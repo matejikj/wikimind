@@ -3,13 +3,14 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+import { SessionProvider } from "@inrupt/solid-ui-react";
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
-  <React.StrictMode>
+  <SessionProvider>
     <App />
-  </React.StrictMode>
+  </SessionProvider>
 );
 
 // If you want your app to work offline and load faster, you can change

@@ -4,6 +4,8 @@ import { Redirect, Route } from 'react-router-dom';
 import Menu from './components/Menu';
 import Login from './pages/Login';
 import Visualisation from './pages/Visualisation';
+import { useSession } from "@inrupt/solid-ui-react";
+import React, { useEffect, useState } from "react";
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -27,20 +29,23 @@ import './theme/variables.css';
 setupIonicReact();
 
 const App: React.FC = () => {
+  const { session } = useSession();
+  
   return (
     <IonApp>
       <IonReactRouter>
-        <IonSplitPane contentId="main">
-          <Menu />
-          <IonRouterOutlet id="main">
-            <Route exact path="/login">
-              <Login />
-            </Route>
-            <Route exact path="/visualisation">
-              <Visualisation />
-            </Route>
-          </IonRouterOutlet>
-        </IonSplitPane>
+        { session.info.isLoggedIn ? (
+          <IonSplitPane contentId="main">
+            <Menu />
+            <IonRouterOutlet id="main">
+              <Route exact path="/visualisation">
+                <Visualisation />
+              </Route>
+            </IonRouterOutlet>
+          </IonSplitPane>
+        ) : (
+          <Login></Login>
+        )}
       </IonReactRouter>
     </IonApp>
   );
