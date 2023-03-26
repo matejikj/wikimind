@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Visualisation from './pages/Visualisation';
 import { useSession } from "@inrupt/solid-ui-react";
 import React, { useEffect, useState } from "react";
+import AppUrlListener from './components/AppUrlListener';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -34,18 +35,19 @@ const App: React.FC = () => {
   return (
     <IonApp>
       <IonReactRouter>
-        { session.info.isLoggedIn ? (
-          <IonSplitPane contentId="main">
-            <Menu />
-            <IonRouterOutlet id="main">
-              <Route exact path="/visualisation">
-                <Visualisation />
-              </Route>
-            </IonRouterOutlet>
-          </IonSplitPane>
-        ) : (
-          <Login></Login>
-        )}
+      <AppUrlListener></AppUrlListener>
+      { session.info.isLoggedIn ? (
+        <IonSplitPane contentId="main">
+          <Menu />
+          <IonRouterOutlet id="main">
+            <Route exact path="/visualisation">
+              <Visualisation />
+            </Route>
+          </IonRouterOutlet>
+        </IonSplitPane>
+      ) : (
+        <Login></Login>
+      )}
       </IonReactRouter>
     </IonApp>
   );

@@ -23,12 +23,6 @@ interface AppPage {
 
 const appPages: AppPage[] = [
   {
-    title: 'Login',
-    url: '/login',
-    iosIcon: mailOutline,
-    mdIcon: mailSharp
-  },
-  {
     title: 'Visualisation',
     url: '/visualisation',
     iosIcon: paperPlaneOutline,
