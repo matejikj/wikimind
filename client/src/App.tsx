@@ -34,20 +34,21 @@ const App: React.FC = () => {
   
   return (
     <IonApp>
+      <div>1.0.0</div>
       <IonReactRouter>
-      { session.info.isLoggedIn ? (
-        <IonSplitPane contentId="main">
-          <Menu />
-          <AppUrlListener></AppUrlListener>
-          <IonRouterOutlet id="main">
-            <Route exact path="/visualisation">
-              <Visualisation />
-            </Route>
-          </IonRouterOutlet>
-        </IonSplitPane>
-      ) : (
-        <Login></Login>
-      )}
+        <AppUrlListener></AppUrlListener>
+        { session.info.isLoggedIn ? (
+          <IonSplitPane contentId="main">
+            <Menu />
+            <IonRouterOutlet id="main">
+              <Route exact path="/visualisation">
+                <Visualisation />
+              </Route>
+            </IonRouterOutlet>
+          </IonSplitPane>
+        ) : (
+          <Login></Login>
+        )}
       </IonReactRouter>
     </IonApp>
   );
