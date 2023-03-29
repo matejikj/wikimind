@@ -1,5 +1,14 @@
-[{
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target" : { "namespace": "android_app", "package_name": "com.matejik.wikee",
-                 "sha256_cert_fingerprints": ["AC:D2:20:97:6E:7B:2B:82:C8:23:49:FB:4D:5E:09:3E:A4:E8:BA:57:4D:64:76:CC:77:80:B4:78:F4:CD:4B:2C"] }
-  }]
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.matejik.wikee",
+            "sha256_cert_fingerprints": [
+                "AC:D2:20:97:6E:7B:2B:82:C8:23:49:FB:4D:5E:09:3E:A4:E8:BA:57:4D:64:76:CC:77:80:B4:78:F4:CD:4B:2C"
+            ]
+        }
+    }
+]
