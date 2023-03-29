@@ -35,10 +35,10 @@ const App: React.FC = () => {
   return (
     <IonApp>
       <IonReactRouter>
-      <AppUrlListener></AppUrlListener>
       { session.info.isLoggedIn ? (
         <IonSplitPane contentId="main">
           <Menu />
+          <AppUrlListener></AppUrlListener>
           <IonRouterOutlet id="main">
             <Route exact path="/visualisation">
               <Visualisation />
