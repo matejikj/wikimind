@@ -34,7 +34,7 @@ const App: React.FC = () => {
   
   return (
     <IonApp>
-      <div>1.0.0</div>
+      <div>1.0.1</div>
       <IonReactRouter>
         <AppUrlListener></AppUrlListener>
         { session.info.isLoggedIn ? (

@@ -44,7 +44,7 @@ const Login: React.FC = () => {
           <IonCol>
               <LoginButton
                 oidcIssuer={currentProvider}
-                redirectUrl={window.location.href}
+                redirectUrl="https://main.d28bhutklw4odo.amplifyapp.com/"
                 authOptions={authOptions}
               >
                 <IonButton>Download</IonButton>
