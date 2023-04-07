@@ -8,14 +8,9 @@ const authOptions = {
 };
 
 const Visualisation: React.FC = () => {
-  const providerOptions = [
-    'https://datapod.igrant.io/',
-    'https://inrupt.net'
-  ];
-  const [currentProvider, setCurrentProvider] = useState<string>('');
   return (
     <div className="App">
-      <Sidenav message="Basic"/>
+      <Sidenav props={{message: "Basic"}} />
       <main>
         <h1>Dashboard</h1>
         </main>
