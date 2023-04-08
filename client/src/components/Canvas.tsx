@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as d3 from "d3";
+import { drag } from "d3-drag";
+import { click } from "@testing-library/user-event/dist/click";
+import { zoom } from 'd3-zoom';
 
 interface Node {
     title: string;
@@ -7,67 +10,84 @@ interface Node {
     cx: number;
     cy: number;
     r: number;
+    id: string
+}
+
+interface Link {
+    from: string;
+    to: string;
+    title: string;
 }
 
 interface IProps {
-    data?: Node[];
+    nodes: Node[];
+    links: Link[];
 }
+
+const menuItems = [
+    {
+      title: 'First action',
+      action: (d: any) => {
+        // TODO: add any action you want to perform
+        console.log(d);
+      }
+    },
+    {
+      title: 'Second action',
+      action: (d: any) => {
+        // TODO: add any action you want to perform
+        console.log(d);
+      }
+    }
+  ];
 
 const Canvas: React.FC<{ props: IProps }> = ({ props }) => {
     const d3Container = useRef(null);
-
-    function dragstarted() {
-      d3.select(this).raise();
-      g.attr("cursor", "grabbing");
-    }
-
-    function dragged(event, d) {
-      d3.select(this).attr("cx", d.x = event.x).attr("cy", d.y = event.y);
-    }
-    
-    function dragended() {
-      g.attr("cursor", "grab");
-    }
-    
-    function zoomed({transform}) {
-      g.attr("transform", transform);
-    }
     
     useEffect(
         () => {
-            if (props.data && d3Container.current) {
-                const svg = d3.select(d3Container.current);
+            if (props && d3Container.current) {
 
-                // Bind D3 data
-                const update = svg.append("g")
-                    .attr("cursor", "grab");
+                //  event functions, drag and zoom.
+                const zoomFunc = (event: any) => {
+                    svg.attr('transform', event.transform);
+                }
+            
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                const dragged = (event: any, d: any) => {
+                    svg.select("#" + d.id).attr("cx", d.x = event.x).attr("cy", d.y = event.y)
+                };
 
-                // Enter new D3 elements
-                update.selectAll("circle")
-                    .data(props.data)
-                    .join("circle")
-                        .attr("cx", ({cx}) => cx)
-                        .attr("cy", ({cy}) => cy)
-                        .attr("r", ({r}) => r * 2)
-                        .attr("fill", (d, i) => d3.interpolateRainbow(i / 120))
-                        .call(d3.drag()
-                            .on("start", dragstarted(d3, g))
-                            .on("drag", dragged(d3))
-                            .on("end", dragended(d3)));
+                const svg = d3
+                    .select(d3Container.current)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    .call(zoom().scaleExtent([0.1, 10]).on('zoom', zoomFunc))
+                    .on('dblclick.zoom', null);
+                    // .append("svg")
+                    // .attr("id", "graphSvg")
 
-                
-                // // Update existing D3 elements
-                // update
-                //     .attr('x', (d, i) => i * 40)
-                //     .text((d: number) => d);
+                const node = svg
+                    .selectAll("circle")
+                    .data(props.nodes)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", ({cx}) => cx)
+                    .attr("cy", ({cy}) => cy)
+                    .attr("r", ({r}) => r * 2)
+                    .attr("id", ({id}) => id)
+                    .attr("fill", (d, i) => d3.interpolateRainbow(i / 120))
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    .call(drag()
+                        .on('drag', dragged)
+                    );
+                }
+            },
 
-                // // Remove old D3 elements
-                // update.exit()
-                //     .remove();
-            }
-        },
-
-        [props.data, d3Container.current])
+        [props, d3Container.current])
+    
 
     return (
         <svg
