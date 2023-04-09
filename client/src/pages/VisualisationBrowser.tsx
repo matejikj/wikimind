@@ -1,6 +1,6 @@
 import { LoginButton } from "@inrupt/solid-ui-react";
 import './Login.css';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Sidenav from "../components/Sidenav";
 import Canvas from "../components/Canvas";
 
@@ -45,12 +45,7 @@ const data = {
 }
 
 const VisualisationBrowser: React.FC = () => {
-  const providerOptions = [
-    'https://datapod.igrant.io/',
-    'https://inrupt.net'
-  ];
-  const [draggedData, setDragData] = useState(null);
-  const [currentProvider, setCurrentProvider] = useState<string>('');
+
   return (
     <div className="App">
       <Sidenav props={{message: "Basic"}} />

@@ -1,28 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import * as d3 from "d3";
-import { drag } from "d3-drag";
-import { click } from "@testing-library/user-event/dist/click";
-import { zoom } from 'd3-zoom';
-
-interface Node {
-    title: string;
-    description: string;
-    cx: number;
-    cy: number;
-    r: number;
-    id: string
-}
-
-interface Link {
-    from: string;
-    to: string;
-    title: string;
-}
-
-interface IProps {
-    nodes: Node[];
-    links: Link[];
-}
+import { IProps } from "../visualisation/types";
+import { createGraph } from "../visualisation/Visualisation";
 
 const menuItems = [
     {
@@ -41,61 +19,43 @@ const menuItems = [
     }
   ];
 
-const Canvas: React.FC<{ props: IProps }> = ({ props }) => {
+  const Canvas: React.FC<{ props: IProps }> = ({ props }) => {
     const d3Container = useRef(null);
+
+    const ref = useRef(null);
+    const [height, setHeight] = useState(0);
+    const [width, setWidth] = useState(0);
     
     useEffect(
         () => {
+            if (ref.current !== null) {
+                const containerRect = (ref.current as any).getBoundingClientRect();
+                const height = containerRect.height;
+                const width = containerRect.width;
+                setHeight(containerRect.height)
+                setWidth(containerRect.width)
+                console.log(containerRect)
+              
+              }
+        }
+    )
+      
+    useEffect(
+        () => {
             if (props && d3Container.current) {
-
-                //  event functions, drag and zoom.
-                const zoomFunc = (event: any) => {
-                    svg.attr('transform', event.transform);
-                }
-            
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                const dragged = (event: any, d: any) => {
-                    svg.select("#" + d.id).attr("cx", d.x = event.x).attr("cy", d.y = event.y)
-                };
-
-                const svg = d3
-                    .select(d3Container.current)
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    .call(zoom().scaleExtent([0.1, 10]).on('zoom', zoomFunc))
-                    .on('dblclick.zoom', null);
-                    // .append("svg")
-                    // .attr("id", "graphSvg")
-
-                const node = svg
-                    .selectAll("circle")
-                    .data(props.nodes)
-                    .enter()
-                    .append("circle")
-                    .attr("cx", ({cx}) => cx)
-                    .attr("cy", ({cy}) => cy)
-                    .attr("r", ({r}) => r * 2)
-                    .attr("id", ({id}) => id)
-                    .attr("fill", (d, i) => d3.interpolateRainbow(i / 120))
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    .call(drag()
-                        .on('drag', dragged)
-                    );
-                }
-            },
-
-        [props, d3Container.current])
-    
+                createGraph(d3Container.current, props)
+            }
+        }, [props, d3Container.current])
 
     return (
-        <svg
-            className="d3-component"
-            width={400}
-            height={200}
-            ref={d3Container}
-        />
+        <div className="uhiuh" ref={ref}>
+            <svg
+                className="d3-component"
+                width={width}
+                height={height}
+                ref={d3Container}
+            />
+        </div>
     )
 
 };

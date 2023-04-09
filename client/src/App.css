@@ -7,7 +7,13 @@ body {
   overflow: hidden;
 }
 
+.uhiuh {
+  width: -webkit-fill-available;
+  height: 100vh;
+}
+
 main {
+  width: -webkit-fill-available;
   overflow: hidden;
 }
 
