@@ -7,7 +7,7 @@ const authOptions = {
   clientName: "Learnee",
 };
 
-const Visualisation: React.FC = () => {
+const Dashboard: React.FC = () => {
   return (
     <div className="App">
       <Sidenav props={{message: "Basic"}} />
@@ -19,4 +19,4 @@ const Visualisation: React.FC = () => {
   );
 };
 
-export default Visualisation;
+export default Dashboard;

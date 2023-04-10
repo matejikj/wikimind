@@ -4,10 +4,10 @@ import { useSession } from "@inrupt/solid-ui-react";
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
-import VisualisationBrowser from "./pages/VisualisationBrowser";
 import Dashboard from "./pages/Dashboard";
 import Container from 'react-bootstrap/Container';
 import Sidenav from "./components/Sidenav";
+import Visualisation from "./pages/Visualisation";
 
 const App: React.FC = () => {
   const { session } = useSession();
@@ -16,7 +16,7 @@ const App: React.FC = () => {
     true ? (
       <Routes>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/visualisation" element={<VisualisationBrowser />} />
+        <Route path="/visualisation" element={<Visualisation />} />
       </Routes>
     ) : (
       <Login></Login>
