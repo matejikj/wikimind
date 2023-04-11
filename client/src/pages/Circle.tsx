@@ -3,13 +3,17 @@ import { IProps } from "../visualisation/types";
 import { createGraph } from "../visualisation/Visualisation";
 import Sidenav from "../components/Sidenav";
 
-const Circle: React.FC<{ x: number, y: number, r: number, title: string }> = ({x, y, r, title}) => {
+const Circle: React.FC<{ ix: number, iy: number, r: number, title: string }> = ({ix, iy, r, title}) => {
     const [position, setPosition] = React.useState({
-        x: x,
-        y: y,
+        x: ix,
+        y: iy,
         active: false,
         offset: {}
     });
+
+    useEffect(()=>{
+        setPosition({x: ix, y: iy, active: position.active, offset: position.offset });
+       },[]);
 
     const handlePointerDown = (e: any) => {
         const el = e.target;

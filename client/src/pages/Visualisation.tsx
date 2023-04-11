@@ -78,19 +78,19 @@ const Visualisation: React.FC = () => {
   //   return () => clearInterval(interval);
   // }, []);
 
-  useEffect(
-    () => {
-      if (ref.current !== null) {
-        const containerRect = (ref.current as any).getBoundingClientRect();
-        const height = containerRect.height;
-        const width = containerRect.width;
-        setHeight(containerRect.height)
-        setWidth(containerRect.width)
-        console.log(containerRect)
+  // useEffect(
+  //   () => {
+  //     if (ref.current !== null) {
+  //       const containerRect = (ref.current as any).getBoundingClientRect();
+  //       const height = containerRect.height;
+  //       const width = containerRect.width;
+  //       setHeight(containerRect.height)
+  //       setWidth(containerRect.width)
+  //       console.log(containerRect)
 
-      }
-    }
-  )
+  //     }
+  //   }
+  // )
 
   // useEffect(
   //     () => {

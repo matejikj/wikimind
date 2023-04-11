@@ -15,6 +15,14 @@ const testData: IProps = {
       "id": "id32",
     },
     {
+      "title": "fdsa",
+      "description": "kral ceskych zemi",
+      "cx": 423,
+      "cy": 87,
+      "r": 23,
+      "id": "id43",
+    },
+    {
       "title": "dsa",
       "description": "dsa dsa bcv",
       "cx": 200,
@@ -59,8 +67,24 @@ const menuItems = [
 
 const Canvas: React.FC<{ width: number, height: number }> = ({ width, height }) => {
   const d3Container = useRef(null);
-  const [data, setData] = useState(testData);
+  const [nodes, setNodes] = useState(testData.nodes);
 
+  const aa = () => {
+    // 👇️ passing function to setData method
+    setNodes([]);
+  };
+
+  const fc = () => {
+    const newTodos = nodes.map((todo) => {
+      if (todo.id === "id3543") {
+        return {...todo, cx: todo.cx + 10};
+      }
+      return todo;
+    });
+    setNodes(newTodos);
+  };
+  
+  
   useEffect(
     () => {
 
@@ -72,18 +96,24 @@ const Canvas: React.FC<{ width: number, height: number }> = ({ width, height }) 
   }
 
   return (
-    <svg
-      className="d3-component"
-      width={width}
-      height={height}
-      ref={d3Container}
-    >
-      {data.nodes.map((node, index) => {
-        return (
-          <Circle childToParent={childToParent} r={node.r} x={node.cx} y={node.cy} title={node.title} />
-        );
-      })}      
-    </svg>
+    <div>
+      <div onClick={fc}>Klik</div>
+      <div onClick={aa}>Klik</div>
+      <svg
+        className="d3-component"
+        width={width}
+        height={height}
+        ref={d3Container}
+      >
+        {nodes.map((node, index) => {
+          return (
+            // <circle cx={node.cx} r={10} cy={node.cy}>{node.cx}</circle>
+            <Circle key={index} r={node.r} x={node.cx} y={node.cy} title={node.title} />
+          );
+        })}      
+      </svg>
+    </div>
+    
   )
 
 };
