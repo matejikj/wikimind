@@ -8,12 +8,24 @@ import Dashboard from "./pages/Dashboard";
 import Container from 'react-bootstrap/Container';
 import Sidenav from "./components/Sidenav";
 import Visualisation from "./pages/Visualisation";
+import { handleIncomingRedirect, onSessionRestore } from "@inrupt/solid-client-authn-browser";
 
 const App: React.FC = () => {
+  const [sessionRestored, setSessionRestored] = useState(false);
+
   const { session } = useSession();
   
+  useEffect(() => {
+    handleIncomingRedirect({
+      restorePreviousSession: true
+    }).then((info) => {
+      console.log(info)
+      setSessionRestored(true)
+    })
+  }, []);
+
   return (
-    true ? (
+    sessionRestored || session.info.isLoggedIn ? (
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/visualisation" element={<Visualisation />} />

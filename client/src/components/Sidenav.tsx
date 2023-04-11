@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { TiThMenu, TiThMenuOutline, TiTag, TiVendorAndroid } from 'react-icons/ti';
+import { TiThMenu, TiThMenuOutline, TiTag, TiVendorAndroid, TiLockOpenOutline } from 'react-icons/ti';
 import styles from "./Sidenav.module.css"
 import { useState } from "react";
 
@@ -27,6 +27,10 @@ const Sidenav: React.FC<{ props: AppProps }> = ({ props }) => {
         setopen(!open)
     }
 
+    const logout = () => {
+        // session.logout()
+    }
+
     return (
         <div className={open ? styles.sidenav : styles.sidenavClosed}>
             <div>{props.message}</div>
@@ -40,6 +44,9 @@ const Sidenav: React.FC<{ props: AppProps }> = ({ props }) => {
                         {open ? (<span className={styles.linkText}>{item.text}</span>) : (<span />)}
                     </NavLink>)
             })}
+            <button className={styles.menuBtn} onClick={logout}>
+                <TiLockOpenOutline/>
+            </button>  
         </div>
 
     );
