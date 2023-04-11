@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { IProps } from "../visualisation/types";
 import { createGraph } from "../visualisation/Visualisation";
 import Sidenav from "../components/Sidenav";
-import Canvas from "./Canvas";
+import Circle from "./Circle";
 
 const data = {
   "nodes": [
@@ -57,9 +57,9 @@ const menuItems = [
     }
   ];
 
-  const Visualisation: React.FC = () => {
+  const Canvas: React.FC = () => {
     const d3Container = useRef(null);
-
+  
     const ref = useRef(null);
     const [height, setHeight] = useState(500);
     const [width, setWidth] = useState(500);
@@ -80,26 +80,23 @@ const menuItems = [
       
     useEffect(
         () => {
-            if (data && d3Container.current) {
-                createGraph(d3Container.current, data)
-            }
-        }, [data, d3Container.current])
+            // if (data && d3Container.current) {
+            //     createGraph(d3Container.current, data)
+            // }
+        }, [data, d3Container.current]
+    )
 
     return (
-      <div className="App">
-        <Sidenav props={{message: "Basic"}} />
-        <main>
-          <svg
-            className="d3-component"
-            width={1000}
-            height={500}
-            ref={d3Container}
-          />
-          <Canvas></Canvas>
-        </main>
-      </div>
+      <svg
+        className="d3-component"
+        width={1000}
+        height={500}
+        ref={d3Container}
+      >
+        <Circle/>
+      </svg>
     )
 
 };
 
-export default Visualisation;
+export default Canvas;
