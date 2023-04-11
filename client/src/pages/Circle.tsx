@@ -3,10 +3,10 @@ import { IProps } from "../visualisation/types";
 import { createGraph } from "../visualisation/Visualisation";
 import Sidenav from "../components/Sidenav";
 
-const Circle: React.FC = () => {
+const Circle: React.FC<{ x: number, y: number, r: number, title: string }> = ({x, y, r, title}) => {
     const [position, setPosition] = React.useState({
-        x: 100,
-        y: 100,
+        x: x,
+        y: y,
         active: false,
         offset: {}
     });
@@ -53,7 +53,7 @@ const Circle: React.FC = () => {
         <circle
             cx={position.x}
             cy={position.y}
-            r={50}
+            r={r}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
             onPointerMove={handlePointerMove}

@@ -4,14 +4,14 @@ import { createGraph } from "../visualisation/Visualisation";
 import Sidenav from "../components/Sidenav";
 import Circle from "./Circle";
 
-const data = {
+const testData: IProps = {
   "nodes": [
     {
       "title": "Karel IV",
       "description": "kral ceskych zemi",
       "cx": 100,
       "cy": 50,
-      "r": 5,
+      "r": 15,
       "id": "id32",
     },
     {
@@ -19,7 +19,7 @@ const data = {
       "description": "dsa dsa bcv",
       "cx": 200,
       "cy": 100,
-      "r": 8,
+      "r": 30,
       "id": "id432",
     },
     {
@@ -27,75 +27,64 @@ const data = {
       "description": "nbv aaaaa lkkl",
       "cx": 10,
       "cy": 100,
-      "r": 10,
+      "r": 20,
       "id": "id3543",
-    }    
+    }
   ],
   "links": [
     {
       "from": "id32",
       "to": "id432",
-      "title": "mama"      
+      "title": "mama"
     }
   ]
 }
 
 const menuItems = [
-    {
-      title: 'First action',
-      action: (d: any) => {
-        // TODO: add any action you want to perform
-        console.log(d);
-      }
-    },
-    {
-      title: 'Second action',
-      action: (d: any) => {
-        // TODO: add any action you want to perform
-        console.log(d);
-      }
+  {
+    title: 'First action',
+    action: (d: any) => {
+      // TODO: add any action you want to perform
+      console.log(d);
     }
-  ];
+  },
+  {
+    title: 'Second action',
+    action: (d: any) => {
+      // TODO: add any action you want to perform
+      console.log(d);
+    }
+  }
+];
 
-  const Canvas: React.FC = () => {
-    const d3Container = useRef(null);
-  
-    const ref = useRef(null);
-    const [height, setHeight] = useState(500);
-    const [width, setWidth] = useState(500);
-    
-    useEffect(
-        () => {
-            if (ref.current !== null) {
-                const containerRect = (ref.current as any).getBoundingClientRect();
-                const height = containerRect.height;
-                const width = containerRect.width;
-                setHeight(containerRect.height)
-                setWidth(containerRect.width)
-                console.log(containerRect)
-              
-              }
-        }
-    )
-      
-    useEffect(
-        () => {
-            // if (data && d3Container.current) {
-            //     createGraph(d3Container.current, data)
-            // }
-        }, [data, d3Container.current]
-    )
+const Canvas: React.FC<{ width: number, height: number }> = ({ width, height }) => {
+  const d3Container = useRef(null);
+  const [data, setData] = useState(testData);
 
-    return (
-      <svg
-        className="d3-component"
-        width={1000}
-        height={500}
-        ref={d3Container}
-      >
-        <Circle/>
-      </svg>
-    )
+  useEffect(
+    () => {
+
+    }
+  )
+
+  const childToParent = () => {
+   
+  }
+
+  return (
+    <svg
+      className="d3-component"
+      width={width}
+      height={height}
+      ref={d3Container}
+    >
+      {data.nodes.map((node, index) => {
+        return (
+          <Circle childToParent={childToParent} r={node.r} x={node.cx} y={node.cy} title={node.title} />
+        );
+      })}      
+    </svg>
+  )
 
 };
 
