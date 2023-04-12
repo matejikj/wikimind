@@ -75,11 +75,32 @@ const Canvas: React.FC<{ width: number, height: number }> = ({ width, height }) 
   const [nodes, setNodes] = useState(testData.nodes);
   const [links, setLinks] = useState(AddCoords(testData.links, getIdsMapping(testData.nodes)));
   const [contextMenu, setContextMenu] = useState({ visibility: "hidden", id: "", x: 100, y: 100 });
+  const [circleMenu, setCircleMenu] = useState({ visibility: "hidden", id: "", x: 100, y: 100 });
 
   const setText = (e: any) => {
     setContextMenu({...contextMenu,
+      x: e.x,
+      y: e.y,
       visibility: "visible"})
     console.log(e)
+  }
+
+  const contextMenuFalse = () => {
+    setContextMenu({...contextMenu,
+      visibility: "hidden"})
+  }
+
+  const openCircleMenu = (e: any) => {
+    setCircleMenu({...contextMenu,
+      x: e.x,
+      y: e.y,
+      visibility: "visible"})
+    console.log(e)
+  }
+
+  const circleMenuFalse = () => {
+    setCircleMenu({...contextMenu,
+      visibility: "hidden"})
   }
 
   const setPosition = (x: number, y: number, id: string) => {
@@ -105,6 +126,7 @@ const Canvas: React.FC<{ width: number, height: number }> = ({ width, height }) 
   return (
     <div>
       <svg
+        onClick={contextMenuFalse}
         className="d3-component"
         width={width}
         height={height}
@@ -123,18 +145,6 @@ const Canvas: React.FC<{ width: number, height: number }> = ({ width, height }) 
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#876" />
           </marker>
         </defs>
-        <g>
-          {menuItems.map( (item, index) => {
-            return (
-              <rect key={index} visibility={contextMenu.visibility} x={contextMenu.x} y={contextMenu.y + index * 30}  ></rect>
-            )
-          })}
-          {menuItems.map( (item, index) => {
-            return (
-              <text key={index} visibility={contextMenu.visibility} x={contextMenu.x} y={contextMenu.y + index * 30}  >{item.title}</text>
-            )
-          })}
-        </g>
         {links.map((link, index) => {
           return (
             <Line from={link.from} key={index} to={link.to} source={link.source} target={link.target} />
@@ -155,6 +165,30 @@ const Canvas: React.FC<{ width: number, height: number }> = ({ width, height }) 
             <Text id={node.id} key={index} ix={node.cx} iy={node.cy} parentSetPosition={setPosition} title={node.title} />
           );
         })}
+        <g>
+          {menuItems.map( (item, index) => {
+            return (
+              <rect fill="orange" height={30} width={120} key={index} visibility={contextMenu.visibility} x={contextMenu.x} y={contextMenu.y + index * 30}  ></rect>
+            )
+          })}
+          {menuItems.map( (item, index) => {
+            return (
+              <text key={index} visibility={contextMenu.visibility} x={contextMenu.x} y={contextMenu.y + index * 30 + 20}  >{item.title}</text>
+            )
+          })}
+        </g>
+        <g>
+          {menuItems.map( (item, index) => {
+            return (
+              <rect fill="orange" height={30} width={120} key={index} visibility={circleMenu.visibility} x={circleMenu.x} y={circleMenu.y + index * 30}  ></rect>
+            )
+          })}
+          {menuItems.map( (item, index) => {
+            return (
+              <text key={index} visibility={circleMenu.visibility} x={circleMenu.x} y={circleMenu.y + index * 30 + 20}  >{item.title}</text>
+            )
+          })}
+        </g>
       </svg>
     </div>
 

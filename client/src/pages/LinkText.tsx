@@ -10,8 +10,11 @@ const LinkText: React.FC<{ title: string, source: any, target: any, parentContex
     });
 
     const handleContextMenu = (e: any) => {
+        const bbox = e.target.getBoundingClientRect();
+        const x = source != undefined && target != undefined ? (source[0] + target[0]) / 2 + 40 : 0;
+        const y = source != undefined && target != undefined ? (source[1] + target[1]) / 2 + 10: 0;
         e.preventDefault()
-        parentContextMenu(e);
+        parentContextMenu({x, y});
     };
 
     useEffect(()=>{
