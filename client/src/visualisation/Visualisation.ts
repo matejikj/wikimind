@@ -71,7 +71,7 @@ export const createGraph = (reference: any, data: IProps) => {
         .style("cursor", "grab")
         .attr("cx", ({cx}) => cx)
         .attr("cy", ({cy}) => cy)
-        .attr("r", ({r}) => r * 2)
+        .attr("r", () => 2 * 2)
         .attr("class", ({id}) => `node_${id}`)
         .attr("fill", (d, i) => d3.interpolateRainbow(i / 120))
         .on('contextmenu', (d) => {

@@ -3,7 +3,6 @@ export interface Node {
     description: string;
     cx: number;
     cy: number;
-    r: number;
     id: string
 }
 

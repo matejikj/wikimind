@@ -3,6 +3,10 @@ import { IProps } from "../visualisation/types";
 import { createGraph } from "../visualisation/Visualisation";
 import Sidenav from "../components/Sidenav";
 import Circle from "./Circle";
+import Text from "./Text";
+import { AddCoords, getIdsMapping } from "../visualisation/utils";
+import Line from "./Line";
+import LinkText from "./LinkText";
 
 const testData: IProps = {
   "nodes": [
@@ -11,7 +15,6 @@ const testData: IProps = {
       "description": "kral ceskych zemi",
       "cx": 100,
       "cy": 50,
-      "r": 15,
       "id": "id32",
     },
     {
@@ -19,7 +22,6 @@ const testData: IProps = {
       "description": "kral ceskych zemi",
       "cx": 423,
       "cy": 87,
-      "r": 23,
       "id": "id43",
     },
     {
@@ -27,7 +29,6 @@ const testData: IProps = {
       "description": "dsa dsa bcv",
       "cx": 200,
       "cy": 100,
-      "r": 30,
       "id": "id432",
     },
     {
@@ -35,7 +36,6 @@ const testData: IProps = {
       "description": "nbv aaaaa lkkl",
       "cx": 10,
       "cy": 100,
-      "r": 20,
       "id": "id3543",
     }
   ],
@@ -43,6 +43,11 @@ const testData: IProps = {
     {
       "from": "id32",
       "to": "id432",
+      "title": "mama"
+    },
+    {
+      "from": "id32",
+      "to": "id43",
       "title": "mama"
     }
   ]
@@ -68,52 +73,91 @@ const menuItems = [
 const Canvas: React.FC<{ width: number, height: number }> = ({ width, height }) => {
   const d3Container = useRef(null);
   const [nodes, setNodes] = useState(testData.nodes);
+  const [links, setLinks] = useState(AddCoords(testData.links, getIdsMapping(testData.nodes)));
+  const [contextMenu, setContextMenu] = useState({ visibility: "hidden", id: "", x: 100, y: 100 });
 
-  const aa = () => {
-    // 👇️ passing function to setData method
-    setNodes([]);
-  };
+  const setText = (e: any) => {
+    setContextMenu({...contextMenu,
+      visibility: "visible"})
+    console.log(e)
+  }
 
-  const fc = () => {
+  const setPosition = (x: number, y: number, id: string) => {
     const newTodos = nodes.map((todo) => {
-      if (todo.id === "id3543") {
-        return {...todo, cx: todo.cx + 10};
+      if (todo.id === id) {
+        return { ...todo, cx: x, cy: y };
       }
       return todo;
     });
     setNodes(newTodos);
-  };
-  
-  
-  useEffect(
-    () => {
-
-    }
-  )
-
-  const childToParent = () => {
-   
+    const newLinks = links.map((todo) => {
+      if (todo.from === id) {
+        return { ...todo, source: [x, y] };
+      }
+      if (todo.to === id) {
+        return { ...todo, target: [x, y] };
+      }
+      return todo;
+    });
+    setLinks(newLinks);
   }
 
   return (
     <div>
-      <div onClick={fc}>Klik</div>
-      <div onClick={aa}>Klik</div>
       <svg
         className="d3-component"
         width={width}
         height={height}
         ref={d3Container}
       >
+        <defs>
+          <marker
+            id="triangle"
+            viewBox="0 0 10 10"
+            refX="30"
+            refY="5"
+            markerUnits="strokeWidth"
+            markerWidth="4"
+            markerHeight="9"
+            orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#876" />
+          </marker>
+        </defs>
+        <g>
+          {menuItems.map( (item, index) => {
+            return (
+              <rect key={index} visibility={contextMenu.visibility} x={contextMenu.x} y={contextMenu.y + index * 30}  ></rect>
+            )
+          })}
+          {menuItems.map( (item, index) => {
+            return (
+              <text key={index} visibility={contextMenu.visibility} x={contextMenu.x} y={contextMenu.y + index * 30}  >{item.title}</text>
+            )
+          })}
+        </g>
+        {links.map((link, index) => {
+          return (
+            <Line from={link.from} key={index} to={link.to} source={link.source} target={link.target} />
+          );
+        })}
+        {links.map((link, index) => {
+          return (
+            <LinkText key={index} title={link.title} source={link.source} parentContextMenu={setText} target={link.target} />
+          );
+        })}
         {nodes.map((node, index) => {
           return (
-            // <circle cx={node.cx} r={10} cy={node.cy}>{node.cx}</circle>
-            <Circle key={index} r={node.r} x={node.cx} y={node.cy} title={node.title} />
+            <Circle id={node.id} key={index} ix={node.cx} iy={node.cy} parentSetPosition={setPosition} title={node.title} />
           );
-        })}      
+        })}
+        {nodes.map((node, index) => {
+          return (
+            <Text id={node.id} key={index} ix={node.cx} iy={node.cy} parentSetPosition={setPosition} title={node.title} />
+          );
+        })}
       </svg>
     </div>
-    
+
   )
 
 };

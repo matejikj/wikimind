@@ -12,7 +12,6 @@ const testData: IProps = {
       "description": "kral ceskych zemi",
       "cx": 100,
       "cy": 50,
-      "r": 5,
       "id": "id32",
     },
     {
@@ -20,7 +19,6 @@ const testData: IProps = {
       "description": "dsa dsa bcv",
       "cx": 200,
       "cy": 100,
-      "r": 8,
       "id": "id432",
     },
     {
@@ -28,7 +26,6 @@ const testData: IProps = {
       "description": "nbv aaaaa lkkl",
       "cx": 10,
       "cy": 100,
-      "r": 10,
       "id": "id3543",
     }
   ],
@@ -78,19 +75,19 @@ const Visualisation: React.FC = () => {
   //   return () => clearInterval(interval);
   // }, []);
 
-  // useEffect(
-  //   () => {
-  //     if (ref.current !== null) {
-  //       const containerRect = (ref.current as any).getBoundingClientRect();
-  //       const height = containerRect.height;
-  //       const width = containerRect.width;
-  //       setHeight(containerRect.height)
-  //       setWidth(containerRect.width)
-  //       console.log(containerRect)
+  useEffect(
+    () => {
+      if (ref.current !== null) {
+        const containerRect = (ref.current as any).getBoundingClientRect();
+        const height = containerRect.height;
+        const width = containerRect.width;
+        setHeight(containerRect.height)
+        setWidth(containerRect.width)
+        console.log(containerRect)
 
-  //     }
-  //   }
-  // )
+      }
+    }
+  )
 
   // useEffect(
   //     () => {
