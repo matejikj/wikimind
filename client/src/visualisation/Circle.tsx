@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { IProps } from "../visualisation/types";
-import { createGraph } from "../visualisation/Visualisation";
-import Sidenav from "../components/Sidenav";
 
-const Text: React.FC<{ id: string, ix: number, iy: number, title: string, parentSetPosition: Function }> = ({ id, ix, iy, title, parentSetPosition}) => {
+const Circle: React.FC<{ id: string, ix: number, iy: number, title: string, parentSetPosition: Function }> = ({ id, ix, iy, title, parentSetPosition}) => {
     const [position, setPosition] = React.useState({
         active: false,
         offset: {}
@@ -51,16 +48,17 @@ const Text: React.FC<{ id: string, ix: number, iy: number, title: string, parent
     };
 
     return (
-        <text
-            x={ix - id.length * 4}
-            y={iy + 5}
+        <circle
+            cx={ix}
+            cy={iy}
+            r={25}
             id={id}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
             onPointerMove={handlePointerMove}
-            fill={position.active ? "blue" : "red"}
-        >{id}</text>
+            fill={position.active ? "blue" : "#543"}
+        />
     );
 };
 
-export default Text;
+export default Circle;

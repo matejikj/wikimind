@@ -14,7 +14,8 @@ const authOptions = {
 const Login: React.FC = () => {
   const providerOptions = [
     'https://datapod.igrant.io/',
-    'https://inrupt.net'
+    'https://inrupt.net',
+    'https://use.id'
   ];
   const [currentProvider, setCurrentProvider] = useState<string>('');
   return (
@@ -26,6 +27,7 @@ const Login: React.FC = () => {
             <option>Open this select menu</option>
             <option value="https://datapod.igrant.io/">https://datapod.igrant.io/</option>
             <option value="https://inrupt.net">https://inrupt.net</option>
+            <option value="https://use.id/matejikj">https://use.id/matejikj</option>
           </Form.Select>
         </Col>
         <Col></Col>

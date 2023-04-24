@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
-import { IProps } from "../visualisation/types";
-import { createGraph } from "../visualisation/Visualisation";
+import { IProps } from "../types/types";
 import Sidenav from "../components/Sidenav";
-import Canvas from "./Canvas";
-import { Node } from "../visualisation/types";
+import Canvas from "../visualisation/Canvas";
+import { Node } from "../types/types";
 
 const testData: IProps = {
   "nodes": [
@@ -13,6 +12,13 @@ const testData: IProps = {
       "cx": 100,
       "cy": 50,
       "id": "id32",
+    },
+    {
+      "title": "fdsa",
+      "description": "kral ceskych zemi",
+      "cx": 423,
+      "cy": 87,
+      "id": "id43",
     },
     {
       "title": "dsa",
@@ -33,6 +39,11 @@ const testData: IProps = {
     {
       "from": "id32",
       "to": "id432",
+      "title": "mama"
+    },
+    {
+      "from": "id32",
+      "to": "id43",
       "title": "mama"
     }
   ]
@@ -62,45 +73,27 @@ const Visualisation: React.FC = () => {
   const [height, setHeight] = useState(500);
   const [width, setWidth] = useState(500);
 
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     const containerRect = (ref.current as any).getBoundingClientRect();
-  //     const height = containerRect.height - 10;
-  //     const width = containerRect.width - 10;
-  //     setHeight(height)
-  //     setWidth(width)
-  //     console.log(width)
-  //   }, 1000);
-  //   return () => clearInterval(interval);
-  // }, []);
-
-  useEffect(
-    () => {
-      if (ref.current !== null) {
-        const containerRect = (ref.current as any).getBoundingClientRect();
-        const height = containerRect.height;
-        const width = containerRect.width;
-        setHeight(containerRect.height)
-        setWidth(containerRect.width)
-        console.log(containerRect)
-
-      }
-    }
-  )
-
   // useEffect(
-  //     () => {
-  //         if (data && d3Container.current) {
-  //             createGraph(d3Container.current, data)
-  //         }
-  //     }, [data, d3Container.current])
+  //   () => {
+  //     if (ref.current !== null) {
+  //       const containerRect = (ref.current as any).getBoundingClientRect();
+  //       const height = containerRect.height;
+  //       const width = containerRect.width;
+  //       setHeight(containerRect.height)
+  //       setWidth(containerRect.width)
+  //       console.log(containerRect)
+  //     }
+  //   }
+  // )
+  const create = (a: number) => {
+    console.log("fds")
+  }
 
   return (
     <div className="App">
       <Sidenav props={{ message: "Basic" }} />
       <main ref={ref}>
-        <Canvas height={height} width={width}></Canvas>
+        <Canvas data={{nodes: testData.nodes, links: testData.links, save: create}} height={height} width={width}></Canvas>
       </main>
     </div>
   )

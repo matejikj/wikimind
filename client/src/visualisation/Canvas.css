@@ -1,0 +1,23 @@
+.menuItem {
+    fill:rgb(121,0,121);
+    stroke-width:3;
+    stroke:rgb(0,0,0)
+}
+
+#svg-canvas {
+    background-color: aquamarine;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#float-btn-save {
+    position: absolute;
+    top: 10px;
+    right: 70px;
+}
+
+#float-btn-add {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}

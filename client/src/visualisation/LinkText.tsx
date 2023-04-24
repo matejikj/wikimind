@@ -1,7 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { IProps } from "../visualisation/types";
-import { createGraph } from "../visualisation/Visualisation";
-import Sidenav from "../components/Sidenav";
 
 const LinkText: React.FC<{ title: string, source: any, target: any, parentContextMenu: Function }> = ({ title, source, target, parentContextMenu }) => {
     const [position, setPosition] = React.useState({

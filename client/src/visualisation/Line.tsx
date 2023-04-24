@@ -1,7 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { IProps } from "../visualisation/types";
-import { createGraph } from "../visualisation/Visualisation";
-import Sidenav from "../components/Sidenav";
 
 const Line: React.FC<{ from: string, to: string, source: any, target: any }> = ({ from, to, source, target }) => {
     const [position, setPosition] = React.useState({

@@ -3,7 +3,7 @@ import { drag } from "d3-drag";
 import { click } from "@testing-library/user-event/dist/click";
 import { zoom } from 'd3-zoom';
 import styles from "./Menu.module.css";
-import { IAction } from "./types";
+import { IAction } from "../types/types";
 
 let menuItems: IAction[] = [
   {

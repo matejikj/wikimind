@@ -1,4 +1,4 @@
-import { Node, Link, Coord } from "./types"
+import { Node, Link, Coord } from "../types/types"
 
 export const getIdsMapping = (list: Array<Node>) => {
     let res = new Map()
