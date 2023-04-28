@@ -8,14 +8,15 @@ const authOptions = {
 };
 
 const Dashboard: React.FC = () => {
+
   return (
     <div className="App">
-      <Sidenav props={{message: "Basic"}} />
+      <Sidenav props={{ message: "Basic" }} />
       <main>
         <h1>Dashboard</h1>
-        </main>
+      </main>
     </div>
-    
+
   );
 };
 

@@ -1,4 +1,6 @@
-import { Node, Link, Coord } from "../types/types"
+import { Coord } from "../models/types/types"
+import { Node } from "../models/types/Node"
+import { Link } from "../models/types/Link"
 
 export const getIdsMapping = (list: Array<Node>) => {
     let res = new Map()

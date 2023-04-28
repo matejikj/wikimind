@@ -1,4 +1,7 @@
-export interface Link {
+import { Entity } from "./Entity";
+
+// export type Link = Entity & {
+export type Link = {
     from: string;
     to: string;
     title: string;

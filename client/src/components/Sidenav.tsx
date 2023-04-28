@@ -1,7 +1,9 @@
 import { NavLink } from "react-router-dom";
 import { TiThMenu, TiThMenuOutline, TiTag, TiVendorAndroid, TiLockOpenOutline } from 'react-icons/ti';
 import styles from "./Sidenav.module.css"
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { handleIncomingRedirect, onSessionRestore, logout } from "@inrupt/solid-client-authn-browser";
+import { SessionContext, UserData } from "../sessionContext";
 
 export const navData = [
     {
@@ -27,8 +29,19 @@ const Sidenav: React.FC<{ props: AppProps }> = ({ props }) => {
         setopen(!open)
     }
 
-    const logout = () => {
-        // session.logout()
+    const theme = useContext(SessionContext);
+
+    const a = async () => {
+        console.log('fdsafs')
+        console.log(theme.userData)
+        const logged = await logout()
+        console.log(logged)
+        theme.setUserData({
+            name: 'fdasfas',
+            isLogged: false,
+            session: null
+        })
+        console.log(theme.userData)
     }
 
     return (
@@ -44,9 +57,9 @@ const Sidenav: React.FC<{ props: AppProps }> = ({ props }) => {
                         {open ? (<span className={styles.linkText}>{item.text}</span>) : (<span />)}
                     </NavLink>)
             })}
-            <button className={styles.menuBtn} onClick={logout}>
-                <TiLockOpenOutline/>
-            </button>  
+            <button className={styles.menuBtn} onClick={a}>
+                <TiLockOpenOutline />
+            </button>
         </div>
 
     );

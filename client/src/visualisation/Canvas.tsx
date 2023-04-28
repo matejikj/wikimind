@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { IProps } from "../types/types";
+import { IProps } from "../models/types/types";
 import Circle from "./Circle";
 import Text from "./Text";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
@@ -94,7 +94,6 @@ const Canvas: React.FC<{ data: IProps, width: number, height: number }> = ({ dat
 
   const exit = (props: any) => {
     setModalShow(false)
-    data.save(5)
     console.log(props)
   }
 

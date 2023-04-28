@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { IProps } from "../types/types";
+import { IProps } from "../models/types/types";
 import Sidenav from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
-import { Node } from "../types/types";
+import { Node } from "../models/types/Node";
+import Button from 'react-bootstrap/Button';
+import { loginAndFetch } from '../service/profile';
+import { checkStructure } from "../service/folderStructure";
 
 const testData: IProps = {
   "nodes": [
@@ -85,15 +88,22 @@ const Visualisation: React.FC = () => {
   //     }
   //   }
   // )
-  const create = (a: number) => {
+  const create = () => {
+    loginAndFetch()
     console.log("fds")
+  }
+  const build = () => {
+    checkStructure()
+    console.log("aaa")
   }
 
   return (
     <div className="App">
       <Sidenav props={{ message: "Basic" }} />
       <main ref={ref}>
-        <Canvas data={{nodes: testData.nodes, links: testData.links, save: create}} height={height} width={width}></Canvas>
+        <Button onClick={create} variant="primary">saas</Button>
+        <Button onClick={build} variant="primary">bb</Button>
+        <Canvas data={{ nodes: testData.nodes, links: testData.links }} height={height} width={width}></Canvas>
       </main>
     </div>
   )

@@ -1,4 +1,5 @@
-import Link from './'
+import { Link } from './Link'
+import { Node } from './Node'
 
 export interface Coord {
     x: number;
@@ -8,8 +9,6 @@ export interface Coord {
 export interface IProps {
     nodes: Node[];
     links: Link[];
-    add?: Function;
-    save(a: number): void;
 }
 
 export interface IAction {
