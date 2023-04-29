@@ -12,7 +12,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { UserData, defaultSessionValue, SessionContext } from "./sessionContext";
 
 const App: React.FC = () => {
-  
+
   const [userData, setUserData]
     = React.useState<UserData>(defaultSessionValue);
 
@@ -26,11 +26,11 @@ const App: React.FC = () => {
       restorePreviousSession: true
     }).then((info) => {
       info?.isLoggedIn ? setUserData({
-        name: 'fdas',
+        podUrl: 'fdas',
         isLogged: true,
         session: null
       }) :
-      console.log(info)
+        console.log(info)
     })
   }, []);
 

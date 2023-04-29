@@ -24,7 +24,7 @@ const Login: React.FC = () => {
 
   const aaa: UserData = {
     session: undefined,
-    name: "fdsafas",
+    podUrl: "fdsafas",
     isLogged: true,
   }
 
@@ -40,7 +40,7 @@ const Login: React.FC = () => {
     // })
     console.log(logged)
     theme.setUserData({
-      name: 'fdas',
+      podUrl: 'fdas',
       isLogged: true,
       session: null
     })
@@ -66,7 +66,7 @@ const Login: React.FC = () => {
         <Col></Col>
         <Col>
           <Button onClick={a} variant="primary">saas</Button>
-          <h1>{theme.userData?.name}</h1>
+          <h1>{theme.userData?.podUrl}</h1>
           {/* <LoginButton
             oidcIssuer={currentProvider}
             redirectUrl={window.location.href}
