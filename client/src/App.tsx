@@ -25,10 +25,10 @@ const App: React.FC = () => {
     handleIncomingRedirect({
       restorePreviousSession: true
     }).then((info) => {
-      info?.isLoggedIn ? setUserData({
+      info?.isLoggedIn && info?.webId !== undefined ? setUserData({
         podUrl: 'fdas',
         isLogged: true,
-        session: null
+        session: info?.webId
       }) :
         console.log(info)
     })

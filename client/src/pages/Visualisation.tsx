@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { IProps } from "../models/types/types";
 import Sidenav from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
@@ -6,6 +6,7 @@ import { Node } from "../models/types/Node";
 import Button from 'react-bootstrap/Button';
 import { loginAndFetch } from '../service/profile';
 import { checkStructure } from "../service/folderStructure";
+import { SessionContext } from "../sessionContext";
 
 const testData: IProps = {
   "nodes": [
@@ -75,7 +76,7 @@ const Visualisation: React.FC = () => {
   const ref = useRef(null);
   const [height, setHeight] = useState(500);
   const [width, setWidth] = useState(500);
-
+  const theme = useContext(SessionContext)
   // useEffect(
   //   () => {
   //     if (ref.current !== null) {
@@ -94,7 +95,7 @@ const Visualisation: React.FC = () => {
   }
   const build = () => {
     checkStructure()
-    console.log("aaa")
+    console.log(theme)
   }
 
   return (

@@ -20,11 +20,9 @@ const APP_DIR = "WIKIE"
 const CLASS_DIR = "classes"
 const GRAPH_DIR = "graphs"
 
-export const checkStructure = async () => {
+export async function checkStructure() {
   const aa: Session = getDefaultSession()
   console.log(aa)
   const bb = await getPodUrlAll(aa.info.webId!)
-  console.log(bb[0])
-  return bb[0]
+  console.log(bb)
 }
-
