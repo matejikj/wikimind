@@ -1,0 +1,23 @@
+{
+    "identity": {
+        "vocabulary": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#Node"
+    },
+    "properties": {
+        "cx": {
+            "vocabulary": "http://schema.org/distance"
+        },
+        "cy": {
+            "vocabulary": "http://schema.org/email"
+        },
+        "description": {
+            "vocabulary": "http://schema.org/brand"
+        },
+        "title": {
+            "vocabulary": "http://schema.org/alternateName"
+        },
+        "id": {
+            "vocabulary": "http://schema.org/productID"
+        }
+    }
+}

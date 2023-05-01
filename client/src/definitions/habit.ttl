@@ -1,0 +1,68 @@
+@prefix voc: <https://ayazdyshin.inrupt.net/plannerApp/vocab.ttl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+voc:Habit
+    a rdfs:Class;
+    rdfs:label "habit"@en ;
+    rdfs:comment "a task that is repeated with specifed interval"@en .
+
+voc:nodes
+    a rdfs:Bag
+    rdfs:domain voc:Habit ;
+voc: Node
+voc:defaultFolder
+    a rdfs:Property ;
+    rdfs:label "default folder"@en ;
+    rdfs:comment "links to default folder url"@en ;
+    rdfs:domain xsd:anyURI ;
+    rdfs:range xsd:anyURI . 
+
+voc:accessType
+    a rdfs:Property ;
+    rdfs:label "access type"@en ;
+    rdfs:comment "access type of an entry"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:domain xsd:TexDigitalDocument ;
+    rdfs:range xsd:string .
+
+voc:recurrence
+    a rdfs:Property ;
+    rdfs:label "recurrence"@en ;
+    rdfs:comment "recurrence of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:string .
+
+voc:custom
+    a rdfs:Property ;
+    rdfs:label "custom"@en ;
+    rdfs:comment "custom recurrence of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:string .
+
+voc:lastCheckInDate
+    a rdfs:Property ;
+    rdfs:label "last check-in date"@en ;
+    rdfs:comment "last check-in date of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:date .
+
+voc:bestSteak
+    a rdfs:Property ;
+    rdfs:label "best streak"@en ;
+    rdfs:comment "biggest number of consecutive check-ins of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:positiveInteger .
+
+voc:currentStreak 
+    a rdfs:Property ;
+    rdfs:label "current steak"@en ;
+    rdfs:comment "current number of consecutive check-ins of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:positiveInteger .
+
+voc:checkInDate
+    a rdfs:Property ;
+    rdfs:label "check-in date"@en ;
+    rdfs:comment "check-in date of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:date .

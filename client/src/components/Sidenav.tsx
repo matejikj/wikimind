@@ -11,13 +11,7 @@ export const navData = [
         text: "Home",
         link: "/",
         icon: <TiTag />
-    },
-    {
-        id: 1,
-        text: "Visualisation",
-        link: "/visualisation",
-        icon: <TiVendorAndroid />
-    },
+    }
 ]
 
 type AppProps = { message: string };

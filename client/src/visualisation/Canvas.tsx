@@ -11,6 +11,10 @@ import Col from 'react-bootstrap/Col';
 import './Canvas.css';
 import Button from 'react-bootstrap/Button';
 import ModalVis from '../components/Modal';
+import { Node } from "../models/types/Node";
+import { createNode, addNode } from "../service/mindMap";
+import { MindMap } from "../models/types/MindMap";
+import { MindMapDataset } from "../models/types/MindMapDataset";
 
 const menuItems = [
   {
@@ -29,7 +33,7 @@ const menuItems = [
   }
 ];
 
-const Canvas: React.FC<{ data: IProps, width: number, height: number }> = ({ data, width, height }) => {
+const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number }> = ({ data, width, height }) => {
   const d3Container = useRef(null);
   const [nodes, setNodes] = useState(data.nodes);
   const [links, setLinks] = useState(AddCoords(data.links, getIdsMapping(data.nodes)));
@@ -67,7 +71,6 @@ const Canvas: React.FC<{ data: IProps, width: number, height: number }> = ({ dat
   const circleMenuFalse = () => {
     setCircleMenu({
       ...contextMenu,
-
       visibility: "hidden"
     })
   }
@@ -89,10 +92,19 @@ const Canvas: React.FC<{ data: IProps, width: number, height: number }> = ({ dat
       }
       return todo;
     });
+    
     setLinks(newLinks);
   }
 
   const exit = (props: any) => {
+    const newNode: Node = {
+      title: props['title'],
+      id: 'fdsa',
+      description: props['title'],
+      cx: 200,
+      cy: 200
+    }
+    addNode(newNode)
     setModalShow(false)
     console.log(props)
   }

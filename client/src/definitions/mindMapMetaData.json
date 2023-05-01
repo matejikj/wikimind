@@ -1,0 +1,23 @@
+{
+    "identity": {
+        "vocabulary": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#MindMap"
+    },
+    "properties": {
+        "title": {
+            "vocabulary": "http://schema.org/email"
+        },
+        "acccessType": {
+            "vocabulary": "http://schema.org/brand"
+        },
+        "url": {
+            "vocabulary": "http://schema.org/brand"
+        },
+        "created": {
+            "vocabulary": "http://schema.org/alternateName"
+        },
+        "id": {
+            "vocabulary": "http://schema.org/productID"
+        }
+    }
+}

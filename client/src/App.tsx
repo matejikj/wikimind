@@ -15,7 +15,6 @@ const App: React.FC = () => {
 
   const [userData, setUserData]
     = React.useState<UserData>(defaultSessionValue);
-
   const value = {
     userData,
     setUserData

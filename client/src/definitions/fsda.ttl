@@ -1,0 +1,24 @@
+<#fdas> a <https://schema.org/Book>;
+    <http://schema.org/dateModified> "fdsa";
+    <http://schema.org/accessCode> "fdas";
+    <http://schema.org/text> "mindMap";
+    <http://schema.org/URL> "fdsa".
+<#id32> a <http://schema.org/TextDigitalDocument>;
+    <http://schema.org/distance> 100;
+    <http://schema.org/email> 100;
+    <http://schema.org/brand> "kral ceskych zemi";
+    <http://schema.org/productID> "Karel IV".
+<#id43> a <http://schema.org/TextDigitalDocument>;
+    <http://schema.org/distance> 423;
+    <http://schema.org/email> 423;
+    <http://schema.org/brand> "kral ceskych zemi";
+    <http://schema.org/productID> "fdsa".
+<#id432> a <http://schema.org/TextDigitalDocument>;
+    <http://schema.org/distance> 200;
+    <http://schema.org/email> 200;
+    <http://schema.org/brand> "dsa dsa bcv";
+    <http://schema.org/productID> "dsa".
+<#id3543> a <http://schema.org/TextDigitalDocument>;
+    <http://schema.org/email> "id32";
+    <http://schema.org/addressRegion> "id43";
+    <http://schema.org/alternateName> "mama".
