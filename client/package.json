@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@inrupt/solid-ui-react": "^2.8.2",
+    "@inrupt/solid-client-notifications": "^1.2.0",
     "@inrupt/vocab-common-rdf": "^1.0.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

@@ -25,7 +25,6 @@ const App: React.FC = () => {
       restorePreviousSession: true
     }).then((info) => {
       info?.isLoggedIn && info?.webId !== undefined ? setUserData({
-        podUrl: 'fdas',
         isLogged: true,
         session: info?.webId
       }) :

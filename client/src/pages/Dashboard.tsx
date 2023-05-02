@@ -3,8 +3,9 @@ import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
 import Sidenav from "../components/Sidenav";
-import { getMindMapList } from "../service/mindMap";
+import { getMindMapList } from "../service/mindMapService";
 import Button from 'react-bootstrap/Button';
+import { generate_uuidv4 } from "../service/utils";
 
 const authOptions = {
   clientName: "Learnee",
@@ -25,7 +26,17 @@ const Dashboard: React.FC = () => {
     console.log(e.target.name)
     navigate('/visualisation/',{
     state: {
-      id: e.target.name
+      id: e.target.name,
+      isNew: false
+    }})
+  }
+
+  const createNew = (e: any) => {
+    console.log(e.target.name)
+    navigate('/visualisation/',{
+    state: {
+      id: generate_uuidv4(),
+      isNew: true
     }})
   }
 
@@ -34,6 +45,7 @@ const Dashboard: React.FC = () => {
       <Sidenav props={{ message: "Basic" }} />
       <main>
         <h1>Dashboard</h1>
+        <Button onClick={createNew} variant="primary">Create new</Button>
         {list.map((item, index) => {
           return (
             <Button key={index} name={item} onClick={handleClick} variant="primary">{item}</Button>

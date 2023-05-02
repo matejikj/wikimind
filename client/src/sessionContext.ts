@@ -2,12 +2,10 @@ import React, { useEffect, createContext, useState, FC } from "react";
 
 export type UserData = {
   session: any;
-  podUrl: string;
   isLogged: boolean;
 }
 export const defaultSessionValue: UserData = {
     session: undefined,
-    podUrl: "",
     isLogged: false
   }
 interface ContextProps {

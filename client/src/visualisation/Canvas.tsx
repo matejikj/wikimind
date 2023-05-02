@@ -12,7 +12,7 @@ import './Canvas.css';
 import Button from 'react-bootstrap/Button';
 import ModalVis from '../components/Modal';
 import { Node } from "../models/types/Node";
-import { createNode, addNode } from "../service/mindMap";
+import { createNode } from "../service/nodeService";
 import { MindMap } from "../models/types/MindMap";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 
@@ -99,19 +99,18 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number }> 
   const exit = (props: any) => {
     const newNode: Node = {
       title: props['title'],
-      id: 'fdsa',
-      description: props['title'],
+      id: props['id'],
+      description: props['description'],
       cx: 200,
       cy: 200
     }
-    addNode(newNode)
+    createNode(newNode)
     setModalShow(false)
     console.log(props)
   }
 
   return (
     <Container fluid>
-      <Button id="float-btn-save" variant="primary">Save</Button>
       <Button id="float-btn-add" onClick={() => {setModalShow(true)}} variant="primary">Add</Button>
       <ModalVis
         modalShow={modalShow}

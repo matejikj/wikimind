@@ -4,12 +4,23 @@ import Sidenav from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
 import { Node } from "../models/types/Node";
 import Button from 'react-bootstrap/Button';
-import { loginAndFetch } from '../service/profile';
-import { checkStructure } from "../service/folderStructure";
 import { SessionContext } from "../sessionContext";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getMindMap } from "../service/mindMap";
+import { getMindMap } from "../service/mindMapService";
+import {
+  WebsocketNotification,
+} from "@inrupt/solid-client-notifications";
+
+const defaultBlankDataset: MindMapDataset = {
+  title: "",
+  url: "",
+  created: "",
+  acccessType: "",
+  id: "",
+  links: [],
+  nodes: []
+}
 
 const Visualisation: React.FC = () => {
   const d3Container = useRef(null);
@@ -20,64 +31,30 @@ const Visualisation: React.FC = () => {
   const ref = useRef(null);
   const [height, setHeight] = useState(500);
   const [width, setWidth] = useState(500);
-  const [dataset, setDataset] = useState({
-    title: "mindMap_1",
-    id: "fdas",
-    url: "fdsa",
-    acccessType: "fdas",
-    created: "fdsa",
-    nodes: [
-      {
-        "title": "Karel IV",
-        "description": "kral ceskych zemi",
-        "cx": 100,
-        "cy": 50,
-        "id": "id32",
-      },
-      {
-        "title": "fdsa",
-        "description": "kral ceskych zemi",
-        "cx": 423,
-        "cy": 87,
-        "id": "id43",
-      },
-      {
-        "title": "dsa",
-        "description": "dsa dsa bcv",
-        "cx": 200,
-        "cy": 100,
-        "id": "id432",
-      },
-      {
-        "title": "nvbcnbcvnx",
-        "description": "nbv aaaaa lkkl",
-        "cx": 10,
-        "cy": 100,
-        "id": "id3543",
-      }
-    ],
-    "links": [
-      {
-        "from": "id32",
-        "to": "id432",
-        "title": "mama",
-        "id": "id3543"
-      },
-      {
-        "from": "id32",
-        "to": "id43",
-        "title": "mama",
-        "id": "id3543"
-      }
-    ]
-  });
+  const [dataset, setDataset] = useState<MindMapDataset>(defaultBlankDataset);
   const theme = useContext(SessionContext)
     useEffect(
     () => {
-      if (location.state?.id !== null) {
-        getMindMap(location.state.id).then((res) => {
-          console.log(res)
-        })
+      if (location.state !== null && location.state.isNew !== null && location.state.id !== null) {
+        if (location.state.isNew == false) {
+          console.log(location.state)
+          getMindMap(location.state.id).then((res: any) => {
+            const myResult = res as MindMapDataset
+            // setDataset(myResult)
+            console.log(myResult)
+          })
+          const websocket4 = new WebsocketNotification(
+            'https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/',
+            { fetch: fetch }
+          );
+          websocket4.on("message", () => {
+            console.log("eeeeeeeeeeeeeeeeeeeeeeeeee")
+          });
+          websocket4.connect();
+        }
+        
+      } else {
+        navigate("/")
       }
     }
   )

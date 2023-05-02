@@ -31,7 +31,6 @@ const Sidenav: React.FC<{ props: AppProps }> = ({ props }) => {
         const logged = await logout()
         console.log(logged)
         theme.setUserData({
-            podUrl: 'fdasfas',
             isLogged: false,
             session: null
         })
