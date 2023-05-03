@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-// import { getPodUrlAll } from '@inrupt/solid-client'
+import { handleIncomingRedirect, login } from "@inrupt/solid-client-authn-browser";
 
 const authOptions = {
   clientName: "Learnee",

@@ -1,11 +1,11 @@
-import { LoginButton } from "@inrupt/solid-ui-react";
-import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
 import Sidenav from "../components/Sidenav";
-import { getMindMapList } from "../service/mindMapService";
+import { getMindMapList } from "../service/containerService";
 import Button from 'react-bootstrap/Button';
 import { generate_uuidv4 } from "../service/utils";
+
+import './Login.css';
 
 const authOptions = {
   clientName: "Learnee",

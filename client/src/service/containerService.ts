@@ -32,7 +32,7 @@ import { Link } from "../models/types/Link";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { MindMap } from "../models/types/MindMap";
 
-export async function getMindMap(url: string) {
+export async function getMindMapList() {
   if (!getDefaultSession().info.isLoggedIn) {
     await login({
       oidcIssuer: "https://login.inrupt.com/",
@@ -42,37 +42,20 @@ export async function getMindMap(url: string) {
   } else {
     console.log('PRIHLASENO')
   }
-
-  const readingListUrl: string = url
+  const readingListUrl: string = 'https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/'
   const myDataset = await getSolidDataset(
     readingListUrl,
     { fetch: fetch }          // fetch from authenticated session
   );
-  console.log(myDataset)
-  // const things = await getThing(myDataset, 'http://www.w3.org/ns/ldp#contains');
-  const things = await getThingAll(myDataset);
-  console.log(things)
-
-  // const fdsa = getUrl(things[0], 'http://www.w3.org/ns/ldp#contains')
-  // console.log(fdsa)
-
-  let nodes: Node[] = []
-  let nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
-  const filteredThings = things.filter(thing => {
-    const types = getUrlAll(thing, RDF.type);
-    // const types = getUrlAll(thing, 'http://www.w3.org/ns/ldp#contains');
-    console.log(types)
-    if (types.some(type => type === 'https://matejikj.inrupt.net/Wikie/vocabulary.ttl#Node')) {
-      console.log("AAAAAAAAAAAA")
-
-      nodes.push(nodeBuilder.read(thing))
-    }
-  });
+  const thing = getThing(myDataset, 'https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/');
+  if (thing !== null) {
+    return getUrlAll(thing, 'http://www.w3.org/ns/ldp#contains');
+  }
+  return []
 }
 
-export async function saveMindMap(mindMap: MindMap) {
-
-  await handleIncomingRedirect();
+export async function createContainer() {
+    await handleIncomingRedirect();
 
   // 2. Start the Login Process if not already logged in.
   if (!getDefaultSession().info.isLoggedIn) {
@@ -84,22 +67,8 @@ export async function saveMindMap(mindMap: MindMap) {
   } else {
     console.log('PRIHLASENO')
   }
+  const wikieContainer = createContainerAt('https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/' + 'Wikie', { fetch: fetch });
+  const mindMapContainer = createContainerAt('https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/' + 'Wikie' + "mindMaps", { fetch: fetch });
 
-
-  let courseSolidDataset = createSolidDataset();
-
-  // const bb: LDO<MindMap> = mindMapDefinition
-  const mapBuilder = new MindMapLDO(mindMapDefinition)
-  let cc = mapBuilder.create(mindMap)
-
-  const savedSolidDataset = await saveSolidDatasetAt(
-    "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/mindMap3.ttl",
-    courseSolidDataset,
-    { fetch: fetch }
-  );
 }
-
-export async function addNodeToMindMap(mindMap: MindMap) {
-}
-
 
