@@ -35,14 +35,14 @@ const App: React.FC = () => {
   return (
     <SessionContext.Provider value={value}>
       <BrowserRouter>
-        {userData.isLogged ? (
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/visualisation" element={<Visualisation />} />
-          </Routes>
-        ) : (
-          <Login></Login>
-        )}
+          {userData.isLogged ? (
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/visualisation" element={<Visualisation />} />
+            </Routes>
+          ) : (
+            <Login></Login>
+          )}
       </BrowserRouter>
     </SessionContext.Provider>
 
