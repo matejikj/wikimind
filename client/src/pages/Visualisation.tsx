@@ -51,14 +51,7 @@ const Visualisation: React.FC = () => {
         // make sure to catch any error
         .catch(console.error);
 
-      const websocket4 = new WebsocketNotification(
-        'https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/',
-        { fetch: fetch }
-      );
-      websocket4.on("message", (e: any) => {
-        console.log(e)
-      });
-      websocket4.connect();
+      
       // const websocket3 = new WebsocketNotification(
       //   'https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/mindMap2.ttl',
       //   { fetch: fetch }
@@ -69,6 +62,14 @@ const Visualisation: React.FC = () => {
       // websocket3.connect();
       if (location.state !== null && location.state.isNew !== null && location.state.id !== null) {
         if (location.state.isNew == false) {
+          const websocket4 = new WebsocketNotification(
+            location.state.id,
+            { fetch: fetch }
+          );
+          websocket4.on("message", (e: any) => {
+            console.log(e)
+          });
+          websocket4.connect();
           console.log(location.state)
           getMindMap(location.state.id).then((res: any) => {
             const myResult = res as MindMapDataset

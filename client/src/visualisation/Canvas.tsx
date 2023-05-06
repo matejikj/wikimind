@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { IProps } from "../models/types/types";
 import Circle from "./Circle";
 import Text from "./Text";
@@ -15,6 +15,7 @@ import { Node } from "../models/types/Node";
 import { createNode } from "../service/nodeService";
 import { MindMap } from "../models/types/MindMap";
 import { MindMapDataset } from "../models/types/MindMapDataset";
+import { SessionContext } from "../sessionContext";
 
 const menuItems = [
   {
@@ -40,6 +41,7 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number }> 
   const [contextMenu, setContextMenu] = useState({ visibility: "hidden", id: "", x: 100, y: 100 });
   const [circleMenu, setCircleMenu] = useState({ visibility: "hidden", id: "", x: 100, y: 100 });
   const [modalShow, setModalShow] = useState(false);
+  const sessionContext = useContext(SessionContext)
 
   const setText = (e: any) => {
     setContextMenu({
@@ -104,7 +106,7 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number }> 
       cx: 200,
       cy: 200
     }
-    createNode(newNode)
+    createNode(newNode, sessionContext.userData?.session)
     setModalShow(false)
     console.log(props)
   }

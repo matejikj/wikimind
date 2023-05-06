@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
+import { SessionContext } from "../sessionContext";
 
 const Circle: React.FC<{ id: string, ix: number, iy: number, title: string, parentSetPosition: Function }> = ({ id, ix, iy, title, parentSetPosition}) => {
     const [position, setPosition] = React.useState({
         active: false,
         offset: {}
     });
-
     useEffect(()=>{
         setPosition({active: position.active, offset: position.offset });
        },[]);
@@ -56,6 +56,9 @@ const Circle: React.FC<{ id: string, ix: number, iy: number, title: string, pare
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
             onPointerMove={handlePointerMove}
+            // onTouchStart={handlePointerDown}
+            // onTouchEnd={handlePointerUp}
+            // onTouchMove={handlePointerMove}
             fill={position.active ? "blue" : "#543"}
         />
     );
