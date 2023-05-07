@@ -5,19 +5,19 @@
     },
     "properties": {
         "title": {
-            "vocabulary": "http://schema.org/email"
+            "vocabulary": "http://schema.org/name"
         },
         "acccessType": {
             "vocabulary": "http://schema.org/brand"
         },
         "url": {
-            "vocabulary": "http://schema.org/brand"
+            "vocabulary": "http://schema.org/distance"
         },
         "created": {
             "vocabulary": "http://schema.org/alternateName"
         },
         "id": {
-            "vocabulary": "http://schema.org/productID"
+            "vocabulary": "http://schema.org/identifier"
         }
     }
 }

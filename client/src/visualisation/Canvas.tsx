@@ -1,21 +1,25 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { IProps } from "../models/types/types";
 import Circle from "./Circle";
-import Text from "./Text";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
 import Line from "./Line";
-import LinkText from "./LinkText";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './Canvas.css';
 import Button from 'react-bootstrap/Button';
-import ModalVis from '../components/Modal';
 import { Node } from "../models/types/Node";
 import { createNode } from "../service/nodeService";
 import { MindMap } from "../models/types/MindMap";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { SessionContext } from "../sessionContext";
+import { addNewNode } from "../service/mindMapService";
+import { theme } from "rdf-namespaces/dist/foaf";
+import ModalNewNode from "./modals/ModalNewNode";
+import ModalDelete from "./modals/ModalDelete";
+import ModalRecommends from "./modals/ModalRecommends";
+import ModalNodeDetail from "./modals/ModalNodeDetail";
+import ModalLinkRename from "./modals/ModalLinkRename";
 
 const menuItems = [
   {
@@ -34,89 +38,78 @@ const menuItems = [
   }
 ];
 
-const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number }> = ({ data, width, height }) => {
+const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, setPosition: Function }> = ({ data, width, height, setPosition }) => {
   const d3Container = useRef(null);
-  const [nodes, setNodes] = useState(data.nodes);
-  const [links, setLinks] = useState(AddCoords(data.links, getIdsMapping(data.nodes)));
-  const [contextMenu, setContextMenu] = useState({ visibility: "hidden", id: "", x: 100, y: 100 });
+  const [linksMenu, setLinksMenu] = useState({ visibility: "hidden", id: "", x: 100, y: 100 });
   const [circleMenu, setCircleMenu] = useState({ visibility: "hidden", id: "", x: 100, y: 100 });
-  const [modalShow, setModalShow] = useState(false);
+  const [modalNewNode, setModalNewNode] = useState(false);
+  const [modalNodeDetail, setModalNodeDetail] = useState(false);
+  const [modalLinkRename, setModalLinkRename] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
+  const [modalRecommends, setModalRecommends] = useState(false);
   const sessionContext = useContext(SessionContext)
 
-  const setText = (e: any) => {
-    setContextMenu({
-      ...contextMenu,
-      x: e.x,
-      y: e.y,
-      visibility: "visible"
-    })
-    console.log(e)
-  }
-
   const contextMenuFalse = () => {
-    setContextMenu({
-      ...contextMenu,
+    setCircleMenu({
+      ...circleMenu,
+      visibility: "hidden"
+    })
+    setLinksMenu({
+      ...linksMenu,
       visibility: "hidden"
     })
   }
 
-  const openCircleMenu = (e: any) => {
-    setCircleMenu({
-      ...contextMenu,
-      x: e.x,
-      y: e.y,
-      visibility: "visible"
-    })
-    console.log(e)
+  const addNode = (node: Node) => {
+    addNewNode(data.title, sessionContext.userData?.session, node)
+    setModalNewNode(false)
   }
 
-  const circleMenuFalse = () => {
-    setCircleMenu({
-      ...contextMenu,
-      visibility: "hidden"
-    })
+  const nodeDetail = (node: Node) => {
+    addNewNode(data.title, sessionContext.userData?.session, node)
+    setModalNewNode(false)
   }
 
-  const setPosition = (x: number, y: number, id: string) => {
-    const newTodos = nodes.map((todo) => {
-      if (todo.id === id) {
-        return { ...todo, cx: x, cy: y };
-      }
-      return todo;
-    });
-    setNodes(newTodos);
-    const newLinks = links.map((todo) => {
-      if (todo.from === id) {
-        return { ...todo, source: [x, y] };
-      }
-      if (todo.to === id) {
-        return { ...todo, target: [x, y] };
-      }
-      return todo;
-    });
-    
-    setLinks(newLinks);
+  const addConnection = (node: Node) => {
+  }
+  
+  const deleteNode = (node: Node) => {
+    addNewNode(data.title, sessionContext.userData?.session, node)
+    setModalDelete(false)
   }
 
-  const exit = (props: any) => {
-    const newNode: Node = {
-      title: props['title'],
-      id: props['id'],
-      description: props['description'],
-      cx: 200,
-      cy: 200
-    }
-    createNode(newNode, sessionContext.userData?.session)
-    setModalShow(false)
-    console.log(props)
+  const recommends = (node: Node) => {
+    addNewNode(data.title, sessionContext.userData?.session, node)
+    setModalRecommends(false)
+  }
+
+  const renameLink = (node: Node) => {
+    addNewNode(data.title, sessionContext.userData?.session, node)
+    setModalLinkRename(false)
   }
 
   return (
     <Container fluid>
-      <Button id="float-btn-add" onClick={() => {setModalShow(true)}} variant="primary">Add</Button>
-      <ModalVis
-        modalShow={modalShow}
-        fnc={exit}
+      <Button id="float-btn-add" onClick={() => { setModalNewNode(true) }} variant="primary">Add</Button>
+      <ModalNewNode
+        modalShow={modalNewNode}
+        fnc={addNode}
+      />
+      <ModalDelete
+        modalShow={modalDelete}
+        fnc={addNode}
+      />
+      <ModalRecommends
+        modalShow={modalRecommends}
+        fnc={addNode}
+      />
+      <ModalNodeDetail
+        modalShow={modalNodeDetail}
+        fnc={addNode}
+      />
+      <ModalLinkRename
+        modalShow={modalLinkRename}
+        fnc={addNode}
       />
       <Row>
         <svg
@@ -140,35 +133,25 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number }> 
               <path d="M 0 0 L 10 5 L 0 10 z" fill="#876" />
             </marker>
           </defs>
-          {links.map((link, index) => {
+          {data.links.map((link, index) => {
             return (
-              <Line from={link.from} key={index} to={link.to} source={link.source} target={link.target} />
+              <Line key={index} link={link} contextMenu={circleMenu} setContextMenu={setPosition}/>
             );
           })}
-          {links.map((link, index) => {
+          {data.nodes.map((node, index) => {
             return (
-              <LinkText key={index} title={link.title} source={link.source} parentContextMenu={setText} target={link.target} />
-            );
-          })}
-          {nodes.map((node, index) => {
-            return (
-              <Circle id={node.id} key={index} ix={node.cx} iy={node.cy} parentSetPosition={setPosition} title={node.title} />
-            );
-          })}
-          {nodes.map((node, index) => {
-            return (
-              <Text id={node.id} key={index} ix={node.cx} iy={node.cy} parentSetPosition={setPosition} title={node.title} />
+              <Circle key={index} node={node} contextMenu={circleMenu} setContextMenu={setCircleMenu} />
             );
           })}
           <g>
             {menuItems.map((item, index) => {
               return (
-                <rect fill="orange" height={30} width={120} key={index} visibility={contextMenu.visibility} x={contextMenu.x} y={contextMenu.y + index * 30}  ></rect>
+                <rect fill="orange" height={30} width={120} key={index} visibility={circleMenu.visibility} x={circleMenu.x} y={circleMenu.y + index * 30}  ></rect>
               )
             })}
             {menuItems.map((item, index) => {
               return (
-                <text key={index} visibility={contextMenu.visibility} x={contextMenu.x} y={contextMenu.y + index * 30 + 20}  >{item.title}</text>
+                <text key={index} visibility={circleMenu.visibility} x={circleMenu.x} y={circleMenu.y + index * 30 + 20}  >{item.title}</text>
               )
             })}
           </g>
@@ -186,11 +169,8 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number }> 
           </g>
         </svg>
       </Row>
-
     </Container>
-
   )
-
 };
 
 export default Canvas;

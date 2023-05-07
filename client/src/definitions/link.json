@@ -11,10 +11,10 @@
             "vocabulary": "http://schema.org/brand"
         },
         "title": {
-            "vocabulary": "http://schema.org/alternateName"
+            "vocabulary": "http://schema.org/name"
         },
         "id": {
-            "vocabulary": "http://schema.org/productID"
+            "vocabulary": "http://schema.org/identifier"
         }
     }
 }

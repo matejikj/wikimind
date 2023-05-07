@@ -1,57 +1,44 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import axios from "axios";
-import { createNode } from "../service/nodeService";
-import { Node } from '../models/types/Node'
+import { createNode } from "../../service/nodeService";
+import { Node } from '../../models/types/Node'
+import { SessionContext } from "../../sessionContext";
+import { addNewNode } from "../../service/mindMapService";
+import { generate_uuidv4 } from "../../service/utils";
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
-const ModalVis: React.FC<{ modalShow: boolean, fnc: Function }> = ({ modalShow, fnc }) => {
+const ModalNodeDetail: React.FC<{ modalShow: boolean, fnc: Function }> = ({ modalShow, fnc }) => {
+    const theme = useContext(SessionContext)
     const [formInputs, setFormInputs] = useState({
         title: 'title_',
-        id: 'id_',
         description: 'description_'
     });
-
-    // const [contextMenu, setContextMenu] = useState({ x: 100, y: 100 });
-    // setContextMenu({
-    //     ...contextMenu,
-    //     visibility: "visible"
-    // })
-
-    const circleMenuFalse = () => {
-        fnc(false)
-    }
 
     function handleChange(event: any) {
         const key = event.target.name;
         const value = event.target.value;
         setFormInputs({...formInputs, [key]: value})
     }
-
-    const handleInputChange = async (event: any) => {
-        fnc(formInputs)
-    };
+    function handleSave(event: any) {
+        const newNode: Node = {
+            id: generate_uuidv4(),
+            title: formInputs.title,
+            description: formInputs.description,
+            cx: 100,
+            cy: 100
+        }
+        fnc(newNode)
+    }
 
     return (
         <Modal
             show={modalShow}
         >
-            <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-
-                </Modal.Title>
-            </Modal.Header>
             <Modal.Body>
                 <Form.Label htmlFor="inputKeyword">Searching keyword:</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Id"
-                    value={formInputs.id}
-                    name="id"
-                    onChange={handleChange}
-                />
                 <Form.Control
                     type="text"
                     placeholder="Title"
@@ -68,11 +55,11 @@ const ModalVis: React.FC<{ modalShow: boolean, fnc: Function }> = ({ modalShow, 
                 />
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={handleInputChange}>Add</Button>
+                <Button onClick={handleSave}>Add</Button>
             </Modal.Footer>
         </Modal>
 
     );
 };
 
-export default ModalVis;
+export default ModalNodeDetail;

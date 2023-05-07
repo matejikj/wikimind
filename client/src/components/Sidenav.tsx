@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { TiThMenu, TiThMenuOutline, TiTag, TiVendorAndroid, TiLockOpenOutline } from 'react-icons/ti';
 import styles from "./Sidenav.module.css"
 import { useContext, useState } from "react";
@@ -24,6 +24,7 @@ export const navData = [
 type AppProps = { message: string };
 
 const Sidenav: React.FC<{ props: AppProps }> = ({ props }) => {
+  const navigate = useNavigate();
 
     const [open, setopen] = useState(true)
     const toggleOpen = () => {
@@ -47,15 +48,6 @@ const Sidenav: React.FC<{ props: AppProps }> = ({ props }) => {
     return (
         <Navbar key={"sm"} bg="light" expand={"sm"} className="mb-3">
           <Container fluid>
-            <Navbar.Brand>
-            <Form>
-                  <Form.Control
-                    type="search"
-                    placeholder="Search"
-                    aria-label="Search"
-                  />
-                </Form>
-            </Navbar.Brand>
             <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${"sm"}`} />
             <Navbar.Offcanvas
               id={`offcanvasNavbar-expand-${"sm"}`}
@@ -69,8 +61,7 @@ const Sidenav: React.FC<{ props: AppProps }> = ({ props }) => {
               </Offcanvas.Header>
               <Offcanvas.Body>
                 <Nav className="justify-content-end flex-grow-1 pe-3">
-                  <Nav.Link href="#action1">Home</Nav.Link>
-                  <Nav.Link href="#action2">Link</Nav.Link>
+                  <Nav.Link onClick={() => {navigate('/')}}>Home</Nav.Link>
                 </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>

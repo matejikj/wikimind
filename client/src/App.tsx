@@ -10,6 +10,8 @@ import Visualisation from "./pages/Visualisation";
 import { handleIncomingRedirect, onSessionRestore } from "@inrupt/solid-client-authn-browser";
 import { BrowserRouter } from 'react-router-dom';
 import { UserData, defaultSessionValue, SessionContext } from "./sessionContext";
+import { checkStructure } from "./service/utils";
+import { checkContainer } from "./service/containerService";
 
 const App: React.FC = () => {
 
@@ -24,25 +26,28 @@ const App: React.FC = () => {
     handleIncomingRedirect({
       restorePreviousSession: true
     }).then((info) => {
-      info?.isLoggedIn && info?.webId !== undefined ? setUserData({
-        isLogged: true,
-        session: info?.webId
-      }) :
-        console.log(info)
+      if (info?.isLoggedIn && info?.webId !== undefined) {
+        checkContainer(info?.webId).then(() => {
+          setUserData({
+            isLogged: true,
+            session: info?.webId
+          })
+        })
+      }
     })
   }, []);
 
   return (
     <SessionContext.Provider value={value}>
       <BrowserRouter>
-          {userData.isLogged ? (
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/visualisation" element={<Visualisation />} />
-            </Routes>
-          ) : (
-            <Login></Login>
-          )}
+        {userData.isLogged ? (
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/visualisation" element={<Visualisation />} />
+          </Routes>
+        ) : (
+          <Login></Login>
+        )}
       </BrowserRouter>
     </SessionContext.Provider>
 

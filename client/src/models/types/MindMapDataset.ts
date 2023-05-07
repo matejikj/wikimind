@@ -1,4 +1,3 @@
-import { Entity } from "./Entity";
 import { Link } from "./Link";
 import { Node } from "./Node";
 import { MindMap } from "./MindMap";

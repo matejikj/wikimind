@@ -1,27 +1,46 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Link } from '../models/types/Link'
 
-const Line: React.FC<{ from: string, to: string, source: any, target: any }> = ({ from, to, source, target }) => {
-    const [position, setPosition] = React.useState({
-        active: false,
-        offset: {}
-    });
+const Line: React.FC<{ link: Link, contextMenu: any, setContextMenu: Function }> = ({ link, contextMenu, setContextMenu }) => {
 
-    useEffect(() => {
-        setPosition({ active: position.active, offset: position.offset });
-    }, []);
+    const handleContextMenu = (e: any) => {
+        const bbox = e.target.getBoundingClientRect();
+        const x = link.source != undefined && link.target != undefined ?
+            (link.source[0] + link.target[0]) / 2 + 40 : 0;
+        const y = link.source != undefined && link.target != undefined ?
+            (link.source[1] + link.target[1]) / 2 + 10 : 0;
+        setContextMenu({
+            ...contextMenu,
+            x: x,
+            y: y,
+            visibility: "visible"
+        })
+        e.preventDefault()
+        // parentContextMenu({x, y});
+    };
 
     return (
-        <line
-            x1={source != undefined ? source[0] : 0}
-            y1={source != undefined ? source[1] : 0}
-            x2={target != undefined ? target[0] : 0}
-            y2={target != undefined ? target[1] : 0}
-            id={from + "_" + to}
-            stroke="#999"
-            strokeOpacity="0.6"
-            strokeWidth="3"
-            markerEnd="url(#triangle)"
-        ></line>
+        <g>
+            <line
+                x1={link.source != undefined ? link.source[0] : 0}
+                y1={link.source != undefined ? link.source[1] : 0}
+                x2={link.target != undefined ? link.target[0] : 0}
+                y2={link.target != undefined ? link.target[1] : 0}
+                id={link.from + "_" + link.to}
+                stroke="#999"
+                strokeOpacity="0.6"
+                strokeWidth="3"
+                markerEnd="url(#triangle)"
+            ></line>
+            <text
+                x={link.source != undefined && link.target != undefined ?
+                    (link.source[0] + link.target[0]) / 2 : 0}
+                y={link.source != undefined && link.target != undefined ?
+                    (link.source[1] + link.target[1]) / 2 : 0}
+                onContextMenu={handleContextMenu}
+            >{link.title}</text>
+        </g>
+
     );
 };
 

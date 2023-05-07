@@ -31,75 +31,110 @@ import { NodeLDO } from "../models/things/NodeLDO";
 import { Link } from "../models/types/Link";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { MindMap } from "../models/types/MindMap";
+import { getPodUrl } from "./containerService";
+import { generate_uuidv4 } from "./utils";
 
 export async function getMindMap(url: string) {
-  if (!getDefaultSession().info.isLoggedIn) {
-    await login({
-      oidcIssuer: "https://login.inrupt.com/",
-      redirectUrl: window.location.href,
-      clientName: "My application"
-    });
-  } else {
-    console.log('PRIHLASENO')
-  }
 
   const readingListUrl: string = url
   const myDataset = await getSolidDataset(
     readingListUrl,
-    { fetch: fetch }          // fetch from authenticated session
-  );
-  console.log(myDataset)
-  // const things = await getThing(myDataset, 'http://www.w3.org/ns/ldp#contains');
-  const things = await getThingAll(myDataset);
-  console.log(things)
-
-  // const fdsa = getUrl(things[0], 'http://www.w3.org/ns/ldp#contains')
-  // console.log(fdsa)
-
-  let nodes: Node[] = []
-  let nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
-  const filteredThings = things.filter(thing => {
-    const types = getUrlAll(thing, RDF.type);
-    // const types = getUrlAll(thing, 'http://www.w3.org/ns/ldp#contains');
-    console.log(types)
-    if (types.some(type => type === 'https://matejikj.inrupt.net/Wikie/vocabulary.ttl#Node')) {
-      console.log("AAAAAAAAAAAA")
-
-      nodes.push(nodeBuilder.read(thing))
-    }
-  });
-}
-
-export async function saveMindMap(mindMap: MindMap) {
-
-  await handleIncomingRedirect();
-
-  // 2. Start the Login Process if not already logged in.
-  if (!getDefaultSession().info.isLoggedIn) {
-    await login({
-      oidcIssuer: "https://login.inrupt.com/",
-      redirectUrl: window.location.href,
-      clientName: "My application"
-    });
-  } else {
-    console.log('PRIHLASENO')
-  }
-
-
-  let courseSolidDataset = createSolidDataset();
-
-  // const bb: LDO<MindMap> = mindMapDefinition
-  const mapBuilder = new MindMapLDO(mindMapDefinition)
-  let cc = mapBuilder.create(mindMap)
-
-  const savedSolidDataset = await saveSolidDatasetAt(
-    "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/mindMap3.ttl",
-    courseSolidDataset,
     { fetch: fetch }
   );
+
+  const things = await getThingAll(myDataset);
+
+  let minMapBuilder = new MindMapLDO(mindMapDefinition)
+  let mindMap: MindMap | null = null;
+  let nodes: Node[] = []
+  let nodeBuilder = new NodeLDO(nodeDefinition)
+  let links: Link[] = []
+  let linkBuilder = new LinkLDO(linkDefinition)
+
+  things.forEach(thing => {
+    const types = getUrlAll(thing, RDF.type);
+    console.log(types)
+    if (types.some(type => type === mindMapDefinition.identity.subject)) {
+      console.log(thing)
+      mindMap = minMapBuilder.read(thing)
+    }
+    if (types.some(type => type === nodeDefinition.identity.subject)) {
+      nodes.push(nodeBuilder.read(thing))
+    }
+    if (types.some(type => type === linkDefinition.identity.subject)) {
+      links.push(linkBuilder.read(thing))
+    }
+  });
+  if (mindMap !== null) {
+    mindMap = mindMap as MindMap
+    const mindMapDataset: MindMapDataset = {
+      id: mindMap.id,
+      title: mindMap.title,
+      acccessType: mindMap.acccessType,
+      created: mindMap.created,
+      url: mindMap.url,
+      links: links,
+      nodes: nodes
+    }
+    return mindMapDataset
+  } else {
+    return null
+  }
 }
 
-export async function addNodeToMindMap(mindMap: MindMap) {
+export async function createNewMindMap(name: string, sessionId: string) {
+  // if (!getDefaultSession().info.isLoggedIn) {
+  //   await login({
+  //     oidcIssuer: "https://login.inrupt.com/",
+  //     redirectUrl: window.location.href,
+  //     clientName: "My application"
+  //   });
+  // }
+
+  const podUrls = await getPodUrl(sessionId)
+  if (podUrls !== null) {
+    const podUrl = podUrls[0]
+    let courseSolidDataset = createSolidDataset();
+    let blankMindMap: MindMap = {
+      title: name,
+      id: generate_uuidv4(),
+      acccessType: "",
+      url: "",
+      created: ""
+    }
+
+    const mindMapLDO = new MindMapLDO(mindMapDefinition).create(blankMindMap)
+    courseSolidDataset = setThing(courseSolidDataset, mindMapLDO)
+    let newName = podUrl + "Wikie/mindMaps/" + name + ".ttl"
+
+    const savedSolidDataset = await saveSolidDatasetAt(
+      newName,
+      courseSolidDataset,
+      { fetch: fetch }
+    );
+    return newName
+  }
 }
 
+export async function addNewNode(name: string, sessionId: string, node: Node) {
+console.log(name)
+  const podUrls = await getPodUrl(sessionId)
+  if (podUrls !== null) {
+    const podUrl = podUrls[0] + "Wikie/mindMaps/" + name + ".ttl"
+    let courseSolidDataset = await getSolidDataset(
+      podUrl,
+      { fetch: fetch }
+    );
 
+
+    let nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
+    courseSolidDataset = setThing(courseSolidDataset, nodeBuilder.create(node));
+
+    const savedSolidDataset = await saveSolidDatasetAt(
+      podUrl,
+      courseSolidDataset,
+      { fetch: fetch }
+    );
+
+  }
+}

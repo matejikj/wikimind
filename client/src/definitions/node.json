@@ -7,6 +7,9 @@
         "cx": {
             "vocabulary": "http://schema.org/distance"
         },
+        "id": {
+            "vocabulary": "http://schema.org/identifier"
+        },
         "cy": {
             "vocabulary": "http://schema.org/email"
         },
@@ -14,10 +17,7 @@
             "vocabulary": "http://schema.org/brand"
         },
         "title": {
-            "vocabulary": "http://schema.org/alternateName"
-        },
-        "id": {
-            "vocabulary": "http://schema.org/productID"
+            "vocabulary": "http://schema.org/name"
         }
     }
 }

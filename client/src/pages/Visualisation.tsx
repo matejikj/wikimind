@@ -12,13 +12,15 @@ import { getDefaultSession, fetch, login } from "@inrupt/solid-client-authn-brow
 import {
   WebsocketNotification,
 } from "@inrupt/solid-client-notifications";
+import { generate_uuidv4 } from "../service/utils";
+import { AddCoords, getIdsMapping } from "../visualisation/utils";
 
 const defaultBlankDataset: MindMapDataset = {
+  id: "",
   title: "",
   url: "",
   created: "",
   acccessType: "",
-  id: "",
   links: [],
   nodes: []
 }
@@ -27,80 +29,69 @@ const Visualisation: React.FC = () => {
   const d3Container = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location)
+  const countRef = useRef(0);
 
   const ref = useRef(null);
   const [height, setHeight] = useState(500);
   const [width, setWidth] = useState(500);
   const [dataset, setDataset] = useState<MindMapDataset>(defaultBlankDataset);
   const theme = useContext(SessionContext)
+  const [mounted, setMounted] = useState(false); // <-- new state variable
+
+  useEffect(() => {
+    setMounted(true); // set the mounted state variable to true after the component mounts
+  }, []);
+
   useEffect(
     () => {
-      const fetchData = async () => {
-        if (!getDefaultSession().info.isLoggedIn) {
-          await login({
-            oidcIssuer: "https://login.inrupt.com/",
-            redirectUrl: window.location.href,
-            clientName: "My application"
-          });
-        } else {
-          console.log('PRIHLASENO')
-        }
-      }
-      fetchData()
-        // make sure to catch any error
-        .catch(console.error);
-
-      
-      // const websocket3 = new WebsocketNotification(
-      //   'https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/mindMap2.ttl',
-      //   { fetch: fetch }
-      // );
-      // websocket3.on("message", () => {
-      //   console.log("vadvdavadvavddsvds")
-      // });
-      // websocket3.connect();
-      if (location.state !== null && location.state.isNew !== null && location.state.id !== null) {
-        if (location.state.isNew == false) {
+      if (mounted) {
+        if (location.state !== null && location.state.id !== null) {
           const websocket4 = new WebsocketNotification(
             location.state.id,
             { fetch: fetch }
           );
           websocket4.on("message", (e: any) => {
-            console.log(e)
+            getMindMap(location.state.id).then((res: any) => {
+              const myr = res as MindMapDataset;
+              myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
+              console.log(myr)
+              setDataset(() => (myr))
+            })
           });
           websocket4.connect();
           console.log(location.state)
           getMindMap(location.state.id).then((res: any) => {
-            const myResult = res as MindMapDataset
-            // setDataset(myResult)
-            console.log(myResult)
+            const myr = res as MindMapDataset
+            setDataset(() => (myr))
           })
+        } else {
+          navigate('/')
         }
-
-      } else {
-        navigate("/")
       }
-    }
-  )
+    }, [mounted])
 
-  // useEffect(
-  //   () => {
-  //     if (ref.current !== null) {
-  //       const containerRect = (ref.current as any).getBoundingClientRect();
-  //       const height = containerRect.height;
-  //       const width = containerRect.width;
-  //       setHeight(containerRect.height)
-  //       setWidth(containerRect.width)
-  //       console.log(containerRect)
-  //     }
-  //   }
-  // )
+    const setPosition = (x: number, y: number, id: string) => {
+      dataset.nodes = dataset.nodes.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, cx: x, cy: y };
+        }
+        return todo;
+      });
+      // dataset.links = dataset.links.map((todo) => {
+      //   if (todo.from === id) {
+      //     return { ...todo, source: [x, y] };
+      //   }
+      //   if (todo.to === id) {
+      //     return { ...todo, target: [x, y] };
+      //   }
+      //   return todo;
+      // });
+    }
   return (
     <div className="App">
       <Sidenav props={{ message: "Basic" }} />
       <main ref={ref}>
-        <Canvas data={dataset} height={height} width={width}></Canvas>
+        <Canvas data={dataset} height={height} width={width} setPosition={setPosition}></Canvas>
       </main>
     </div>
   )

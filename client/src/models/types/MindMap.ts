@@ -1,4 +1,3 @@
-import { Entity } from "./Entity";
 import { Link } from "./Link";
 import { Node } from "./Node";
 
@@ -7,7 +6,8 @@ enum ACCESS_TYPE {
     PRIVATE
 }
 
-export type MindMap = Entity & {
+export type MindMap = {
+    id: string;
     title: string;
     url: string;
     acccessType: string;

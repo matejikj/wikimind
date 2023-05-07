@@ -1,6 +1,5 @@
-import { Entity } from "./Entity";
-
-export type Node = Entity & {
+export type Node = {
+    id: string;
     title: string;
     description: string;
     cx: number;
