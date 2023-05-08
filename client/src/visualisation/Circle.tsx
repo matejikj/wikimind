@@ -39,7 +39,8 @@ const Circle: React.FC<{ node: Node, contextMenu: any, setContextMenu: Function 
             ...contextMenu,
             x: x,
             y: y,
-            visibility: "visible"
+            visible: "visible",
+            nodeId: node.id
         })
         
     }

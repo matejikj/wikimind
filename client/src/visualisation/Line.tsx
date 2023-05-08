@@ -13,7 +13,8 @@ const Line: React.FC<{ link: Link, contextMenu: any, setContextMenu: Function }>
             ...contextMenu,
             x: x,
             y: y,
-            visibility: "visible"
+            visibility: "visible",
+            nodeId: link.id
         })
         e.preventDefault()
         // parentContextMenu({x, y});

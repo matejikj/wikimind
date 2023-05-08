@@ -20,28 +20,21 @@ import ModalDelete from "./modals/ModalDelete";
 import ModalRecommends from "./modals/ModalRecommends";
 import ModalNodeDetail from "./modals/ModalNodeDetail";
 import ModalLinkRename from "./modals/ModalLinkRename";
+import { ContextMenuItem } from "../models/types/ContextMenuItem";
+import ContextMenu from "./ContextMenu";
+import { ContextMenuType } from "../models/types/ContextMenuType";
 
-const menuItems = [
-  {
-    title: 'First action',
-    action: (d: any) => {
-      // TODO: add any action you want to perform
-      console.log(d);
-    }
-  },
-  {
-    title: 'Second action',
-    action: (d: any) => {
-      // TODO: add any action you want to perform
-      console.log(d);
-    }
-  }
-];
+const DELETE_LINK_METHOD = "delete";
+const LINK_RENAME_METHOD = "rename";
+
+const DELETE_NODE_METHOD = "delete";
+const DETAIL_METHOD = "detail";
+const RECOMMENDS_METHOD = "recommendations";
+const CONNECTION_METHOD = "add connection";
 
 const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, setPosition: Function }> = ({ data, width, height, setPosition }) => {
   const d3Container = useRef(null);
-  const [linksMenu, setLinksMenu] = useState({ visibility: "hidden", id: "", x: 100, y: 100 });
-  const [circleMenu, setCircleMenu] = useState({ visibility: "hidden", id: "", x: 100, y: 100 });
+  
   const [modalNewNode, setModalNewNode] = useState(false);
   const [modalNodeDetail, setModalNodeDetail] = useState(false);
   const [modalLinkRename, setModalLinkRename] = useState(false);
@@ -49,43 +42,71 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
   const [modalRecommends, setModalRecommends] = useState(false);
   const sessionContext = useContext(SessionContext)
 
-  const contextMenuFalse = () => {
-    setCircleMenu({
-      ...circleMenu,
-      visibility: "hidden"
-    })
-    setLinksMenu({
-      ...linksMenu,
-      visibility: "hidden"
-    })
-  }
-
   const addNode = (node: Node) => {
     addNewNode(data.title, sessionContext.userData?.session, node)
     setModalNewNode(false)
   }
 
-  const nodeDetail = (node: Node) => {
-    addNewNode(data.title, sessionContext.userData?.session, node)
-    setModalNewNode(false)
+  const showNodeDetail = () => {
+    setModalNodeDetail(true)
   }
 
   const addConnection = (node: Node) => {
   }
   
-  const deleteNode = (node: Node) => {
+  const showDeleteNode = (node: Node) => {
     addNewNode(data.title, sessionContext.userData?.session, node)
     setModalDelete(false)
   }
 
-  const recommends = (node: Node) => {
+  const showRecommends = (node: Node) => {
     addNewNode(data.title, sessionContext.userData?.session, node)
     setModalRecommends(false)
   }
 
-  const renameLink = (node: Node) => {
+  const showRenameLink = (node: Node) => {
     addNewNode(data.title, sessionContext.userData?.session, node)
     setModalLinkRename(false)
+  }
+
+  const showDeleteLink = (node: Node) => {
+    addNewNode(data.title, sessionContext.userData?.session, node)
+    setModalLinkRename(false)
+  }
+
+  const [circleMenu, setCircleMenu] = useState<ContextMenuType>({
+    posX: 0,
+    posY: 0,
+    visible: "hidden",
+    nodeId: "",
+    items: [
+      { title: DETAIL_METHOD, action: showNodeDetail},
+      { title: DELETE_NODE_METHOD, action: showDeleteNode},
+      { title: RECOMMENDS_METHOD, action: showRecommends},
+      { title: CONNECTION_METHOD, action: addConnection}
+    ]
+  })
+
+  const [linksMenu, setLinksMenu] = useState<ContextMenuType>({
+    posX: 0,
+    posY: 0,
+    visible: "hidden",
+    nodeId: "",
+    items: [
+      { title: DELETE_LINK_METHOD, action: showDeleteLink},
+      { title: LINK_RENAME_METHOD, action: showRenameLink}
+      ]
+  });
+
+  const contextMenuFalse = () => {
+    setCircleMenu({
+      ...circleMenu,
+      visible: "hidden"
+    })
+    setLinksMenu({
+      ...linksMenu,
+      visible: "hidden"
+    })
   }
 
   return (
@@ -135,7 +156,7 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
           </defs>
           {data.links.map((link, index) => {
             return (
-              <Line key={index} link={link} contextMenu={circleMenu} setContextMenu={setPosition}/>
+              <Line key={index} link={link} contextMenu={linksMenu} setContextMenu={setLinksMenu}/>
             );
           })}
           {data.nodes.map((node, index) => {
@@ -143,30 +164,10 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
               <Circle key={index} node={node} contextMenu={circleMenu} setContextMenu={setCircleMenu} />
             );
           })}
-          <g>
-            {menuItems.map((item, index) => {
-              return (
-                <rect fill="orange" height={30} width={120} key={index} visibility={circleMenu.visibility} x={circleMenu.x} y={circleMenu.y + index * 30}  ></rect>
-              )
-            })}
-            {menuItems.map((item, index) => {
-              return (
-                <text key={index} visibility={circleMenu.visibility} x={circleMenu.x} y={circleMenu.y + index * 30 + 20}  >{item.title}</text>
-              )
-            })}
-          </g>
-          <g>
-            {menuItems.map((item, index) => {
-              return (
-                <rect fill="orange" height={30} width={120} key={index} visibility={circleMenu.visibility} x={circleMenu.x} y={circleMenu.y + index * 30}  ></rect>
-              )
-            })}
-            {menuItems.map((item, index) => {
-              return (
-                <text key={index} visibility={circleMenu.visibility} x={circleMenu.x} y={circleMenu.y + index * 30 + 20}  >{item.title}</text>
-              )
-            })}
-          </g>
+          <ContextMenu
+            menu={circleMenu}
+          />
+          <ContextMenu menu={linksMenu} />
         </svg>
       </Row>
     </Container>
