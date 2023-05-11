@@ -116,7 +116,7 @@ export async function createNewMindMap(name: string, sessionId: string) {
   }
 }
 
-export async function addNewNode(name: string, sessionId: string, node: Node) {
+export async function createNode(name: string, sessionId: string, node: Node) {
 console.log(name)
   const podUrls = await getPodUrl(sessionId)
   if (podUrls !== null) {
@@ -137,4 +137,29 @@ console.log(name)
     );
 
   }
+}
+
+export async function addNewLink(name: string, sessionId: any, link: Link) {
+  const podUrls = await getPodUrl(sessionId)
+  if (podUrls !== null) {
+    const podUrl = podUrls[0] + "Wikie/mindMaps/" + name + ".ttl"
+    let courseSolidDataset = await getSolidDataset(
+      podUrl,
+      { fetch: fetch }
+    );
+
+
+    let linkBuilder = new LinkLDO((linkDefinition as LDO<Link>))
+    courseSolidDataset = setThing(courseSolidDataset, linkBuilder.create(link));
+
+    const savedSolidDataset = await saveSolidDatasetAt(
+      podUrl,
+      courseSolidDataset,
+      { fetch: fetch }
+    );
+
+  }
+  console.log(name)
+  console.log(sessionId)
+  console.log(link)
 }

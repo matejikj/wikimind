@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { SessionContext } from "../sessionContext";
 import { Node } from '../models/types/Node'
-import { ContextMenuItem } from "../models/types/ContextMenuItem";
-import { ContextMenuType } from "../models/types/ContextMenuType";
+import { ContextMenuType } from "./models/ContextMenuType";
 
 const ContextMenu: React.FC<{ menu: ContextMenuType }> = ({ menu }) => {
 
   const handleContextMenu = (e: any) => {
-    menu.items[0].action()
-    console.log(e)
+    menu.items[parseInt(e.target.id)].action()
   }
 
   return (

@@ -6,19 +6,17 @@ import axios from "axios";
 import { Node } from '../../models/types/Node'
 import { Link } from '../../models/types/Link'
 import { SessionContext } from "../../sessionContext";
-import { addNewLink, createNode } from "../../service/mindMapService";
+import { createNode } from "../../service/mindMapService";
 import { generate_uuidv4 } from "../../service/utils";
 import { CanvasState } from '../models/CanvasState'
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
-const ModalLinkRename: React.FC<{
+const ModalLinkDelete: React.FC<{
     datasetName: string,
     clickedLink: Link | undefined,
-    canvasState: CanvasState,
-    setCanvasState: Function,
     showModal: boolean,
     setModal: Function
-}> = ({     datasetName, clickedLink, canvasState, setCanvasState, showModal, setModal }) => {
+}> = ({ datasetName, clickedLink, showModal, setModal }) => {
     const theme = useContext(SessionContext)
     const [formInputs, setFormInputs] = useState({
         title: 'title_',
@@ -31,12 +29,14 @@ const ModalLinkRename: React.FC<{
         setFormInputs({ ...formInputs, [key]: value })
     }
     function handleSave(event: any) {
-        
-        if (clickedLink !== undefined) {
-            clickedLink.title = formInputs.title
-            addNewLink(datasetName, theme.userData?.session, clickedLink)
+        const newNode: Node = {
+            id: generate_uuidv4(),
+            title: formInputs.title,
+            description: formInputs.description,
+            cx: 100,
+            cy: 100
         }
-        setModal(false)
+        createNode(datasetName, theme.userData?.session, newNode)
     }
 
     return (
@@ -52,6 +52,13 @@ const ModalLinkRename: React.FC<{
                     value={formInputs.title}
                     onChange={handleChange}
                 />
+                <Form.Control
+                    type="text"
+                    name="description"
+                    placeholder="Description"
+                    value={formInputs.description}
+                    onChange={handleChange}
+                />
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={handleSave}>Add</Button>
@@ -61,4 +68,4 @@ const ModalLinkRename: React.FC<{
     );
 };
 
-export default ModalLinkRename;
+export default ModalLinkDelete;

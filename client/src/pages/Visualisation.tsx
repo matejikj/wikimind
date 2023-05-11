@@ -61,10 +61,12 @@ const Visualisation: React.FC = () => {
           websocket4.connect();
           console.log(location.state)
           getMindMap(location.state.id).then((res: any) => {
-            const myr = res as MindMapDataset
+            const myr = res as MindMapDataset;
+            myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
+            console.log(myr)
             setDataset(() => (myr))
           })
-        } else {
+      } else {
           navigate('/')
         }
       }

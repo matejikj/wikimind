@@ -1,28 +1,23 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
-import { IProps } from "../models/types/types";
+import React, { useState, useRef, useContext } from "react";
 import Circle from "./Circle";
-import { AddCoords, getIdsMapping } from "../visualisation/utils";
 import Line from "./Line";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import './Canvas.css';
 import Button from 'react-bootstrap/Button';
-import { Node } from "../models/types/Node";
-import { createNode } from "../service/nodeService";
-import { MindMap } from "../models/types/MindMap";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { SessionContext } from "../sessionContext";
-import { addNewNode } from "../service/mindMapService";
-import { theme } from "rdf-namespaces/dist/foaf";
-import ModalNewNode from "./modals/ModalNewNode";
-import ModalDelete from "./modals/ModalDelete";
-import ModalRecommends from "./modals/ModalRecommends";
 import ModalNodeDetail from "./modals/ModalNodeDetail";
 import ModalLinkRename from "./modals/ModalLinkRename";
-import { ContextMenuItem } from "../models/types/ContextMenuItem";
 import ContextMenu from "./ContextMenu";
-import { ContextMenuType } from "../models/types/ContextMenuType";
+import { ContextMenuType } from "./models/ContextMenuType";
+import { CanvasState } from "./models/CanvasState";
+import ModalLinkDelete from "./modals/ModalLinkDelete";
+import ModalNodeCreate from "./modals/ModalNodeCreate";
+import ModalNodeDelete from "./modals/ModalNodeDelete";
+import ModalNodeRecommends from "./modals/ModalNodeRecommends";
+import { Link } from "../models/types/Link";
+import { Node } from "../models/types/Node";
 
 const DELETE_LINK_METHOD = "delete";
 const LINK_RENAME_METHOD = "rename";
@@ -31,59 +26,51 @@ const DELETE_NODE_METHOD = "delete";
 const DETAIL_METHOD = "detail";
 const RECOMMENDS_METHOD = "recommendations";
 const CONNECTION_METHOD = "add connection";
+const CONNECTION_SELECTION_METHOD = "add connection";
 
 const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, setPosition: Function }> = ({ data, width, height, setPosition }) => {
   const d3Container = useRef(null);
-  
-  const [modalNewNode, setModalNewNode] = useState(false);
+
+  const [modalNodeCreate, setModalNodeCreate] = useState(false);
   const [modalNodeDetail, setModalNodeDetail] = useState(false);
+  const [modalNodeDelete, setModalNodeDelete] = useState(false);
+  const [modalNodeRecommends, setModalNodeRecommends] = useState(false);
   const [modalLinkRename, setModalLinkRename] = useState(false);
-  const [modalDelete, setModalDelete] = useState(false);
-  const [modalRecommends, setModalRecommends] = useState(false);
-  const sessionContext = useContext(SessionContext)
+  const [modalLinkDelete, setModalLinkDelete] = useState(false);
 
-  const addNode = (node: Node) => {
-    addNewNode(data.title, sessionContext.userData?.session, node)
-    setModalNewNode(false)
-  }
-
-  const showNodeDetail = () => {
-    setModalNodeDetail(true)
-  }
-
-  const addConnection = (node: Node) => {
-  }
-  
-  const showDeleteNode = (node: Node) => {
-    addNewNode(data.title, sessionContext.userData?.session, node)
-    setModalDelete(false)
-  }
-
-  const showRecommends = (node: Node) => {
-    addNewNode(data.title, sessionContext.userData?.session, node)
-    setModalRecommends(false)
-  }
-
-  const showRenameLink = (node: Node) => {
-    addNewNode(data.title, sessionContext.userData?.session, node)
-    setModalLinkRename(false)
-  }
-
-  const showDeleteLink = (node: Node) => {
-    addNewNode(data.title, sessionContext.userData?.session, node)
-    setModalLinkRename(false)
-  }
+  const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
+  const [clickedNode, setClickedNode] = useState<Node>();
+  const [clickedLink, setClickedLink] = useState<Link>();
 
   const [circleMenu, setCircleMenu] = useState<ContextMenuType>({
     posX: 0,
     posY: 0,
     visible: "hidden",
-    nodeId: "",
     items: [
-      { title: DETAIL_METHOD, action: showNodeDetail},
-      { title: DELETE_NODE_METHOD, action: showDeleteNode},
-      { title: RECOMMENDS_METHOD, action: showRecommends},
-      { title: CONNECTION_METHOD, action: addConnection}
+      {
+        title: DETAIL_METHOD,
+        action: () => {
+          setModalNodeDetail(true)
+        }
+      },
+      {
+        title: DELETE_NODE_METHOD,
+        action: () => {
+          setModalNodeDelete(true)
+        }
+      },
+      {
+        title: RECOMMENDS_METHOD,
+        action: () => {
+          setModalNodeRecommends(true)
+        }
+      },
+      {
+        title: CONNECTION_SELECTION_METHOD,
+        action: () => {
+          setCanvasState(CanvasState.ADD_CONNECTION)
+        }
+      }
     ]
   })
 
@@ -91,11 +78,20 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
     posX: 0,
     posY: 0,
     visible: "hidden",
-    nodeId: "",
     items: [
-      { title: DELETE_LINK_METHOD, action: showDeleteLink},
-      { title: LINK_RENAME_METHOD, action: showRenameLink}
-      ]
+      {
+        title: DELETE_LINK_METHOD,
+        action: () => {
+          setModalLinkDelete(true)
+        }
+      },
+      {
+        title: LINK_RENAME_METHOD,
+        action: () => {
+          setModalLinkRename(true)
+        }
+      },
+    ]
   });
 
   const contextMenuFalse = () => {
@@ -109,28 +105,53 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
     })
   }
 
+  // useEffect(() => {
+  //   setMounted(true); // set the mounted state variable to true after the component mounts
+  // }, []);
+
+
   return (
     <Container fluid>
-      <Button id="float-btn-add" onClick={() => { setModalNewNode(true) }} variant="primary">Add</Button>
-      <ModalNewNode
-        modalShow={modalNewNode}
-        fnc={addNode}
+      <Button id="float-btn-add" onClick={() => { setModalNodeCreate(true) }} variant="primary">Add</Button>
+      <ModalNodeCreate
+        datasetName={data.title}
+        clickedNode={clickedNode}
+        canvasState={canvasState}
+        setCanvasState={setCanvasState}
+        showModal={modalNodeCreate}
+        setModal={setModalNodeCreate}
       />
-      <ModalDelete
-        modalShow={modalDelete}
-        fnc={addNode}
+      <ModalNodeDelete
+        datasetName={data.title}
+        clickedNode={clickedNode}
+        showModal={modalNodeDelete}
+        setModal={setModalNodeDelete}
       />
-      <ModalRecommends
-        modalShow={modalRecommends}
-        fnc={addNode}
+      <ModalNodeRecommends
+        datasetName={data.title}
+        clickedNode={clickedNode}
+        showModal={modalNodeRecommends}
+        setModal={setModalNodeRecommends}
       />
       <ModalNodeDetail
-        modalShow={modalNodeDetail}
-        fnc={addNode}
+        datasetName={data.title}
+        clickedNode={clickedNode}
+        showModal={modalNodeDetail}
+        setModal={setModalNodeDetail}
       />
-      <ModalLinkRename
-        modalShow={modalLinkRename}
-        fnc={addNode}
+      <ModalLinkRename      
+        datasetName={data.title}
+        clickedLink={clickedLink}
+        canvasState={canvasState}
+        setCanvasState={setCanvasState}
+        showModal={modalLinkRename}
+        setModal={setModalLinkRename}
+      />
+      <ModalLinkDelete
+        datasetName={data.title}
+        clickedLink={clickedLink}
+        showModal={modalLinkDelete}
+        setModal={setModalLinkDelete}
       />
       <Row>
         <svg
@@ -156,18 +177,37 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
           </defs>
           {data.links.map((link, index) => {
             return (
-              <Line key={index} link={link} contextMenu={linksMenu} setContextMenu={setLinksMenu}/>
+              <Line
+                key={index}
+                link={link}
+                contextMenu={linksMenu}
+                setContextMenu={setLinksMenu}
+              />
             );
           })}
           {data.nodes.map((node, index) => {
             return (
-              <Circle key={index} node={node} contextMenu={circleMenu} setContextMenu={setCircleMenu} />
+              <Circle
+                key={index}
+                node={node}
+                clickedLink={clickedLink}
+                setClickedLink={setClickedLink}
+                setClickedNode={setClickedNode}
+                setModalLinkRename={setModalLinkRename}
+                clickedNode={clickedNode}
+                canvasState={canvasState}
+                setCanvasState={setCanvasState}
+                contextMenu={circleMenu}
+                setContextMenu={setCircleMenu}
+              />
             );
           })}
           <ContextMenu
             menu={circleMenu}
           />
-          <ContextMenu menu={linksMenu} />
+          <ContextMenu
+            menu={linksMenu}
+          />
         </svg>
       </Row>
     </Container>

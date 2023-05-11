@@ -3,14 +3,21 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import axios from "axios";
-import { createNode } from "../../service/nodeService";
 import { Node } from '../../models/types/Node'
 import { SessionContext } from "../../sessionContext";
-import { addNewNode } from "../../service/mindMapService";
+import { createNode } from "../../service/mindMapService";
 import { generate_uuidv4 } from "../../service/utils";
+import { CanvasState } from '../models/CanvasState'
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
-const ModalDelete: React.FC<{ modalShow: boolean, fnc: Function }> = ({ modalShow, fnc }) => {
+const ModalNodeCreate: React.FC<{
+    datasetName: string,
+    clickedNode: Node | undefined,
+    canvasState: CanvasState,
+    setCanvasState: Function,
+    showModal: boolean,
+    setModal: Function
+}> = ({ datasetName, canvasState, showModal, setModal }) => {
     const theme = useContext(SessionContext)
     const [formInputs, setFormInputs] = useState({
         title: 'title_',
@@ -20,7 +27,7 @@ const ModalDelete: React.FC<{ modalShow: boolean, fnc: Function }> = ({ modalSho
     function handleChange(event: any) {
         const key = event.target.name;
         const value = event.target.value;
-        setFormInputs({...formInputs, [key]: value})
+        setFormInputs({ ...formInputs, [key]: value })
     }
     function handleSave(event: any) {
         const newNode: Node = {
@@ -30,12 +37,15 @@ const ModalDelete: React.FC<{ modalShow: boolean, fnc: Function }> = ({ modalSho
             cx: 100,
             cy: 100
         }
-        fnc(newNode)
+        createNode(datasetName, theme.userData?.session, newNode)
+        if (canvasState === CanvasState.ADD_CONNECTED_NODE) {
+            // createLink()
+        }
     }
 
     return (
         <Modal
-            show={modalShow}
+            show={showModal}
         >
             <Modal.Body>
                 <Form.Label htmlFor="inputKeyword">Searching keyword:</Form.Label>
@@ -62,4 +72,4 @@ const ModalDelete: React.FC<{ modalShow: boolean, fnc: Function }> = ({ modalSho
     );
 };
 
-export default ModalDelete;
+export default ModalNodeCreate;
