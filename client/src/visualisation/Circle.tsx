@@ -5,10 +5,12 @@ import { CanvasState } from './models/CanvasState'
 import { ContextMenuType } from "./models/ContextMenuType";
 import { Link } from "../models/types/Link";
 import { generate_uuidv4 } from "../service/utils";
+import { updateNode } from "../service/mindMapService";
 
 const Circle: React.FC<{
     node: Node,
     clickedLink: Link | undefined,
+    datasetName: string,
     setClickedLink: Function,
     clickedNode: Node | undefined,
     setClickedNode: Function,
@@ -21,6 +23,7 @@ const Circle: React.FC<{
     node,
     clickedLink,
     setClickedLink,
+    datasetName,
     clickedNode,
     setClickedNode,
     setModalLinkRename,
@@ -33,7 +36,11 @@ const Circle: React.FC<{
     const [x, setX] = React.useState(node.cx);
     const [y, setY] = React.useState(node.cy);
 
+    const theme = useContext(SessionContext)
+
     const handlePointerDown = (e: any) => {
+        e.stopPropagation()
+        e.preventDefault()
         if (!(canvasState === CanvasState.ADD_CONNECTION)) {
             const el = e.target;
             const bbox = e.target.getBoundingClientRect();
@@ -47,6 +54,8 @@ const Circle: React.FC<{
         }
     };
     const handlePointerMove = (e: any) => {
+        e.stopPropagation()
+        e.preventDefault()
         if (!(canvasState === CanvasState.ADD_CONNECTION)) {
             if (active) {
                 setX(e.clientX)
@@ -55,11 +64,23 @@ const Circle: React.FC<{
         }
     };
     const handlePointerUp = (e: any) => {
+        e.stopPropagation()
+        e.preventDefault()
         if (!(canvasState === CanvasState.ADD_CONNECTION)) {
             // parentSetPosition(x, y, e.target.id)
             setActive(false);
+            const updatedNode: Node = {
+                cx: x,
+                cy: y,
+                title: node.title,
+                id: node.id,
+                description: node.description
+            }
+            
+            updateNode(datasetName, theme.userData?.session, updatedNode)
         }
     };
+
     const addConnection = (e: any) => {
         if (canvasState === CanvasState.ADD_CONNECTION) {
             // const idMaster = contextMenu.nodeId
@@ -115,8 +136,8 @@ const Circle: React.FC<{
     return (
         <g>
             <circle
-                cx={x}
-                cy={y}
+                cx={active ? x : node.cx}
+                cy={active ? y : node.cy}
                 r={25}
                 fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 1) : 1}
                 id={node.id}

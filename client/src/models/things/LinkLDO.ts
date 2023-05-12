@@ -16,10 +16,12 @@ export class LinkLDO extends BaseLDO<Link> implements CRUDLDO<Link> {
     };
 
     create(object: Link) {
-        const newThing: ThingLocal = buildThing(createThing({ name: object.title }))
+        const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
             .addUrl(this.rdf.identity.vocabulary, this.rdf.identity.subject)
             .addStringNoLocale((this.rdf.properties.from as LDOIRI).vocabulary, object.from)
             .addStringNoLocale((this.rdf.properties.to as LDOIRI).vocabulary, object.to)
+            .addStringNoLocale((this.rdf.properties.id as LDOIRI).vocabulary, object.id)
+            .addStringNoLocale((this.rdf.properties.title as LDOIRI).vocabulary, object.title)
             .build();
         return newThing;
     }

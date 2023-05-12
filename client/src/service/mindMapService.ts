@@ -116,8 +116,56 @@ export async function createNewMindMap(name: string, sessionId: string) {
   }
 }
 
+export async function updateNode(name: string, sessionId: string, node: Node) {
+  console.log(name)
+    if (!getDefaultSession().info.isLoggedIn) {
+    await login({
+      oidcIssuer: "https://login.inrupt.com/",
+      redirectUrl: window.location.href,
+      clientName: "My application"
+    });
+  }
+  const podUrls = await getPodUrl(sessionId)
+  if (podUrls !== null) {
+    const podUrl = podUrls[0] + "Wikie/mindMaps/" + name + ".ttl"
+    let courseSolidDataset = await getSolidDataset(
+      podUrl,
+      { fetch: fetch }
+    );
+    let nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
+    let thingUrl = podUrl + "#" + node.id
+    // // let thingUrl = "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/ahojda.ttl#44274717-8e40-41d3-a372-94d85bd5e686"
+    // console.log(thingUrl)
+    //     let book1Thing = await getThing(courseSolidDataset, thingUrl);
+    //     if (book1Thing !== null){
+    //       console.log(nodeBuilder.read(book1Thing))
+    //       console.log(getStringNoLocale(book1Thing, 'http://schema.org/identifier'))
+    //     }
+        courseSolidDataset = setThing(courseSolidDataset, nodeBuilder.create(node));
+
+
+
+    // console.log(nodeBuilder.read(book1Thing))
+
+    // let book1Thing = getThing(courseSolidDataset, `${resourceURL}#${}`);
+    // book1Thing = buildThing(book1Thing)
+    //   .addInteger("https://schema.org/numberOfPages", 30)
+    //   .build();
+
+    // courseSolidDataset = setThing(courseSolidDataset, nodeBuilder.create(node));
+
+    const savedSolidDataset = await saveSolidDatasetAt(
+      podUrl,
+      courseSolidDataset,
+      { fetch: fetch }
+    );
+
+  }
+}
+
+
 export async function createNode(name: string, sessionId: string, node: Node) {
-console.log(name)
+  console.log(name)
   const podUrls = await getPodUrl(sessionId)
   if (podUrls !== null) {
     const podUrl = podUrls[0] + "Wikie/mindMaps/" + name + ".ttl"

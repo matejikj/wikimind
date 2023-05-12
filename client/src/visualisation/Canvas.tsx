@@ -18,6 +18,8 @@ import ModalNodeDelete from "./modals/ModalNodeDelete";
 import ModalNodeRecommends from "./modals/ModalNodeRecommends";
 import { Link } from "../models/types/Link";
 import { Node } from "../models/types/Node";
+import { TransformWrapper } from "react-zoom-pan-pinch";
+import { TransformComponent } from "react-zoom-pan-pinch";
 
 const DELETE_LINK_METHOD = "delete";
 const LINK_RENAME_METHOD = "rename";
@@ -105,111 +107,115 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
     })
   }
 
-  // useEffect(() => {
-  //   setMounted(true); // set the mounted state variable to true after the component mounts
-  // }, []);
-
-
   return (
     <Container fluid>
-      <Button id="float-btn-add" onClick={() => { setModalNodeCreate(true) }} variant="primary">Add</Button>
-      <ModalNodeCreate
-        datasetName={data.title}
-        clickedNode={clickedNode}
-        canvasState={canvasState}
-        setCanvasState={setCanvasState}
-        showModal={modalNodeCreate}
-        setModal={setModalNodeCreate}
-      />
-      <ModalNodeDelete
-        datasetName={data.title}
-        clickedNode={clickedNode}
-        showModal={modalNodeDelete}
-        setModal={setModalNodeDelete}
-      />
-      <ModalNodeRecommends
-        datasetName={data.title}
-        clickedNode={clickedNode}
-        showModal={modalNodeRecommends}
-        setModal={setModalNodeRecommends}
-      />
-      <ModalNodeDetail
-        datasetName={data.title}
-        clickedNode={clickedNode}
-        showModal={modalNodeDetail}
-        setModal={setModalNodeDetail}
-      />
-      <ModalLinkRename      
-        datasetName={data.title}
-        clickedLink={clickedLink}
-        canvasState={canvasState}
-        setCanvasState={setCanvasState}
-        showModal={modalLinkRename}
-        setModal={setModalLinkRename}
-      />
-      <ModalLinkDelete
-        datasetName={data.title}
-        clickedLink={clickedLink}
-        showModal={modalLinkDelete}
-        setModal={setModalLinkDelete}
-      />
-      <Row>
-        <svg
-          id="svg-canvas"
-          onClick={contextMenuFalse}
-          className="d3-component"
-          width={width}
-          height={height}
-          ref={d3Container}
+      <TransformWrapper>
+        <Button id="float-btn-add" onClick={() => { setModalNodeCreate(true) }} variant="primary">Add</Button>
+        <ModalNodeCreate
+          datasetName={data.title}
+          clickedNode={clickedNode}
+          canvasState={canvasState}
+          setCanvasState={setCanvasState}
+          showModal={modalNodeCreate}
+          setModal={setModalNodeCreate}
+        />
+        <ModalNodeDelete
+          datasetName={data.title}
+          clickedNode={clickedNode}
+          showModal={modalNodeDelete}
+          setModal={setModalNodeDelete}
+        />
+        <ModalNodeRecommends
+          datasetName={data.title}
+          clickedNode={clickedNode}
+          showModal={modalNodeRecommends}
+          setModal={setModalNodeRecommends}
+        />
+        <ModalNodeDetail
+          datasetName={data.title}
+          clickedNode={clickedNode}
+          showModal={modalNodeDetail}
+          setModal={setModalNodeDetail}
+        />
+        <ModalLinkRename
+          datasetName={data.title}
+          clickedLink={clickedLink}
+          canvasState={canvasState}
+          setCanvasState={setCanvasState}
+          showModal={modalLinkRename}
+          setModal={setModalLinkRename}
+        />
+        <ModalLinkDelete
+          datasetName={data.title}
+          clickedLink={clickedLink}
+          showModal={modalLinkDelete}
+          setModal={setModalLinkDelete}
+        />
+        <TransformComponent
+          wrapperStyle={{
+            maxWidth: "100%",
+            maxHeight: "calc(100vh - 50px)",
+          }}
         >
-          <defs>
-            <marker
-              id="triangle"
-              viewBox="0 0 10 10"
-              refX="30"
-              refY="5"
-              markerUnits="strokeWidth"
-              markerWidth="4"
-              markerHeight="9"
-              orient="auto">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#876" />
-            </marker>
-          </defs>
-          {data.links.map((link, index) => {
-            return (
-              <Line
-                key={index}
-                link={link}
-                contextMenu={linksMenu}
-                setContextMenu={setLinksMenu}
-              />
-            );
-          })}
-          {data.nodes.map((node, index) => {
-            return (
-              <Circle
-                key={index}
-                node={node}
-                clickedLink={clickedLink}
-                setClickedLink={setClickedLink}
-                setClickedNode={setClickedNode}
-                setModalLinkRename={setModalLinkRename}
-                clickedNode={clickedNode}
-                canvasState={canvasState}
-                setCanvasState={setCanvasState}
-                contextMenu={circleMenu}
-                setContextMenu={setCircleMenu}
-              />
-            );
-          })}
-          <ContextMenu
-            menu={circleMenu}
-          />
-          <ContextMenu
-            menu={linksMenu}
-          />
-        </svg>
-      </Row>
+          <svg
+            id="svg-canvas"
+            onClick={contextMenuFalse}
+            className="d3-component"
+            width={width}
+            height={height}
+            ref={d3Container}
+          >
+            <defs>
+              <marker
+                id="triangle"
+                viewBox="0 0 10 10"
+                refX="30"
+                refY="5"
+                markerUnits="strokeWidth"
+                markerWidth="4"
+                markerHeight="9"
+                orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#876" />
+              </marker>
+            </defs>
+            {data.links.map((link, index) => {
+              return (
+                <Line
+                  key={index}
+                  link={link}
+                  contextMenu={linksMenu}
+                  setContextMenu={setLinksMenu}
+                />
+              );
+            })}
+            {data.nodes.map((node, index) => {
+              return (
+                <Circle
+                  key={index}
+                  node={node}
+                  datasetName={data.title}
+                  clickedLink={clickedLink}
+                  setClickedLink={setClickedLink}
+                  setClickedNode={setClickedNode}
+                  setModalLinkRename={setModalLinkRename}
+                  clickedNode={clickedNode}
+                  canvasState={canvasState}
+                  setCanvasState={setCanvasState}
+                  contextMenu={circleMenu}
+                  setContextMenu={setCircleMenu}
+                />
+              );
+            })}
+            <ContextMenu
+              menu={circleMenu}
+            />
+            <ContextMenu
+              menu={linksMenu}
+            />
+          </svg>
+        </TransformComponent>
+      </TransformWrapper>
+
     </Container>
   )
 };
