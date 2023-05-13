@@ -34,10 +34,13 @@ const ModalNodeCreate: React.FC<{
         setFormInputs({ ...formInputs, [key]: value })
     }
 
-    function searchKeyword(event: any) {
-        const key = event.target.name;
-        const value = event.target.value;
-        setFormInputs({ ...formInputs, [key]: value })
+    async function searchKeyword(event: any) {
+        try {
+            const response = await axios.get(`http://localhost:3006/search?keyword=${formInputs.keyword}`);
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     function handleSave(event: any) {
