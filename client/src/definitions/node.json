@@ -18,6 +18,9 @@
         },
         "title": {
             "vocabulary": "http://schema.org/name"
+        },
+        "visible": {
+            "vocabulary": "http://schema.org/brand"
         }
     }
 }

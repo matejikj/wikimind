@@ -82,7 +82,27 @@ export async function checkContainer(sessionId: string) {
     if (!(await isUrlContainer(podUrl + 'Wikie/classes'))) {
       const cont = createContainerAt(podUrl + 'Wikie/classes', { fetch: fetch });
     }
+    const classesDatasetUrl = podUrl + 'Wikie/classes/classes.ttl'
+    const classesDataset = await getDataset(classesDatasetUrl)
+    if (classesDataset === null) {
+      let courseSolidDataset = createSolidDataset();
+      const savedSolidDatasetContainer = await saveSolidDatasetAt(
+        classesDatasetUrl,
+        courseSolidDataset,
+        { fetch: fetch }
+      );
+    }
   }
+}
+
+export async function getDataset(url: string) {
+  try { 
+    const classesDataset = await getSolidDataset(url, { fetch: fetch })
+    return classesDataset
+  } catch (error) {
+    return null
+  }
+
 }
 
 export async function getMindMapList() {

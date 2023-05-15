@@ -49,8 +49,14 @@ export async function createNewClass(name: string, sessionId: string) {
 
     const podUrls = await getPodUrl(sessionId)
     if (podUrls !== null) {
-        const podUrl = podUrls[0]
-        let courseSolidDataset = createSolidDataset();
+
+        const podUrl = podUrls[0] + 'Wikie/classes/classes.ttl'
+
+        let myDataset = await getSolidDataset(
+            podUrl,
+            { fetch: fetch }
+        );
+
 
         const teacherProfile = await getProfile(sessionId)
         const teacherName = teacherProfile?.name + ' ' + teacherProfile?.surname
@@ -62,11 +68,21 @@ export async function createNewClass(name: string, sessionId: string) {
         }
 
         const classLDO = new ClassLDO(classDefinition).create(blankClass)
-        courseSolidDataset = setThing(courseSolidDataset, classLDO)
+        myDataset = setThing(myDataset, classLDO)
         let newName = podUrl + "Wikie/classes/" + "classes" + ".ttl"
 
+        let courseSolidDataset = createSolidDataset();
+        const classDataset = new ClassLDO(classDefinition).create(blankClass)
+        courseSolidDataset = setThing(courseSolidDataset, classDataset)
+        let newClassDataset = podUrls[0] + "Wikie/classes/" + blankClass.id + ".ttl"
+
+        const savedSolidDatasetContainer = await saveSolidDatasetAt(
+            podUrl,
+            myDataset,
+            { fetch: fetch }
+        );
         const savedSolidDataset = await saveSolidDatasetAt(
-            newName,
+            newClassDataset,
             courseSolidDataset,
             { fetch: fetch }
         );

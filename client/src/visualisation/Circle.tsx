@@ -70,11 +70,12 @@ const Circle: React.FC<{
             // parentSetPosition(x, y, e.target.id)
             setActive(false);
             const updatedNode: Node = {
+                visible: true,
                 cx: x,
                 cy: y,
                 title: node.title,
                 id: node.id,
-                description: node.description
+                description: node.description,
             }
             
             updateNode(datasetName, theme.userData?.session, updatedNode)
@@ -100,8 +101,9 @@ const Circle: React.FC<{
                 from: fromId,
                 to: node.id,
                 title: "",
-                id: generate_uuidv4()
-                
+                id: generate_uuidv4(),
+                visible: true
+    
             }
             setClickedLink(newLink)
             setCanvasState(CanvasState.DEFAULT)

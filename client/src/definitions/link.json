@@ -15,6 +15,9 @@
         },
         "id": {
             "vocabulary": "http://schema.org/identifier"
+        },
+        "visible": {
+            "vocabulary": "http://schema.org/distance"
         }
     }
 }

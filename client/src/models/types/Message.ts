@@ -1,8 +1,7 @@
-export type Node = {
+export type Message = {
     id: string;
     title: string;
     description: string;
     cx: number;
     cy: number;
-    visible: boolean;
 }

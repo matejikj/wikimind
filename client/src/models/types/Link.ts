@@ -6,4 +6,5 @@ export type Link = {
     title: string;
     source?: Array<any>;
     target?: Array<any>;
+    visible: boolean;
 }

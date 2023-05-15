@@ -34,7 +34,8 @@ const ModalLinkDelete: React.FC<{
             title: formInputs.title,
             description: formInputs.description,
             cx: 100,
-            cy: 100
+            cy: 100,
+            visible: true
         }
         createNode(datasetName, theme.userData?.session, newNode)
     }
