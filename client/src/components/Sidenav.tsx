@@ -63,6 +63,15 @@ const Sidenav: React.FC<{ props: AppProps }> = ({ props }) => {
                 <Nav className="justify-content-end flex-grow-1 pe-3">
                   <Nav.Link onClick={() => {navigate('/')}}>Home</Nav.Link>
                 </Nav>
+                <Nav className="justify-content-end flex-grow-1 pe-3">
+                  <Nav.Link onClick={() => {navigate('/profile')}}>Profile</Nav.Link>
+                </Nav>
+                <Nav className="justify-content-end flex-grow-1 pe-3">
+                  <Nav.Link onClick={() => {navigate('/classes')}}>Classes</Nav.Link>
+                </Nav>
+                <Nav className="justify-content-end flex-grow-1 pe-3">
+                  <Nav.Link onClick={() => {navigate('/messages')}}>Messages</Nav.Link>
+                </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>
           </Container>

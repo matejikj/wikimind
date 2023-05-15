@@ -12,6 +12,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { UserData, defaultSessionValue, SessionContext } from "./sessionContext";
 import { checkStructure } from "./service/utils";
 import { checkContainer } from "./service/containerService";
+import Classes from "./pages/Classes";
+import Messages from "./pages/Messages";
+import Profile from "./pages/Profile";
 
 const App: React.FC = () => {
 
@@ -44,6 +47,9 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/visualisation" element={<Visualisation />} />
+            <Route path="/classes" element={<Classes />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/messages" element={<Messages />} />
           </Routes>
         ) : (
           <Login></Login>
