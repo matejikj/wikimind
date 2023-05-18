@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { IProps } from "../models/types/types";
-import Sidenav from "../components/Sidenav";
+import Sidenav, { SideNavType } from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
 import { Node } from "../models/types/Node";
 import Button from 'react-bootstrap/Button';
@@ -91,7 +91,7 @@ const Visualisation: React.FC = () => {
     }
   return (
     <div className="App">
-      <Sidenav props={{ message: "Basic" }} />
+      <Sidenav type={SideNavType.CANVAS} />
       <main ref={ref}>
         <Canvas data={dataset} height={height} width={width} setPosition={setPosition}></Canvas>
       </main>

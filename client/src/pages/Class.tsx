@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { IProps } from "../models/types/types";
-import Sidenav from "../components/Sidenav";
+import Sidenav, { SideNavType } from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
 import { Node } from "../models/types/Node";
 import Button from 'react-bootstrap/Button';
@@ -13,6 +13,8 @@ import {
   WebsocketNotification,
 } from "@inrupt/solid-client-notifications";
 import { generate_uuidv4 } from "../service/utils";
+import { DatasetLink } from "../models/types/DatasetLink";
+import { getClassDataset } from "../service/classService";
 
 const Class: React.FC = () => {
   const d3Container = useRef(null);
@@ -33,31 +35,32 @@ const Class: React.FC = () => {
   useEffect(
     () => {
       if (mounted) {
-    //     if (location.state !== null && location.state.id !== null) {
-    //       const websocket4 = new WebsocketNotification(
-    //         location.state.id,
-    //         { fetch: fetch }
-    //       );
-    //       websocket4.on("message", (e: any) => {
-    //         getClassDataset()
-    //       });
-    //       websocket4.connect();
-    //       console.log(location.state)
-    //       getMindMap(location.state.id).then((res: any) => {
-    //         const myr = res as MindMapDataset;
-    //         myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
-    //         console.log(myr)
-    //         setDataset(() => (myr))
-    //       })
-    //   } else {
-    //       navigate('/')
-    //     }
+        if (location.state !== null && location.state.url !== null) {
+          // const websocket4 = new WebsocketNotification(
+          //   location.state.url,
+          //   { fetch: fetch }
+          // );
+          // websocket4.on("message", (e: any) => {
+          //   getClassDataset(location.state.url).then((res: any) => {
+          //   })
+          // });
+          // websocket4.connect();
+          console.log(location.state)
+          if (theme.userData !== null) {
+            getClassDataset(theme.userData, location.state.url).then((res: any) => {
+              console.log(res)
+            })
+          }
+          
+      } else {
+          navigate('/')
+        }
       }
     }, [mounted])
     
   return (
     <div className="App">
-      <Sidenav props={{ message: "Basic" }} />
+      <Sidenav type={SideNavType.COMMON} />
       <main ref={ref}>
       </main>
     </div>

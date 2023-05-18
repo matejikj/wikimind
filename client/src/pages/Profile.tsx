@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from "react";
-import Sidenav from "../components/Sidenav";
+import Sidenav, { SideNavType } from "../components/Sidenav";
 import { getMindMapList } from "../service/containerService";
 import Button from 'react-bootstrap/Button';
 import { generate_uuidv4 } from "../service/utils";
@@ -32,7 +32,7 @@ const Profile: React.FC = () => {
 
   return (
     <div className="App">
-      <Sidenav props={{ message: "Basic" }} />
+      <Sidenav type={SideNavType.COMMON} />
       <main>
         
       </main>

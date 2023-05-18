@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { IProps } from "../models/types/types";
-import Sidenav from "../components/Sidenav";
+import Sidenav, { SideNavType } from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
 import { Node } from "../models/types/Node";
 import Button from 'react-bootstrap/Button';
@@ -14,16 +14,7 @@ import {
 } from "@inrupt/solid-client-notifications";
 import { generate_uuidv4 } from "../service/utils";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
-
-const defaultBlankDataset: MindMapDataset = {
-    id: "",
-    title: "",
-    url: "",
-    created: "",
-    acccessType: "",
-    links: [],
-    nodes: []
-}
+import { Col, Container, Row } from "react-bootstrap";
 
 const Visualisation: React.FC = () => {
     const d3Container = useRef(null);
@@ -33,16 +24,44 @@ const Visualisation: React.FC = () => {
 
     const ref = useRef(null);
     const [height, setHeight] = useState(1000);
-    const [width, setWidth] = useState(1000);
-    const [dataset, setDataset] = useState<MindMapDataset>(defaultBlankDataset);
+    const [width, setWidth] = useState(500);
     const theme = useContext(SessionContext)
     const [mounted, setMounted] = useState(false); // <-- new state variable
 
+    React.useEffect(() => {
+        function handleResize() {
+            setWidth(window.innerWidth)
+            // console.log('resized to: ', window.innerWidth, 'x', window.innerHeight)
+        }
+
+        window.addEventListener('resize', handleResize)
+    })
+
     return (
         <div className="App">
-            <Sidenav props={{ message: "Basic" }} />
+            <Sidenav type={SideNavType.COMMON} />
             <main ref={ref}>
-                
+                {width > 770 ? (
+                    <Container>
+                        <Row>
+                            <Col sm="6">
+                                fsadfsad
+                            </Col>
+                            <Col sm="6">
+                                tyeytr
+                            </Col>
+                        </Row>
+                    </Container>
+                ) : (
+                    <Container>
+                        <Row>
+                            <Col sm="12">
+                                yuuuuuuuuuu
+                            </Col>
+                        </Row>
+                    </Container>
+                )}
+
             </main>
         </div>
     )

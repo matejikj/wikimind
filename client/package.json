@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@inrupt/solid-client-access-grants": "^2.2.0",
     "@inrupt/solid-client-authn-browser": "^1.15.0",
     "@inrupt/solid-client-notifications": "^1.2.0",
     "@inrupt/vocab-common-rdf": "^1.0.5",
