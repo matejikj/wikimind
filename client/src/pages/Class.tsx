@@ -46,8 +46,8 @@ const Class: React.FC = () => {
           // });
           // websocket4.connect();
           console.log(location.state)
-          if (theme.userData !== null) {
-            getClassDataset(theme.userData, location.state.url).then((res: any) => {
+          if (theme.sessionInfo.isLogged) {
+            getClassDataset(theme.sessionInfo, location.state.url).then((res: any) => {
               console.log(res)
             })
           }

@@ -7,13 +7,10 @@ import { generate_uuidv4 } from "../service/utils";
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-import './Login.css';
+import './Dashboard.css';
 import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
-
-const authOptions = {
-  clientName: "Learnee",
-};
+import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
 
 const Dashboard: React.FC = () => {
   const [list, setList] = useState<{ url: string; title: string | null }[]>([]);
@@ -33,7 +30,7 @@ const Dashboard: React.FC = () => {
 
   }, []);
 
-  const handleClick = (e: any) => {
+  const showMindMap = (e: any) => {
     console.log(e.target.name)
     navigate('/visualisation/', {
       state: {
@@ -41,10 +38,18 @@ const Dashboard: React.FC = () => {
       }
     })
   }
+  const removeMindMap = (e: any) => {
+    console.log(e.target.name)
+    // navigate('/visualisation/', {
+    //   state: {
+    //     id: e.target.name
+    //   }
+    // })
+  }
 
   const createNew = (e: any) => {
-    if (theme.userData !== null) {
-      createNewMindMap(name, theme.userData.session).then((res) => {
+    if (theme.sessionInfo.isLogged) {
+      createNewMindMap(name, theme.sessionInfo.webId).then((res) => {
         console.log(res)
         navigate('/visualisation/', {
           state: {
@@ -83,16 +88,34 @@ const Dashboard: React.FC = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-        <h1>Dashboard</h1>
-        <Button onClick={handleShow} variant="primary">Create new</Button>
-        {list.map((item, index) => {
-          return (
-            <div key={index}>
-              <Button  name={item.url} onClick={handleClick} variant="primary">{item.title}</Button>
-              <br />
-            </div>
-          )
-        })}
+        <Container>
+          <Row>
+            <h1>Your mind maps!</h1>
+          </Row>
+
+          {list.map((item, index) => {
+            return (
+              <Row key={index}>
+                <Col sm={9}>{item.title}</Col>
+                <Col sm={3}>
+                  
+                  <Stack direction="horizontal" gap={2}>
+                    <div>
+                      <Button className='class-btn' name={item.url} onClick={showMindMap} variant="primary">Show</Button>
+                      <br />
+                    </div>
+                    <div>
+                      <Button className='class-btn' name={item.url} onClick={removeMindMap} variant="primary">Remove</Button>
+                      <br />
+                    </div>
+
+                  </Stack>
+                </Col>
+              </Row>
+            )
+          })}
+          <Button onClick={handleShow} variant="danger">Create new</Button>
+        </Container>
       </main>
     </div>
 

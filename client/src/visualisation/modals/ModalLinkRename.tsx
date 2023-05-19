@@ -34,7 +34,7 @@ const ModalLinkRename: React.FC<{
         
         if (clickedLink !== undefined) {
             clickedLink.title = formInputs.title
-            addNewLink(datasetName, theme.userData?.session, clickedLink)
+            addNewLink(datasetName, theme.sessionInfo.webId, clickedLink)
         }
         setModal(false)
     }

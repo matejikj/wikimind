@@ -30,7 +30,7 @@ const Classes: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const result = getClassesList(theme.userData?.session).then((res) => {
+    const result = getClassesList(theme.sessionInfo.webId).then((res) => {
       setList(res)
     });
 
@@ -46,8 +46,8 @@ const Classes: React.FC = () => {
   }
 
   const createNew = (e: any) => {
-    if (theme.userData !== null) {
-      createNewClass(name, theme.userData.session).then((res) => {
+    if (theme.sessionInfo.isLogged) {
+      createNewClass(name, theme.sessionInfo.webId).then((res) => {
         console.log(res)
         // navigate('/class/', {
         //   state: {

@@ -14,34 +14,24 @@ import { checkStructure } from "./service/utils";
 import { checkContainer } from "./service/containerService";
 import Classes from "./pages/Classes";
 import Messages from "./pages/Messages";
-import Profile from "./pages/Profile";
+import ProfileView from "./pages/ProfileView";
 import Class from "./pages/Class";
 
 const App: React.FC = () => {
 
-  const [userData, setUserData]
+  const [sessionInfo, setSessionInfo]
     = React.useState<UserData>(defaultSessionValue);
-  const value = {
-    userData,
-    setUserData
-  };
 
   useEffect(() => {
     handleIncomingRedirect({
       restorePreviousSession: true
     }).then((info) => {
-      let session = new Session();
-      console.log(session)
-      session = getDefaultSession()
-      console.log(session)
-      // console.log(getDefaultSession())
-      console.log(info)
       if (info?.isLoggedIn && info?.webId !== undefined) {
         checkContainer(info?.webId).then(() => {
-          setUserData({
+          setSessionInfo({
+            ...sessionInfo,
             isLogged: true,
-            session: info?.webId,
-            sess: getDefaultSession()
+            webId: info?.webId!
           })
         })
       }
@@ -49,15 +39,18 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <SessionContext.Provider value={value}>
+    <SessionContext.Provider value={{
+      sessionInfo,
+      setSessionInfo
+    }}>
       <BrowserRouter>
-        {userData.isLogged ? (
+        {sessionInfo.isLogged ? (
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/visualisation" element={<Visualisation />} />
             <Route path="/classes" element={<Classes />} />
             <Route path="/class" element={<Class />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<ProfileView />} />
             <Route path="/messages" element={<Messages />} />
           </Routes>
         ) : (

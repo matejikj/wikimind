@@ -78,7 +78,7 @@ const Circle: React.FC<{
                 description: node.description,
             }
             
-            updateNode(datasetName, theme.userData?.session, updatedNode)
+            updateNode(datasetName, theme.sessionInfo.webId, updatedNode)
         }
     };
 

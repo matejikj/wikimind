@@ -27,17 +27,12 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
 
   const theme = useContext(SessionContext);
 
-  const a = async () => {
-    console.log('fdsafs')
-    console.log(theme.userData)
-    const logged = await logout()
-    console.log(logged)
-    theme.setUserData({
-      isLogged: false,
-      session: null,
-      sess: getDefaultSession()
+  const logout = async () => {
+    // const logged = await logout()
+    theme.setSessionInfo({
+      webId: "",
+      isLogged: false
     })
-    console.log(theme.userData)
   }
 
   return (
@@ -73,6 +68,9 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
             </Nav>
             <Nav className="justify-content-end flex-grow-1 pe-3">
               <Nav.Link onClick={() => { navigate('/messages') }}>Messages</Nav.Link>
+            </Nav>
+            <Nav className="justify-content-end flex-grow-1 pe-3">
+              <Nav.Link onClick={logout}>Logout</Nav.Link>
             </Nav>
 
           </Offcanvas.Body>

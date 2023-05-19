@@ -52,7 +52,7 @@ const ModalNodeCreate: React.FC<{
             cy: 100,
             visible: true
         }
-        createNode(datasetName, theme.userData?.session, newNode)
+        createNode(datasetName, theme.sessionInfo.webId, newNode)
         if (canvasState === CanvasState.ADD_CONNECTED_NODE) {
             // createLink()
         }

@@ -149,10 +149,6 @@ export async function getClassDataset(cnt: UserData, url: string) {
     // ExamplePrinter sets the requested access (if granted) to expire in 5 minutes.
     let accessExpiration = new Date(Date.now() + 50 * 60000);
 
-
-
-
-
     // Call `issueAccessRequest` to create an access request
     //
     // const requestVC = await issueAccessRequest(
@@ -186,6 +182,43 @@ export async function getClassDataset(cnt: UserData, url: string) {
         { fetch: fetch }
     );
     console.log(myDataset)
+
+    const node: Node = {
+        cx: 5,
+        cy: 5,
+        id: "43",
+        title: "AAAA",
+        description: "farwetgey hf ",
+        visible: false
+    }
+    let nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
+    // // let thingUrl = "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/ahojda.ttl#44274717-8e40-41d3-a372-94d85bd5e686"
+    // console.log(thingUrl)
+    //     let book1Thing = await getThing(courseSolidDataset, thingUrl);
+    //     if (book1Thing !== null){
+    //       console.log(nodeBuilder.read(book1Thing))
+    //       console.log(getStringNoLocale(book1Thing, 'http://schema.org/identifier'))
+    //     }
+    let courseSolidDataset = setThing(myDataset, nodeBuilder.create(node));
+
+
+
+    // console.log(nodeBuilder.read(book1Thing))
+
+    // let book1Thing = getThing(courseSolidDataset, `${resourceURL}#${}`);
+    // book1Thing = buildThing(book1Thing)
+    //   .addInteger("https://schema.org/numberOfPages", 30)
+    //   .build();
+
+    // courseSolidDataset = setThing(courseSolidDataset, nodeBuilder.create(node));
+
+    const savedSolidDataset = await saveSolidDatasetAt(
+        "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/classes/classes.ttl",
+        courseSolidDataset,
+        { fetch: fetch }
+    );
+
+    console.log(savedSolidDataset)
 
     // function logAccessInfo(agent: any, agentAccess: any, resource: any) {
     //     console.log(`For resource::: ${resource}`);
@@ -227,9 +260,9 @@ export async function getClassDataset(cnt: UserData, url: string) {
 
 
     // universalAccess.setAgentAccess(
-    //     "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/classes/requests/",         // Resource
+    //     "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/classes/classes.ttl",         // Resource
     //     "http://www.w3.org/ns/solid/acp#AuthenticatedAgent",     // Agent
-    //     { append: true, read: false, write: false },          // Access object
+    //     { append: true, read: true, write: false },          // Access object
     //     { fetch: fetch }                         // fetch function from authenticated session
     //   ).then((newAccess) => {
     //     console.log(newAccess)

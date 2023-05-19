@@ -1,0 +1,6 @@
+.roomfac {
+    display: flex;
+    width: 60%;
+    justify-content:center;
+    margin:0 auto;
+}
