@@ -33,6 +33,7 @@ import { LinkLDO } from "../models/things/LinkLDO";
 import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
 import { generate_uuidv4 } from "./utils";
+import { UserSession } from "../models/types/UserSession";
 
 export async function getMindMap(url: string) {
 
@@ -82,18 +83,7 @@ export async function getMindMap(url: string) {
   }
 }
 
-export async function createNewMindMap(name: string, sessionId: string) {
-  // if (!getDefaultSession().info.isLoggedIn) {
-  //   await login({
-  //     oidcIssuer: "https://login.inrupt.com/",
-  //     redirectUrl: window.location.href,
-  //     clientName: "My application"
-  //   });
-  // }
-
-  const podUrls = await getPodUrl(sessionId)
-  if (podUrls !== null) {
-    const podUrl = podUrls[0]
+export async function createNewMindMap(name: string, userSession: UserSession) {
     let courseSolidDataset = createSolidDataset();
     let blankMindMap: MindMap = {
       title: name,
@@ -102,18 +92,16 @@ export async function createNewMindMap(name: string, sessionId: string) {
       url: "",
       created: ""
     }
-
     const mindMapLDO = new MindMapLDO(mindMapDefinition).create(blankMindMap)
     courseSolidDataset = setThing(courseSolidDataset, mindMapLDO)
-    let newName = podUrl + "Wikie/mindMaps/" + name + ".ttl"
-
+    let newName = userSession.podUrl + "Wikie/mindMaps/" + name + ".ttl"
     const savedSolidDataset = await saveSolidDatasetAt(
       newName,
       courseSolidDataset,
       { fetch: fetch }
     );
     return newName
-  }
+  
 }
 
 export async function updateNode(name: string, sessionId: string, node: Node) {

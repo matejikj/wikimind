@@ -24,11 +24,11 @@ const ProfileView: React.FC = () => {
     surname: ""
   });
 
-  const theme = useContext(SessionContext)
+  const sessionContext = useContext(SessionContext)
 
 
   useEffect(() => {
-    const result = getProfile(theme.sessionInfo.webId).then((res: any) => {
+    const result = getProfile(sessionContext.sessionInfo).then((res: any) => {
       if (res !== undefined) { setProfile(res) }
 
       console.log(res)

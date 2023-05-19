@@ -35,6 +35,7 @@ import { NodeLDO } from "../models/things/NodeLDO";
 import { Link } from "../models/types/Link";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { MindMap } from "../models/types/MindMap";
+import { UserSession } from "../models/types/UserSession";
 
 /**
  * 
@@ -92,7 +93,9 @@ export async function checkContainer(sessionId: string) {
         { fetch: fetch }
       );
     }
+    return podUrl
   }
+  throw new Error("There is problem with SolidPod.");
 }
 
 export async function getDataset(url: string) {
@@ -105,9 +108,9 @@ export async function getDataset(url: string) {
 
 }
 
-export async function getMindMapList() {
-  
-  const readingListUrl: string = 'https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/'
+export async function getMindMapList(userSession: UserSession) {
+
+  const readingListUrl: string = userSession.podUrl + 'Wikie/mindMaps/'
   const myDataset = await getSolidDataset(
     readingListUrl,
     { fetch: fetch }          // fetch from authenticated session

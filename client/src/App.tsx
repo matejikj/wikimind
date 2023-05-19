@@ -9,31 +9,41 @@ import Sidenav from "./components/Sidenav";
 import Visualisation from "./pages/Visualisation";
 import { Session, fetch, getDefaultSession, handleIncomingRedirect, onSessionRestore } from "@inrupt/solid-client-authn-browser";
 import { BrowserRouter } from 'react-router-dom';
-import { UserData, defaultSessionValue, SessionContext } from "./sessionContext";
 import { checkStructure } from "./service/utils";
 import { checkContainer } from "./service/containerService";
 import Classes from "./pages/Classes";
 import Messages from "./pages/Messages";
 import ProfileView from "./pages/ProfileView";
 import Class from "./pages/Class";
+import { UserSession, defaultSessionValue } from "./models/types/UserSession";
+import { SessionContext } from "./sessionContext";
 
 const App: React.FC = () => {
 
   const [sessionInfo, setSessionInfo]
-    = React.useState<UserData>(defaultSessionValue);
+    = React.useState<UserSession>(defaultSessionValue);
 
   useEffect(() => {
     handleIncomingRedirect({
       restorePreviousSession: true
     }).then((info) => {
       if (info?.isLoggedIn && info?.webId !== undefined) {
-        checkContainer(info?.webId).then(() => {
-          setSessionInfo({
-            ...sessionInfo,
-            isLogged: true,
-            webId: info?.webId!
+        try {
+          checkContainer(info?.webId).then((solidPodUrl) => {
+            console.log({
+              isLogged: true,
+              webId: info?.webId!,
+              podUrl: solidPodUrl
+            })
+            setSessionInfo({
+              isLogged: true,
+              webId: info?.webId!,
+              podUrl: solidPodUrl
+            })
           })
-        })
+        } catch (error) {
+          alert("There is problem with  logging.")
+        }
       }
     })
   }, []);

@@ -47,67 +47,52 @@ import { DatasetLink } from "../models/types/DatasetLink";
 import { DatasetLinkLDO } from "../models/things/DatasetLinkLDO";
 import { LinkType } from "../models/types/LinkType";
 import { AccessRequest, issueAccessRequest, redirectToAccessManagementUi } from "@inrupt/solid-client-access-grants";
-import { UserData } from "../sessionContext";
+import { UserSession } from "../models/types/UserSession";
 
-export async function createNewClass(name: string, sessionId: string) {
-    // if (!getDefaultSession().info.isLoggedIn) {
-    //   await login({
-    //     oidcIssuer: "https://login.inrupt.com/",
-    //     redirectUrl: window.location.href,
-    //     clientName: "My application"
-    //   });
-    // }
-
-    const podUrls = await getPodUrl(sessionId)
-    if (podUrls !== null) {
-
-        const podUrl = podUrls[0] + 'Wikie/classes/classes.ttl'
-
-        let myDataset = await getSolidDataset(
-            podUrl,
-            { fetch: fetch }
-        );
-
-
-        const teacherProfile = await getProfile(sessionId)
-        const teacherName = teacherProfile?.name + ' ' + teacherProfile?.surname
-        const blankClass: TeachClass = {
-            name: name,
-            id: generate_uuidv4(),
-            teacher: teacherName,
-            storage: podUrls[0]
-        }
-
-        const datasetLink: DatasetLink = {
-            id: blankClass.id,
-            url: podUrls[0],
-            linkType: LinkType.CLASS_LINK
-        }
-
-        const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
-        myDataset = setThing(myDataset, classLDO)
-        let newName = podUrl + "Wikie/classes/" + "classes" + ".ttl"
-
-        let courseSolidDataset = createSolidDataset();
-        const classDataset = new ClassLDO(classDefinition).create(blankClass)
-        courseSolidDataset = setThing(courseSolidDataset, classDataset)
-        let newClassDataset = podUrls[0] + "Wikie/classes/" + blankClass.id + ".ttl"
-
-        const savedSolidDatasetContainer = await saveSolidDatasetAt(
-            podUrl,
-            myDataset,
-            { fetch: fetch }
-        );
-        const savedSolidDataset = await saveSolidDatasetAt(
-            newClassDataset,
-            courseSolidDataset,
-            { fetch: fetch }
-        );
-        return newName
+export async function createNewClass(name: string, userSession: UserSession) {
+    const podUrl = userSession.podUrl + 'Wikie/classes/classes.ttl'
+    const teacherProfile = await getProfile(userSession)
+    const teacherName = teacherProfile?.name + ' ' + teacherProfile?.surname
+    const blankClass: TeachClass = {
+        name: name,
+        id: generate_uuidv4(),
+        teacher: teacherName,
+        storage: userSession.podUrl
     }
+
+    const datasetLink: DatasetLink = {
+        id: blankClass.id,
+        url: userSession.podUrl,
+        linkType: LinkType.CLASS_LINK
+    }
+    const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
+    let myDataset = await getSolidDataset(
+        podUrl,
+        { fetch: fetch }
+    );
+    myDataset = setThing(myDataset, classLDO)
+    let newName = podUrl + "Wikie/classes/" + "classes" + ".ttl"
+
+    let courseSolidDataset = createSolidDataset();
+    const classDataset = new ClassLDO(classDefinition).create(blankClass)
+    courseSolidDataset = setThing(courseSolidDataset, classDataset)
+    let newClassDataset = userSession.podUrl + "Wikie/classes/" + blankClass.id + ".ttl"
+
+    const savedSolidDatasetContainer = await saveSolidDatasetAt(
+        podUrl,
+        myDataset,
+        { fetch: fetch }
+    );
+    const savedSolidDataset = await saveSolidDatasetAt(
+        newClassDataset,
+        courseSolidDataset,
+        { fetch: fetch }
+    );
+    return newName
+
 }
 
-export async function addClass(name: string, sessionId: string) {
+export async function addClass(name: string, userSession: UserSession) {
     // if (!getDefaultSession().info.isLoggedIn) {
     //   await login({
     //     oidcIssuer: "https://login.inrupt.com/",
@@ -143,8 +128,8 @@ export async function addClass(name: string, sessionId: string) {
     // }
 }
 
-export async function getClassDataset(cnt: UserData, url: string) {
-    console.log(url)
+export async function getClassDataset(userSession: UserSession, classPodUrl: string) {
+    console.log(userSession)
 
     // ExamplePrinter sets the requested access (if granted) to expire in 5 minutes.
     let accessExpiration = new Date(Date.now() + 50 * 60000);
@@ -178,7 +163,7 @@ export async function getClassDataset(cnt: UserData, url: string) {
 
 
     let myDataset = await getSolidDataset(
-        "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/classes/classes.ttl",
+        userSession.podUrl + "Wikie/classes/classes.ttl",
         { fetch: fetch }
     );
     console.log(myDataset)
@@ -213,7 +198,7 @@ export async function getClassDataset(cnt: UserData, url: string) {
     // courseSolidDataset = setThing(courseSolidDataset, nodeBuilder.create(node));
 
     const savedSolidDataset = await saveSolidDatasetAt(
-        "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/classes/classes.ttl",
+        userSession.podUrl + "Wikie/classes/classes.ttl",
         courseSolidDataset,
         { fetch: fetch }
     );
@@ -367,39 +352,33 @@ export async function getClassDataset(cnt: UserData, url: string) {
 }
 
 
-export async function getClassesList(url: string) {
-    console.log(url)
+export async function getClassesList(userSession: UserSession) {
     let classes: DatasetLink[] = []
-    const podUrls = await getPodUrl(url)
-    console.log(podUrls)
-    console.log(fetch)
-    if (podUrls !== null) {
-        const podUrl = podUrls[0] + 'Wikie/classes/classes.ttl'
+    const podUrl = userSession.podUrl + 'Wikie/classes/classes.ttl'
 
-        const myDataset = await getSolidDataset(
-            podUrl,
-            getDefaultSession()
-        );
+    const myDataset = await getSolidDataset(
+        podUrl,
+        getDefaultSession()
+    );
 
-        const things = await getThingAll(myDataset);
-        console.log(things)
+    const things = await getThingAll(myDataset);
+    console.log(things)
 
 
-        let datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
+    let datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
 
-        things.forEach(thing => {
-            const types = getUrlAll(thing, RDF.type);
-            if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
-                const link = datasetLinkBuilder.read(thing)
-                if (link.linkType === LinkType.CLASS_LINK) {
-                    classes.push(link)
-                }
+    things.forEach(thing => {
+        const types = getUrlAll(thing, RDF.type);
+        if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
+            const link = datasetLinkBuilder.read(thing)
+            if (link.linkType === LinkType.CLASS_LINK) {
+                classes.push(link)
             }
-        });
+        }
+    });
+    console.log(classes)
 
-        console.log(classes)
-
-    }
     return classes;
+
 
 }

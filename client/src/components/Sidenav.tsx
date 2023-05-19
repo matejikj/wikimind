@@ -3,7 +3,7 @@ import { TiThMenu, TiThMenuOutline, TiTag, TiVendorAndroid, TiLockOpenOutline } 
 import styles from "./Sidenav.module.css"
 import { useContext, useState } from "react";
 import { handleIncomingRedirect, onSessionRestore, logout, getDefaultSession } from "@inrupt/solid-client-authn-browser";
-import { SessionContext, UserData } from "../sessionContext";
+import { SessionContext } from "../sessionContext";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -32,6 +32,7 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
     // const logged = await logout()
     theme.setSessionInfo({
       webId: "",
+      podUrl: "",
       isLogged: false
     })
   }

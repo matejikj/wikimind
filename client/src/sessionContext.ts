@@ -1,18 +1,10 @@
 import { Session, getDefaultSession } from "@inrupt/solid-client-authn-browser";
 import React, { useEffect, createContext, useState, FC } from "react";
-
-export type UserData = {
-  webId: string;
-  isLogged: boolean;
-}
-export const defaultSessionValue: UserData = {
-  webId: "",
-  isLogged: false,
-}
+import { UserSession, defaultSessionValue } from "./models/types/UserSession";
 
 interface ContextProps {
-  sessionInfo: UserData;
-  setSessionInfo: (userData: UserData) => void;
+  sessionInfo: UserSession;
+  setSessionInfo: (userData: UserSession) => void;
 }
 
 export const SessionContext = createContext<ContextProps>({

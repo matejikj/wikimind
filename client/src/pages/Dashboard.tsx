@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
   const [list, setList] = useState<{ url: string; title: string | null }[]>([]);
   const [show, setShow] = useState(false);
   const [name, setName] = useState("");
-  const theme = useContext(SessionContext)
+  const sessionContext = useContext(SessionContext)
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -24,7 +24,7 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const result = getMindMapList().then((res) => {
+    const result = getMindMapList(sessionContext.sessionInfo).then((res) => {
       setList(res)
     });
 
@@ -48,8 +48,8 @@ const Dashboard: React.FC = () => {
   }
 
   const createNew = (e: any) => {
-    if (theme.sessionInfo.isLogged) {
-      createNewMindMap(name, theme.sessionInfo.webId).then((res) => {
+    if (sessionContext.sessionInfo.isLogged) {
+      createNewMindMap(name, sessionContext.sessionInfo).then((res) => {
         console.log(res)
         navigate('/visualisation/', {
           state: {

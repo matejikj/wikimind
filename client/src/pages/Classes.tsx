@@ -23,7 +23,7 @@ const Classes: React.FC = () => {
   const [list, setList] = useState<DatasetLink[]>([]);
   const [show, setShow] = useState(false);
   const [name, setName] = useState("");
-  const theme = useContext(SessionContext)
+  const sessionContext = useContext(SessionContext)
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -31,7 +31,7 @@ const Classes: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const result = getClassesList(theme.sessionInfo.webId).then((res) => {
+    const result = getClassesList(sessionContext.sessionInfo).then((res) => {
       setList(res)
     });
 
@@ -56,8 +56,8 @@ const Classes: React.FC = () => {
   }
 
   const createNew = (e: any) => {
-    if (theme.sessionInfo.isLogged) {
-      createNewClass(name, theme.sessionInfo.webId).then((res) => {
+    if (sessionContext.sessionInfo.isLogged) {
+      createNewClass(name, sessionContext.sessionInfo).then((res) => {
         console.log(res)
         // navigate('/class/', {
         //   state: {
