@@ -48,10 +48,10 @@ const ProfileView: React.FC = () => {
     <div className="App">
       <Sidenav type={SideNavType.COMMON} />
       <main>
-        <Container className='roomfac'>
+        <Container className='center-container'>
           <Row>
             <Col sm={12}>
-              <Card>
+              <Card border="success" style={{ width: '18rem' }}>
                 <Card.Body>
                   <Card.Title>Profile info:</Card.Title>
 
@@ -77,11 +77,10 @@ const ProfileView: React.FC = () => {
                     onChange={handleChange}
                   />
                 </Card.Body>
-                                <Card.Footer>                  <Button onClick={updateProfile}>Confirm</Button>
-</Card.Footer>
-
+                <Card.Footer>
+                  <Button variant="outline-success" onClick={updateProfile}>Confirm</Button>
+                </Card.Footer>
               </Card>
-
             </Col>
           </Row>
         </Container>

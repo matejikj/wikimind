@@ -41,18 +41,18 @@ import { MindMap } from "../models/types/MindMap";
 import { getPodUrl, isUrlContainer } from "./containerService";
 
 export async function createNode(node: Node, sessionId: any) {
-  await handleIncomingRedirect();
+  // await handleIncomingRedirect();
 
   // 2. Start the Login Process if not already logged in.
-  if (!getDefaultSession().info.isLoggedIn) {
-    await login({
-      oidcIssuer: "https://login.inrupt.com/",
-      redirectUrl: window.location.href,
-      clientName: "My application"
-    });
-  } else {
-    console.log('PRIHLASENO')
-  }
+  // if (!getDefaultSession().info.isLoggedIn) {
+  //   await login({
+  //     oidcIssuer: "https://login.inrupt.com/",
+  //     redirectUrl: window.location.href,
+  //     clientName: "My application"
+  //   });
+  // } else {
+  //   console.log('PRIHLASENO')
+  // }
 
   let dataset = await getSolidDataset("https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/mindMap3.ttl", { fetch: fetch })
   let book1Thing = getThing(dataset, "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/mindMap3.ttl#dsa");
@@ -85,16 +85,16 @@ export async function createNode(node: Node, sessionId: any) {
 
 export async function aaaa(node: Node, podUrl: string) {
 
-  await handleIncomingRedirect();
+  // await handleIncomingRedirect();
 
   // 2. Start the Login Process if not already logged in.
-  if (!getDefaultSession().info.isLoggedIn) {
-    await login({
-      oidcIssuer: "https://login.inrupt.com/",
-      redirectUrl: window.location.href,
-      clientName: "My application"
-    });
-  }
+  // if (!getDefaultSession().info.isLoggedIn) {
+  //   await login({
+  //     oidcIssuer: "https://login.inrupt.com/",
+  //     redirectUrl: window.location.href,
+  //     clientName: "My application"
+  //   });
+  // }
 
   
 

@@ -13,6 +13,7 @@ import { SessionContext } from '../sessionContext';
 import { createNewClass, getClassesList } from '../service/classService';
 import { Class } from '../models/types/Class';
 import { DatasetLink } from '../models/types/DatasetLink';
+import { Col, Container, Row, Stack } from 'react-bootstrap';
 
 const authOptions = {
   clientName: "Learnee",
@@ -36,13 +37,22 @@ const Classes: React.FC = () => {
 
   }, []);
 
-  const handleClick = (e: any) => {
+  const showClass = (e: any) => {
     console.log(e.target.name)
     navigate('/class/', {
       state: {
         url: e.target.name
       }
     })
+  }
+
+  const deleteClass = (e: any) => {
+    console.log(e.target.name)
+    // navigate('/class/', {
+    //   state: {
+    //     url: e.target.name
+    //   }
+    // })
   }
 
   const createNew = (e: any) => {
@@ -62,7 +72,7 @@ const Classes: React.FC = () => {
     <div className="App">
       <Sidenav type={SideNavType.COMMON} />
       <main>
-        <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose}>
           <Modal.Header>
             <Modal.Title>Choose name</Modal.Title>
           </Modal.Header>
@@ -86,16 +96,41 @@ const Classes: React.FC = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-        <h1>Dashboard</h1>
-        <Button onClick={handleShow} variant="primary">Create new class</Button>
-        {list.map((item, index) => {
-          return (
-            <div key={index}>
-              <Button  name={item.url + "Wikie/classes/" + item.id + ".ttl"} onClick={handleClick} variant="primary">{item.id}</Button>
-              <br />
-            </div>
-          )
-        })}
+        <Container>
+          <Row>
+            <h1>Your classes!</h1>
+          </Row>
+
+          {list.map((item, index) => {
+            return (
+              <Row key={index}>
+                <Col sm={9}>{item.id}</Col>
+                <Col sm={3}>
+                  
+                  <Stack direction="horizontal" gap={2}>
+                    <div>
+                      <Button
+                        className='class-btn'
+                        name={item.url + "Wikie/classes/" + item.id + ".ttl"}
+                        onClick={showClass}
+                        variant="primary"
+                        >
+                          Show
+                      </Button>
+                      <br />
+                    </div>
+                    <div>
+                      <Button className='class-btn' name={item.url + "Wikie/classes/" + item.id + ".ttl"} onClick={deleteClass} variant="primary">Remove</Button>
+                      <br />
+                    </div>
+
+                  </Stack>
+                </Col>
+              </Row>
+            )
+          })}
+          <Button onClick={handleShow} variant="danger">Create new</Button>
+        </Container>
       </main>
     </div>
 

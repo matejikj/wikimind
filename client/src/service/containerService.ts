@@ -65,13 +65,13 @@ export async function getPodUrl(sessionId: string) {
 }
 
 export async function checkContainer(sessionId: string) {
-  if (!getDefaultSession().info.isLoggedIn) {
-    await login({
-      oidcIssuer: "https://login.inrupt.com/",
-      redirectUrl: window.location.href,
-      clientName: "My application"
-    });
-  }
+  // if (!getDefaultSession().info.isLoggedIn) {
+  //   await login({
+  //     oidcIssuer: "https://login.inrupt.com/",
+  //     redirectUrl: window.location.href,
+  //     clientName: "My application"
+  //   });
+  // }
 
   const podUrls = await getPodUrl(sessionId)
   if (podUrls !== null) {
@@ -106,13 +106,7 @@ export async function getDataset(url: string) {
 }
 
 export async function getMindMapList() {
-  if (!getDefaultSession().info.isLoggedIn) {
-    await login({
-      oidcIssuer: "https://login.inrupt.com/",
-      redirectUrl: window.location.href,
-      clientName: "My application"
-    });
-  }
+  
   const readingListUrl: string = 'https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/'
   const myDataset = await getSolidDataset(
     readingListUrl,

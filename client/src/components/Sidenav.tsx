@@ -11,6 +11,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Offcanvas from 'react-bootstrap/Offcanvas';
+import './Sidenav.css';
 
 export enum SideNavType {
   COMMON,
@@ -36,10 +37,10 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
   }
 
   return (
-    <Navbar key={"false"} bg="light" expand={false} className="mb-3">
+    <Navbar key={"false"} bg="light" expand={false}>
       <Container fluid>
         <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${false}`} />
-        <Navbar.Brand href="#">WikiMind</Navbar.Brand>
+        <img className="logo" src="logo.png"/>
 
         <Navbar.Offcanvas
           id={`offcanvasNavbar-expand-${false}`}
@@ -47,9 +48,7 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
           placement="start"
         >
           <Offcanvas.Header closeButton>
-            <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${false}`}>
-              WikiMind
-            </Offcanvas.Title>
+          <img className="logo" src="logo.png"/>
           </Offcanvas.Header>
           <Offcanvas.Body>
             {(type === SideNavType.CANVAS) &&

@@ -63,7 +63,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="App">
       <Sidenav type={SideNavType.COMMON} />
-      <main>
+      <main className='dashboard-main'>
         <Modal show={show} onHide={handleClose}>
           <Modal.Header>
             <Modal.Title>Choose name</Modal.Title>
@@ -80,7 +80,9 @@ const Dashboard: React.FC = () => {
             </Form>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button
+              className='my-btn'
+              variant="secondary" onClick={handleClose}>
               Close
             </Button>
             <Button variant="primary" onClick={createNew}>
@@ -101,11 +103,21 @@ const Dashboard: React.FC = () => {
                   
                   <Stack direction="horizontal" gap={2}>
                     <div>
-                      <Button className='class-btn' name={item.url} onClick={showMindMap} variant="primary">Show</Button>
+                      <Button
+                        className='class-btn'
+                        name={item.url}
+                        onClick={showMindMap}
+                        variant="success"
+                      >Show</Button>
                       <br />
                     </div>
                     <div>
-                      <Button className='class-btn' name={item.url} onClick={removeMindMap} variant="primary">Remove</Button>
+                      <Button
+                        className='class-btn'
+                        name={item.url}
+                        onClick={removeMindMap}
+                        variant="success"
+                        >Remove</Button>
                       <br />
                     </div>
 
@@ -114,7 +126,7 @@ const Dashboard: React.FC = () => {
               </Row>
             )
           })}
-          <Button onClick={handleShow} variant="danger">Create new</Button>
+          <Button onClick={handleShow} variant="outline-success">Create new</Button>
         </Container>
       </main>
     </div>

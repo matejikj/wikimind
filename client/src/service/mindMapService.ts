@@ -118,13 +118,13 @@ export async function createNewMindMap(name: string, sessionId: string) {
 
 export async function updateNode(name: string, sessionId: string, node: Node) {
   console.log(name)
-    if (!getDefaultSession().info.isLoggedIn) {
-    await login({
-      oidcIssuer: "https://login.inrupt.com/",
-      redirectUrl: window.location.href,
-      clientName: "My application"
-    });
-  }
+  //   if (!getDefaultSession().info.isLoggedIn) {
+  //   await login({
+  //     oidcIssuer: "https://login.inrupt.com/",
+  //     redirectUrl: window.location.href,
+  //     clientName: "My application"
+  //   });
+  // }
   const podUrls = await getPodUrl(sessionId)
   if (podUrls !== null) {
     const podUrl = podUrls[0] + "Wikie/mindMaps/" + name + ".ttl"

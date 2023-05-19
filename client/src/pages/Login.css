@@ -1,0 +1,14 @@
+.center-container {
+    display: flex;
+    top: 20px;
+    width: 60%;
+    justify-content:center;
+    margin:0 auto;
+    position:relative;
+}
+
+#login {
+    background-image: url('../../public/learn.jpg');
+    height: 100vh;
+    background-size: cover;
+}
