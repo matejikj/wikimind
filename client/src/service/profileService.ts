@@ -61,14 +61,12 @@ export async function getProfile(userSession: UserSession) {
     const profiles = await getProfileAll(userSession.webId, { fetch });
 
     let myExtendedProfile = profiles.altProfileAll[0];
-    let bb = getThing(myExtendedProfile, "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/profile#Wikie");
+    let bb = getThing(myExtendedProfile, userSession.podUrl + "profile#Wikie");
     let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
 
     if (bb === null) {
-        createProfile(userSession, {name: "jakub", surname: "matejik"})
+        createProfile(userSession, { webId: userSession.webId, name: "jakub", surname: "matejik"})
     } else {
-        console.log(profileBuilder.read(bb))
-
         return profileBuilder.read(bb)
     }
 }

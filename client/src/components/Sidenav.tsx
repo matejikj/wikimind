@@ -41,7 +41,7 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
     <Navbar key={"false"} bg="light" expand={false}>
       <Container fluid>
         <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${false}`} />
-        <img className="logo" src="logo.png"/>
+        <img className="logo" src={'../logo.png'}/>
 
         <Navbar.Offcanvas
           id={`offcanvasNavbar-expand-${false}`}
@@ -49,7 +49,7 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
           placement="start"
         >
           <Offcanvas.Header closeButton>
-          <img className="logo" src="logo.png"/>
+          <img className="logo" src="../logo.png"/>
           </Offcanvas.Header>
           <Offcanvas.Body>
             {(type === SideNavType.CANVAS) &&

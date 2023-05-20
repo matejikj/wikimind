@@ -9,7 +9,8 @@ export class ProfileLDO extends BaseLDO<Profile> implements CRUDLDO<Profile> {
     read(thing: any): Profile {
         return {
             name: getStringNoLocale(thing, (this.rdf.properties.name as LDOIRI).vocabulary)!,
-            surname: getStringNoLocale(thing, (this.rdf.properties.surname as LDOIRI).vocabulary)!
+            surname: getStringNoLocale(thing, (this.rdf.properties.surname as LDOIRI).vocabulary)!,
+            webId: getStringNoLocale(thing, (this.rdf.properties.webId as LDOIRI).vocabulary)!
         }
     };
 
@@ -18,6 +19,8 @@ export class ProfileLDO extends BaseLDO<Profile> implements CRUDLDO<Profile> {
             .addUrl(this.rdf.identity.vocabulary, this.rdf.identity.subject)
             .addStringNoLocale((this.rdf.properties.name as LDOIRI).vocabulary,
                 object.name)
+            .addStringNoLocale((this.rdf.properties.webId as LDOIRI).vocabulary,
+                object.webId)
             .addStringNoLocale((this.rdf.properties.surname as LDOIRI).vocabulary,
                 object.surname)
             .build();

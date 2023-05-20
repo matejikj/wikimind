@@ -108,7 +108,9 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
   }
 
   return (
-    <TransformWrapper>
+    <TransformWrapper
+      disabled={true}
+    >
       <Button id="float-btn-add" onClick={() => { setModalNodeCreate(true) }} variant="primary">Add</Button>
       <ModalNodeCreate
         datasetName={data.title}
@@ -151,6 +153,7 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
         setModal={setModalLinkDelete}
       />
       <TransformComponent
+
         wrapperStyle={{
           maxWidth: "100%",
           maxHeight: "calc(100vh - 50px)",

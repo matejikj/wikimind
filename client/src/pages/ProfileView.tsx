@@ -18,13 +18,14 @@ import Col from 'react-bootstrap/Col';
 import { Profile } from '../models/types/Profile';
 
 const ProfileView: React.FC = () => {
+  const sessionContext = useContext(SessionContext)
 
   const [profile, setProfile] = useState<Profile>({
     name: "",
-    surname: ""
+    surname: "",
+    webId: sessionContext.sessionInfo.webId
   });
 
-  const sessionContext = useContext(SessionContext)
 
 
   useEffect(() => {
@@ -54,7 +55,8 @@ const ProfileView: React.FC = () => {
               <Card border="success" style={{ width: '18rem' }}>
                 <Card.Body>
                   <Card.Title>Profile info:</Card.Title>
-
+                  <Card.Subtitle>{profile.webId}</Card.Subtitle>
+                  <br/>
                   <Form.Label htmlFor="name">Name</Form.Label>
                   <Form.Control
                     type="text"

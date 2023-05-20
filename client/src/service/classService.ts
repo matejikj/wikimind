@@ -6,17 +6,20 @@ import {
     getSolidDataset,
     addStringNoLocale,
     buildThing,
+    getPodOwner,
     createSolidDataset,
     createThing,
     setThing,
     getFile,
+    deleteFile,
     setUrl,
     getThingAll,
     getSolidDatasetWithAcl,
     createContainerAt,
+    getResourceInfo,
     getStringNoLocale,
     getUrlAll,
-    getUrl,
+    getUrl, getContainedResourceUrlAll,
     getAgentAccessAll,
     saveFileInContainer, getSourceUrl,
     universalAccess,
@@ -24,9 +27,18 @@ import {
     getLinkedResourceUrlAll,
     saveSolidDatasetAt,
 } from "@inrupt/solid-client";
+import {
+    AccessGrant,
+    approveAccessRequest,
+    denyAccessRequest
+}
+    from "@inrupt/solid-client-access-grants"
 import { SCHEMA_INRUPT, RDF } from "@inrupt/vocab-common-rdf";
 import { Node } from "../models/types/Node";
 import { MindMapLDO } from "../models/things/MindMapLDO";
+import examDefinition from "../definitions/examDefinition.json"
+import profileDefinition from "../definitions/profile.json"
+import messageDefinition from "../definitions/messageDefinition.json"
 import nodeDefinition from "../definitions/node.json"
 import linkDefinition from "../definitions/link.json"
 import mindMapDefinition from "../definitions/mindMapMetaData.json"
@@ -40,7 +52,7 @@ import { LinkLDO } from "../models/things/LinkLDO";
 import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
 import { generate_uuidv4 } from "./utils";
-import { Class, Class as TeachClass } from "../models/types/Class";
+import { Class as TeachClass } from "../models/types/Class";
 import { ClassLDO } from "../models/things/ClassLDO";
 import { getProfile } from "./profileService";
 import { DatasetLink } from "../models/types/DatasetLink";
@@ -48,21 +60,26 @@ import { DatasetLinkLDO } from "../models/things/DatasetLinkLDO";
 import { LinkType } from "../models/types/LinkType";
 import { AccessRequest, issueAccessRequest, redirectToAccessManagementUi } from "@inrupt/solid-client-access-grants";
 import { UserSession } from "../models/types/UserSession";
+import { ClassDataset } from "../models/types/ClassDataset";
+import { Exam } from "../models/types/Exam";
+import { Profile } from "../models/types/Profile";
+import { ExamLDO } from "../models/things/ExamLDO";
+import { ProfileLDO } from "../models/things/ProfileLDO";
+import { ClassRequest } from "../models/types/ClassRequest";
 
 export async function createNewClass(name: string, userSession: UserSession) {
     const podUrl = userSession.podUrl + 'Wikie/classes/classes.ttl'
     const teacherProfile = await getProfile(userSession)
-    const teacherName = teacherProfile?.name + ' ' + teacherProfile?.surname
     const blankClass: TeachClass = {
         name: name,
         id: generate_uuidv4(),
-        teacher: teacherName,
+        teacher: userSession.webId,
         storage: userSession.podUrl
     }
 
     const datasetLink: DatasetLink = {
-        id: blankClass.id,
-        url: userSession.podUrl,
+        id: generate_uuidv4(),
+        url: userSession.podUrl + "Wikie/classes/" + blankClass.id + ".ttl",
         linkType: LinkType.CLASS_LINK
     }
     const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
@@ -129,10 +146,56 @@ export async function addClass(name: string, userSession: UserSession) {
 }
 
 export async function getClassDataset(userSession: UserSession, classPodUrl: string) {
-    console.log(userSession)
+    const myDataset = await getSolidDataset(
+        classPodUrl,
+        { fetch: fetch }
+    );
+    const things = await getThingAll(myDataset);
+    console.log(things)
+
+    let newClass: TeachClass | null = null;
+    let classBuilder = new ClassLDO(classDefinition)
+    let mindMaps: MindMapDataset[] = []
+    let exams: Exam[] = []
+    let examBuilder = new ExamLDO(examDefinition)
+    let profiles: Profile[] = []
+    let profileBuilder = new ProfileLDO(profileDefinition);
+
+    things.forEach(thing => {
+        const types = getUrlAll(thing, RDF.type);
+        if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
+            console.log(thing)
+        }
+        if (types.some(type => type === examDefinition.identity.subject)) {
+        }
+        if (types.some(type => type === classDefinition.identity.subject)) {
+            newClass = classBuilder.read(thing)
+            console.log(newClass)
+        }
+    });
+    if (newClass !== null) {
+        newClass = newClass as TeachClass
+        const classDataset: ClassDataset = {
+            id: newClass.id,
+            name: newClass.name,
+            storage: newClass.storage,
+            teacher: newClass.teacher,
+            mindMaps: mindMaps,
+            pupils: profiles,
+            testResults: exams
+        }
+        return classDataset
+    } else {
+        return null
+    }
+}
+
+export async function aaaa(userSession: UserSession, classPodUrl: string) {
+
+    console.log(classPodUrl)
 
     // ExamplePrinter sets the requested access (if granted) to expire in 5 minutes.
-    let accessExpiration = new Date(Date.now() + 50 * 60000);
+    // let accessExpiration = new Date(Date.now() + 50 * 60000);
 
     // Call `issueAccessRequest` to create an access request
     //
@@ -274,17 +337,18 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
     //     logAccessInfo("", agentAccess, "https://example.com/resource");
     //   });
 
+    let accessExpiration = new Date(Date.now() + 60 * 60 * 60 * 60000);
 
-    // const requestVC = await issueAccessRequest(
-    //     {
-    //         "access": { read: true },
-    //         "resources": ["https://storage.inrupt.com/7dacd025-b698-49fc-b6ec-d75ee58ff387/Wikie/classes/a16fd524-88eb-4951-bc57-b8652d2f0294.ttl"],   // Array of URLs
-    //         "resourceOwner": "https://id.inrupt.com/matejikj",
-    //         "expirationDate": accessExpiration,
-    //         "purpose": ["https://example.com/purposes#print"]
-    //     },
-    //     { fetch: fetch } // From the requestor's (i.e., ExamplePrinter's) authenticated session
-    // );
+    const requestVC = await issueAccessRequest(
+        {
+            "access": { read: true },
+            "resources": ["https://storage.inrupt.com/7dacd025-b698-49fc-b6ec-d75ee58ff387/Wikie/classes/a16fd524-88eb-4951-bc57-b8652d2f0294.ttl"],   // Array of URLs
+            "resourceOwner": "https://id.inrupt.com/matejikj",
+            "expirationDate": accessExpiration,
+            "purpose": ["https://example.com/purposes#print"]
+        },
+        { fetch: fetch } // From the requestor's (i.e., ExamplePrinter's) authenticated session
+    );
 
     // const aa = JSON.stringify(requestVC)
     // const file = new Blob([aa], { type: 'text/plain' })
@@ -348,6 +412,167 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
 
     // }
     // return classes;
+
+}
+
+export async function allowAccess(userSession: UserSession, classRequest: ClassRequest) {
+    const accessGrant = await approveAccessRequest(
+        classRequest.accessRequest,
+        undefined,  // Optional modifications
+        {
+            fetch: fetch, // From the resource owner's (i.e., snoringsue's) authenticated session
+        }
+    );
+
+    const podUrls = await getPodUrl(accessGrant.credentialSubject.providedConsent.isProvidedTo)
+    console.log(podUrls)
+    if (podUrls !== null) {
+        const dataUrl = podUrls[0] + "Wikie/classes/requests/"
+
+        const cc = JSON.stringify(accessGrant)
+        const file = new Blob([cc], { type: 'text/plain' })
+        console.log(file)
+        const naame = generate_uuidv4() + ".json"
+        const savedFile = await saveFileInContainer(
+            dataUrl,           // Container URL
+            file,                         // File 
+            { slug: naame, contentType: file.type, fetch: fetch }
+        );
+
+        console.log(dataUrl)
+    }
+
+    console.log(accessGrant)
+    await deleteFile(
+        classRequest.requestFile,  // File to delete
+        { fetch: fetch }                         // fetch function from authenticated session
+    );
+
+}
+
+export async function denyRequest(userSession: UserSession, classRequest: ClassRequest) {
+
+    const accessGrant = await denyAccessRequest(
+        classRequest.accessRequest,
+        {
+            fetch: fetch, // From the resource owner's (i.e., snoringsue's) authenticated session
+        }
+    );
+    await deleteFile(
+        classRequest.requestFile,  // File to delete
+        { fetch: fetch }                         // fetch function from authenticated session
+    );
+
+}
+
+export async function getRequests(userSession: UserSession) {
+    const myDataset = await getSolidDataset(
+        userSession.podUrl + "Wikie/classes/requests",
+        { fetch: fetch }          // fetch from authenticated session
+    );
+
+    const resourceUrls = await getContainedResourceUrlAll(myDataset);
+    console.log(resourceUrls)
+    const array: ClassRequest[] = []
+
+    await Promise.all(resourceUrls.map(async (item) => {
+        const file = await getFile(item, { fetch: fetch })
+        let fileText = await file.text()
+        let credentialObject = JSON.parse(fileText)
+        let objectTypes = credentialObject.type as string[]
+        if (objectTypes.includes("SolidAccessRequest")) {
+            const accessRequest = credentialObject as AccessRequest
+            const classUrl = accessRequest.credentialSubject.hasConsent.forPersonalData[0]
+            const id = accessRequest.credentialSubject.hasConsent.forPersonalData[0].split('Wikie/classes/')[1]
+            const myDataset = await getSolidDataset(
+                classUrl,
+                { fetch: fetch }          // fetch from authenticated session
+            )
+            const classThing = await getThing(myDataset, classUrl + "#" + id.split(".ttl")[0])
+            let classBuilder = new ClassLDO(classDefinition)
+            if (classThing !== null) {
+                const classObject = classBuilder.read(classThing)
+                array.push({
+                    accessRequest: accessRequest,
+                    className: classObject.name,
+                    requestFile: item
+                })
+            }
+        }
+        if (objectTypes.includes("SolidAccessGrant")) {
+            const accessGrant = credentialObject as AccessGrant
+            // console.log(accessGrant)
+
+            const datasetLink: DatasetLink = {
+                id: generate_uuidv4(),
+                url: accessGrant.credentialSubject.providedConsent.forPersonalData[0],
+                linkType: LinkType.CLASS_LINK
+            }
+            const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
+            let myDataset = await getSolidDataset(
+                userSession.podUrl + "Wikie/classes/classes.ttl",
+                { fetch: fetch }
+            );
+            const newDAtaset = setThing(myDataset, classLDO)
+            const savedSolidDatasetContainer = await saveSolidDatasetAt(
+                userSession.podUrl + "Wikie/classes/classes.ttl",
+                newDAtaset,
+                { fetch: fetch }
+            );
+
+        }
+
+        // const accessGrant = await approveAccessRequest(
+        //     ii,
+        //     undefined,  // Optional modifications
+        //     {
+        //         fetch: fetch, // From the resource owner's (i.e., snoringsue's) authenticated session
+        //     }
+        // );
+
+    }))
+
+    console.log(array)
+    return array
+}
+
+export async function requestClass(userSession: UserSession, classUri: string) {
+    let paramString = classUri.split('?')[1];
+    let webId = classUri.split('?')[0];
+    const urlParams = new URLSearchParams(paramString);
+    let classId = (urlParams.get("classId"))
+
+    const podUrls = await getPodUrl(webId)
+    console.log(podUrls)
+    if (podUrls !== null) {
+        const dataUrl = podUrls[0] + "Wikie/classes/" + classId + ".ttl"
+        console.log(dataUrl)
+
+        let accessExpiration = new Date(Date.now() + 60 * 60 * 60 * 60000);
+        const requestVC = await issueAccessRequest(
+            {
+                "access": { read: true },
+                "resources": [dataUrl],   // Array of URLs
+                "resourceOwner": webId,
+                "expirationDate": accessExpiration,
+                "purpose": ["https://example.com/purposes#print"]
+            },
+            { fetch: fetch } // From the requestor's (i.e., ExamplePrinter's) authenticated session
+        );
+        console.log(requestVC)
+        const cc = JSON.stringify(requestVC)
+        const dd = podUrls[0] + "Wikie/classes/requests/"
+        const file = new Blob([cc], { type: 'text/plain' })
+        console.log(file)
+        const naame = generate_uuidv4() + ".json"
+        const savedFile = await saveFileInContainer(
+            dd,           // Container URL
+            file,                         // File 
+            { slug: naame, contentType: file.type, fetch: fetch }
+        );
+
+    }
+
 
 }
 

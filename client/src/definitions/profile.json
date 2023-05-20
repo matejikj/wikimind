@@ -10,7 +10,7 @@
         "name": {
             "vocabulary": "http://schema.org/name"
         },
-        "id": {
+        "webId": {
             "vocabulary": "http://schema.org/identifier"
         }
     }

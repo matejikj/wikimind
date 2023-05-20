@@ -29,39 +29,22 @@ const Visualisation: React.FC = () => {
     const [mounted, setMounted] = useState(false); // <-- new state variable
 
     React.useEffect(() => {
-        function handleResize() {
-            setWidth(window.innerWidth)
-            // console.log('resized to: ', window.innerWidth, 'x', window.innerHeight)
-        }
-        window.addEventListener('resize', handleResize)
-        setWidth(window.innerWidth)
     })
 
     return (
         <div className="App">
             <Sidenav type={SideNavType.COMMON} />
             <main ref={ref}>
-                {width > 770 ? (
-                    <Container>
-                        <Row>
-                            <Col sm="6">
-                                fsadfsad
-                            </Col>
-                            <Col sm="6">
-                                tyeytr
-                            </Col>
-                        </Row>
-                    </Container>
-                ) : (
-                    <Container>
-                        <Row>
-                            <Col sm="12">
-                                yuuuuuuuuuu
-                            </Col>
-                        </Row>
-                    </Container>
-                )}
-
+                <Container>
+                    <Row>
+                        <Col sm="6">
+                            fsadfsad
+                        </Col>
+                        <Col sm="6">
+                            tyeytr
+                        </Col>
+                    </Row>
+                </Container>
             </main>
         </div>
     )

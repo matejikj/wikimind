@@ -83,6 +83,10 @@ export async function checkContainer(sessionId: string) {
     if (!(await isUrlContainer(podUrl + 'Wikie/classes'))) {
       const cont = createContainerAt(podUrl + 'Wikie/classes', { fetch: fetch });
     }
+    if (!(await isUrlContainer(podUrl + 'Wikie/classes/requests'))) {
+      const cont = createContainerAt(podUrl + 'Wikie/classes/requests', { fetch: fetch });
+    }
+    // TODO - pridat kontrolu na spravne pristupove podminky pro requests
     const classesDatasetUrl = podUrl + 'Wikie/classes/classes.ttl'
     const classesDataset = await getDataset(classesDatasetUrl)
     if (classesDataset === null) {

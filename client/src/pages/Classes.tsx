@@ -10,10 +10,12 @@ import Form from 'react-bootstrap/Form';
 import './Login.css';
 import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
-import { createNewClass, getClassesList } from '../service/classService';
+import { allowAccess, createNewClass, denyRequest, getClassesList, getRequests, requestClass } from '../service/classService';
 import { Class } from '../models/types/Class';
 import { DatasetLink } from '../models/types/DatasetLink';
-import { Col, Container, Row, Stack } from 'react-bootstrap';
+import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
+import { AccessRequest } from '@inrupt/solid-client-access-grants';
+import { ClassRequest } from '../models/types/ClassRequest';
 
 const authOptions = {
   clientName: "Learnee",
@@ -21,21 +23,38 @@ const authOptions = {
 
 const Classes: React.FC = () => {
   const [list, setList] = useState<DatasetLink[]>([]);
+  const [requestsCount, setRequestsCount] = useState(0);
   const [show, setShow] = useState(false);
+  const [request, setRequest] = useState(false);
+  const [requestUrl, setRequestUrl] = useState("");
   const [name, setName] = useState("");
   const sessionContext = useContext(SessionContext)
+  const [requests, setRequests] = useState<ClassRequest[]>([]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const navigate = useNavigate();
 
+  // const [mounted, setMounted] = useState(false); // <-- new state variable
+
+  // useEffect(() => {
+  //   setMounted(true); // set the mounted state variable to true after the component mounts
+  // }, []);
+
+
   useEffect(() => {
     const result = getClassesList(sessionContext.sessionInfo).then((res) => {
       setList(res)
     });
-
+    getRequests(sessionContext.sessionInfo).then((aaa) => {
+      setRequests(aaa)
+    });
   }, []);
+
+  useEffect(() => {
+    
+  }, []);  
 
   const showClass = (e: any) => {
     console.log(e.target.name)
@@ -55,6 +74,46 @@ const Classes: React.FC = () => {
     // })
   }
 
+  const allowRequest = (e: any) => {
+    console.log(e.target.name)
+    let aa = requests.find((item) => { return item.requestFile === e.target.name})
+    if (aa !== undefined) {
+      allowAccess(sessionContext.sessionInfo, aa)
+    }
+
+    // navigate('/class/', {
+    //   state: {
+    //     url: e.target.name
+    //   }
+    // })
+  }
+
+  const denyAccess = (e: any) => {
+    console.log(e.target.name)
+    let aa = requests.find((item) => { return item.requestFile === e.target.name})
+    if (aa !== undefined) {
+      denyRequest(sessionContext.sessionInfo, aa)
+    }
+
+    // navigate('/class/', {
+    //   state: {
+    //     url: e.target.name
+    //   }
+    // })
+  }
+
+  const sendRequest = (e: any) => {
+    console.log(e.target.name)
+    requestClass(sessionContext.sessionInfo, requestUrl)
+    // getRequests(sessionContext.sessionInfo)
+    // navigate('/class/', {
+    //   state: {
+    //     url: e.target.name
+    //   }
+    // })
+  }
+
+
   const createNew = (e: any) => {
     if (sessionContext.sessionInfo.isLogged) {
       createNewClass(name, sessionContext.sessionInfo).then((res) => {
@@ -72,7 +131,7 @@ const Classes: React.FC = () => {
     <div className="App">
       <Sidenav type={SideNavType.COMMON} />
       <main>
-      <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={handleClose}>
           <Modal.Header>
             <Modal.Title>Choose name</Modal.Title>
           </Modal.Header>
@@ -106,21 +165,21 @@ const Classes: React.FC = () => {
               <Row key={index}>
                 <Col sm={9}>{item.id}</Col>
                 <Col sm={3}>
-                  
+
                   <Stack direction="horizontal" gap={2}>
                     <div>
                       <Button
                         className='class-btn'
-                        name={item.url + "Wikie/classes/" + item.id + ".ttl"}
+                        name={item.url}
                         onClick={showClass}
                         variant="primary"
-                        >
-                          Show
+                      >
+                        Show
                       </Button>
                       <br />
                     </div>
                     <div>
-                      <Button className='class-btn' name={item.url + "Wikie/classes/" + item.id + ".ttl"} onClick={deleteClass} variant="primary">Remove</Button>
+                      <Button className='class-btn' name={item.url} onClick={deleteClass} variant="primary">Remove</Button>
                       <br />
                     </div>
 
@@ -129,7 +188,75 @@ const Classes: React.FC = () => {
               </Row>
             )
           })}
-          <Button onClick={handleShow} variant="danger">Create new</Button>
+          <Row>
+
+            {request ?
+              <Stack direction="horizontal" gap={1}>
+                <Form.Control
+                  // style={{ maxWidth: '500px' }}
+                  type="text"
+                  id="inputPassword5"
+                  value={requestUrl}
+                  name="id"
+                  style={{ maxWidth: '600px' }}
+                  onChange={(e) => { setRequestUrl(e.target.value) }}
+                />
+                <Button onClick={sendRequest} variant="success">Request</Button>
+                <Button onClick={() => { setRequest(false) }} variant="danger">Cancel</Button>
+              </Stack> :
+              <Stack direction="horizontal" gap={1}>
+                <Button onClick={handleShow} variant="primary">Create new class</Button>
+                <Button onClick={() => { setRequest(true) }} variant="success">Add class</Button>
+              </Stack>
+            }
+          </Row>
+          <Row>
+            <Col sm="12">
+              <Card className="class-card">
+                <Container>
+                  <Row>
+                    <h4>Requests</h4>
+                    {requests.length === 0 &&
+                      <p>No requests already</p>
+                    }
+
+                  </Row>
+                  {requests.map((item, index) => {
+                    return (
+                      <Row key={index}>
+                        <Col sm={9}>{item.className}</Col>
+                        <Col sm={3}>
+
+                          <Stack direction="horizontal" gap={2}>
+                            <div>
+                              <Button
+                                className='class-btn'
+                                name={item.requestFile}
+                                onClick={allowRequest}
+                                variant="success"
+                              >Allow</Button>
+                              <br />
+                            </div>
+                            <div>
+                              <Button
+                                className='class-btn'
+                                name={item.requestFile}
+                                onClick={denyAccess}
+                                variant="outline-danger"
+                              >Deny</Button>
+                              <br />
+                            </div>
+
+                          </Stack>
+                        </Col>
+                      </Row>
+                    )
+                  })}
+                </Container>
+              </Card>
+
+            </Col>
+          </Row>
         </Container>
       </main>
     </div>

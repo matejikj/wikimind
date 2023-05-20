@@ -39,14 +39,14 @@ const Circle: React.FC<{
     const theme = useContext(SessionContext)
 
     const handlePointerDown = (e: any) => {
-        e.stopPropagation()
-        e.preventDefault()
+        // e.stopPropagation()
+        // e.preventDefault()
         if (!(canvasState === CanvasState.ADD_CONNECTION)) {
             const el = e.target;
             const bbox = e.target.getBoundingClientRect();
             // const x = e.clientX - bbox.left;
             // const y = e.clientY - bbox.top;
-            el.setPointerCapture(e.pointerId);
+            // el.setPointerCapture(e.pointerId);
 
             // setX(x)
             // setY(y)
@@ -54,18 +54,19 @@ const Circle: React.FC<{
         }
     };
     const handlePointerMove = (e: any) => {
-        e.stopPropagation()
-        e.preventDefault()
+        console.log(e)
+        // e.stopPropagation()
+        // e.preventDefault()
         if (!(canvasState === CanvasState.ADD_CONNECTION)) {
             if (active) {
-                setX(e.clientX)
-                setY(e.clientY - 50)
+                setX(e.touches[0].clientX)
+                setY(e.touches[0].clientY - 50)
             }
         }
     };
     const handlePointerUp = (e: any) => {
-        e.stopPropagation()
-        e.preventDefault()
+        // e.stopPropagation()
+        // e.preventDefault()
         if (!(canvasState === CanvasState.ADD_CONNECTION)) {
             // parentSetPosition(x, y, e.target.id)
             setActive(false);
@@ -144,13 +145,13 @@ const Circle: React.FC<{
                 fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 1) : 1}
                 id={node.id}
                 // stroke={contextMenu.nodeId === node.id ? "green" : "orange"}
-                onPointerDown={handlePointerDown}
-                onPointerUp={handlePointerUp}
-                onPointerMove={handlePointerMove}
-                onClick={addConnection}
-                // onTouchStart={handlePointerDown}
-                // onTouchEnd={handlePointerUp}
-                // onTouchMove={handlePointerMove}
+                // onPointerDown={handlePointerDown}
+                // onPointerUp={handlePointerUp}
+                // onPointerMove={handlePointerMove}
+                // onClick={addConnection}
+                onTouchStart={handlePointerDown}
+                onTouchEnd={handlePointerUp}
+                onTouchMove={handlePointerMove}
                 fill={active ? "blue" : "#543"}
                 onContextMenu={handleContextMenu}
             />
@@ -158,9 +159,13 @@ const Circle: React.FC<{
                 x={x - node.title.length * 4}
                 y={y + 5}
                 id={node.id}
-                onPointerDown={handlePointerDown}
-                onPointerUp={handlePointerUp}
-                onPointerMove={handlePointerMove}
+                // onPointerDown={handlePointerDown}
+                // onPointerUp={handlePointerUp}
+                // onPointerMove={handlePointerMove}
+                onTouchStart={handlePointerDown}
+                onTouchEnd={handlePointerUp}
+                onTouchMove={handlePointerMove}
+
                 fill={active ? "blue" : "red"}
                 onClick={addConnection}
                 onContextMenu={handleContextMenu}
