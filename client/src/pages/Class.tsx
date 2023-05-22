@@ -18,6 +18,7 @@ import { DatasetLink } from "../models/types/DatasetLink";
 import { getClassDataset } from "../service/classService";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import './Class.css';
+import { FcComments } from "react-icons/fc";
 
 const Class: React.FC = () => {
   const d3Container = useRef(null);
@@ -83,6 +84,19 @@ const Class: React.FC = () => {
   }
 
   const handleShow = (e: any) => {
+    // if (sessionContext.sessionInfo.isLogged) {
+    //   createNewClass(name, sessionContext.sessionInfo).then((res) => {
+    //     console.log(res)
+    //     // navigate('/class/', {
+    //     //   state: {
+    //     //     url: res
+    //     //   }
+    //     // })
+    //   })
+    // }
+  }
+
+  const sendMessage = (e: any) => {
     // if (sessionContext.sessionInfo.isLogged) {
     //   createNewClass(name, sessionContext.sessionInfo).then((res) => {
     //     console.log(res)
@@ -181,32 +195,14 @@ const Class: React.FC = () => {
                     }
 
                   </Row>
-                  {dataset?.mindMaps.map((item, index) => {
+                  {dataset?.pupils.map((item, index) => {
                     return (
                       <Row key={index}>
-                        <Col sm={9}>{item.title}</Col>
+                        <Col sm={9}>{item.name} {item.surname}</Col>
                         <Col sm={3}>
 
                           <Stack direction="horizontal" gap={2}>
-                            <div>
-                              <Button
-                                className='class-btn'
-                                name={item.url}
-                                onClick={showMindMap}
-                                variant="success"
-                              >Show</Button>
-                              <br />
-                            </div>
-                            <div>
-                              <Button
-                                className='class-btn'
-                                name={item.url}
-                                onClick={removeMindMap}
-                                variant="success"
-                              >Remove</Button>
-                              <br />
-                            </div>
-
+                            <FcComments onClick={sendMessage}></FcComments>
                           </Stack>
                         </Col>
                       </Row>

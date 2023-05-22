@@ -1,0 +1,4 @@
+.accordion-class {
+    overflow: auto;
+    max-height: 45vh;
+}

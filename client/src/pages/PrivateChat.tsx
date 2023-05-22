@@ -16,7 +16,7 @@ import { generate_uuidv4 } from "../service/utils";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
 import { Col, Container, Row } from "react-bootstrap";
 
-const Visualisation: React.FC = () => {
+const PrivateChat: React.FC = () => {
     const d3Container = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
@@ -51,4 +51,4 @@ const Visualisation: React.FC = () => {
 
 };
 
-export default Visualisation;
+export default PrivateChat;

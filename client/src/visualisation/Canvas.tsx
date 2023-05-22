@@ -43,7 +43,7 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
   const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
   const [clickedNode, setClickedNode] = useState<Node>();
   const [clickedLink, setClickedLink] = useState<Link>();
-
+  const [disabledCanvas, setDisabledCanvas] = useState(false);
   const [circleMenu, setCircleMenu] = useState<ContextMenuType>({
     posX: 0,
     posY: 0,
@@ -109,7 +109,7 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
 
   return (
     <TransformWrapper
-      disabled={true}
+      disabled={disabledCanvas}
     >
       <Button id="float-btn-add" onClick={() => { setModalNodeCreate(true) }} variant="primary">Add</Button>
       <ModalNodeCreate
@@ -205,6 +205,7 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
                 setCanvasState={setCanvasState}
                 contextMenu={circleMenu}
                 setContextMenu={setCircleMenu}
+                setDisabledCanvas={setDisabledCanvas}
               />
             );
           })}

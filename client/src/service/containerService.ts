@@ -19,7 +19,7 @@ import {
   getPodUrlAll,
   isContainer,
   getContainedResourceUrlAll,
-  Thing,
+  Thing, universalAccess,
   getLinkedResourceUrlAll,
   saveSolidDatasetAt,
 } from "@inrupt/solid-client";
@@ -83,6 +83,17 @@ export async function checkContainer(sessionId: string) {
     if (!(await isUrlContainer(podUrl + 'Wikie/classes'))) {
       const cont = createContainerAt(podUrl + 'Wikie/classes', { fetch: fetch });
     }
+    if (!(await isUrlContainer(podUrl + 'Wikie/messages'))) {
+      const cont = createContainerAt(podUrl + 'Wikie/messages', { fetch: fetch });
+      let courseSolidDataset = createSolidDataset();
+      const savedSolidDatasetContainer = await saveSolidDatasetAt(
+        podUrl + 'Wikie/messages/contacts.ttl',
+        courseSolidDataset,
+        { fetch: fetch }
+      );
+
+
+    }
     if (!(await isUrlContainer(podUrl + 'Wikie/classes/requests'))) {
       const cont = createContainerAt(podUrl + 'Wikie/classes/requests', { fetch: fetch });
     }
@@ -97,13 +108,33 @@ export async function checkContainer(sessionId: string) {
         { fetch: fetch }
       );
     }
+
+
+            universalAccess.setAgentAccess(
+        podUrl + 'Wikie/messages/contacts.ttl',         // Resource
+        "http://www.w3.org/ns/solid/acp#AuthenticatedAgent",     // Agent
+        { append: true, read: true, write: false },          // Access object
+        { fetch: fetch }                         // fetch function from authenticated session
+      ).then((newAccess) => {
+        console.log("newAccess       contacts.ttl")
+      });
+      universalAccess.setAgentAccess(
+        podUrl + 'Wikie/classes/requests',         // Resource
+        "http://www.w3.org/ns/solid/acp#AuthenticatedAgent",     // Agent
+        { append: true, read: true, write: false },          // Access object
+        { fetch: fetch }                         // fetch function from authenticated session
+      ).then((newAccess) => {
+        console.log("newAccess  vrequests")
+      });
+  
+
     return podUrl
   }
   throw new Error("There is problem with SolidPod.");
 }
 
 export async function getDataset(url: string) {
-  try { 
+  try {
     const classesDataset = await getSolidDataset(url, { fetch: fetch })
     return classesDataset
   } catch (error) {
@@ -123,7 +154,7 @@ export async function getMindMapList(userSession: UserSession) {
   // const myDataset = await getSolidDatasetWithAcl(readingListUrl);
   const resourceUrls = await getContainedResourceUrlAll(myDataset);
 
-  const resultResources: {url: string; title: string | null}[] = []
+  const resultResources: { url: string; title: string | null }[] = []
   for (var res of resourceUrls) {
     const dat = await getSolidDataset(res, { fetch: fetch })
     const things = getThingAll(dat);

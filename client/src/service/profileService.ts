@@ -12,7 +12,7 @@ import {
   setUrl,
   getThingAll,
   createContainerAt,
-  getStringNoLocale,
+  getStringNoLocale,universalAccess,
   getUrlAll,
   getUrl,
   Thing,
@@ -65,7 +65,20 @@ export async function getProfile(userSession: UserSession) {
     let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
 
     if (bb === null) {
+        console.log("AAAAAAA")
         createProfile(userSession, { webId: userSession.webId, name: "jakub", surname: "matejik"})
+        universalAccess.setPublicAccess(
+            userSession.podUrl + "profile#Wikie",  // Resource
+            { read: true, write: false },    // Access object
+            { fetch: fetch }                 // fetch function from authenticated session
+          ).then((newAccess) => {
+            if (newAccess === null) {
+              console.log("Could not load access details for this Resource.");
+            } else {
+              console.log("Returned Public Access:: ", JSON.stringify(newAccess));
+          
+            }
+          });
     } else {
         return profileBuilder.read(bb)
     }

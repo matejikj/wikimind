@@ -9,8 +9,9 @@ import { createNode } from "../../service/mindMapService";
 import { generate_uuidv4 } from "../../service/utils";
 import { CanvasState } from '../models/CanvasState'
 import Container from 'react-bootstrap/Container';
-import { Col, Row } from "react-bootstrap";
+import { Accordion, Col, Row } from "react-bootstrap";
 import ModalHeader from 'react-bootstrap/ModalHeader'
+import './ModalNodeCreate.css';
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalNodeCreate: React.FC<{
@@ -23,10 +24,11 @@ const ModalNodeCreate: React.FC<{
 }> = ({ datasetName, canvasState, showModal, setModal }) => {
     const theme = useContext(SessionContext)
     const [formInputs, setFormInputs] = useState({
-        title: 'title_',
-        description: 'description_',
+        title: '',
+        description: '',
         keyword: ''
     });
+    const [results, setResults] = useState<{ title: string; comment: any; }[]>([]);
 
     function handleChange(event: any) {
         const key = event.target.name;
@@ -34,13 +36,37 @@ const ModalNodeCreate: React.FC<{
         setFormInputs({ ...formInputs, [key]: value })
     }
 
+    const searchTerm = 'musk';
+    const language = 'en';
+
+
     async function searchKeyword(event: any) {
-        try {
-            const response = await axios.get(`http://localhost:3006/search?keyword=${formInputs.keyword}`);
-            console.log(response.data);
-        } catch (error) {
-            console.error(error);
-        }
+        const url = "https://lookup.dbpedia.org/api/search?label=" + formInputs.keyword
+        axios.get("https://lookup.dbpedia.org/api/search", {
+            params: {
+                format: 'json',
+                label: formInputs.keyword,
+                languages: language
+            },
+            headers: {
+                Accept: 'application/json'
+            }
+        })
+            .then(response => {
+                // Handle the response data
+                let a = response.data.docs.slice(0, 30)
+                a = a.map((item: any) => {
+                    return {
+                        title: item.label === undefined ? '' : item.label[0].replace('<B>', '').replace('</B>', ''),
+                        comment: item.comment === undefined ? '' : item.comment[0]
+                    }
+                })
+                setResults(a)
+            })
+            .catch(error => {
+                // Handle the error
+                console.error(error);
+            });
     }
 
     function handleSave(event: any) {
@@ -57,6 +83,14 @@ const ModalNodeCreate: React.FC<{
             // createLink()
         }
     }
+
+    function bbb(event: any) {
+        console.log(results[event])
+        console.log()
+        setFormInputs({ ...formInputs, description: results[event].comment, title: results[event].title })
+    }
+
+
     const handleClose = () => setModal(false);
 
     return (
@@ -67,8 +101,34 @@ const ModalNodeCreate: React.FC<{
                 <Modal.Title>Find and add new node</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form.Label htmlFor="inputKeyword">Searching keyword:</Form.Label>
                 <Container fluid>
+                    <Form.Label htmlFor="inputKeyword">Entity info:</Form.Label>
+
+                    <Row>
+                        <Col xs={6}>
+                            <Form.Control
+                                type="text"
+                                placeholder="title"
+                                name="title"
+                                value={formInputs.title}
+                                onChange={handleChange}
+                            />
+                        </Col>
+                    </Row><Row>
+                        <Col xs={12}>
+                            <Form.Control
+                                as="textarea"
+                                rows={4}
+                                placeholder="description"
+                                name="description"
+                                value={formInputs.description}
+                                onChange={handleChange}
+                            />
+                        </Col>
+
+                    </Row><Row><br /></Row>
+                    <Form.Label htmlFor="inputKeyword">Searching keyword:</Form.Label>
+
                     <Row>
                         <Col xs={9}>
                             <Form.Control
@@ -83,12 +143,24 @@ const ModalNodeCreate: React.FC<{
                             <Button onClick={searchKeyword}>Search</Button>
                         </Col>
 
-                    </Row>
+                    </Row><Row><br /></Row>
                     <Row>
-                        <br />
-                    </Row>
-                    <Row>
-                        <br />
+                        <Accordion className="accordion-class" defaultActiveKey="0">
+                            {results.map((item: any, index: any) => {
+                                return (
+                                    <Accordion.Item key={index} eventKey={index}>
+                                        <Accordion.Header>{item.title}
+                                        </Accordion.Header>
+                                        <Accordion.Body>
+                                            <p>{item.comment}</p>
+                                            <Button variant="secondary" onClick={() => { bbb(index) }}>
+                                                select
+                                            </Button>
+                                        </Accordion.Body>
+                                    </Accordion.Item>
+                                )
+                            })}
+                        </Accordion>
                     </Row>
                 </Container>
 

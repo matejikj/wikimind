@@ -1,0 +1,121 @@
+import { login, handleIncomingRedirect, getDefaultSession, fetch } from "@inrupt/solid-client-authn-browser";
+
+import {
+    addUrl,
+    getThing,
+    getSolidDataset,
+    addStringNoLocale,
+    buildThing,
+    getPodOwner,
+    createSolidDataset,
+    createThing,
+    setThing,
+    getFile, getProfileAll,
+    deleteFile,
+    setUrl,
+    getThingAll,
+    getSolidDatasetWithAcl,
+    createContainerAt,
+    getResourceInfo,
+    getStringNoLocale,
+    getUrlAll,
+    getUrl, getContainedResourceUrlAll,
+    getAgentAccessAll,
+    saveFileInContainer, getSourceUrl,
+    universalAccess,
+    Thing,
+    getLinkedResourceUrlAll,
+    saveSolidDatasetAt,
+} from "@inrupt/solid-client";
+import {
+    AccessGrant,
+    approveAccessRequest,
+    denyAccessRequest
+}
+    from "@inrupt/solid-client-access-grants"
+import { SCHEMA_INRUPT, RDF } from "@inrupt/vocab-common-rdf";
+import { Node } from "../models/types/Node";
+import { MindMapLDO } from "../models/things/MindMapLDO";
+import examDefinition from "../definitions/examDefinition.json"
+import profileDefinition from "../definitions/profile.json"
+import messageDefinition from "../definitions/messageDefinition.json"
+import nodeDefinition from "../definitions/node.json"
+import linkDefinition from "../definitions/link.json"
+import mindMapDefinition from "../definitions/mindMapMetaData.json"
+import classDefinition from "../definitions/class.json"
+import datasetLinkDefinition from "../definitions/datasetLink.json"
+import { MindMapDataset } from "../models/types/MindMapDataset";
+import { LDO } from "../models/LDO";
+import { NodeLDO } from "../models/things/NodeLDO";
+import { Link } from "../models/types/Link";
+import { LinkLDO } from "../models/things/LinkLDO";
+import { MindMap } from "../models/types/MindMap";
+import { getPodUrl } from "./containerService";
+import { generate_uuidv4 } from "./utils";
+import { Class as TeachClass } from "../models/types/Class";
+import { ClassLDO } from "../models/things/ClassLDO";
+import { getProfile } from "./profileService";
+import { DatasetLink } from "../models/types/DatasetLink";
+import { DatasetLinkLDO } from "../models/things/DatasetLinkLDO";
+import { LinkType } from "../models/types/LinkType";
+import { AccessRequest, issueAccessRequest, redirectToAccessManagementUi } from "@inrupt/solid-client-access-grants";
+import { UserSession } from "../models/types/UserSession";
+import { ClassDataset } from "../models/types/ClassDataset";
+import { Exam } from "../models/types/Exam";
+import { Profile } from "../models/types/Profile";
+import { ExamLDO } from "../models/things/ExamLDO";
+import { ProfileLDO } from "../models/things/ProfileLDO";
+import { ClassRequest } from "../models/types/ClassRequest";
+
+export async function getProfiles(userSession: UserSession) {
+
+    let datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
+    let profiles: Profile[] = []
+
+    let msgDataset = await getSolidDataset(
+        userSession.podUrl + "Wikie/messages/contacts.ttl",
+        { fetch: fetch }
+    );
+
+    const things = await getThingAll(msgDataset);
+
+    await Promise.all(things.map(async (thing) => {
+        const types = getUrlAll(thing, RDF.type);
+        if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
+            const newLink = datasetLinkBuilder.read(thing)
+            if (newLink.linkType === LinkType.PROFILE_LINK) {
+                const pupilProfiles = await getProfileAll(newLink.url, { fetch });
+
+                let myExtendedProfile = pupilProfiles.altProfileAll[0];
+
+                const podUrls = await getPodUrl(newLink.url)
+                if (podUrls !== null) {
+                    const podUrl = podUrls[0]
+                    let bb = getThing(myExtendedProfile, podUrl + "profile#Wikie");
+                    let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+                    let userProfile = profileBuilder.read(bb)
+                    console.log(userProfile)
+                    profiles.push(userProfile)
+                }
+            }
+        }
+    }))
+
+    console.log(profiles)
+
+
+
+
+
+    // const newProfileLink = new DatasetLinkLDO(datasetLinkDefinition).read()
+
+
+    // let minMapBuilder = new MindMapLDO(mindMapDefinition)
+    // let mindMap: MindMap | null = null;
+    // let nodes: Node[] = []
+    // let nodeBuilder = new NodeLDO(nodeDefinition)
+    // let links: Link[] = []
+    // let linkBuilder = new LinkLDO(linkDefinition)
+
+    return profiles
+}

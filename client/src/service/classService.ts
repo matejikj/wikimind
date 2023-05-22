@@ -10,7 +10,7 @@ import {
     createSolidDataset,
     createThing,
     setThing,
-    getFile,
+    getFile,getProfileAll,
     deleteFile,
     setUrl,
     getThingAll,
@@ -160,19 +160,45 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
     let examBuilder = new ExamLDO(examDefinition)
     let profiles: Profile[] = []
     let profileBuilder = new ProfileLDO(profileDefinition);
+    let datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
 
-    things.forEach(thing => {
+    await Promise.all(things.map(async (thing) => {
         const types = getUrlAll(thing, RDF.type);
         if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
-            console.log(thing)
+            const newLink = datasetLinkBuilder.read(thing)
+            if (newLink.linkType === LinkType.PROFILE_LINK) {
+                console.log(newLink)
+                console.log("newLink")
+                const pupilProfiles = await getProfileAll(newLink.url, { fetch });
+
+                console.log(pupilProfiles)
+                let myExtendedProfile = pupilProfiles.altProfileAll[0];
+                
+
+                const podUrls = await getPodUrl(newLink.url)
+                if (podUrls !== null) {
+                  const podUrl = podUrls[0]
+                  let bb = getThing(myExtendedProfile, podUrl + "profile#Wikie");
+                  let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+                  let userProfile = profileBuilder.read(bb)
+                  console.log(userProfile)
+                  profiles.push(userProfile)
+                }
+              
+
+                
+
+            }
         }
         if (types.some(type => type === examDefinition.identity.subject)) {
+            // const newLink = datasetLinkBuilder.read(thing)
         }
         if (types.some(type => type === classDefinition.identity.subject)) {
             newClass = classBuilder.read(thing)
             console.log(newClass)
         }
-    });
+    }))
+
     if (newClass !== null) {
         newClass = newClass as TeachClass
         const classDataset: ClassDataset = {
@@ -190,7 +216,32 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
     }
 }
 
-export async function aaaa(userSession: UserSession, classPodUrl: string) {
+export async function aaaa() {
+    const newProfileLink = new DatasetLinkLDO(datasetLinkDefinition).create({
+        id: generate_uuidv4(),
+        linkType: LinkType.PROFILE_LINK,
+        url: "https://id.inrupt.com/matejikj"
+      })
+  
+      let myContactsDataset = await getSolidDataset(
+        "https://storage.inrupt.com/7dacd025-b698-49fc-b6ec-d75ee58ff387/Wikie/messages/contacts.ttl",
+        { fetch: fetch }
+      );
+      
+    //   const newProfileLink = new DatasetLinkLDO(datasetLinkDefinition).read()
+
+      const newProfileThing = setThing(myContactsDataset, newProfileLink)
+
+      const savedProfileDatatset = await saveSolidDatasetAt(
+        "https://storage.inrupt.com/7dacd025-b698-49fc-b6ec-d75ee58ff387/Wikie/messages/contacts.ttl",
+        newProfileThing,
+        { fetch: fetch }
+      );
+      console.log(myContactsDataset)
+      console.log("AAAAAAAAAAAAA")
+}
+
+export async function aaaaaa(userSession: UserSession, classPodUrl: string) {
 
     console.log(classPodUrl)
 
@@ -439,7 +490,73 @@ export async function allowAccess(userSession: UserSession, classRequest: ClassR
             { slug: naame, contentType: file.type, fetch: fetch }
         );
 
-        console.log(dataUrl)
+        const datasetLink: DatasetLink = {
+            id: generate_uuidv4(),
+            url: accessGrant.credentialSubject.providedConsent.isProvidedTo,
+            linkType: LinkType.PROFILE_LINK
+        }
+        const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
+        let myDataset = await getSolidDataset(
+            accessGrant.credentialSubject.providedConsent.forPersonalData[0],
+            { fetch: fetch }
+        );
+        const newDAtaset = setThing(myDataset, classLDO)
+        const savedSolidDatasetContainer = await saveSolidDatasetAt(
+            accessGrant.credentialSubject.providedConsent.forPersonalData[0],
+            newDAtaset,
+            { fetch: fetch }
+        );
+
+        universalAccess.setAgentAccess(
+            accessGrant.credentialSubject.providedConsent.forPersonalData[0],
+            accessGrant.credentialSubject.providedConsent.isProvidedTo,     // Agent
+            { append: true, read: true, write: false },          // Access object
+            { fetch: fetch }    // fetch function from authenticated session
+        ).then((newAccess) => {
+            console.log(newAccess)
+        });
+
+        let courseSolidDataset = createSolidDataset();
+
+
+        let messageDatasetUrl = userSession.podUrl + "Wikie/messages/" + encodeURIComponent(accessGrant.credentialSubject.providedConsent.isProvidedTo) + ".ttl"
+        
+        const messageDataset = await saveSolidDatasetAt(
+            messageDatasetUrl,
+            courseSolidDataset,
+            { fetch: fetch }
+        );
+    
+
+        universalAccess.setAgentAccess(
+            messageDatasetUrl,
+            accessGrant.credentialSubject.providedConsent.isProvidedTo,     // Agent
+            { append: true, read: true, write: false },          // Access object
+            { fetch: fetch }    // fetch function from authenticated session
+        ).then((newAccess) => {
+            console.log(newAccess)
+        });
+
+        const newProfileLink = new DatasetLinkLDO(datasetLinkDefinition).create({
+            id: generate_uuidv4(),
+            linkType: LinkType.PROFILE_LINK,
+            url: userSession.webId
+        })
+
+        console.log(podUrls[0] + "Wikie/messages/contacts.ttl")
+
+        let myContactsDataset = await getSolidDataset(
+            podUrls[0] + "Wikie/messages/contacts.ttl",
+            { fetch: fetch }
+        );
+        console.log(myContactsDataset)
+        const newProfileThing = setThing(myContactsDataset, newProfileLink)
+        const savedProfileDatatset = await saveSolidDatasetAt(
+            podUrls[0] + "Wikie/messages/contacts.ttl",
+            newProfileThing,
+            { fetch: fetch }
+        );
+        console.log(myContactsDataset)
     }
 
     console.log(accessGrant)

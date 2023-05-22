@@ -10,7 +10,7 @@ import Form from 'react-bootstrap/Form';
 import './Login.css';
 import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
-import { allowAccess, createNewClass, denyRequest, getClassesList, getRequests, requestClass } from '../service/classService';
+import { aaaa, allowAccess, createNewClass, denyRequest, getClassesList, getRequests, requestClass } from '../service/classService';
 import { Class } from '../models/types/Class';
 import { DatasetLink } from '../models/types/DatasetLink';
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
@@ -53,8 +53,8 @@ const Classes: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    
-  }, []);  
+
+  }, []);
 
   const showClass = (e: any) => {
     console.log(e.target.name)
@@ -76,7 +76,7 @@ const Classes: React.FC = () => {
 
   const allowRequest = (e: any) => {
     console.log(e.target.name)
-    let aa = requests.find((item) => { return item.requestFile === e.target.name})
+    let aa = requests.find((item) => { return item.requestFile === e.target.name })
     if (aa !== undefined) {
       allowAccess(sessionContext.sessionInfo, aa)
     }
@@ -90,7 +90,7 @@ const Classes: React.FC = () => {
 
   const denyAccess = (e: any) => {
     console.log(e.target.name)
-    let aa = requests.find((item) => { return item.requestFile === e.target.name})
+    let aa = requests.find((item) => { return item.requestFile === e.target.name })
     if (aa !== undefined) {
       denyRequest(sessionContext.sessionInfo, aa)
     }
@@ -111,6 +111,11 @@ const Classes: React.FC = () => {
     //     url: e.target.name
     //   }
     // })
+  }
+
+  const aaa = (e: any) => {
+    aaaa()
+
   }
 
 
@@ -253,6 +258,15 @@ const Classes: React.FC = () => {
                     )
                   })}
                 </Container>
+                <div>
+                              <Button
+                                className='class-btn'
+                                onClick={aaa}
+                                variant="outline-danger"
+                              >aaaa</Button>
+                              <br />
+                            </div>
+
               </Card>
 
             </Col>
