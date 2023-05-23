@@ -14,10 +14,436 @@ import {
 } from "@inrupt/solid-client-notifications";
 import { generate_uuidv4 } from "../service/utils";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
-import { Card, Col, Container, ListGroup, Row, Stack } from "react-bootstrap";
+import { Card, Col, Container, Form, ListGroup, Row, Stack } from "react-bootstrap";
 import { getProfiles } from "../service/messageService";
-import { FcComments } from "react-icons/fc";
 import { Profile } from "../models/types/Profile";
+import { Message } from "../models/types/Message";
+import { MdSend } from "react-icons/md";
+import './Messages.css';
+import { flushSync } from "react-dom";
+
+const divWidth = 770
+const exx: Message[] = [
+    {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "faewaew",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "11",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "11",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    }, {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "11",
+        from: "matej",
+        to: "jakub",
+        text: "last",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "faewaew",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "11",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "11",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    }, {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "12321",
+        from: "matej",
+        to: "jakub",
+        text: "last",
+        date: "1.1.2023 10:50:20"
+    },
+
+]
 
 const Visualisation: React.FC = () => {
     const d3Container = useRef(null);
@@ -32,8 +458,10 @@ const Visualisation: React.FC = () => {
     const [mounted, setMounted] = useState(false); // <-- new state variable
 
     const [list, setList] = useState<Profile[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [clickedUser, setClickedUser] = useState('')
     const sessionContext = useContext(SessionContext)
+
 
 
     useEffect(() => {
@@ -51,12 +479,21 @@ const Visualisation: React.FC = () => {
         }
         window.addEventListener('resize', handleResize)
         setWidth(window.innerWidth)
+
     })
 
     const goPrivateMessage = (e: any) => {
         console.log(e)
-        if (width > 770) {
+        if (width > divWidth) {
             setClickedUser(e)
+            flushSync(() => {
+                setMessages(exx)
+            });
+            const element = document.getElementById('12321');
+            if (element) {
+                // 👇 Will scroll smoothly to the top of the next section
+                element.scrollIntoView({ behavior: 'auto' });
+            }
         } else {
             navigate('/chat/', {
                 state: {
@@ -65,6 +502,8 @@ const Visualisation: React.FC = () => {
             })
         }
 
+        // 12321
+
     }
 
 
@@ -72,92 +511,63 @@ const Visualisation: React.FC = () => {
         <div className="App">
             <Sidenav type={SideNavType.COMMON} />
             <main ref={ref}>
-                {width > 770 ? (
-                    <Container fluid>
-                        <Row>
+                <Container>
+                    <Row>
+                        <Col sm="6">
+
+                            <Row className="message-card">
+                                {list.length === 0 &&
+                                    <p>No contacts already</p>
+                                }
+                            </Row>
+                            <ListGroup>
+                                {list.map((item, index) => {
+                                    return (
+                                        <ListGroup.Item action onClick={() => { goPrivateMessage(item.webId) }} key={index}>
+                                            <Col sm={9}>{item.name} {item.name}</Col>
+                                        </ListGroup.Item>
+                                    )
+                                })}
+                            </ListGroup>
+                        </Col>
+                        {width > divWidth && (
                             <Col sm="6">
-                                <Row>
-                                    <h4>Classes mindMaps</h4>
-                                    {list.length === 0 &&
-                                        <p>No messages already</p>
-                                    }
-
-                                </Row>
-                                <ListGroup>
-                                    {list.map((item, index) => {
-                                        return (
-                                            <ListGroup.Item action onClick={() => { goPrivateMessage(item.webId) }} key={index}>
-                                                <Col sm={9}>{item.name} {item.name}</Col>
-                                            </ListGroup.Item>
-                                        )
-                                    })}
-                                </ListGroup>
-
+                                {messages.length !== 0 ?
+                                    <Card className="message-card">
+                                        <Card.Body>
+                                            <Stack className="message-box">
+                                                {messages.map((item, index) => {
+                                                    return (
+                                                        <Card className="message-bubble">
+                                                            <Card.Body id={item.id}>
+                                                                {item.text}
+                                                            </Card.Body>
+                                                        </Card>
+                                                    )
+                                                })}
+                                            </Stack>
+                                        </Card.Body>
+                                        <Card.Footer>
+                                            <Stack direction="horizontal" gap={2}>
+                                                <Form.Control
+                                                    type="text"
+                                                    id="inputPassword5"
+                                                    aria-describedby="passwordHelpBlock"
+                                                />
+                                                <MdSend></MdSend>
+                                            </Stack>
+                                        </Card.Footer>
+                                    </Card>
+                                    :
+                                    <Card className="message-card">
+                                        <Card.Body>
+                                            <p>First select contact</p>
+                                        </Card.Body>
+                                    </Card>}
                             </Col>
-                            <Col sm="6">
-                                <Card className="class-card">
-                                    <Container>
-                                        <Row>
-                                            <h4>Private msg</h4>
-                                        </Row>
-                                    </Container>
-                                </Card>
-
-                            </Col>
-                        </Row>
-                    </Container>
-                ) : (
-                    <Container fluid>
-                        {/* <Row>
-                            <Col sm="12">
-                                <Card className="class-card">
-                                    <Container>
-                                        <Row>
-                                            <h4>Classes mindMaps</h4>
-                                            {dataset?.mindMaps.length === 0 &&
-                                                <p>No mindMaps already</p>
-                                            }
-
-                                        </Row>
-                                        {dataset?.mindMaps.map((item, index) => {
-                                            return (
-                                                <Row key={index}>
-                                                    <Col sm={9}>{item.title}</Col>
-                                                    <Col sm={3}>
-                                                        <Stack direction="horizontal" gap={2}>
-                                                            <div>
-                                                                <Button
-                                                                    className='class-btn'
-                                                                    name={item.url}
-                                                                    onClick={showMindMap}
-                                                                    variant="success"
-                                                                >Show</Button>
-                                                                <br />
-                                                            </div>
-                                                            <div>
-                                                                <Button
-                                                                    className='class-btn'
-                                                                    name={item.url}
-                                                                    onClick={removeMindMap}
-                                                                    variant="success"
-                                                                >Remove</Button>
-                                                                <br />
-                                                            </div>
-
-                                                        </Stack>
-                                                    </Col>
-                                                </Row>
-                                            )
-                                        })}
-                                        <Button onClick={handleShow} variant="outline-success">Create new</Button>
-                                    </Container>
-                                </Card>
-
-                            </Col>
-                        </Row> */}
-                    </Container>
-                )}
-
+                        )}
+                    </Row>
+                </Container>
             </main>
         </div>
     )

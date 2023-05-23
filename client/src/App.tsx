@@ -17,6 +17,7 @@ import ProfileView from "./pages/ProfileView";
 import Class from "./pages/Class";
 import { UserSession, defaultSessionValue } from "./models/types/UserSession";
 import { SessionContext } from "./sessionContext";
+import PrivateChat from "./pages/PrivateChat";
 
 const App: React.FC = () => {
 
@@ -62,6 +63,7 @@ const App: React.FC = () => {
             <Route path="/class" element={<Class />} />
             <Route path="/profile" element={<ProfileView />} />
             <Route path="/messages" element={<Messages />} />
+            <Route path="/chat" element={<PrivateChat />} />
           </Routes>
         ) : (
           <Login></Login>

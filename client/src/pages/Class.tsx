@@ -19,6 +19,7 @@ import { getClassDataset } from "../service/classService";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import './Class.css';
 import { FcComments } from "react-icons/fc";
+import ModelClassAdd from "./ModalClassAdd";
 
 const Class: React.FC = () => {
   const d3Container = useRef(null);
@@ -29,6 +30,7 @@ const Class: React.FC = () => {
   const ref = useRef(null);
   const [height, setHeight] = useState(1000);
   const [width, setWidth] = useState(1000);
+  const [modelClassAddShow, setModelClassAddShow] = useState(false);
   const [dataset, setDataset] = useState<ClassDataset>();
 
   const [mounted, setMounted] = useState(false); // <-- new state variable
@@ -83,7 +85,21 @@ const Class: React.FC = () => {
     // })
   }
 
-  const handleShow = (e: any) => {
+  const handleCreate = (e: any) => {
+    // if (sessionContext.sessionInfo.isLogged) {
+    //   createNewClass(name, sessionContext.sessionInfo).then((res) => {
+    //     console.log(res)
+    //     // navigate('/class/', {
+    //     //   state: {
+    //     //     url: res
+    //     //   }
+    //     // })
+    //   })
+    // }
+  }
+
+  const handleAddExisting = (e: any) => {
+    setModelClassAddShow(true)
     // if (sessionContext.sessionInfo.isLogged) {
     //   createNewClass(name, sessionContext.sessionInfo).then((res) => {
     //     console.log(res)
@@ -117,7 +133,7 @@ const Class: React.FC = () => {
     <div className="App">
       <Sidenav type={SideNavType.COMMON} />
       <main ref={ref}>
-        <Container fluid>
+        <Container>
           <Row>
             <Col sm="6">
               <h1>Class {dataset?.name}</h1>
@@ -180,7 +196,9 @@ const Class: React.FC = () => {
                       </Row>
                     )
                   })}
-                  <Button onClick={handleShow} variant="outline-success">Create new</Button>
+                  <Button onClick={handleCreate} variant="outline-success">Create new</Button>
+                  <Button onClick={handleAddExisting} variant="outline-success">Add existing</Button>
+                  <ModelClassAdd showModal={modelClassAddShow} setModal={setModelClassAddShow} />
                 </Container>
               </Card>
 

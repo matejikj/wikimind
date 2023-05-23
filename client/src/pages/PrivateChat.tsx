@@ -14,7 +14,432 @@ import {
 } from "@inrupt/solid-client-notifications";
 import { generate_uuidv4 } from "../service/utils";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
-import { Col, Container, Row } from "react-bootstrap";
+import { Card, Col, Container, Form, Row, Stack } from "react-bootstrap";
+import { MdSend } from "react-icons/md";
+import { Message } from "../models/types/Message";
+import { flushSync } from "react-dom";
+
+const exx: Message[] = [
+    {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "faewaew",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "11",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "11",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    }, {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "11",
+        from: "matej",
+        to: "jakub",
+        text: "last",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "faewaew",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "11",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "11",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    }, {
+        id: "1",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "3",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "4",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "5",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "6",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "7",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "8",
+        from: "jakub",
+        to: "matej",
+        text: "zdarec",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "9",
+        from: "matej",
+        to: "jakub",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "10",
+        from: "jakub",
+        to: "matej",
+        text: "Hello world",
+        date: "1.1.2023 10:50:20"
+    },
+    {
+        id: "12321",
+        from: "matej",
+        to: "jakub",
+        text: "last",
+        date: "1.1.2023 10:50:20"
+    },
+
+]
 
 const PrivateChat: React.FC = () => {
     const d3Container = useRef(null);
@@ -27,24 +452,51 @@ const PrivateChat: React.FC = () => {
     const [width, setWidth] = useState(500);
     const theme = useContext(SessionContext)
     const [mounted, setMounted] = useState(false); // <-- new state variable
+    const [messages, setMessages] = useState<Message[]>([]);
 
     React.useEffect(() => {
+        // if (location.state !== null && location.state.webID !== null) {
+
+        // }
+        flushSync(() => {
+            setMessages(exx)
+        });
+        const element = document.getElementById('12321');
+        if (element) {
+            // 👇 Will scroll smoothly to the top of the next section
+            element.scrollIntoView({ behavior: 'auto' });
+        }
     })
 
     return (
         <div className="App">
             <Sidenav type={SideNavType.COMMON} />
             <main ref={ref}>
-                <Container>
-                    <Row>
-                        <Col sm="6">
-                            fsadfsad
-                        </Col>
-                        <Col sm="6">
-                            tyeytr
-                        </Col>
-                    </Row>
-                </Container>
+                <Card>
+                    <Card.Body>
+                        <Stack className="message-box">
+                            {messages.map((item, index) => {
+                                return (
+                                    <Card className="message-bubble">
+                                        <Card.Body id={item.id}>
+                                            {item.text}
+                                        </Card.Body>
+                                    </Card>
+                                )
+                            })}
+                        </Stack>
+                    </Card.Body>
+                    <Card.Footer>
+                        <Stack direction="horizontal" gap={2}>
+                            <Form.Control
+                                type="text"
+                                id="inputPassword5"
+                                aria-describedby="passwordHelpBlock"
+                            />
+                            <MdSend></MdSend>
+                        </Stack>
+                    </Card.Footer>
+                </Card>
             </main>
         </div>
     )
