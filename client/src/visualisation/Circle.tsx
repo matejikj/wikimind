@@ -41,15 +41,15 @@ const Circle: React.FC<{
     const theme = useContext(SessionContext)
 
     const handlePointerDown = (e: any) => {
-        // e.stopPropagation()
-        // e.preventDefault()
+        e.stopPropagation()
+        e.preventDefault()
         setDisabledCanvas(true)
         if (!(canvasState === CanvasState.ADD_CONNECTION)) {
             const el = e.target;
             const bbox = e.target.getBoundingClientRect();
-            // const x = e.clientX - bbox.left;
-            // const y = e.clientY - bbox.top;
-            // el.setPointerCapture(e.pointerId);
+            const x = e.clientX - bbox.left;
+            const y = e.clientY - bbox.top;
+            el.setPointerCapture(e.pointerId);
 
             // setX(x)
             // setY(y)
@@ -132,7 +132,7 @@ const Circle: React.FC<{
         setContextMenu({
             ...contextMenu,
             posX: e.clientX,
-            posY: e.clientY - 50,
+            posY: e.clientY,
             visible: "visible"
         })
         console.log("eeeeeeeeeeee")

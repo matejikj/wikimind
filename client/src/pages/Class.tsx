@@ -220,7 +220,8 @@ const Class: React.FC = () => {
                         <Col sm={3}>
 
                           <Stack direction="horizontal" gap={2}>
-                            <FcComments onClick={sendMessage}></FcComments>
+                            <Button className="class-message" variant="outline" onClick={sendMessage}><FcComments> </FcComments></Button>
+                            
                           </Stack>
                         </Col>
                       </Row>

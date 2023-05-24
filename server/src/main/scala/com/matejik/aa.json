@@ -1,0 +1,66 @@
+{
+  "head" : {
+    "link" : [
+    ],
+    "vars" : [
+      "property",
+      "value"
+    ]
+  },
+  "results" : {
+    "distinct" : false,
+    "ordered" : true,
+    "bindings" : [
+      {
+        "property" : {
+          "type" : "uri",
+          "value" : "http://dbpedia.org/resource/Cardinal_(Catholic_Church)"
+        },
+        "value" : {
+          "type" : "uri",
+          "value" : "http://dbpedia.org/resource/Cardinal_(Catholicism)"
+        }
+      },
+      {
+        "property" : {
+          "type" : "uri",
+          "value" : "http://dbpedia.org/resource/Casimir_IV,_Duke_of_Pomerania"
+        },
+        "value" : {
+          "type" : "uri",
+          "value" : "http://dbpedia.org/resource/Casimir_III_the_Great"
+        }
+      },
+      {
+        "property" : {
+          "type" : "uri",
+          "value" : "http://dbpedia.org/resource/Prague"
+        },
+        "value" : {
+          "type" : "uri",
+          "value" : "http://dbpedia.org/resource/Casimir_III_the_Great"
+        }
+      },
+      {
+        "property" : {
+          "type" : "uri",
+          "value" : "http://dbpedia.org/resource/Schindler's_List"
+        },
+        "value" : {
+          "type" : "uri",
+          "value" : "http://dbpedia.org/resource/Casimir_III_the_Great"
+        }
+      },
+      {
+        "property" : {
+          "type" : "uri",
+          "value" : "http://dbpedia.org/resource/Bolesław_V_the_Chaste"
+        },
+        "value" : {
+          "type" : "uri",
+          "value" : "http://dbpedia.org/resource/Casimir_III_the_Great"
+        }
+      }
+    ]
+  }
+}

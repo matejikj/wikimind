@@ -32,8 +32,8 @@ const Visualisation: React.FC = () => {
   const countRef = useRef(0);
 
   const ref = useRef(null);
-  const [height, setHeight] = useState(1000);
-  const [width, setWidth] = useState(1000);
+  const [height, setHeight] = useState(4000);
+  const [width, setWidth] = useState(4000);
   const [dataset, setDataset] = useState<MindMapDataset>(defaultBlankDataset);
   const theme = useContext(SessionContext)
   const [mounted, setMounted] = useState(false); // <-- new state variable
