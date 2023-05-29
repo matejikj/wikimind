@@ -33,6 +33,7 @@ const Visualisation: React.FC = () => {
 
   const ref = useRef(null);
   const [height, setHeight] = useState(4000);
+  const [url, setUrl] = useState('');
   const [width, setWidth] = useState(4000);
   const [dataset, setDataset] = useState<MindMapDataset>(defaultBlankDataset);
   const theme = useContext(SessionContext)
@@ -46,6 +47,7 @@ const Visualisation: React.FC = () => {
     () => {
       if (mounted) {
         if (location.state !== null && location.state.id !== null) {
+          setUrl(location.state.id)
           const websocket4 = new WebsocketNotification(
             location.state.id,
             { fetch: fetch }
@@ -93,7 +95,7 @@ const Visualisation: React.FC = () => {
     <div className="App">
       <Sidenav type={SideNavType.CANVAS} />
       <main ref={ref}>
-        <Canvas data={dataset} height={height} width={width} setPosition={setPosition}></Canvas>
+        <Canvas url={url} data={dataset} height={height} width={width} setPosition={setPosition}></Canvas>
       </main>
     </div>
   )

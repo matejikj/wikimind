@@ -66,6 +66,8 @@ import { Profile } from "../models/types/Profile";
 import { ExamLDO } from "../models/things/ExamLDO";
 import { ProfileLDO } from "../models/things/ProfileLDO";
 import { ClassRequest } from "../models/types/ClassRequest";
+import { MessageLDO } from "../models/things/MessageLDO";
+import { Message } from "../models/types/Message";
 
 export async function getProfiles(userSession: UserSession) {
 
@@ -119,3 +121,56 @@ export async function getProfiles(userSession: UserSession) {
 
     return profiles
 }
+
+export async function getFriendMessages(userSession: UserSession, userId: string) {
+    try {
+        const dataset = await getSolidDataset(userSession.podUrl + "Wikie/messages/" + encodeURIComponent(userId) + ".ttl")
+        const things = await getThingAll(dataset);
+
+        let messageBuilder = new MessageLDO(messageDefinition)
+        let messages: Message[] = [];
+
+        things.forEach(thing => {
+            const types = getUrlAll(thing, RDF.type);
+            console.log(types)
+            if (types.some(type => type === mindMapDefinition.identity.subject)) {
+                console.log(thing)
+                const message = messageBuilder.read(thing)
+                messages.push(message)
+            }
+        })
+
+        return messages;
+
+    } catch (e) {
+        const podUrls = await getPodUrl(userId)
+        if (podUrls !== null) {
+            const dataUrl = podUrls[0] + "Wikie/classes/requests/"
+            try {
+                const dataset = await getSolidDataset(podUrls[0] + "Wikie/messages/" + encodeURIComponent(userSession.webId) + ".ttl",
+                    { fetch: fetch })
+                const things = await getThingAll(dataset);
+
+                let messageBuilder = new MessageLDO(messageDefinition)
+                let messages: Message[] = [];
+
+                things.forEach(thing => {
+                    const types = getUrlAll(thing, RDF.type);
+                    console.log(types)
+                    if (types.some(type => type === mindMapDefinition.identity.subject)) {
+                        console.log(thing)
+                        const message = messageBuilder.read(thing)
+                        messages.push(message)
+                    }
+                })
+
+                return messages;
+
+            } catch (e) {
+                let messages: Message[] = [];
+                return messages;
+            }
+        }
+    }
+}
+

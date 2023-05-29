@@ -115,3 +115,21 @@ object QueryEndpoint {
 //        |}
 //        |
 //        |""".stripMargin
+
+
+//PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+//PREFIX dbo: <http://dbpedia.org/ontology/>
+//PREFIX dbp: <http://dbpedia.org/property/>
+//
+//SELECT ?value (COUNT(?value) AS ?count)
+//WHERE {
+//  {
+//    ?a <http://dbpedia.org/ontology/wikiPageWikiLink> ?p.
+//      ?value <http://dbpedia.org/ontology/wikiPageWikiLink> ?p.
+//      FILTER ( ?a = <http://dbpedia.org/resource/Bílovice>)
+//  } UNION {
+//    ?a <http://dbpedia.org/ontology/wikiPageWikiLink> ?p.
+//      ?p <http://dbpedia.org/ontology/wikiPageWikiLink> ?value.
+//      FILTER ( ?a = <http://dbpedia.org/resource/Bílovice>)
+//  }}
+//GROUP BY ?value

@@ -112,18 +112,13 @@ const Class: React.FC = () => {
     // }
   }
 
-  const sendMessage = (e: any) => {
-    // if (sessionContext.sessionInfo.isLogged) {
-    //   createNewClass(name, sessionContext.sessionInfo).then((res) => {
-    //     console.log(res)
-    //     // navigate('/class/', {
-    //     //   state: {
-    //     //     url: res
-    //     //   }
-    //     // })
-    //   })
-    // }
-  }
+  const sendMessage = (e: string) => {
+    navigate('/messages/', {
+      state: {
+        friendId: e
+      }
+    })
+}
 
   const copyToClipboard = (e: any) => {
     navigator.clipboard.writeText(sessionContext.sessionInfo.webId + "?classId=" + dataset?.id!)
@@ -220,7 +215,7 @@ const Class: React.FC = () => {
                         <Col sm={3}>
 
                           <Stack direction="horizontal" gap={2}>
-                            <Button className="class-message" variant="outline" onClick={sendMessage}><FcComments> </FcComments></Button>
+                            <Button className="class-message" variant="outline" onClick={() => {sendMessage(item.webId)}}><FcComments> </FcComments></Button>
                             
                           </Stack>
                         </Col>

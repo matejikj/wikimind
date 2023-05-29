@@ -20,7 +20,7 @@
             "vocabulary": "http://schema.org/name"
         },
         "visible": {
-            "vocabulary": "http://schema.org/brand"
+            "vocabulary": "https://schema.org/Product"
         }
     }
 }

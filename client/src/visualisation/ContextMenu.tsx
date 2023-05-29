@@ -3,10 +3,13 @@ import { SessionContext } from "../sessionContext";
 import { Node } from '../models/types/Node'
 import { ContextMenuType } from "./models/ContextMenuType";
 
-const ContextMenu: React.FC<{ menu: ContextMenuType }> = ({ menu }) => {
+const ContextMenu: React.FC<{
+  menu: ContextMenuType, clickedNode: Node | undefined,
+}> = ({ menu, clickedNode }) => {
 
   const handleContextMenu = (e: any) => {
-    menu.items[parseInt(e.target.id)].action()
+    console.log(clickedNode)
+    menu.items[parseInt(e.target.id)].action(clickedNode)
   }
 
   return (

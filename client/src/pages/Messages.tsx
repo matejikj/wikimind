@@ -15,7 +15,7 @@ import {
 import { generate_uuidv4 } from "../service/utils";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
 import { Card, Col, Container, Form, ListGroup, Row, Stack } from "react-bootstrap";
-import { getProfiles } from "../service/messageService";
+import { getFriendMessages, getProfiles } from "../service/messageService";
 import { Profile } from "../models/types/Profile";
 import { Message } from "../models/types/Message";
 import { MdSend } from "react-icons/md";
@@ -465,35 +465,48 @@ const Visualisation: React.FC = () => {
 
 
     useEffect(() => {
-        const result = getProfiles(sessionContext.sessionInfo).then((res: any) => {
-            setList(res)
-            console.log(res)
-        });
-
-    }, []);
-
-    React.useEffect(() => {
         function handleResize() {
             setWidth(window.innerWidth)
             // console.log('resized to: ', window.innerWidth, 'x', window.innerHeight)
         }
         window.addEventListener('resize', handleResize)
         setWidth(window.innerWidth)
+        if (location.state !== null && location.state.friendId !== null) {
+            if (width < divWidth) {
+                navigate('/chat/', {
+                    state: {
+                        friendId: location.state.friendId
+                    }
+                })
+            } else {
+                setClickedUser(location.state.friendId)
+                getFriendMessages(theme.sessionInfo ,location.state.friendId)
+            }
+        }
+
+        const result = getProfiles(sessionContext.sessionInfo).then((res: any) => {
+            setList(res)
+            console.log(res)
+        });
+    }, []);
+
+    React.useEffect(() => {
+
 
     })
 
     const goPrivateMessage = (e: any) => {
-        console.log(e)
         if (width > divWidth) {
             setClickedUser(e)
             flushSync(() => {
-                setMessages(exx)
+                getFriendMessages(theme.sessionInfo, e)
             });
-            const element = document.getElementById('12321');
-            if (element) {
-                // 👇 Will scroll smoothly to the top of the next section
-                element.scrollIntoView({ behavior: 'auto' });
-            }
+
+            // const element = document.getElementById('12321');
+            // if (element) {
+            //     // 👇 Will scroll smoothly to the top of the next section
+            //     element.scrollIntoView({ behavior: 'auto' });
+            // }
         } else {
             navigate('/chat/', {
                 state: {
@@ -532,8 +545,11 @@ const Visualisation: React.FC = () => {
                         </Col>
                         {width > divWidth && (
                             <Col sm="6">
-                                {messages.length !== 0 ?
+                                {clickedUser !== '' ?
                                     <Card className="message-card">
+                                        <Card.Header>
+                                           {clickedUser} 
+                                        </Card.Header>
                                         <Card.Body>
                                             <Stack className="message-box">
                                                 {messages.map((item, index) => {

@@ -57,7 +57,7 @@ const Circle: React.FC<{
         }
     };
     const handlePointerMove = (e: any) => {
-        console.log(e)
+        // console.log(e)
         // e.stopPropagation()
         // e.preventDefault()
         if (!(canvasState === CanvasState.ADD_CONNECTION)) {
@@ -71,22 +71,29 @@ const Circle: React.FC<{
     };
     const handlePointerUp = (e: any) => {
         setDisabledCanvas(false)
-
         // e.stopPropagation()
         // e.preventDefault()
         if (!(canvasState === CanvasState.ADD_CONNECTION)) {
             // parentSetPosition(x, y, e.target.id)
             setActive(false);
-            const updatedNode: Node = {
-                visible: true,
-                cx: x,
-                cy: y,
-                title: node.title,
-                id: node.id,
-                description: node.description,
+            if (node.cx !== x) {
+                console.log("iiiiiiiiiii")
+                // console.log(clickedNode?.cx)
+                console.log(x)
+                console.log("iiiiiiiiiii")
+
+                const updatedNode: Node = {
+                    visible: true,
+                    cx: x,
+                    cy: y,
+                    title: node.title,
+                    id: node.id,
+                    description: node.description,
+                }
+                
+                updateNode(datasetName, theme.sessionInfo.webId, updatedNode)
             }
             
-            updateNode(datasetName, theme.sessionInfo.webId, updatedNode)
         }
     };
 
@@ -121,24 +128,31 @@ const Circle: React.FC<{
         }
     };
 
-    const handleContextMenu = (e: any) => {
+    const handleContextMenu = async (e: any) => {
+        e.stopPropagation()
         e.preventDefault()
+
         // const bbox = e.target.getBoundingClientRect();
         // const x = node != undefined && node.cx : 0;
         // const y = node.source != undefined && node.target != undefined ?
         //     (node.source[1] + node.target[1]) / 2 + 10 : 0;
-        setCanvasState(CanvasState.DEFAULT)
         setClickedNode(node)
+        setCanvasState(CanvasState.DEFAULT)
         setContextMenu({
             ...contextMenu,
             posX: e.clientX,
             posY: e.clientY,
             visible: "visible"
         })
+
         console.log("eeeeeeeeeeee")
         console.log(canvasState)
         console.log(clickedNode)
         console.log("eeeeeeeeeeee")
+        console.log("eeeeeeeeeeee")
+        console.log(clickedNode)
+        console.log("eeeeeeeeeeee")
+
 
 
     }
@@ -152,6 +166,7 @@ const Circle: React.FC<{
                 fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 1) : 1}
                 id={node.id}
                 // stroke={contextMenu.nodeId === node.id ? "green" : "orange"}
+                onContextMenu={handleContextMenu}
                 onPointerDown={handlePointerDown}
                 onPointerUp={handlePointerUp}
                 onPointerMove={handlePointerMove}
@@ -160,12 +175,13 @@ const Circle: React.FC<{
                 // onTouchEnd={handlePointerUp}
                 // onTouchMove={handlePointerMove}
                 fill={active ? "blue" : "#543"}
-                onContextMenu={handleContextMenu}
             />
             <text
                 x={x - node.title.length * 4}
                 y={y + 5}
                 id={node.id}
+                onContextMenu={handleContextMenu}
+
                 onPointerDown={handlePointerDown}
                 onPointerUp={handlePointerUp}
                 onPointerMove={handlePointerMove}
@@ -175,7 +191,6 @@ const Circle: React.FC<{
 
                 fill={active ? "blue" : "red"}
                 onClick={addConnection}
-                onContextMenu={handleContextMenu}
             >{node.title}</text>
         </g>
     );

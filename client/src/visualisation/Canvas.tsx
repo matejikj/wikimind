@@ -20,6 +20,7 @@ import { Link } from "../models/types/Link";
 import { Node } from "../models/types/Node";
 import { TransformWrapper } from "react-zoom-pan-pinch";
 import { TransformComponent } from "react-zoom-pan-pinch";
+import { updateNode } from "../service/mindMapService";
 
 const DELETE_LINK_METHOD = "delete";
 const LINK_RENAME_METHOD = "rename";
@@ -27,11 +28,13 @@ const LINK_RENAME_METHOD = "rename";
 const DELETE_NODE_METHOD = "delete";
 const DETAIL_METHOD = "detail";
 const RECOMMENDS_METHOD = "recommendations";
+const VISIBILITY = "vidibility";
 const CONNECTION_METHOD = "add connection";
 const CONNECTION_SELECTION_METHOD = "add connection";
 
-const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, setPosition: Function }> = ({ data, width, height, setPosition }) => {
+const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, height: number, setPosition: Function }> = ({ url, data, width, height, setPosition }) => {
   const d3Container = useRef(null);
+  const theme = useContext(SessionContext)
 
   const [modalNodeCreate, setModalNodeCreate] = useState(false);
   const [modalNodeDetail, setModalNodeDetail] = useState(false);
@@ -52,6 +55,7 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
       {
         title: DETAIL_METHOD,
         action: () => {
+          console.log(clickedNode)
           setModalNodeDetail(true)
         }
       },
@@ -68,6 +72,19 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
         }
       },
       {
+        title: VISIBILITY,
+        action: (node: any) => {
+          // console.log("AAAAAAAAA")
+          // console.log(node)
+          if (node !== undefined) {
+
+            node.visible = false
+            updateNode(data.title, theme.sessionInfo.webId, node)
+            console.log(url, theme.sessionInfo.webId, node)
+          }
+        }
+      },
+      {
         title: CONNECTION_SELECTION_METHOD,
         action: () => {
           setCanvasState(CanvasState.ADD_CONNECTION)
@@ -75,6 +92,8 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
       }
     ]
   })
+
+
 
   const [linksMenu, setLinksMenu] = useState<ContextMenuType>({
     posX: 0,
@@ -210,9 +229,12 @@ const Canvas: React.FC<{ data: MindMapDataset, width: number, height: number, se
             );
           })}
           <ContextMenu
+            clickedNode={clickedNode}
             menu={circleMenu}
           />
           <ContextMenu
+                      clickedNode={clickedNode}
+
             menu={linksMenu}
           />
         </svg>

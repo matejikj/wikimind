@@ -556,7 +556,26 @@ export async function allowAccess(userSession: UserSession, classRequest: ClassR
             newProfileThing,
             { fetch: fetch }
         );
-        console.log(myContactsDataset)
+
+        // const newProfilePupilLink = new DatasetLinkLDO(datasetLinkDefinition).create({
+        //     id: generate_uuidv4(),
+        //     linkType: LinkType.PROFILE_LINK,
+        //     url: accessGrant.credentialSubject.providedConsent.isProvidedTo
+        // })
+
+        // let myPupilContactsDataset = await getSolidDataset(
+        //     userSession.podUrl + "Wikie/messages/contacts.ttl",
+        //     { fetch: fetch }
+        // );
+        // console.log(myPupilContactsDataset)
+        // const newPupilProfileThing = setThing(myPupilContactsDataset, newProfilePupilLink)
+        // const savedPupilProfileDatatset = await saveSolidDatasetAt(
+        //     userSession.podUrl + "Wikie/messages/contacts.ttl",
+        //     newPupilProfileThing,
+        //     { fetch: fetch }
+        // );
+
+        // console.log(savedPupilProfileDatatset)
     }
 
     console.log(accessGrant)
@@ -636,7 +655,6 @@ export async function getRequests(userSession: UserSession) {
                 newDAtaset,
                 { fetch: fetch }
             );
-
         }
 
         // const accessGrant = await approveAccessRequest(
