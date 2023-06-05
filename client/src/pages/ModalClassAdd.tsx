@@ -10,13 +10,15 @@ import { generate_uuidv4 } from "../service/utils";
 import { CanvasState } from '../visualisation/models/CanvasState'
 import { getMindMapList } from "../service/containerService";
 import { Col, Row, Stack } from "react-bootstrap";
+import { addGraphToClass } from "../service/classService";
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModelClassAdd: React.FC<{
+    classUrl: string,
     showModal: boolean,
     setModal: Function
 
-}> = ({ showModal, setModal }) => {
+}> = ({ classUrl, showModal, setModal }) => {
     const theme = useContext(SessionContext)
     const [formInputs, setFormInputs] = useState({
         title: 'title_',
@@ -35,6 +37,7 @@ const ModelClassAdd: React.FC<{
     function handleChange(event: any) {
     }
     function handleAdd(event: any) {
+      addGraphToClass(theme.sessionInfo, event, classUrl)
     }
     const handleClose = () => setModal(false);
     return (
@@ -51,7 +54,7 @@ const ModelClassAdd: React.FC<{
                       <Button
                         className='class-btn'
                         name={item.url}
-                        onClick={handleAdd}
+                        onClick={() => handleAdd(item.url)}
                         variant="success"
                       >Add</Button>
                   </Stack>

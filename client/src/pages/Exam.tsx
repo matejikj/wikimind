@@ -27,6 +27,25 @@ const defaultBlankDataset: MindMapDataset = {
     nodes: []
 }
 
+const example = {
+    "id": "b6ea7650-ec8f-4c2d-b170-e7da507cf7ff",
+    "title": "AAAA",
+    "acccessType": "",
+    "created": "",
+    "url": "",
+    "links": [],
+    "nodes": [
+        {
+            "id": "6756dda2-0eb4-4547-8ff7-b73bda116a05",
+            "cx": 95,
+            "cy": 290,
+            "title": "FC Bohemians Praha",
+            "description": "",
+            "visible": false
+        }
+    ]
+}
+
 const Exam: React.FC = () => {
     const d3Container = useRef(null);
     const navigate = useNavigate();
@@ -41,6 +60,7 @@ const Exam: React.FC = () => {
     const theme = useContext(SessionContext)
     const [mounted, setMounted] = useState(false); // <-- new state variable
 
+    
     useEffect(() => {
         setMounted(true); // set the mounted state variable to true after the component mounts
     }, []);
@@ -48,31 +68,37 @@ const Exam: React.FC = () => {
     useEffect(
         () => {
             if (mounted) {
-                if (location.state !== null && location.state.id !== null) {
-                    setUrl(location.state.id)
-                    const websocket4 = new WebsocketNotification(
-                        location.state.id,
-                        { fetch: fetch }
-                    );
-                    websocket4.on("message", (e: any) => {
-                        getMindMap(location.state.id).then((res: any) => {
-                            const myr = res as MindMapDataset;
-                            myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
-                            console.log(myr)
-                            setDataset(() => (myr))
-                        })
-                    });
-                    websocket4.connect();
-                    console.log(location.state)
-                    getMindMap(location.state.id).then((res: any) => {
-                        const myr = res as MindMapDataset;
-                        myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
-                        console.log(myr)
-                        setDataset(() => (myr))
-                    })
-                } else {
-                    navigate('/')
-                }
+                const myr = example as MindMapDataset;
+                    myr.links = AddCoords(example.links, getIdsMapping(myr.nodes))
+                    console.log(myr)
+                    setDataset(myr)
+                // if (location.state !== null && location.state.id !== null) {
+                //     setUrl(location.state.id)
+                    
+
+                //     // const websocket4 = new WebsocketNotification(
+                //     //     location.state.id,
+                //     //     { fetch: fetch }
+                //     // );
+                //     // websocket4.on("message", (e: any) => {
+                //     //     getMindMap(location.state.id).then((res: any) => {
+                //     //         const myr = example as MindMapDataset;
+                //     //         myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
+                //     //         console.log(myr)
+                //     //         setDataset(myr)
+                //     //     })
+                //     // });
+                //     // websocket4.connect();
+                //     // console.log(location.state)
+                //     // getMindMap(location.state.id).then((res: any) => {
+                //     //     const myr = example as MindMapDataset;
+                //     //     myr.links = AddCoords(example.links, getIdsMapping(myr.nodes))
+                //     //     console.log(myr)
+                //     //     setDataset(myr)
+                //     // })
+                // } else {
+                //     navigate('/')
+                // }
             }
         }, [mounted])
 

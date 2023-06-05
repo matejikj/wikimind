@@ -34,166 +34,188 @@ const Circle: React.FC<{
     setContextMenu,
     setDisabledCanvas
 }) => {
-    const [active, setActive] = React.useState(false);
-    const [x, setX] = React.useState(node.cx);
-    const [y, setY] = React.useState(node.cy);
+        const [active, setActive] = React.useState(false);
+        const [moveX, setMoveX] = React.useState(0);
+        const [moveY, setMoveY] = React.useState(0);
+        const [difX, setDifX] = React.useState(0);
+        const [difY, setDifY] = React.useState(0);
 
-    const theme = useContext(SessionContext)
+        const theme = useContext(SessionContext)
 
-    const handlePointerDown = (e: any) => {
-        e.stopPropagation()
-        e.preventDefault()
-        setDisabledCanvas(true)
-        if (!(canvasState === CanvasState.ADD_CONNECTION)) {
-            const el = e.target;
-            const bbox = e.target.getBoundingClientRect();
-            const x = e.clientX - bbox.left;
-            const y = e.clientY - bbox.top;
-            el.setPointerCapture(e.pointerId);
+        const handlePointerDown = (e: any) => {
+            e.stopPropagation()
+            // e.preventDefault()
+            setDisabledCanvas(true)
+            if (!(canvasState === CanvasState.ADD_CONNECTION)) {
+                if (e.type === "touchstart") {
+                    setMoveX(Math.round(e.touches[0].clientX))
+                    setMoveY(Math.round(e.touches[0].clientY))
+                    // console.log(moveX)
+                    // console.log(moveY)
 
-            // setX(x)
-            // setY(y)
-            setActive(true);
-        }
-    };
-    const handlePointerMove = (e: any) => {
-        // console.log(e)
-        // e.stopPropagation()
-        // e.preventDefault()
-        if (!(canvasState === CanvasState.ADD_CONNECTION)) {
-            if (active) {
-                // setX(e.touches[0].clientX)
-                // setY(e.touches[0].clientY)
-                setX(e.clientX)
-                setY(e.clientY)
-            }
-        }
-    };
-    const handlePointerUp = (e: any) => {
-        setDisabledCanvas(false)
-        // e.stopPropagation()
-        // e.preventDefault()
-        if (!(canvasState === CanvasState.ADD_CONNECTION)) {
-            // parentSetPosition(x, y, e.target.id)
-            setActive(false);
-            if (node.cx !== x) {
-                console.log("iiiiiiiiiii")
-                // console.log(clickedNode?.cx)
-                console.log(x)
-                console.log("iiiiiiiiiii")
-
-                const updatedNode: Node = {
-                    visible: true,
-                    cx: x,
-                    cy: y,
-                    title: node.title,
-                    id: node.id,
-                    description: node.description,
+                } else {
+                    e.target.setPointerCapture(e.pointerId);
+                    setMoveX(Math.round(e.clientX))
+                    setMoveY(Math.round(e.clientY))
                 }
-                
-                updateNode(datasetName, theme.sessionInfo.webId, updatedNode)
-            }
-            
-        }
-    };
+                try {
 
-    const addConnection = (e: any) => {
-        if (canvasState === CanvasState.ADD_CONNECTION) {
-            // const idMaster = contextMenu.nodeId
-            // const idSlave = e.target.id
-    
-            // setContextMenu({
-            //     ...contextMenu,
-            //     node: node
-            // })
-            console.log(clickedNode)
-            console.log(node)
-            let fromId = ""
-            if (clickedNode !== undefined) {
-                fromId = clickedNode.id
+                } catch (error) {
+
+                }
+
+                // setX(x)
+                // setY(y)
+                setActive(true);
             }
-            const newLink: Link = {
-                from: fromId,
-                to: node.id,
-                title: "",
-                id: generate_uuidv4(),
-                visible: true
+        };
+        const handlePointerMove = (e: any) => {
+            // console.log(e)
+            // e.stopPropagation()
+            // e.preventDefault()
+            if (!(canvasState === CanvasState.ADD_CONNECTION)) {
+                if (active) {
+                    if (e.type === "touchmove") {
+                        console.log(Math.round(e.touches[0].clientX - moveX))
+                        setDifX(Math.round(e.touches[0].clientX - moveX))
+                        setDifY(Math.round(e.touches[0].clientY - moveY))
+                                        console.log("111111111")
+
+                    } else {
+                                        console.log("222222222222")
+
+                        setDifX(Math.round(e.clientX - moveX))
+                        setDifY(Math.round(e.clientY - moveY))
+                    }
+                    // console.log(difX)
+                    // console.log(difY)
     
+                    try {
+                        e.target.setPointerCapture(e.pointerId);
+
+                    } catch (error) {
+
+                    }
+                    // setX(e.clientX)
+                    // setY(e.clientY)
+                }
             }
-            setClickedLink(newLink)
+        };
+        const handlePointerUp = async (e: any) => {
+            setDisabledCanvas(false)
+            // e.stopPropagation()
+            // e.preventDefault()
+            if (!(canvasState === CanvasState.ADD_CONNECTION)) {
+                // parentSetPosition(x, y, e.target.id)
+                setActive(false);
+                if (difX !== 0 || difY !== 0) {
+
+                    const updatedNode: Node = {
+                        visible: true,
+                        cx: Math.round(node.cx + difX),
+                        cy: Math.round(node.cy + difY),
+                        title: node.title,
+                        id: node.id,
+                        description: node.description,
+                    }
+
+                    await updateNode(datasetName, theme.sessionInfo.webId, updatedNode)
+                    setDifX(0)
+                    setDifY(0)
+                    setMoveX(0)
+                    setMoveY(0)
+                }
+
+            }
+        };
+
+        const addConnection = (e: any) => {
+            if (canvasState === CanvasState.ADD_CONNECTION) {
+                // const idMaster = contextMenu.nodeId
+                // const idSlave = e.target.id
+
+                // setContextMenu({
+                //     ...contextMenu,
+                //     node: node
+                // })
+                console.log(clickedNode)
+                console.log(node)
+                let fromId = ""
+                if (clickedNode !== undefined) {
+                    fromId = clickedNode.id
+                }
+                const newLink: Link = {
+                    from: fromId,
+                    to: node.id,
+                    title: "",
+                    id: generate_uuidv4(),
+                    visible: true
+
+                }
+                setClickedLink(newLink)
+                setCanvasState(CanvasState.DEFAULT)
+                setModalLinkRename(true)
+                // parentSetPosition(x, y, e.target.id)
+            }
+        };
+
+        const handleContextMenu = async (e: any) => {
+            e.stopPropagation()
+            e.preventDefault()
+
+            // const bbox = e.target.getBoundingClientRect();
+            // const x = node != undefined && node.cx : 0;
+            // const y = node.source != undefined && node.target != undefined ?
+            //     (node.source[1] + node.target[1]) / 2 + 10 : 0;
+            setClickedNode(node)
             setCanvasState(CanvasState.DEFAULT)
-            setModalLinkRename(true)
-            // parentSetPosition(x, y, e.target.id)
-            console.log("KONEKCE")
+            setContextMenu({
+                ...contextMenu,
+                posX: node.cx + difX,
+                posY: node.cy + difY,
+                visible: "visible"
+            })
         }
+
+        return (
+            <g>
+                <rect
+                    x={(node.cx + difX) - node.title.length * 4}
+                    y={(node.cy + difY) - 15}
+                    rx="4" ry="4"
+                    width={node.title.length * 13}
+                    height={30}
+                    fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 1) : 1}
+                    id={node.id}
+                    stroke="green"
+                    strokeWidth="3"
+                    // stroke={contextMenu.nodeId === node.id ? "green" : "orange"}
+                    onContextMenu={handleContextMenu}
+                    onPointerDown={handlePointerDown}
+                    onPointerUp={handlePointerUp}
+                    onPointerMove={handlePointerMove}
+                    // onClick={addConnection}
+                    onTouchStart={handlePointerDown}
+                    onTouchEnd={handlePointerUp}
+                    onTouchMove={handlePointerMove}
+                    fill={active ? "blue" : "white"}
+                />
+                <text
+                    x={(node.cx + difX) - node.title.length * 4 + 8}
+                    y={(node.cy + difY) + 5}
+                    id={node.id}
+                    onContextMenu={handleContextMenu}
+                    onPointerDown={handlePointerDown}
+                    onPointerUp={handlePointerUp}
+                    onPointerMove={handlePointerMove}
+                    onTouchStart={handlePointerDown}
+                    onTouchEnd={handlePointerUp}
+                    onTouchMove={handlePointerMove}
+                    fill={active ? "blue" : "black"}
+                    onClick={addConnection}
+                >{node.title}</text>
+            </g>
+        );
     };
-
-    const handleContextMenu = async (e: any) => {
-        e.stopPropagation()
-        e.preventDefault()
-
-        // const bbox = e.target.getBoundingClientRect();
-        // const x = node != undefined && node.cx : 0;
-        // const y = node.source != undefined && node.target != undefined ?
-        //     (node.source[1] + node.target[1]) / 2 + 10 : 0;
-        setClickedNode(node)
-        setCanvasState(CanvasState.DEFAULT)
-        setContextMenu({
-            ...contextMenu,
-            posX: e.clientX,
-            posY: e.clientY,
-            visible: "visible"
-        })
-
-        console.log("eeeeeeeeeeee")
-        console.log(canvasState)
-        console.log(clickedNode)
-        console.log("eeeeeeeeeeee")
-        console.log("eeeeeeeeeeee")
-        console.log(clickedNode)
-        console.log("eeeeeeeeeeee")
-
-
-
-    }
-
-    return (
-        <g>
-            <circle
-                cx={active ? x : node.cx}
-                cy={active ? y : node.cy}
-                r={25}
-                fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 1) : 1}
-                id={node.id}
-                // stroke={contextMenu.nodeId === node.id ? "green" : "orange"}
-                onContextMenu={handleContextMenu}
-                onPointerDown={handlePointerDown}
-                onPointerUp={handlePointerUp}
-                onPointerMove={handlePointerMove}
-                // onClick={addConnection}
-                // onTouchStart={handlePointerDown}
-                // onTouchEnd={handlePointerUp}
-                // onTouchMove={handlePointerMove}
-                fill={active ? "blue" : "#543"}
-            />
-            <text
-                x={x - node.title.length * 4}
-                y={y + 5}
-                id={node.id}
-                onContextMenu={handleContextMenu}
-
-                onPointerDown={handlePointerDown}
-                onPointerUp={handlePointerUp}
-                onPointerMove={handlePointerMove}
-                // onTouchStart={handlePointerDown}
-                // onTouchEnd={handlePointerUp}
-                // onTouchMove={handlePointerMove}
-
-                fill={active ? "blue" : "red"}
-                onClick={addConnection}
-            >{node.title}</text>
-        </g>
-    );
-};
 
 export default Circle;

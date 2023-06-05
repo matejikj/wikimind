@@ -34,6 +34,8 @@ import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
 import { generate_uuidv4 } from "./utils";
 import { UserSession } from "../models/types/UserSession";
+import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
+import { initializeAcl } from "./accessService";
 
 export async function getMindMap(url: string) {
 
@@ -100,6 +102,11 @@ export async function createNewMindMap(name: string, userSession: UserSession) {
       courseSolidDataset,
       { fetch: fetch }
     );
+
+    if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
+      initializeAcl(newName)
+    }
+
     return newName
   
 }

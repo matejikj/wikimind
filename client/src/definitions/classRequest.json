@@ -1,0 +1,17 @@
+{
+    "identity": {
+        "vocabulary": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#ClassRequest"
+    },
+    "properties": {
+        "requestor": {
+            "vocabulary": "http://schema.org/distance"
+        },
+        "id": {
+            "vocabulary": "http://schema.org/identifier"
+        },
+        "class": {
+            "vocabulary": "http://schema.org/brand"
+        }
+    }
+}

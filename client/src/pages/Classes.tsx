@@ -10,7 +10,7 @@ import Form from 'react-bootstrap/Form';
 import './Login.css';
 import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
-import { aaaa, allowAccess, createNewClass, denyRequest, getClassesList, getRequests, requestClass } from '../service/classService';
+import { allowAccess, createNewClass, denyRequest, getClassesList, getRequests, requestClass } from '../service/classService';
 import { Class } from '../models/types/Class';
 import { DatasetLink } from '../models/types/DatasetLink';
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
@@ -76,7 +76,7 @@ const Classes: React.FC = () => {
 
   const allowRequest = (e: any) => {
     console.log(e.target.name)
-    let aa = requests.find((item) => { return item.requestFile === e.target.name })
+    let aa = requests.find((item) => { return item.requestor === e.target.name })
     if (aa !== undefined) {
       allowAccess(sessionContext.sessionInfo, aa)
     }
@@ -90,44 +90,20 @@ const Classes: React.FC = () => {
 
   const denyAccess = (e: any) => {
     console.log(e.target.name)
-    let aa = requests.find((item) => { return item.requestFile === e.target.name })
+    let aa = requests.find((item) => { return item.requestor === e.target.name })
     if (aa !== undefined) {
       denyRequest(sessionContext.sessionInfo, aa)
     }
-
-    // navigate('/class/', {
-    //   state: {
-    //     url: e.target.name
-    //   }
-    // })
   }
 
   const sendRequest = (e: any) => {
-    console.log(e.target.name)
     requestClass(sessionContext.sessionInfo, requestUrl)
-    // getRequests(sessionContext.sessionInfo)
-    // navigate('/class/', {
-    //   state: {
-    //     url: e.target.name
-    //   }
-    // })
   }
-
-  const aaa = (e: any) => {
-    aaaa()
-
-  }
-
 
   const createNew = (e: any) => {
     if (sessionContext.sessionInfo.isLogged) {
       createNewClass(name, sessionContext.sessionInfo).then((res) => {
         console.log(res)
-        // navigate('/class/', {
-        //   state: {
-        //     url: res
-        //   }
-        // })
       })
     }
   }
@@ -229,14 +205,14 @@ const Classes: React.FC = () => {
                   {requests.map((item, index) => {
                     return (
                       <Row key={index}>
-                        <Col sm={9}>{item.className}</Col>
+                        <Col sm={9}>{item.requestor}</Col>
                         <Col sm={3}>
 
                           <Stack direction="horizontal" gap={2}>
                             <div>
                               <Button
                                 className='class-btn'
-                                name={item.requestFile}
+                                name={item.requestor}
                                 onClick={allowRequest}
                                 variant="success"
                               >Allow</Button>
@@ -245,7 +221,7 @@ const Classes: React.FC = () => {
                             <div>
                               <Button
                                 className='class-btn'
-                                name={item.requestFile}
+                                name={item.requestor}
                                 onClick={denyAccess}
                                 variant="outline-danger"
                               >Deny</Button>
@@ -258,17 +234,7 @@ const Classes: React.FC = () => {
                     )
                   })}
                 </Container>
-                <div>
-                              <Button
-                                className='class-btn'
-                                onClick={aaa}
-                                variant="outline-danger"
-                              >aaaa</Button>
-                              <br />
-                            </div>
-
               </Card>
-
             </Col>
           </Row>
         </Container>

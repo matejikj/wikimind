@@ -190,7 +190,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
             <marker
               id="triangle"
               viewBox="0 0 10 10"
-              refX="30"
+              refX="50"
               refY="5"
               markerUnits="strokeWidth"
               markerWidth="4"
@@ -233,7 +233,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
             menu={circleMenu}
           />
           <ContextMenu
-                      clickedNode={clickedNode}
+            clickedNode={clickedNode}
 
             menu={linksMenu}
           />

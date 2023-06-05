@@ -34,6 +34,7 @@ const Login: React.FC = () => {
                   <option value="https://datapod.igrant.io/">https://datapod.igrant.io/</option>
                   <option value="https://inrupt.net">https://inrupt.net</option>
                   <option value="https://use.id/matejikj">https://use.id/matejikj</option>
+                  <option value="https://solidweb.org">https://solidweb.org</option>
                   <option value="https://login.inrupt.com/">https://login.inrupt.com/</option>
                 </Form.Select>
                 <br />

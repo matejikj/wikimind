@@ -33,7 +33,8 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
     theme.setSessionInfo({
       webId: "",
       podUrl: "",
-      isLogged: false
+      isLogged: false,
+      podAccessControlPolicy: null
     })
   }
 

@@ -18,6 +18,10 @@ import Class from "./pages/Class";
 import { UserSession, defaultSessionValue } from "./models/types/UserSession";
 import { SessionContext } from "./sessionContext";
 import PrivateChat from "./pages/PrivateChat";
+import Exam from "./pages/Exam";
+import { AccessControlPolicy } from "./models/types/AccessControlPolicy";
+import { createProfile, getProfile } from "./service/profileService";
+import { Profile } from "./models/types/Profile";
 
 const App: React.FC = () => {
 
@@ -30,17 +34,31 @@ const App: React.FC = () => {
     }).then((info) => {
       if (info?.isLoggedIn && info?.webId !== undefined) {
         try {
-          checkContainer(info?.webId).then((solidPodUrl) => {
+          checkContainer(info?.webId).then((value) => {
             console.log({
               isLogged: true,
               webId: info?.webId!,
-              podUrl: solidPodUrl
+              podUrl: value.podUrl,
+              podAccessControlPolicy: value.accessControlPolicy
             })
             setSessionInfo({
               isLogged: true,
               webId: info?.webId!,
-              podUrl: solidPodUrl
+              podUrl: value.podUrl,
+              podAccessControlPolicy: value.accessControlPolicy
             })
+            console.log(sessionInfo)
+            // try {
+            //   getProfile(sessionInfo)
+            // } catch (error) {
+            //   const profile: Profile = {
+            //     webId:sessionInfo.webId,
+            //     name: "aaa",
+            //     surname: "bbb"
+            //   }
+            //   createProfile(sessionInfo, profile)
+            //   console.log(error)
+            // }
           })
         } catch (error) {
           alert("There is problem with  logging.")
@@ -64,6 +82,7 @@ const App: React.FC = () => {
             <Route path="/profile" element={<ProfileView />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/chat" element={<PrivateChat />} />
+            <Route path="/exam" element={<Exam />} />
           </Routes>
         ) : (
           <Login></Login>

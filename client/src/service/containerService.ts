@@ -8,11 +8,11 @@ import {
   buildThing,
   createSolidDataset,
   createThing,
-  setThing,
+  setThing, hasResourceAcl, hasAccessibleAcl, createAclFromFallbackAcl, getResourceAcl,
   setUrl,
   getThingAll,
-  createContainerAt,
-  getStringNoLocale,
+  createContainerAt, saveAclFor, acp_ess_2,
+  getStringNoLocale, hasFallbackAcl,
   getUrlAll,
   getSolidDatasetWithAcl,
   getUrl,
@@ -36,6 +36,18 @@ import { Link } from "../models/types/Link";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { MindMap } from "../models/types/MindMap";
 import { UserSession } from "../models/types/UserSession";
+import { initializeAcl, isWacOrAcp } from "./accessService";
+import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
+import { getProfile } from "./profileService";
+
+function logAccessInfo(agent: any, agentAccess: any, resource: any) {
+  console.log(`For resource::: ${resource}`);
+  if (agentAccess === null) {
+    console.log(`Could not load ${agent}'s access details.`);
+  } else {
+    console.log(`${agent}'s Access:: ${JSON.stringify(agentAccess)}`);
+  }
+}
 
 /**
  * 
@@ -65,7 +77,8 @@ export async function getPodUrl(sessionId: string) {
   }
 }
 
-export async function checkContainer(sessionId: string) {
+export async function checkContainer(sessionId: string): Promise<{podUrl: string,
+  accessControlPolicy: AccessControlPolicy}> {
   // if (!getDefaultSession().info.isLoggedIn) {
   //   await login({
   //     oidcIssuer: "https://login.inrupt.com/",
@@ -73,74 +86,65 @@ export async function checkContainer(sessionId: string) {
   //     clientName: "My application"
   //   });
   // }
-
+  
   const podUrls = await getPodUrl(sessionId)
   if (podUrls !== null) {
     const podUrl = podUrls[0]
+  
     if (!(await isUrlContainer(podUrl + 'Wikie/mindMaps'))) {
-      const cont = createContainerAt(podUrl + 'Wikie/mindMaps', { fetch: fetch });
+      const cont = await createContainerAt(podUrl + 'Wikie/mindMaps', { fetch: fetch });
     }
     if (!(await isUrlContainer(podUrl + 'Wikie/classes'))) {
-      const cont = createContainerAt(podUrl + 'Wikie/classes', { fetch: fetch });
+      const classes = await createContainerAt(podUrl + 'Wikie/classes', { fetch: fetch });
+      let classesDataset = createSolidDataset();
+      const savedSolidDatasetContainer = await saveSolidDatasetAt(
+        podUrl + 'Wikie/classes/classes.ttl',
+        classesDataset,
+        { fetch: fetch }
+      );
+      let reqeustsDataset = createSolidDataset();
+      const savedSolidDataset = await saveSolidDatasetAt(
+        podUrl + 'Wikie/classes/requests.ttl',
+        reqeustsDataset,
+        { fetch: fetch }
+      );
+
     }
     if (!(await isUrlContainer(podUrl + 'Wikie/messages'))) {
-      const cont = createContainerAt(podUrl + 'Wikie/messages', { fetch: fetch });
-      let courseSolidDataset = createSolidDataset();
+      const messages = await createContainerAt(podUrl + 'Wikie/messages', { fetch: fetch });
+      let messagesDataset = await createSolidDataset();
       const savedSolidDatasetContainer = await saveSolidDatasetAt(
         podUrl + 'Wikie/messages/contacts.ttl',
-        courseSolidDataset,
-        { fetch: fetch }
-      );
-
-
-    }
-    if (!(await isUrlContainer(podUrl + 'Wikie/classes/requests'))) {
-      const cont = createContainerAt(podUrl + 'Wikie/classes/requests', { fetch: fetch });
-    }
-    // TODO - pridat kontrolu na spravne pristupove podminky pro requests
-    const classesDatasetUrl = podUrl + 'Wikie/classes/classes.ttl'
-    const classesDataset = await getDataset(classesDatasetUrl)
-    if (classesDataset === null) {
-      let courseSolidDataset = createSolidDataset();
-      const savedSolidDatasetContainer = await saveSolidDatasetAt(
-        classesDatasetUrl,
-        courseSolidDataset,
+        messagesDataset,
         { fetch: fetch }
       );
     }
 
+    let accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl + 'Wikie/')
 
-            universalAccess.setAgentAccess(
-        podUrl + 'Wikie/messages/contacts.ttl',         // Resource
-        "http://www.w3.org/ns/solid/acp#AuthenticatedAgent",     // Agent
-        { append: true, read: true, write: false },          // Access object
-        { fetch: fetch }                         // fetch function from authenticated session
-      ).then((newAccess) => {
-        console.log("newAccess       contacts.ttl")
-      });
-      universalAccess.setAgentAccess(
-        podUrl + 'Wikie/classes/requests',         // Resource
-        "http://www.w3.org/ns/solid/acp#AuthenticatedAgent",     // Agent
-        { append: true, read: true, write: false },          // Access object
-        { fetch: fetch }                         // fetch function from authenticated session
-      ).then((newAccess) => {
-        console.log("newAccess  vrequests")
-      });
-  
+    if (accessControlPolicy === AccessControlPolicy.WAC) {
+      await initializeAcl(podUrl + 'Wikie/classes/requests.ttl')
+      await initializeAcl(podUrl + 'Wikie/messages/contacts.ttl')
+    }
 
-    return podUrl
+    universalAccess.setPublicAccess(
+      podUrl + 'Wikie/messages/contacts.ttl',         // Resource
+      { append: true, read: true, write: false },          // Access object
+      { fetch: fetch }                         // fetch function from authenticated session
+    ).then((newAccess) => {
+      console.log("newAccess       contacts.ttl")
+    });
+    universalAccess.setPublicAccess(
+      podUrl + 'Wikie/classes/requests.ttl',         // Resource
+      { append: true, read: true, write: false },          // Access object
+      { fetch: fetch }                         // fetch function from authenticated session
+    ).then((newAccess) => {
+      console.log("newAccess  vrequests")
+    });
+
+    return { podUrl, accessControlPolicy }
   }
   throw new Error("There is problem with SolidPod.");
-}
-
-export async function getDataset(url: string) {
-  try {
-    const classesDataset = await getSolidDataset(url, { fetch: fetch })
-    return classesDataset
-  } catch (error) {
-    return null
-  }
-
 }
 
 export async function getMindMapList(userSession: UserSession) {

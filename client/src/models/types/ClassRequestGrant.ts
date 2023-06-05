@@ -2,8 +2,7 @@ import { Exam } from "./Exam";
 import { MindMap } from "./MindMap";
 import { Profile } from "./Profile";
 
-export type ClassRequest = {
+export type ClassRequestGrant = {
     id: string;
-    requestor: string;
     class: string;
 }

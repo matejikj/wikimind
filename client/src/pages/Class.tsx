@@ -30,6 +30,7 @@ const Class: React.FC = () => {
   const ref = useRef(null);
   const [height, setHeight] = useState(1000);
   const [width, setWidth] = useState(1000);
+  const [classUrl, setClassUrl] = useState('');
   const [modelClassAddShow, setModelClassAddShow] = useState(false);
   const [dataset, setDataset] = useState<ClassDataset>();
 
@@ -43,6 +44,7 @@ const Class: React.FC = () => {
     () => {
       if (mounted) {
         if (location.state !== null && location.state.url !== null) {
+          setClassUrl(location.state.url)
           // const websocket4 = new WebsocketNotification(
           //   location.state.url,
           //   { fetch: fetch }
@@ -65,16 +67,6 @@ const Class: React.FC = () => {
         }
       }
     }, [mounted])
-
-
-  const showMindMap = (e: any) => {
-    console.log(e.target.name)
-    // navigate('/class/', {
-    //   state: {
-    //     url: e.target.name
-    //   }
-    // })
-  }
 
   const removeMindMap = (e: any) => {
     console.log(e.target.name)
@@ -118,7 +110,15 @@ const Class: React.FC = () => {
         friendId: e
       }
     })
-}
+  }
+
+  const showMindMap = (e: any) => {
+    navigate('/visualisation/', {
+      state: {
+        id: e
+      }
+    })
+  }
 
   const copyToClipboard = (e: any) => {
     navigator.clipboard.writeText(sessionContext.sessionInfo.webId + "?classId=" + dataset?.id!)
@@ -144,9 +144,9 @@ const Class: React.FC = () => {
               {
                 (sessionContext.sessionInfo.webId === dataset?.teacher) &&
                 <Stack direction="horizontal" gap={2}>
-                <h6>Link for copy</h6>
-                <Button onClick={copyToClipboard} variant="success">copy</Button>
-              </Stack>
+                  <h6>Link for copy</h6>
+                  <Button onClick={copyToClipboard} variant="success">copy</Button>
+                </Stack>
               }
             </Col>
           </Row>
@@ -171,7 +171,7 @@ const Class: React.FC = () => {
                               <Button
                                 className='class-btn'
                                 name={item.url}
-                                onClick={showMindMap}
+                                onClick={() => showMindMap(item.url)}
                                 variant="success"
                               >Show</Button>
                               <br />
@@ -193,7 +193,7 @@ const Class: React.FC = () => {
                   })}
                   <Button onClick={handleCreate} variant="outline-success">Create new</Button>
                   <Button onClick={handleAddExisting} variant="outline-success">Add existing</Button>
-                  <ModelClassAdd showModal={modelClassAddShow} setModal={setModelClassAddShow} />
+                  <ModelClassAdd classUrl={classUrl} showModal={modelClassAddShow} setModal={setModelClassAddShow} />
                 </Container>
               </Card>
 
@@ -215,8 +215,8 @@ const Class: React.FC = () => {
                         <Col sm={3}>
 
                           <Stack direction="horizontal" gap={2}>
-                            <Button className="class-message" variant="outline" onClick={() => {sendMessage(item.webId)}}><FcComments> </FcComments></Button>
-                            
+                            <Button className="class-message" variant="outline" onClick={() => { sendMessage(item.webId) }}><FcComments> </FcComments></Button>
+
                           </Stack>
                         </Col>
                       </Row>
