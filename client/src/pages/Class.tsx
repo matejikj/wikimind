@@ -30,7 +30,6 @@ const Class: React.FC = () => {
   const ref = useRef(null);
   const [height, setHeight] = useState(1000);
   const [width, setWidth] = useState(1000);
-  const [classUrl, setClassUrl] = useState('');
   const [modelClassAddShow, setModelClassAddShow] = useState(false);
   const [dataset, setDataset] = useState<ClassDataset>();
 
@@ -44,29 +43,56 @@ const Class: React.FC = () => {
     () => {
       if (mounted) {
         if (location.state !== null && location.state.url !== null) {
-          setClassUrl(location.state.url)
-          // const websocket4 = new WebsocketNotification(
-          //   location.state.url,
-          //   { fetch: fetch }
-          // );
-          // websocket4.on("message", (e: any) => {
-          //   getClassDataset(location.state.url).then((res: any) => {
-          //   })
-          // });
-          // websocket4.connect();
-          console.log(location.state)
+          const websocket4 = new WebsocketNotification(
+            location.state.url,
+            { fetch: fetch }
+          );
+          websocket4.on("message", (e: any) => {
+            getClassDataset(sessionContext.sessionInfo, location.state.url).then((res: any) => {
+              setDataset(res)
+              console.log(dataset?.mindMaps.length)
+            })
+          });
+          websocket4.connect();
           if (sessionContext.sessionInfo.isLogged) {
             getClassDataset(sessionContext.sessionInfo, location.state.url).then((res: any) => {
               setDataset(res)
               console.log(dataset?.mindMaps.length)
             })
           }
-
         } else {
           navigate('/')
         }
       }
     }, [mounted])
+  // if (location.state !== null && location.state.url !== null) {
+  //   // const websocket4 = new WebsocketNotification(
+  //   //   location.state.url,
+  //   //   { fetch: fetch }
+  //   // );
+  //   // websocket4.on("message", (e: any) => {
+  //   //   getClassDataset(location.state.url).then((res: any) => {
+  //   //   })
+  //   // });
+  //   // websocket4.connect();
+  //   console.log(location.state)
+  //   if (sessionContext.sessionInfo.isLogged) {
+  //     getClassDataset(sessionContext.sessionInfo, location.state.url).then((res: any) => {
+  //       setDataset(res)
+  //       console.log(dataset?.mindMaps.length)
+  //     })
+  //   }
+
+
+
+  const showMindMap = (e: any) => {
+    console.log(e.target.name)
+    // navigate('/class/', {
+    //   state: {
+    //     url: e.target.name
+    //   }
+    // })
+  }
 
   const removeMindMap = (e: any) => {
     console.log(e.target.name)
@@ -112,13 +138,15 @@ const Class: React.FC = () => {
     })
   }
 
-  const showMindMap = (e: any) => {
-    navigate('/visualisation/', {
+  const showExam = (e: any) => {
+    console.log(e.target.name)
+    navigate('/exam/', {
       state: {
-        id: e
+        id: e.target.name
       }
     })
   }
+
 
   const copyToClipboard = (e: any) => {
     navigator.clipboard.writeText(sessionContext.sessionInfo.webId + "?classId=" + dataset?.id!)
@@ -164,14 +192,14 @@ const Class: React.FC = () => {
                   {dataset?.mindMaps.map((item, index) => {
                     return (
                       <Row key={index}>
-                        <Col sm={9}>{item.title}</Col>
-                        <Col sm={3}>
+                        <Col>
                           <Stack direction="horizontal" gap={2}>
+                          {item.title}
                             <div>
                               <Button
                                 className='class-btn'
                                 name={item.url}
-                                onClick={() => showMindMap(item.url)}
+                                onClick={showMindMap}
                                 variant="success"
                               >Show</Button>
                               <br />
@@ -185,6 +213,15 @@ const Class: React.FC = () => {
                               >Remove</Button>
                               <br />
                             </div>
+                            <div>
+                              <Button
+                                className='class-btn'
+                                name={item.url}
+                                onClick={showExam}
+                                variant="success"
+                              >Exa</Button>
+                              <br />
+                            </div>
 
                           </Stack>
                         </Col>
@@ -193,7 +230,7 @@ const Class: React.FC = () => {
                   })}
                   <Button onClick={handleCreate} variant="outline-success">Create new</Button>
                   <Button onClick={handleAddExisting} variant="outline-success">Add existing</Button>
-                  <ModelClassAdd classUrl={classUrl} showModal={modelClassAddShow} setModal={setModelClassAddShow} />
+                  <ModelClassAdd classInfo={dataset} showModal={modelClassAddShow} setModal={setModelClassAddShow} />
                 </Container>
               </Card>
 
