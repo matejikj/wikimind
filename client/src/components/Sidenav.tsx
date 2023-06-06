@@ -53,11 +53,11 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
           <img className="logo" src="../logo.png"/>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            {(type === SideNavType.CANVAS) &&
+            {/* {(type === SideNavType.CANVAS) &&
               <Nav className="justify-content-end flex-grow-1 pe-3">
                 <Nav.Link onClick={() => { navigate('/') }}>Home</Nav.Link>
               </Nav>
-            }
+            } */}
             <Nav className="justify-content-end flex-grow-1 pe-3">
               <Nav.Link onClick={() => { navigate('/') }}>Home</Nav.Link>
             </Nav>

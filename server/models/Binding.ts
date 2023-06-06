@@ -3,7 +3,7 @@ export interface Binding {
     type: string;
     value: string;
   };
-  count: {
+  count?: {
     type: string;
     datatype: string;
     value: string;

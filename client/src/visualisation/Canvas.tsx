@@ -130,7 +130,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
     <TransformWrapper
       disabled={disabledCanvas}
     >
-      <Button id="float-btn-add" onClick={() => { setModalNodeCreate(true) }} variant="primary">Add</Button>
+      <Button id="float-btn-add" onClick={() => { setModalNodeCreate(true) }} variant="success">Add</Button>
       <ModalNodeCreate
         datasetName={data.title}
         clickedNode={clickedNode}

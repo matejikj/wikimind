@@ -66,19 +66,19 @@ const Visualisation: React.FC = () => {
               }
             }
           };
-          // const websocket4 = new WebsocketNotification(
-          //   location.state.id,
-          //   { fetch: fetch }
-          // );
-          // websocket4.on("message", (e: any) => {
-          //   getMindMap(location.state.id).then((res: any) => {
-          //     const myr = res as MindMapDataset;
-          //     myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
-          //     console.log(myr)
-          //     setDataset(() => (myr))
-          //   })
-          // });
-          // websocket4.connect();
+          const websocket4 = new WebsocketNotification(
+            location.state.id,
+            { fetch: fetch }
+          );
+          websocket4.on("message", (e: any) => {
+            getMindMap(location.state.id).then((res: any) => {
+              const myr = res as MindMapDataset;
+              myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
+              console.log(myr)
+              setDataset(() => (myr))
+            })
+          });
+          websocket4.connect();
           console.log(location.state)
           getMindMap(location.state.id).then((res: any) => {
             const myr = res as MindMapDataset;

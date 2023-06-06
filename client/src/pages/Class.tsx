@@ -30,6 +30,7 @@ const Class: React.FC = () => {
   const ref = useRef(null);
   const [height, setHeight] = useState(1000);
   const [width, setWidth] = useState(1000);
+  const [url, setUrl] = useState('');
   const [modelClassAddShow, setModelClassAddShow] = useState(false);
   const [dataset, setDataset] = useState<ClassDataset>();
 
@@ -43,6 +44,7 @@ const Class: React.FC = () => {
     () => {
       if (mounted) {
         if (location.state !== null && location.state.url !== null) {
+          setUrl(location.state.url)
           const websocket4 = new WebsocketNotification(
             location.state.url,
             { fetch: fetch }
@@ -86,7 +88,13 @@ const Class: React.FC = () => {
 
 
   const showMindMap = (e: any) => {
-    console.log(e.target.name)
+    console.log(e)
+    navigate('/visualisation/', {
+      state: {
+        id: e
+      }
+    })
+
     // navigate('/class/', {
     //   state: {
     //     url: e.target.name
@@ -199,7 +207,7 @@ const Class: React.FC = () => {
                               <Button
                                 className='class-btn'
                                 name={item.url}
-                                onClick={showMindMap}
+                                onClick={() => showMindMap(item.url)}
                                 variant="success"
                               >Show</Button>
                               <br />
@@ -230,7 +238,7 @@ const Class: React.FC = () => {
                   })}
                   <Button onClick={handleCreate} variant="outline-success">Create new</Button>
                   <Button onClick={handleAddExisting} variant="outline-success">Add existing</Button>
-                  <ModelClassAdd classInfo={dataset} showModal={modelClassAddShow} setModal={setModelClassAddShow} />
+                  <ModelClassAdd classUrl={url} showModal={modelClassAddShow} setModal={setModelClassAddShow} />
                 </Container>
               </Card>
 

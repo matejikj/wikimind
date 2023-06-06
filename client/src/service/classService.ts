@@ -171,6 +171,7 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
             if (newLink.linkType === LinkType.GRAPH_LINK) {
                 const a = await getMindMap(newLink.url)
                 if (a !== null) {
+                    a.url = newLink.url
                     mindMaps.push(a)
                 }
             }

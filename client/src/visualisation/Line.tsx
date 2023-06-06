@@ -30,7 +30,7 @@ const Line: React.FC<{ link: Link, contextMenu: any, setContextMenu: Function }>
                 id={link.from + "_" + link.to}
                 stroke="#999"
                 strokeOpacity="0.6"
-                strokeWidth="3"
+                strokeWidth="1.5"
                 markerEnd="url(#triangle)"
             ></line>
             <text

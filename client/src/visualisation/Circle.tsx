@@ -181,14 +181,15 @@ const Circle: React.FC<{
             <g>
                 <rect
                     x={(node.cx + difX) - node.title.length * 4}
-                    y={(node.cy + difY) - 15}
-                    rx="4" ry="4"
-                    width={node.title.length * 13}
-                    height={30}
-                    fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 1) : 1}
+                    y={(node.cy + difY) - 10}
+                    width={node.title.length * 7 + 20}
+                    height={20}
+                    fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 0.9) : 0.9}
                     id={node.id}
                     stroke="green"
-                    strokeWidth="3"
+                    strokeWidth="2"
+                    strokeOpacity={0.5}
+                    rx="4" ry="4"
                     // stroke={contextMenu.nodeId === node.id ? "green" : "orange"}
                     onContextMenu={handleContextMenu}
                     onPointerDown={handlePointerDown}
@@ -198,7 +199,7 @@ const Circle: React.FC<{
                     onTouchStart={handlePointerDown}
                     onTouchEnd={handlePointerUp}
                     onTouchMove={handlePointerMove}
-                    fill={active ? "blue" : "white"}
+                    fill={active ? "white" : "#8FBC8F"}
                 />
                 <text
                     x={(node.cx + difX) - node.title.length * 4 + 8}
@@ -211,9 +212,9 @@ const Circle: React.FC<{
                     onTouchStart={handlePointerDown}
                     onTouchEnd={handlePointerUp}
                     onTouchMove={handlePointerMove}
-                    fill={active ? "blue" : "black"}
+                    fill={active ? "#8FBC8F" : "black"}
                     onClick={addConnection}
-                >{node.title}</text>
+                >{node.title}{node.visible ? '' : '❓'}</text>
             </g>
         );
     };

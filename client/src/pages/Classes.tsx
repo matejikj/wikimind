@@ -16,6 +16,7 @@ import { DatasetLink } from '../models/types/DatasetLink';
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { AccessRequest } from '@inrupt/solid-client-access-grants';
 import { ClassRequest } from '../models/types/ClassRequest';
+import { WebsocketNotification } from '@inrupt/solid-client-notifications';
 
 const authOptions = {
   clientName: "Learnee",
@@ -35,6 +36,8 @@ const Classes: React.FC = () => {
   const handleShow = () => setShow(true);
 
   const navigate = useNavigate();
+  const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
+  wssUrl.protocol = 'wss';
 
   // const [mounted, setMounted] = useState(false); // <-- new state variable
 
@@ -50,6 +53,38 @@ const Classes: React.FC = () => {
     getRequests(sessionContext.sessionInfo).then((aaa) => {
       setRequests(aaa)
     });
+    const podUrl = sessionContext.sessionInfo.podUrl + 'Wikie/classes/classes.ttl'
+
+    const socket = new WebSocket(wssUrl, ['solid-0.1']);
+    socket.onopen = function () {
+      this.send(`sub ${podUrl}`);
+    };
+    socket.onmessage = function (msg) {
+      if (msg.data && msg.data.slice(0, 3) === 'pub') {
+        if (msg.data === `pub ${podUrl}`) {
+          const result = getClassesList(sessionContext.sessionInfo).then((res) => {
+            setList(res)
+          });
+          getRequests(sessionContext.sessionInfo).then((aaa) => {
+            setRequests(aaa)
+          });
+        }
+      }
+    };
+    const websocket4 = new WebsocketNotification(
+      podUrl,
+      { fetch: fetch }
+    );
+    websocket4.on("message", (e: any) => {
+      const result = getClassesList(sessionContext.sessionInfo).then((res) => {
+        setList(res)
+      });
+      getRequests(sessionContext.sessionInfo).then((aaa) => {
+        setRequests(aaa)
+      });
+    });
+    websocket4.connect();
+
   }, []);
 
   useEffect(() => {
