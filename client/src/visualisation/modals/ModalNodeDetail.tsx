@@ -12,14 +12,14 @@ import { CanvasState } from '../models/CanvasState'
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalNodeDetail: React.FC<{
     datasetName: string,
-    clickedNode: Node | undefined,
+    clickedNode: Node,
     showModal: boolean,
     setModal: Function
 }> = ({ datasetName, clickedNode, showModal, setModal }) => {
     const theme = useContext(SessionContext)
     const [formInputs, setFormInputs] = useState({
-        title: 'title_',
-        description: 'description_'
+        title: clickedNode?.title,
+        description: clickedNode?.description
     });
 
     function handleChange(event: any) {
@@ -27,17 +27,19 @@ const ModalNodeDetail: React.FC<{
         const value = event.target.value;
         setFormInputs({ ...formInputs, [key]: value })
     }
-    function handleSave(event: any) {
-        const newNode: Node = {
-            id: generate_uuidv4(),
-            title: formInputs.title,
-            description: formInputs.description,
-            cx: 100,
-            cy: 100,
-            visible: true
-        }
-        createNode(datasetName, theme.sessionInfo.webId, newNode)
-    }
+    // function handleSave(event: any) {
+    //     const newNode: Node = {
+    //         id: generate_uuidv4(),
+    //         title: formInputs.title,
+    //         description: formInputs.description,
+    //         cx: 100,
+    //         cy: 100,
+    //         visible: true
+    //     }
+    //     createNode(datasetName, theme.sessionInfo.webId, newNode)
+    // }
+
+    const handleClose = () => setModal(false);
 
     return (
         <Modal
@@ -61,7 +63,9 @@ const ModalNodeDetail: React.FC<{
                 />
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={handleSave}>Add</Button>
+            <Button variant="secondary" onClick={handleClose}>
+                    Close
+                </Button>
             </Modal.Footer>
         </Modal>
 

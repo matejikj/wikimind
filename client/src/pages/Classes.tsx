@@ -55,35 +55,35 @@ const Classes: React.FC = () => {
     });
     const podUrl = sessionContext.sessionInfo.podUrl + 'Wikie/classes/classes.ttl'
 
-    const socket = new WebSocket(wssUrl, ['solid-0.1']);
-    socket.onopen = function () {
-      this.send(`sub ${podUrl}`);
-    };
-    socket.onmessage = function (msg) {
-      if (msg.data && msg.data.slice(0, 3) === 'pub') {
-        if (msg.data === `pub ${podUrl}`) {
-          const result = getClassesList(sessionContext.sessionInfo).then((res) => {
-            setList(res)
-          });
-          getRequests(sessionContext.sessionInfo).then((aaa) => {
-            setRequests(aaa)
-          });
-        }
-      }
-    };
-    const websocket4 = new WebsocketNotification(
-      podUrl,
-      { fetch: fetch }
-    );
-    websocket4.on("message", (e: any) => {
-      const result = getClassesList(sessionContext.sessionInfo).then((res) => {
-        setList(res)
-      });
-      getRequests(sessionContext.sessionInfo).then((aaa) => {
-        setRequests(aaa)
-      });
-    });
-    websocket4.connect();
+    // const socket = new WebSocket(wssUrl, ['solid-0.1']);
+    // socket.onopen = function () {
+    //   this.send(`sub ${podUrl}`);
+    // };
+    // socket.onmessage = function (msg) {
+    //   if (msg.data && msg.data.slice(0, 3) === 'pub') {
+    //     if (msg.data === `pub ${podUrl}`) {
+    //       const result = getClassesList(sessionContext.sessionInfo).then((res) => {
+    //         setList(res)
+    //       });
+    //       getRequests(sessionContext.sessionInfo).then((aaa) => {
+    //         setRequests(aaa)
+    //       });
+    //     }
+    //   }
+    // };
+    // const websocket4 = new WebsocketNotification(
+    //   podUrl,
+    //   { fetch: fetch }
+    // );
+    // websocket4.on("message", (e: any) => {
+    //   const result = getClassesList(sessionContext.sessionInfo).then((res) => {
+    //     setList(res)
+    //   });
+    //   getRequests(sessionContext.sessionInfo).then((aaa) => {
+    //     setRequests(aaa)
+    //   });
+    // });
+    // websocket4.connect();
 
   }, []);
 

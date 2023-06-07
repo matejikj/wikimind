@@ -85,21 +85,27 @@ export async function getProfiles(userSession: UserSession) {
         const types = getUrlAll(thing, RDF.type);
         if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
             const newLink = datasetLinkBuilder.read(thing)
-            if (newLink.linkType === LinkType.PROFILE_LINK) {
-                const pupilProfiles = await getProfileAll(newLink.url, { fetch });
+            profiles.push({
+                webId: newLink.url,
+                name: '',
+                surname: ''
+            })
 
-                let myExtendedProfile = pupilProfiles.altProfileAll[0];
+            // if (newLink.linkType === LinkType.PROFILE_LINK) {
+            //     const pupilProfiles = await getProfileAll(newLink.url, { fetch });
 
-                const podUrls = await getPodUrl(newLink.url)
-                if (podUrls !== null) {
-                    const podUrl = podUrls[0]
-                    let bb = getThing(myExtendedProfile, podUrl + "profile#Wikie");
-                    let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-                    let userProfile = profileBuilder.read(bb)
-                    console.log(userProfile)
-                    profiles.push(userProfile)
-                }
-            }
+                // let myExtendedProfile = pupilProfiles.altProfileAll[0];
+
+                // const podUrls = await getPodUrl(newLink.url)
+                // if (podUrls !== null) {
+                //     const podUrl = podUrls[0]
+                //     let bb = getThing(myExtendedProfile, podUrl + "profile#Wikie");
+                //     let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+                //     let userProfile = profileBuilder.read(bb)
+                //     console.log(userProfile)
+                //     profiles.push(userProfile)
+                // }
+            // }
         }
     }))
 

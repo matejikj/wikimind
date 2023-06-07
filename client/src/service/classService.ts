@@ -483,7 +483,7 @@ export async function getClassesList(userSession: UserSession) {
 
     const myDataset = await getSolidDataset(
         podUrl,
-        getDefaultSession()
+        { fetch: fetch }
     );
     const things = await getThingAll(myDataset);
     let datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
@@ -516,4 +516,12 @@ export async function addGraphToClass(userSession: UserSession, graphUrl: string
         newDAtaset,
         { fetch: fetch }
     );
+    universalAccess.setPublicAccess(
+        graphUrl,         // Resource
+        { append: true, read: true, write: false },          // Access object
+        { fetch: fetch }                         // fetch function from authenticated session
+      ).then((newAccess) => {
+        console.log("newAccess       contacts.ttl")
+      });
+  
 }

@@ -21,7 +21,16 @@ import { Node } from "../models/types/Node";
 import { TransformWrapper } from "react-zoom-pan-pinch";
 import { TransformComponent } from "react-zoom-pan-pinch";
 import { updateNode } from "../service/mindMapService";
+import axios from "axios";
 
+const nodeEx: Node = {
+  id: '',
+  cx: 0,
+  cy: 0,
+  title: '',
+  description: '',
+  visible: false
+}
 const DELETE_LINK_METHOD = "delete";
 const LINK_RENAME_METHOD = "rename";
 
@@ -42,9 +51,10 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
   const [modalNodeRecommends, setModalNodeRecommends] = useState(false);
   const [modalLinkRename, setModalLinkRename] = useState(false);
   const [modalLinkDelete, setModalLinkDelete] = useState(false);
+  const [title, setTitle] = useState('ds');
 
   const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
-  const [clickedNode, setClickedNode] = useState<Node>();
+  const [clickedNode, setClickedNode] = useState<Node>(nodeEx);
   const [clickedLink, setClickedLink] = useState<Link>();
   const [disabledCanvas, setDisabledCanvas] = useState(false);
   const [circleMenu, setCircleMenu] = useState<ContextMenuType>({
@@ -54,9 +64,8 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
     items: [
       {
         title: DETAIL_METHOD,
-        action: () => {
-          console.log(clickedNode)
-          setModalNodeDetail(true)
+        action: (node: Node) => {
+          // setModalNodeDetail(true)
         }
       },
       {
@@ -67,8 +76,21 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
       },
       {
         title: RECOMMENDS_METHOD,
-        action: () => {
-          setModalNodeRecommends(true)
+        action: (node: Node) => {
+          let rrr = ''
+          const name = node.title.replaceAll(' ', '_')
+          axios.get("http://localhost:5000/recommends?entity=" + name).then((res) => {
+            const ress = res.data.map((item: string) => {
+              rrr = rrr + item.split("http://dbpedia.org/resource/")[1] + '\n'
+            })
+            setTitle(ress)
+            console.log(ress)
+            console.log(title)
+            alert(rrr)
+
+          })
+
+          // setModalNodeRecommends(true)
         }
       },
       {

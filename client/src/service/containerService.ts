@@ -163,6 +163,9 @@ export async function getMindMapList(userSession: UserSession) {
     const dat = await getSolidDataset(res, { fetch: fetch })
     const things = getThingAll(dat);
     things.forEach(thing => {
+
+
+      
       const types = getUrlAll(thing, RDF.type);
       if (types.some(type => type === mindMapDefinition.identity.subject)) {
         resultResources.push({

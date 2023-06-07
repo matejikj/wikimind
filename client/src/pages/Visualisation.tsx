@@ -112,7 +112,7 @@ const Visualisation: React.FC = () => {
   return (
     <div className="App">
       <Sidenav type={SideNavType.CANVAS} />
-      <main ref={ref}>
+      <main className="canvas-back" ref={ref}>
         <Canvas url={url} data={dataset} height={height} width={width} setPosition={setPosition}></Canvas>
       </main>
     </div>

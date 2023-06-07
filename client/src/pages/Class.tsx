@@ -20,6 +20,17 @@ import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import './Class.css';
 import { FcComments } from "react-icons/fc";
 import ModelClassAdd from "./ModalClassAdd";
+import { Exam } from "../models/types/Exam";
+
+const exampleExams: Exam[] = [{
+  id: generate_uuidv4(),
+  profile: 'inrupt.com/matejikj',
+  mindMap: 'aaaaa',
+  max: 5,
+  result: 3
+}]
+
+
 
 const Class: React.FC = () => {
   const d3Container = useRef(null);
@@ -202,7 +213,7 @@ const Class: React.FC = () => {
                       <Row key={index}>
                         <Col>
                           <Stack direction="horizontal" gap={2}>
-                          {item.title}
+                            {item.title}
                             <div>
                               <Button
                                 className='class-btn'
@@ -227,7 +238,7 @@ const Class: React.FC = () => {
                                 name={item.url}
                                 onClick={showExam}
                                 variant="success"
-                              >Exa</Button>
+                              >Exam</Button>
                               <br />
                             </div>
 
@@ -271,6 +282,51 @@ const Class: React.FC = () => {
               </Card>
 
             </Col>
+            <Col sm="6">
+              <Card className="class-card">
+                <Container>
+                  <Row>
+                    <h4>Exams</h4>
+                    {exampleExams.length === 0 &&
+                      <p>No exams already</p>
+                    }
+
+                  </Row>
+                  <table>
+                    <tr>
+                      <th>Pupil</th>
+                      <th>MindMap</th>
+                      <th>Max</th>
+                      <th>Result</th>
+                    </tr>
+                    {exampleExams.map((item, index) => {
+                      return (
+                        <tr>
+                          <td>{item.profile}</td>
+                          <td>{item.mindMap}</td>
+                          <td>{item.max}</td>
+                          <td>{item.result}</td>
+                        </tr>
+
+                        // <Row key={index}>
+                        //   <Col sm={9}>{item.name} {item.surname}</Col>
+                        //   <Col sm={3}>
+
+                        //     <Stack direction="horizontal" gap={2}>
+                        //       <Button className="class-message" variant="outline" onClick={() => { sendMessage(item.webId) }}><FcComments> </FcComments></Button>
+
+                        //     </Stack>
+                        //   </Col>
+                        // </Row>
+                      )
+                    })}
+                  </table>
+
+                </Container>
+              </Card>
+
+            </Col>
+
           </Row>
         </Container>
       </main>

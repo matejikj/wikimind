@@ -499,14 +499,15 @@ const Visualisation: React.FC = () => {
         if (width > divWidth) {
             setClickedUser(e)
             flushSync(() => {
-                getFriendMessages(theme.sessionInfo, e)
+                setMessages(exx)
+                // getFriendMessages(theme.sessionInfo, e)
             });
 
-            // const element = document.getElementById('12321');
-            // if (element) {
-            //     // 👇 Will scroll smoothly to the top of the next section
-            //     element.scrollIntoView({ behavior: 'auto' });
-            // }
+            const element = document.getElementById('12321');
+            if (element) {
+                // 👇 Will scroll smoothly to the top of the next section
+                element.scrollIntoView({ behavior: 'auto' });
+            }
         } else {
             navigate('/chat/', {
                 state: {
@@ -537,7 +538,7 @@ const Visualisation: React.FC = () => {
                                 {list.map((item, index) => {
                                     return (
                                         <ListGroup.Item action onClick={() => { goPrivateMessage(item.webId) }} key={index}>
-                                            <Col sm={9}>{item.name} {item.name}</Col>
+                                            <Col sm={9}>{item.webId}</Col>
                                         </ListGroup.Item>
                                     )
                                 })}

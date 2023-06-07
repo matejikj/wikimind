@@ -17,7 +17,7 @@ svg.drag-over {
   border: 3px dashed red;
 }
 
-main {
+.canvas-back {
   background-color: #f5f5f5;
 
 }

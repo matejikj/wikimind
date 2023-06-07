@@ -8,6 +8,7 @@ const ContextMenu: React.FC<{
 }> = ({ menu, clickedNode }) => {
 
   const handleContextMenu = (e: any) => {
+    console.log('clickedNode')
     console.log(clickedNode)
     menu.items[parseInt(e.target.id)].action(clickedNode)
   }
