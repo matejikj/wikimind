@@ -22,6 +22,7 @@ import Exam from "./pages/Exam";
 import { AccessControlPolicy } from "./models/types/AccessControlPolicy";
 import { createProfile, getProfile } from "./service/profileService";
 import { Profile } from "./models/types/Profile";
+import Creator from "./pages/Creator";
 
 const App: React.FC = () => {
 
@@ -77,6 +78,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/visualisation" element={<Visualisation />} />
+            <Route path="/creator" element={<Creator />} />
             <Route path="/classes" element={<Classes />} />
             <Route path="/class" element={<Class />} />
             <Route path="/profile" element={<ProfileView />} />

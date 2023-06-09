@@ -30,6 +30,7 @@ const Dashboard: React.FC = () => {
 
   }, []);
 
+
   const showMindMap = (e: any) => {
     console.log(e.target.name)
     navigate('/visualisation/', {
@@ -38,6 +39,16 @@ const Dashboard: React.FC = () => {
       }
     })
   }
+
+  const creator = (e: any) => {
+    console.log(e.target.name)
+    navigate('/creator/', {
+      state: {
+        id: e.target.name
+      }
+    })
+  }
+
   const removeMindMap = (e: any) => {
     console.log(e.target.name)
     // navigate('/visualisation/', {
@@ -52,6 +63,19 @@ const Dashboard: React.FC = () => {
       createNewMindMap(name, sessionContext.sessionInfo).then((res) => {
         console.log(res)
         navigate('/visualisation/', {
+          state: {
+            id: res
+          }
+        })
+      })
+    }
+  }
+
+  const createWithCreator = (e: any) => {
+    if (sessionContext.sessionInfo.isLogged) {
+      createNewMindMap(name, sessionContext.sessionInfo).then((res) => {
+        console.log(res)
+        navigate('/creator/', {
           state: {
             id: res
           }
@@ -88,6 +112,9 @@ const Dashboard: React.FC = () => {
             <Button variant="primary" onClick={createNew}>
               Save Changes
             </Button>
+            <Button variant="primary" onClick={createWithCreator}>
+              Creator
+            </Button>
           </Modal.Footer>
         </Modal>
         <Container>
@@ -98,28 +125,32 @@ const Dashboard: React.FC = () => {
           {list.map((item, index) => {
             return (
               <Row key={index}>
-                <Col sm={9}>{item.title}</Col>
-                <Col sm={3}>
-                  
+                <Col sm={8}>{item.title}</Col>
+                <Col sm={4}>
+
                   <Stack direction="horizontal" gap={2}>
-                    <div>
                       <Button
                         className='class-btn'
                         name={item.url}
                         onClick={showMindMap}
                         variant="success"
-                      >Show</Button>
-                      <br />
-                    </div>
-                    <div>
+                      >
+                        Show
+                      </Button>
+                      <Button
+                        className='class-btn'
+                        name={item.url}
+                        onClick={creator}
+                        variant="success"
+                      >
+                        Creator
+                      </Button>
                       <Button
                         className='class-btn'
                         name={item.url}
                         onClick={removeMindMap}
                         variant="success"
-                        >Remove</Button>
-                      <br />
-                    </div>
+                      >Remove</Button>
 
                   </Stack>
                 </Col>

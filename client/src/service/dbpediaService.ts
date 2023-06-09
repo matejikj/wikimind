@@ -44,33 +44,29 @@ export async function getCategoryInfo(entity: string) {
     const sparqlQuery = `
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX dbo: <http://dbpedia.org/ontology/>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
     
-    SELECT ?p (COUNT(?p) AS ?count)
+    SELECT ?p ?a
     WHERE {
-        {
-            <http://dbpedia.org/resource/${entity}> dbo:wikiPageWikiLink ?a.
-            <http://dbpedia.org/resource/${entity}> dcterms:subject ?c.
-            ?a dbo:wikiPageWikiLink ?p.
-            ?p dcterms:subject ?c.
-        }
-    }
-    GROUP BY ?p
-    ORDER BY DESC(COUNT(?p))
-    LIMIT 50
-`;
+      {
+        <${entity}> ?p ?a.
+        FILTER (?p = dbo:wikiPageWikiLink || ?p = dcterms:subject)
+      }
+    }`;
 
     const endpointUrl = 'https://dbpedia.org/sparql';
     const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
     try {
-        axios.get(queryUrl).then(async (response) => {
-
-            const result: Result = response.data;
-            const entities = result.results.bindings.map((item: Binding) => {
-                return item.p.value
+        const entities: any[] = []
+        const b = await axios.get(queryUrl).then((response) => {
+            const result = response.data;
+            result.results.bindings.forEach((item: Binding) => {
+                if (item.a) {
+                    entities.push(item.a.value)
+                }
             })
-            return entities;
-
         });
+        return entities;
     } catch (error) {
         console.log(error);
     }
