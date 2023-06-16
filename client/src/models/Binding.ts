@@ -1,13 +1,13 @@
 export interface Binding {
-  p: {
+  entity: {
     type: string;
     value: string;
   };
-  a?: {
+  type: {
     type: string;
     value: string;
   };
-  count?: {
+  label: {
     type: string;
     datatype: string;
     value: string;

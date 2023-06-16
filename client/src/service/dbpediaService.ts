@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Result } from "../models/Result";
 import { Binding } from "../models/Binding";
+import { ResultItem, SparqlResults } from "../models/SparqlResults";
 
 export async function getSingleReccomends(entity: string) {
 
@@ -29,7 +30,7 @@ export async function getSingleReccomends(entity: string) {
 
             const result: Result = response.data;
             const entities = result.results.bindings.map((item: Binding) => {
-                return item.p.value
+                return item.entity.value
             })
             return entities;
 
@@ -39,35 +40,99 @@ export async function getSingleReccomends(entity: string) {
     }
 }
 
-export async function getCategoryInfo(entity: string) {
+// export async function getEntityNeighbours(entity: string) {
+
+//     const sparqlQuery = `
+//     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+//     PREFIX dbo: <http://dbpedia.org/ontology/>
+//     PREFIX dcterms: <http://purl.org/dc/terms/>
+    
+//     SELECT ?p ?a
+//     WHERE {
+//       {
+//         <${entity}> ?p ?a.
+//         FILTER (?p = dbo:wikiPageWikiLink || ?p = dcterms:subject)
+//       }
+//     }`;
+
+//     const endpointUrl = 'https://dbpedia.org/sparql';
+//     const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
+//     try {
+//         const entities: any[] = []
+//         const b = await axios.get(queryUrl).then((response) => {
+//             const result = response.data;
+//             result.results.bindings.forEach((item: Binding) => {
+//                 if (item.a) {
+//                     entities.push({url: item.a.value, type: item.p.value})
+//                 }
+//             })
+//         });
+//         return entities;
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
+
+export async function getEntityNeighbours(entity: string): Promise<ResultItem[] | undefined> {
 
     const sparqlQuery = `
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX dbo: <http://dbpedia.org/ontology/>
     PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     
-    SELECT ?p ?a
+    SELECT ?entity ?type ?label
     WHERE {
       {
-        <${entity}> ?p ?a.
-        FILTER (?p = dbo:wikiPageWikiLink || ?p = dcterms:subject)
+        <${entity}> ?type ?entity.
+        ?entity rdfs:label ?label.
+        FILTER (lang(?label) = "cs" || lang(?label) = "en")
+        FILTER (?type = dbo:wikiPageWikiLink || ?type = dcterms:subject)
       }
     }`;
 
     const endpointUrl = 'https://dbpedia.org/sparql';
     const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
     try {
-        const entities: any[] = []
-        const b = await axios.get(queryUrl).then((response) => {
-            const result = response.data;
-            result.results.bindings.forEach((item: Binding) => {
-                if (item.a) {
-                    entities.push(item.a.value)
-                }
-            })
+        await axios.get(queryUrl).then((response) => {
+            const result: SparqlResults = response.data;
+            return result.results.bindings;
         });
-        return entities;
+        return undefined;
     } catch (error) {
         console.log(error);
     }
 }
+
+// export async function getEntityDetail(entity: string) {
+
+//     const sparqlQuery = `
+//     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+//     PREFIX dbo: <http://dbpedia.org/ontology/>
+//     PREFIX dcterms: <http://purl.org/dc/terms/>
+    
+//     SELECT ?p ?a
+//     WHERE {
+//       {
+//         <${entity}> ?p ?a.
+//         FILTER (?p = dbo:wikiPageWikiLink || ?p = dcterms:subject)
+//       }
+//     }`;
+
+//     const endpointUrl = 'https://dbpedia.org/sparql';
+//     const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
+//     try {
+//         const entities: any[] = []
+//         const b = await axios.get(queryUrl).then((response) => {
+//             const result = response.data;
+//             result.results.bindings.forEach((item: Binding) => {
+//                 if (item.a) {
+//                     entities.push(item.a.value)
+//                 }
+//             })
+//         });
+//         return entities;
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }

@@ -73,14 +73,11 @@ const Dashboard: React.FC = () => {
 
   const createWithCreator = (e: any) => {
     if (sessionContext.sessionInfo.isLogged) {
-      createNewMindMap(name, sessionContext.sessionInfo).then((res) => {
-        console.log(res)
-        navigate('/creator/', {
-          state: {
-            id: res
-          }
-        })
-      })
+      navigate('/creator/')
+      // createNewMindMap(name, sessionContext.sessionInfo).then((res) => {
+      //   console.log(res)
+
+      // })
     }
   }
 
@@ -112,9 +109,6 @@ const Dashboard: React.FC = () => {
             <Button variant="primary" onClick={createNew}>
               Save Changes
             </Button>
-            <Button variant="primary" onClick={createWithCreator}>
-              Creator
-            </Button>
           </Modal.Footer>
         </Modal>
         <Container>
@@ -129,35 +123,36 @@ const Dashboard: React.FC = () => {
                 <Col sm={4}>
 
                   <Stack direction="horizontal" gap={2}>
-                      <Button
-                        className='class-btn'
-                        name={item.url}
-                        onClick={showMindMap}
-                        variant="success"
-                      >
-                        Show
-                      </Button>
-                      <Button
-                        className='class-btn'
-                        name={item.url}
-                        onClick={creator}
-                        variant="success"
-                      >
-                        Creator
-                      </Button>
-                      <Button
-                        className='class-btn'
-                        name={item.url}
-                        onClick={removeMindMap}
-                        variant="success"
-                      >Remove</Button>
+                    <Button
+                      className='class-btn'
+                      name={item.url}
+                      onClick={showMindMap}
+                      variant="success"
+                    >
+                      Show
+                    </Button>
+                    <Button
+                      className='class-btn'
+                      name={item.url}
+                      onClick={removeMindMap}
+                      variant="success"
+                    >Remove</Button>
 
                   </Stack>
                 </Col>
               </Row>
             )
           })}
-          <Button onClick={handleShow} variant="outline-success">Create new</Button>
+          <Stack direction='horizontal'>
+            <Button onClick={handleShow} variant="outline-success">Create new</Button>
+            <Button
+              onClick={createWithCreator}
+              variant="success"
+            >
+              Creator
+            </Button>
+
+          </Stack>
         </Container>
       </main>
     </div>

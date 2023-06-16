@@ -1,0 +1,33 @@
+.creator-btn {
+    margin: 2px;
+    padding: 2px;
+    border-radius: 5px;
+    background-color:forestgreen;
+    color: white;
+    border: 1px solid white;
+
+}
+
+.creator-btn-category {
+    margin: 2px;
+    padding: 2px;
+    border-radius: 5px;
+    background-color:orangered;
+    color: white;
+    border: 1px solid white;
+
+}
+
+.creator-inline-btn {
+    border: 0px solid green;
+    margin-right: 2px;
+    border-radius: 5px;
+    background-color:white;
+    color: black;
+
+    /* padding-left: 2px; */
+}
+
+.pagination-creator {
+    margin: 12px;
+}
