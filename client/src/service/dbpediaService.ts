@@ -73,6 +73,35 @@ export async function getSingleReccomends(entity: string) {
 //     }
 // }
 
+export async function getLabels(list: ResultItem[]) {
+    let query = ''
+
+    list.forEach((item) => {
+        query = query + '<' + item.entity.value + '> '
+    })
+
+    const sparqlQuery = `
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+    SELECT ?entity rdfs:label as ?type ?label
+    WHERE {
+        VALUES ?entity { ${query}}
+        ?entity rdfs:label ?label .
+        FILTER(LANG(?label) = "cs")
+    }`;
+
+    const endpointUrl = 'https://dbpedia.org/sparql';
+    const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
+    try {
+        const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings
+        // const result: SparqlResults = response.data;
+        return response;
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+
 export async function getEntityNeighbours(entity: string): Promise<ResultItem[] | undefined> {
 
     const sparqlQuery = `
@@ -94,11 +123,34 @@ export async function getEntityNeighbours(entity: string): Promise<ResultItem[] 
     const endpointUrl = 'https://dbpedia.org/sparql';
     const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
     try {
-        await axios.get(queryUrl).then((response) => {
-            const result: SparqlResults = response.data;
-            return result.results.bindings;
-        });
-        return undefined;
+        const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings
+        const dict = new Map<string, boolean>();
+        response.forEach((item) => {
+            if (item.label["xml:lang"] === 'cs') {
+                dict.set(item.entity.value, true)
+            }
+        })
+        for (let i = response.length - 1; i >= 0; i--) {
+            if (response[i].label["xml:lang"] === 'en' && dict.has(response[i].entity.value)) {
+                response.splice(i, 1)
+            }
+        }
+        // if (csLabels !== undefined) {
+        //     csLabels.forEach((item) => {
+        //         dict.set(item.entity.value, item.label.value)
+        //     })
+        // }
+        // res.forEach((item) => {
+        //     const newLabel = dict.get(item.entity.value)
+        //     if (newLabel !== undefined) {
+        //         item.label.value = newLabel
+        //         item.label["xml:lang"] = 'cs'
+        //     }
+        // })
+
+
+        // const result: SparqlResults = response.data;
+        return response;
     } catch (error) {
         console.log(error);
     }

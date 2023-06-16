@@ -23,7 +23,7 @@ import './Messages.css';
 import { flushSync } from "react-dom";
 import axios from "axios";
 import * as d3 from "d3";
-import { getEntityNeighbours } from "../service/dbpediaService";
+import { getEntityNeighbours, getLabels } from "../service/dbpediaService";
 import { FaBackspace, FaInfo, FaMinus, FaPlus } from "react-icons/fa";
 import './Creator.css';
 import { ResultItem } from "../models/SparqlResults";
@@ -93,7 +93,7 @@ const Creator: React.FC = () => {
         }
     }, []);
 
-    const language = 'en';
+    const language = 'cs';
 
     async function searchKeyword() {
         const url = "https://lookup.dbpedia.org/api/search?label=" + formInputs
@@ -101,22 +101,49 @@ const Creator: React.FC = () => {
             params: {
                 format: 'json',
                 label: formInputs,
-                languages: language
             },
             headers: {
                 Accept: 'application/json'
             }
         })
-            .then(response => {
+            .then(async response => {
                 // Handle the response data
                 const res: ResultItem[] = response.data.docs.slice(0, 100).map((item: any) => {
                     return {
-                        label: item.label === undefined ? '' : item.label[0].replaceAll('<B>', '').replaceAll('</B>', ''),
-                        entity: item.resource === undefined ? '' : item.resource[0],
-                        type: 'http://dbpedia.org/ontology/wikiPageWikiLink'
+                        "entity":
+                        {
+                            "type": "uri",
+                            "value": item.resource[0]
+                        },
+                        "type":
+                        {
+                            "type": "uri",
+                            "value": "http://dbpedia.org/ontology/wikiPageWikiLink"
+                        },
+                        "label":
+                        {
+                            "type": "literal",
+                            "xml:lang": "en",
+                            "value": item.label[0].replaceAll('<B>', '').replaceAll('</B>', '')
+                        }
+                    }
+                })
+                const csLabels = await getLabels(res)
+                const dict = new Map<string, string>();
+                if (csLabels !== undefined) {
+                    csLabels.forEach((item) => {
+                        dict.set(item.entity.value, item.label.value)
+                    })
+                }
+                res.forEach((item) => {
+                    const newLabel = dict.get(item.entity.value)
+                    if (newLabel !== undefined) {
+                        item.label.value = newLabel
+                        item.label["xml:lang"] = 'cs'
                     }
                 })
                 setResults(res)
+                console.log(results)
             })
             .catch(error => {
                 // Handle the error
@@ -147,36 +174,50 @@ const Creator: React.FC = () => {
 
     }
 
-    async function refreshPath(event: any) {
-        // const bb = results.find((item) => item.url)
+    async function refreshPath(item: ResultItem) {
         // console.log(bb)
 
-        // const lastElement = path[path.length - 1];
+        const lastElement = path[path.length - 1];
+
         // const isInNodes = nodes.find(x => x.url === event.url)
         // if (isInNodes === undefined) {
         //     nodes.push(event)
         // }
-        // // if (!nodes.includes(event)) {
-        // //     nodes.push(event)
-        // // }
-        // links.push({ source: lastElement.url, target: event.url, type: event.type })
-        // // setLinks([...links, ])
 
-        // setPath([...path, event])
-        // const a = await getEntityNeighbours(event.url)
-        // if (a) {
-        //     setRecommends(a)
+        // if (!nodes.includes(event)) {
+        //     nodes.push(event)
         // }
-        // // setRecommends([{
-        // //     url: 'http://dbpedia.org/resource/tretre',
-        // //     type: 'tretre'
-        // // }])
+
+
+
+
+        // setLinks([...links, ])
+
+        setPath([...path, item])
+        const a = await getEntityNeighbours(item.entity.value)
+        if (a) {
+            setRecommends(a)
+        }
+        // setRecommends([{
+        //     url: 'http://dbpedia.org/resource/tretre',
+        //     type: 'tretre'
+        // }])
         // console.log('RES')
         // console.log({ source: lastElement.url, target: event.url, type: event.type })
         // console.log(event)
     }
 
-    async function addLink(to: string) {
+    async function addLink(to: ResultItem) {
+        const isInNodes = nodes.find((item) => item.entity.value === to.entity.value)
+        if (isInNodes === undefined) {
+            nodes.push(to)
+        }
+        const lastElement = path[path.length - 1];
+
+        links.push({ source: lastElement.entity.value, target: to.entity.value, type: to.type.value })
+
+
+
         // const lastElement = path[path.length - 1];
         // if (!nodes.includes(lastElement)) {
         //     nodes.push(lastElement)
@@ -194,20 +235,20 @@ const Creator: React.FC = () => {
         //     .force("x", d3.forceX())
         //     .force("y", d3.forceY());
 
-        // // setA(aaa)
-        // // setB(bbb)
-        // // const t = simulation.alphaTarget(0)
-        // // console.log(aaa)
-        // // console.log(bbb)
+        // setA(aaa)
+        // setB(bbb)
+        // const t = simulation.alphaTarget(0)
+        // console.log(aaa)
+        // console.log(bbb)
     }
 
     async function backspace() {
-        // const newLastElement = path[path.length - 2];
-        // const a = await getEntityNeighbours(newLastElement.url)
-        // setPath((item) => path.filter((_, index) => index !== path.length - 1))
-        // if (a) {
-        //     setRecommends(a)
-        // }
+        const newLastElement = path[path.length - 2];
+        const a = await getEntityNeighbours(newLastElement.entity.value)
+        setPath((item) => path.filter((_, index) => index !== path.length - 1))
+        if (a) {
+            setRecommends(a)
+        }
 
     }
 
@@ -239,11 +280,11 @@ const Creator: React.FC = () => {
                         <div className="">
                             {nodes.map((item, index) => {
                                 return (
-                                    <button className="creator-btn" onClick={() => refreshPath(item.url)}>
-                                        {item.url.split('http://dbpedia.org/resource/')[1].replace('Category:', '').replaceAll('_', ' ')}
-                                        <button className="creator-delete-btn" onClick={(e) => { e.stopPropagation(); alert('minus') }}>
+                                    <button key={index} className="creator-btn">
+                                        {item.label.value}
+                                        {/* <button className="creator-delete-btn" onClick={(e) => { e.stopPropagation(); alert('minus') }}>
                                             <FaMinus></FaMinus>
-                                        </button>
+                                        </button> */}
                                     </button>
                                 )
                             })}
@@ -251,7 +292,7 @@ const Creator: React.FC = () => {
 
                     </Modal.Body>
                     <Modal.Footer>
-                    <Button
+                        <Button
                             className='my-btn'
                             variant="secondary"
                             onClick={() => setShow(false)}
@@ -300,7 +341,7 @@ const Creator: React.FC = () => {
                             <Pagination className="pagination-creator">
                                 {path.length >= 1 && (
                                     <Pagination.Item key={generate_uuidv4()}>
-                                        {path[0].url.split('http://dbpedia.org/resource/')[1].replace('Category:', '').replaceAll('_', ' ')}
+                                        {path[0].label.value}
                                     </Pagination.Item>
                                 )}
 
@@ -311,7 +352,7 @@ const Creator: React.FC = () => {
                                 )}
                                 {path.length > 1 && (
                                     <Pagination.Item key={generate_uuidv4()}>
-                                        {path[path.length - 1].url.split('http://dbpedia.org/resource/')[1].replace('Category:', '').replaceAll('_', ' ')}
+                                        {path[path.length - 1].label.value}
                                     </Pagination.Item>
                                 )}
                                 {path.length > 1 && (
@@ -326,22 +367,24 @@ const Creator: React.FC = () => {
                                 <div className="message-box">
                                     {recommends.map((item, index) => {
                                         return (
+                                            <div key={index} className="fckn-div">
 
-                                            <button className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'creator-btn' : 'creator-btn-category'} onClick={() => refreshPath(item)}>
-                                                {item.label.value}
+                                                <button className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'creator-btn' : 'creator-btn-category'} onClick={() => refreshPath(item)}>
+                                                    {item.label.value}
+                                                </button>
                                                 <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); alert('item') }}>
                                                     <FaInfo></FaInfo>
                                                 </button>
-                                                <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); alert('item') }}>
+                                                <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); addLink(item) }}>
                                                     <FaPlus></FaPlus>
                                                 </button>
-                                            </button>
+                                            </div>
                                         )
                                     })}
                                 </div>
                             </Col>
                         </Row>
-                        <Row>
+                        {/* <Row>
                             <svg
                                 width={800}
                                 height={600}
@@ -381,7 +424,7 @@ const Creator: React.FC = () => {
                                 })}
 
                             </svg>
-                        </Row>
+                        </Row> */}
                     </Container>
                 ) : (
                     <Container>
