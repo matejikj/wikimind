@@ -12,7 +12,7 @@ import Container from 'react-bootstrap/Container';
 import './ProfileView.css';
 import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
-import { getProfile } from '../service/profileService';
+import { getProfile, updateProfile } from '../service/profileService';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Profile } from '../models/types/Profile';
@@ -36,14 +36,16 @@ const ProfileView: React.FC = () => {
 
   }, []);
 
-  const updateProfile = (e: any) => {
-
+  const profileSaved = () => {
+    updateProfile(sessionContext.sessionInfo, profile)
   }
+
   function handleChange(event: any) {
     const key = event.target.name;
     const value = event.target.value;
     setProfile({ ...profile, [key]: value })
   }
+
   return (
     <div className="App">
       <Sidenav type={SideNavType.COMMON} />
@@ -79,7 +81,7 @@ const ProfileView: React.FC = () => {
                   />
                 </Card.Body>
                 <Card.Footer>
-                  <Button variant="outline-success" onClick={updateProfile}>Confirm</Button>
+                  <Button variant="outline-success" onClick={profileSaved}>Confirm</Button>
                 </Card.Footer>
               </Card>
             </Col>

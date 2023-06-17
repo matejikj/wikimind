@@ -20,7 +20,6 @@ import { SessionContext } from "./sessionContext";
 import PrivateChat from "./pages/PrivateChat";
 import Exam from "./pages/Exam";
 import { AccessControlPolicy } from "./models/types/AccessControlPolicy";
-import { createProfile, getProfile } from "./service/profileService";
 import { Profile } from "./models/types/Profile";
 import Creator from "./pages/Creator";
 
@@ -36,30 +35,12 @@ const App: React.FC = () => {
       if (info?.isLoggedIn && info?.webId !== undefined) {
         try {
           checkContainer(info?.webId).then((value) => {
-            console.log({
-              isLogged: true,
-              webId: info?.webId!,
-              podUrl: value.podUrl,
-              podAccessControlPolicy: value.accessControlPolicy
-            })
             setSessionInfo({
               isLogged: true,
               webId: info?.webId!,
               podUrl: value.podUrl,
               podAccessControlPolicy: value.accessControlPolicy
             })
-            console.log(sessionInfo)
-            // try {
-            //   getProfile(sessionInfo)
-            // } catch (error) {
-            //   const profile: Profile = {
-            //     webId:sessionInfo.webId,
-            //     name: "aaa",
-            //     surname: "bbb"
-            //   }
-            //   createProfile(sessionInfo, profile)
-            //   console.log(error)
-            // }
           })
         } catch (error) {
           alert("There is problem with  logging.")

@@ -40,29 +40,29 @@ import { ProfileLDO } from "../models/things/ProfileLDO";
 import { UserSession } from "../models/types/UserSession";
 import { SOLID } from "@inrupt/vocab-solid";
 
-export async function createProfile(userSession: UserSession, profile: Profile) {
-  const profiles = await getProfileAll(userSession.webId, { fetch });
-  const webIDProfileSolidDataset = profiles.webIdProfile;
-  const webIdThing = getThing(webIDProfileSolidDataset, userSession.webId);
-  if (webIdThing) {
-    const extendedProfilesSolidDatasets = profiles.altProfileAll;
+// export async function createProfile(userSession: UserSession, profile: Profile) {
+//   const profiles = await getProfileAll(userSession.webId, { fetch });
+//   const webIDProfileSolidDataset = profiles.webIdProfile;
+//   const webIdThing = getThing(webIDProfileSolidDataset, userSession.webId);
+//   if (webIdThing) {
+//     const extendedProfilesSolidDatasets = profiles.altProfileAll;
 
-    let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-    // myExtendedProfile = setThing(myExtendedProfile, profileBuilder.create(profile));
+//     let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+//     // myExtendedProfile = setThing(myExtendedProfile, profileBuilder.create(profile));
 
-  }
-  // let myExtendedProfile = profiles.altProfileAll[0];
-  // let userDataThing = getThing(myExtendedProfile, userSession.webId);
+//   }
+//   // let myExtendedProfile = profiles.altProfileAll[0];
+//   // let userDataThing = getThing(myExtendedProfile, userSession.webId);
 
 
-  // console.log(myExtendedProfile)
-  // console.log(userDataThing)
-  // await saveSolidDatasetAt(
-  //   getSourceUrl(myExtendedProfile),
-  //   myExtendedProfile,
-  //   { fetch: fetch }             // fetch from authenticated Session
-  // );
-}
+//   // console.log(myExtendedProfile)
+//   // console.log(userDataThing)
+//   // await saveSolidDatasetAt(
+//   //   getSourceUrl(myExtendedProfile),
+//   //   myExtendedProfile,
+//   //   { fetch: fetch }             // fetch from authenticated Session
+//   // );
+// }
 
 export async function getProfile(userSession: UserSession): Promise<Profile | undefined> {
 
@@ -70,82 +70,29 @@ export async function getProfile(userSession: UserSession): Promise<Profile | un
     userSession.podUrl + 'Wikie/profile/profile.ttl',
     { fetch: fetch }
   );
-
   const profileThing = getThing(myDataset, userSession.podUrl + 'Wikie/profile/profile.ttl#Wikie')
-
 
   let profileLDO = new ProfileLDO(profileDefinition)
   let profile: Profile | null = null;
-
   profile = profileLDO.read(profileThing)
-
   return profile
-
-  // const profiles = await getProfileAll(userSession.webId, { fetch });
-
-  // const webIDProfileSolidDataset = profiles.webIdProfile;
-  // const webIdThing = getThing(webIDProfileSolidDataset, userSession.webId);
-  // if (webIdThing) {
-  //   const issuers = getUrlAll(webIdThing, SOLID.oidcIssuer);
-  //   const extendedProfilesSolidDatasets = profiles.altProfileAll;
-  //   let aaaa = await getWebIdDataset(userSession.webId);
-
-  //   const prrr = getThing(aaaa, userSession.webId.split("#")[0] + "#Wikie")
-  //   const profile: Profile = {
-  //     webId: userSession.webId,
-  //     name: "aaa",
-  //     surname: "bbb"
-  //   }
-  //   let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-
-
-  //   aaaa = setThing(aaaa, profileBuilder.create(profile));
-  //   const savedProfileDatatset = await saveSolidDatasetAt(
-  //     userSession.webId,
-  //     aaaa,
-  //     { fetch: fetch }
-  //   );
-
-  //   if (extendedProfilesSolidDatasets.length === 0) {
-
-  //     const profile: Profile = {
-  //       webId: userSession.webId,
-  //       name: "aaa",
-  //       profileImage: '',
-  //       surname: "bbb"
-  //     }
-
-  //     createProfile(userSession, profile)
-  //   } else {
-  //     let myExtendedProfile = profiles.altProfileAll[0];
-  //     let bb = getThing(myExtendedProfile, userSession.podUrl + "profile#Wikie");
-  //     let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-
-  //   }
-
-  //   console.log(extendedProfilesSolidDatasets)
-  // }
-
-  // let myExtendedProfile = profiles.altProfileAll[0];
-  // let bb = getThing(myExtendedProfile, userSession.podUrl + "profile#Wikie");
-  // let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-
-  // if (bb === null) {
-  //     console.log("AAAAAAA")
-  //     createProfile(userSession, { webId: userSession.webId, name: "jakub", surname: "matejik"})
-  //     universalAccess.setPublicAccess(
-  //         userSession.podUrl + "profile#Wikie",  // Resource
-  //         { read: true, write: false },    // Access object
-  //         { fetch: fetch }                 // fetch function from authenticated session
-  //       ).then((newAccess) => {
-  //         if (newAccess === null) {
-  //           console.log("Could not load access details for this Resource.");
-  //         } else {
-  //           console.log("Returned Public Access:: ", JSON.stringify(newAccess));
-
-  //         }
-  //       });
-  // } else {
-  //     return profileBuilder.read(bb)
-  // }
 }
+
+export async function updateProfile(userSession: UserSession, profile: Profile): Promise<Profile | undefined> {
+
+  const myDataset = await getSolidDataset(
+    userSession.podUrl + 'Wikie/profile/profile.ttl',
+    { fetch: fetch }
+  );
+
+  const profileLDO = new ProfileLDO(profileDefinition).create(profile)
+  const savedProfileSolidDataset = setThing(myDataset, profileLDO)
+  let newName = userSession.podUrl + "Wikie/profile/profile.ttl"
+  const savedSolidDataset = await saveSolidDatasetAt(
+    newName,
+    savedProfileSolidDataset,
+    { fetch: fetch }
+  );
+  return profile
+}
+

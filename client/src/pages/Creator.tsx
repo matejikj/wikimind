@@ -22,7 +22,7 @@ import './Messages.css';
 import { flushSync } from "react-dom";
 import axios from "axios";
 import * as d3 from "d3";
-import { getEntityNeighbours, getLabels } from "../service/dbpediaService";
+import { getEntityNeighbours, getKeywords, getLabels } from "../service/dbpediaService";
 import { FaBackspace, FaInfo, FaMinus, FaPlus } from "react-icons/fa";
 import './Creator.css';
 import { ResultItem } from "../models/SparqlResults";
@@ -48,7 +48,7 @@ const Creator: React.FC = () => {
     const sessionContext = useContext(SessionContext)
     const [currentProvider, setCurrentProvider] = useState<string>('');
 
-    const [formInputs, setFormInputs] = useState('');
+    const [searchedKeyword, setFormInputs] = useState('');
     const [results, setResults] = useState<ResultItem[]>([]);
 
     const [recommends, setRecommends] = useState<ResultItem[]>([]);
@@ -69,23 +69,9 @@ const Creator: React.FC = () => {
         items.push()
     }
 
-
-
-    // if (path.length <= 2) {
-    //     path.forEach()
-    // }
-    // path.forEach((item) => {
-    //     items.push(
-    //         <Pagination.Item key={item}>
-    //             {item.url.split('http://dbpedia.org/resource/')[1].replace('Category:', '').replaceAll('_', ' ')}
-    //         </Pagination.Item>,
-    //     );
-    // })
-
     useEffect(() => {
         function handleResize() {
             setWidth(window.innerWidth)
-            // console.log('resized to: ', window.innerWidth, 'x', window.innerHeight)
         }
         window.addEventListener('resize', handleResize)
         setWidth(window.innerWidth)
@@ -96,60 +82,12 @@ const Creator: React.FC = () => {
     const language = 'cs';
 
     async function searchKeyword() {
-        const url = "https://lookup.dbpedia.org/api/search?label=" + formInputs
-        axios.get("https://lookup.dbpedia.org/api/search", {
-            params: {
-                format: 'json',
-                label: formInputs,
-            },
-            headers: {
-                Accept: 'application/json'
-            }
-        })
-            .then(async response => {
-                // Handle the response data
-                const res: ResultItem[] = response.data.docs.slice(0, 100).map((item: any) => {
-                    return {
-                        "entity":
-                        {
-                            "type": "uri",
-                            "value": item.resource[0]
-                        },
-                        "type":
-                        {
-                            "type": "uri",
-                            "value": "http://dbpedia.org/ontology/wikiPageWikiLink"
-                        },
-                        "label":
-                        {
-                            "type": "literal",
-                            "xml:lang": "en",
-                            "value": item.label[0].replaceAll('<B>', '').replaceAll('</B>', '')
-                        }
-                    }
-                })
-                const csLabels = await getLabels(res)
-                const dict = new Map<string, string>();
-                if (csLabels !== undefined) {
-                    csLabels.forEach((item) => {
-                        dict.set(item.entity.value, item.label.value)
-                    })
-                }
-                res.forEach((item) => {
-                    const newLabel = dict.get(item.entity.value)
-                    if (newLabel !== undefined) {
-                        item.label.value = newLabel
-                        item.label["xml:lang"] = 'cs'
-                    }
-                })
-                setResults(res)
-                console.log(results)
-            })
-            .catch(error => {
-                // Handle the error
-                console.error(error);
-            });
+        const keywords = await getKeywords(searchedKeyword)
+        if (keywords !== undefined) {
+            setResults(keywords)
+        }
     }
+
 
     async function getRecs(event: any) {
         const selected = results.find((item) => item.entity.value === event)
@@ -157,54 +95,25 @@ const Creator: React.FC = () => {
             const a = await getEntityNeighbours(selected.entity.value)
             setLinks([])
             setNodes([])
-
             const isInNodes = nodes.find(x => x.entity.value === selected.entity.value)
             if (isInNodes === undefined) {
                 setNodes([...nodes, selected])
-                // nodes.push(root)
             }
-
             if (a) {
                 setPath([selected])
                 setRecommends(a)
             }
-
         }
         console.log(selected)
-
     }
 
     async function refreshPath(item: ResultItem) {
-        // console.log(bb)
-
         const lastElement = path[path.length - 1];
-
-        // const isInNodes = nodes.find(x => x.url === event.url)
-        // if (isInNodes === undefined) {
-        //     nodes.push(event)
-        // }
-
-        // if (!nodes.includes(event)) {
-        //     nodes.push(event)
-        // }
-
-
-
-
-        // setLinks([...links, ])
-
         setPath([...path, item])
         const a = await getEntityNeighbours(item.entity.value)
         if (a) {
             setRecommends(a)
         }
-        // setRecommends([{
-        //     url: 'http://dbpedia.org/resource/tretre',
-        //     type: 'tretre'
-        // }])
-        // console.log('RES')
-        // console.log({ source: lastElement.url, target: event.url, type: event.type })
-        // console.log(event)
     }
 
     async function addLink(to: ResultItem) {
@@ -213,33 +122,7 @@ const Creator: React.FC = () => {
             nodes.push(to)
         }
         const lastElement = path[path.length - 1];
-
         links.push({ source: lastElement.entity.value, target: to.entity.value, type: to.type.value })
-
-
-
-        // const lastElement = path[path.length - 1];
-        // if (!nodes.includes(lastElement)) {
-        //     nodes.push(lastElement)
-        // }
-        // if (!nodes.includes(to)) {
-        //     nodes.push(to)
-        // }
-
-        // //  @ts-ignore
-        // const simulation = d3.forceSimulation(aaa)
-        //     // @ts-ignore
-        //     .force("link", d3.forceLink(bbb).id(d => d.id))
-        //     .force("center", d3.forceCenter(800 / 2, 600 / 2))
-        //     .force("charge", d3.forceManyBody().strength(-400))
-        //     .force("x", d3.forceX())
-        //     .force("y", d3.forceY());
-
-        // setA(aaa)
-        // setB(bbb)
-        // const t = simulation.alphaTarget(0)
-        // console.log(aaa)
-        // console.log(bbb)
     }
 
     async function backspace() {
@@ -249,11 +132,11 @@ const Creator: React.FC = () => {
         if (a) {
             setRecommends(a)
         }
-
     }
 
-    function createVis() {
+    // function 
 
+    function createVis() {
         const simulation = d3.forceSimulation(nodes)
             // @ts-ignore
             .force("link", d3.forceLink(links).id(d => d.url))
@@ -262,9 +145,9 @@ const Creator: React.FC = () => {
             .force("x", d3.forceX())
             .force("y", d3.forceY());
 
-            const mindMapNodes: Node[] = []
-            const mindMapLinks: Connection[] = []
-            nodes.forEach((item) => {
+        const mindMapNodes: Node[] = []
+        const mindMapLinks: Connection[] = []
+        nodes.forEach((item) => {
             mindMapNodes.push({
                 id: generate_uuidv4(),
                 title: item.label.value,
@@ -288,6 +171,7 @@ const Creator: React.FC = () => {
         //     })
         // })
 
+        console.log('fdfds')
     }
 
     return (
@@ -344,7 +228,7 @@ const Creator: React.FC = () => {
                                     type="text"
                                     placeholder="Keyword"
                                     name="keyword"
-                                    value={formInputs}
+                                    value={searchedKeyword}
                                     onChange={(e) => setFormInputs(e.target.value)}
                                 />
                                 <Button onClick={searchKeyword}>Search</Button>
