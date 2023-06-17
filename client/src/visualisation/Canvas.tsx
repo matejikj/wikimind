@@ -16,7 +16,7 @@ import ModalLinkDelete from "./modals/ModalLinkDelete";
 import ModalNodeCreate from "./modals/ModalNodeCreate";
 import ModalNodeDelete from "./modals/ModalNodeDelete";
 import ModalNodeRecommends from "./modals/ModalNodeRecommends";
-import { Link } from "../models/types/Link";
+import { Connection } from "../models/types/Connection";
 import { Node } from "../models/types/Node";
 import { TransformWrapper } from "react-zoom-pan-pinch";
 import { TransformComponent } from "react-zoom-pan-pinch";
@@ -55,7 +55,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
 
   const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
   const [clickedNode, setClickedNode] = useState<Node>(nodeEx);
-  const [clickedLink, setClickedLink] = useState<Link>();
+  const [clickedLink, setClickedLink] = useState<Connection>();
   const [disabledCanvas, setDisabledCanvas] = useState(false);
   const [circleMenu, setCircleMenu] = useState<ContextMenuType>({
     posX: 0,

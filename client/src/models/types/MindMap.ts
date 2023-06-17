@@ -1,4 +1,4 @@
-import { Link } from "./Link";
+import { Connection } from "./Connection";
 import { Node } from "./Node";
 
 enum ACCESS_TYPE {

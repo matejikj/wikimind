@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { IProps } from "../models/types/types";
 import Sidenav, { SideNavType } from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
 import { Node } from "../models/types/Node";
@@ -27,6 +26,7 @@ import { getEntityNeighbours, getLabels } from "../service/dbpediaService";
 import { FaBackspace, FaInfo, FaMinus, FaPlus } from "react-icons/fa";
 import './Creator.css';
 import { ResultItem } from "../models/SparqlResults";
+import { Connection } from "../models/types/Connection";
 
 const divWidth = 770
 
@@ -254,13 +254,39 @@ const Creator: React.FC = () => {
 
     function createVis() {
 
-        // const simulation = d3.forceSimulation(nodes)
-        //     // @ts-ignore
-        //     .force("link", d3.forceLink(links).id(d => d.url))
-        //     .force("center", d3.forceCenter(800 / 2, 600 / 2))
-        //     .force("charge", d3.forceManyBody().strength(-400))
-        //     .force("x", d3.forceX())
-        //     .force("y", d3.forceY());
+        const simulation = d3.forceSimulation(nodes)
+            // @ts-ignore
+            .force("link", d3.forceLink(links).id(d => d.url))
+            .force("center", d3.forceCenter(800 / 2, 600 / 2))
+            .force("charge", d3.forceManyBody().strength(-400))
+            .force("x", d3.forceX())
+            .force("y", d3.forceY());
+
+            const mindMapNodes: Node[] = []
+            const mindMapLinks: Connection[] = []
+            nodes.forEach((item) => {
+            mindMapNodes.push({
+                id: generate_uuidv4(),
+                title: item.label.value,
+                uri: item.entity.value,
+                description: '',
+                cx: item.x,
+                cy: item.y,
+                visible: true
+            })
+        })
+
+        // links.forEach((item) => {
+        //     mindMapNodes.push({
+        //         id: generate_uuidv4(),
+        //         title: item..value,
+        //         uri: item.entity.value,
+        //         description: '',
+        //         cx: item.x,
+        //         cy: item.y,
+        //         visible: true
+        //     })
+        // })
 
     }
 

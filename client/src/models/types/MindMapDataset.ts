@@ -1,4 +1,4 @@
-import { Link } from "./Link";
+import { Connection } from "./Connection";
 import { Node } from "./Node";
 import { MindMap } from "./MindMap";
 
@@ -8,6 +8,6 @@ enum ACCESS_TYPE {
 }
 
 export type MindMapDataset = MindMap & {
-    links: Link[];
+    links: Connection[];
     nodes: Node[];
 }

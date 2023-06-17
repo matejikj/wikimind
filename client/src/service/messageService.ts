@@ -47,7 +47,7 @@ import datasetLinkDefinition from "../definitions/datasetLink.json"
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
 import { NodeLDO } from "../models/things/NodeLDO";
-import { Link } from "../models/types/Link";
+import { Connection } from "../models/types/Connection";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
@@ -55,7 +55,7 @@ import { generate_uuidv4 } from "./utils";
 import { Class as TeachClass } from "../models/types/Class";
 import { ClassLDO } from "../models/things/ClassLDO";
 import { getProfile } from "./profileService";
-import { DatasetLink } from "../models/types/DatasetLink";
+import { Link } from "../models/types/Link";
 import { DatasetLinkLDO } from "../models/things/DatasetLinkLDO";
 import { LinkType } from "../models/types/LinkType";
 import { AccessRequest, issueAccessRequest, redirectToAccessManagementUi } from "@inrupt/solid-client-access-grants";
@@ -65,7 +65,7 @@ import { Exam } from "../models/types/Exam";
 import { Profile } from "../models/types/Profile";
 import { ExamLDO } from "../models/things/ExamLDO";
 import { ProfileLDO } from "../models/things/ProfileLDO";
-import { ClassRequest } from "../models/types/ClassRequest";
+import { Request } from "../models/types/Request";
 import { MessageLDO } from "../models/things/MessageLDO";
 import { Message } from "../models/types/Message";
 

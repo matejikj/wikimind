@@ -1,5 +1,5 @@
 export enum LinkType {
-    GRAPH_LINK = 'graphLink',
-    CLASS_LINK = 'classLink',
-    PROFILE_LINK = 'profileLink'
+    GRAPH_LINK = 'GRAPH',
+    CLASS_LINK = 'CLASS',
+    PROFILE_LINK = 'PROFILE'
 }

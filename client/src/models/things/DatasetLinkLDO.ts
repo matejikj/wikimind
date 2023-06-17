@@ -1,6 +1,6 @@
 import { LDOIRI } from "../LDOIRI";
 import { Class } from "../types/Class";
-import { DatasetLink } from "../types/DatasetLink";
+import { Link } from "../types/Link";
 import { LinkType } from "../types/LinkType";
 import { Node } from "../types/Node";
 import { Profile } from "../types/Profile";
@@ -8,8 +8,8 @@ import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
 import { ThingLocal, buildThing, getStringNoLocale, getInteger, createThing } from "@inrupt/solid-client";
 
-export class DatasetLinkLDO extends BaseLDO<DatasetLink> implements CRUDLDO<DatasetLink> {
-    read(thing: any): DatasetLink {
+export class DatasetLinkLDO extends BaseLDO<Link> implements CRUDLDO<Link> {
+    read(thing: any): Link {
         const str = getStringNoLocale(thing, (this.rdf.properties.linkType as LDOIRI).vocabulary)! as unknown as LinkType
         return {
             url: getStringNoLocale(thing, (this.rdf.properties.url as LDOIRI).vocabulary)!,
@@ -18,7 +18,7 @@ export class DatasetLinkLDO extends BaseLDO<DatasetLink> implements CRUDLDO<Data
         }
     };
 
-    create(object: DatasetLink) {
+    create(object: Link) {
         const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
             .addUrl(this.rdf.identity.vocabulary, this.rdf.identity.subject)
             .addStringNoLocale((this.rdf.properties.id as LDOIRI).vocabulary,

@@ -32,7 +32,7 @@ import mindMapDefinition from "../definitions/mindMapMetaData.json"
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
 import { NodeLDO } from "../models/things/NodeLDO";
-import { Link } from "../models/types/Link";
+import { Connection } from "../models/types/Connection";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { MindMap } from "../models/types/MindMap";
 import { UserSession } from "../models/types/UserSession";

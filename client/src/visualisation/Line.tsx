@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from '../models/types/Link'
+import { Connection } from '../models/types/Connection'
 
-const Line: React.FC<{ link: Link, contextMenu: any, setContextMenu: Function }> = ({ link, contextMenu, setContextMenu }) => {
+const Line: React.FC<{ link: Connection, contextMenu: any, setContextMenu: Function }> = ({ link, contextMenu, setContextMenu }) => {
 
     const handleContextMenu = (e: any) => {
         const bbox = e.target.getBoundingClientRect();

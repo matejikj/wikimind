@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { IProps } from "../models/types/types";
 import Sidenav, { SideNavType } from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
 import { Node } from "../models/types/Node";
@@ -13,7 +12,6 @@ import {
     WebsocketNotification,
 } from "@inrupt/solid-client-notifications";
 import { generate_uuidv4 } from "../service/utils";
-import { AddCoords, getIdsMapping } from "../visualisation/utils";
 import { Card, Col, Container, Form, ListGroup, Row, Stack } from "react-bootstrap";
 import { getFriendMessages, getProfiles } from "../service/messageService";
 import { Profile } from "../models/types/Profile";

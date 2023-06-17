@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { IProps } from "../models/types/types";
 import Sidenav, { SideNavType } from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
 import { Node } from "../models/types/Node";
@@ -14,12 +13,11 @@ import {
   WebsocketNotification,
 } from "@inrupt/solid-client-notifications";
 import { generate_uuidv4 } from "../service/utils";
-import { DatasetLink } from "../models/types/DatasetLink";
+import { Link } from "../models/types/Link";
 import { getClassDataset } from "../service/classService";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import './Class.css';
 import { FcComments } from "react-icons/fc";
-import ModelClassAdd from "./ModalClassAdd";
 import { Exam } from "../models/types/Exam";
 
 const exampleExams: Exam[] = [{
@@ -249,7 +247,6 @@ const Class: React.FC = () => {
                   })}
                   <Button onClick={handleCreate} variant="outline-success">Create new</Button>
                   <Button onClick={handleAddExisting} variant="outline-success">Add existing</Button>
-                  <ModelClassAdd classUrl={url} showModal={modelClassAddShow} setModal={setModelClassAddShow} />
                 </Container>
               </Card>
 
@@ -259,12 +256,12 @@ const Class: React.FC = () => {
                 <Container>
                   <Row>
                     <h4>Pupils</h4>
-                    {dataset?.pupils.length === 0 &&
+                    {dataset?.students.length === 0 &&
                       <p>No pupils already</p>
                     }
 
                   </Row>
-                  {dataset?.pupils.map((item, index) => {
+                  {dataset?.students.map((item, index) => {
                     return (
                       <Row key={index}>
                         <Col sm={9}>{item.name} {item.surname}</Col>

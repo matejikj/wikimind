@@ -4,7 +4,7 @@ import { MindMap } from "./MindMap";
 import { Profile } from "./Profile";
 
 export type ClassDataset = Class & {
-    pupils: Profile[];
+    students: Profile[];
     mindMaps: MindMap[];
     testResults: Exam[];
 }

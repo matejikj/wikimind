@@ -12,10 +12,10 @@ import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
 import { allowAccess, createNewClass, denyRequest, getClassesList, getRequests, requestClass } from '../service/classService';
 import { Class } from '../models/types/Class';
-import { DatasetLink } from '../models/types/DatasetLink';
+import { Link } from '../models/types/Link';
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { AccessRequest } from '@inrupt/solid-client-access-grants';
-import { ClassRequest } from '../models/types/ClassRequest';
+import { Request } from '../models/types/Request';
 import { WebsocketNotification } from '@inrupt/solid-client-notifications';
 
 const authOptions = {
@@ -23,14 +23,14 @@ const authOptions = {
 };
 
 const Classes: React.FC = () => {
-  const [list, setList] = useState<DatasetLink[]>([]);
+  const [list, setList] = useState<Link[]>([]);
   const [requestsCount, setRequestsCount] = useState(0);
   const [show, setShow] = useState(false);
   const [request, setRequest] = useState(false);
   const [requestUrl, setRequestUrl] = useState("");
   const [name, setName] = useState("");
   const sessionContext = useContext(SessionContext)
-  const [requests, setRequests] = useState<ClassRequest[]>([]);
+  const [requests, setRequests] = useState<Request[]>([]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);

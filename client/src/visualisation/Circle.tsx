@@ -3,13 +3,13 @@ import { SessionContext } from "../sessionContext";
 import { Node } from '../models/types/Node'
 import { CanvasState } from './models/CanvasState'
 import { ContextMenuType } from "./models/ContextMenuType";
-import { Link } from "../models/types/Link";
+import { Connection } from "../models/types/Connection";
 import { generate_uuidv4 } from "../service/utils";
 import { updateNode } from "../service/mindMapService";
 
 const Circle: React.FC<{
     node: Node,
-    clickedLink: Link | undefined,
+    clickedLink: Connection | undefined,
     datasetName: string,
     setClickedLink: Function,
     clickedNode: Node | undefined,
@@ -144,7 +144,7 @@ const Circle: React.FC<{
                 if (clickedNode !== undefined) {
                     fromId = clickedNode.id
                 }
-                const newLink: Link = {
+                const newLink: Connection = {
                     from: fromId,
                     to: node.id,
                     title: "",

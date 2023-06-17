@@ -1,6 +1,5 @@
-import { Coord } from "../models/types/types"
 import { Node } from "../models/types/Node"
-import { Link } from "../models/types/Link"
+import { Connection } from "../models/types/Connection"
 
 export const getIdsMapping = (list: Array<Node>) => {
     let res = new Map()
@@ -10,7 +9,10 @@ export const getIdsMapping = (list: Array<Node>) => {
     return res
 }
 
-export const AddCoords = (links: Array<Link>, coords: Map<string, Coord>) => {
+export const AddCoords = (links: Array<Connection>, coords: Map<string, {
+    x: number;
+    y: number;
+}>) => {
     links.forEach(item => {
         item.source = [coords.get(item.from)?.x, coords.get(item.from)?.y]
         item.target = [coords.get(item.to)?.x, coords.get(item.to)?.y]

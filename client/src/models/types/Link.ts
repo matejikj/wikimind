@@ -1,10 +1,7 @@
-// export type Link = Entity & {
+import { LinkType } from "./LinkType";
+
 export type Link = {
     id: string;
-    from: string;
-    to: string;
-    title: string;
-    source?: Array<any>;
-    target?: Array<any>;
-    visible: boolean;
+    url: string;
+    linkType: LinkType;
 }

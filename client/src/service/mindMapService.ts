@@ -28,7 +28,7 @@ import mindMapDefinition from "../definitions/mindMapMetaData.json"
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
 import { NodeLDO } from "../models/things/NodeLDO";
-import { Link } from "../models/types/Link";
+import { Connection } from "../models/types/Connection";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
@@ -51,7 +51,7 @@ export async function getMindMap(url: string) {
   let mindMap: MindMap | null = null;
   let nodes: Node[] = []
   let nodeBuilder = new NodeLDO(nodeDefinition)
-  let links: Link[] = []
+  let links: Connection[] = []
   let linkBuilder = new LinkLDO(linkDefinition)
 
   things.forEach(thing => {
@@ -109,6 +109,32 @@ export async function createNewMindMap(name: string, userSession: UserSession) {
 
     return newName
   
+}
+
+export async function createPreparedMindMap(nodes: Node[], links: Connection[], name: string, userSession: UserSession) {
+  let courseSolidDataset = createSolidDataset();
+  let blankMindMap: MindMap = {
+    title: name,
+    id: generate_uuidv4(),
+    acccessType: "",
+    url: "",
+    created: ""
+  }
+  const mindMapLDO = new MindMapLDO(mindMapDefinition).create(blankMindMap)
+  courseSolidDataset = setThing(courseSolidDataset, mindMapLDO)
+  let newName = userSession.podUrl + "Wikie/mindMaps/" + name + ".ttl"
+  const savedSolidDataset = await saveSolidDatasetAt(
+    newName,
+    courseSolidDataset,
+    { fetch: fetch }
+  );
+
+  if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
+    initializeAcl(newName)
+  }
+
+  return newName
+
 }
 
 export async function updateNode(name: string, sessionId: string, node: Node) {
@@ -182,7 +208,7 @@ export async function createNode(name: string, sessionId: string, node: Node) {
   }
 }
 
-export async function addNewLink(name: string, sessionId: any, link: Link) {
+export async function addNewLink(name: string, sessionId: any, link: Connection) {
   const podUrls = await getPodUrl(sessionId)
   if (podUrls !== null) {
     const podUrl = podUrls[0] + "Wikie/mindMaps/" + name + ".ttl"
@@ -192,7 +218,7 @@ export async function addNewLink(name: string, sessionId: any, link: Link) {
     );
 
 
-    let linkBuilder = new LinkLDO((linkDefinition as LDO<Link>))
+    let linkBuilder = new LinkLDO((linkDefinition as LDO<Connection>))
     courseSolidDataset = setThing(courseSolidDataset, linkBuilder.create(link));
 
     const savedSolidDataset = await saveSolidDatasetAt(

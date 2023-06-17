@@ -1,9 +1,9 @@
 import { LDOIRI } from "./LDOIRI";
-import { Link } from "./types/Link";
+import { Connection } from "./types/Connection";
 import { Node } from "./types/Node";
 
 type LDOProperties<T> = {
-    [Property in keyof T]: LDOIRI | LDO<Node> | LDO<Link>;
+    [Property in keyof T]: LDOIRI | LDO<Node> | LDO<Connection>;
 }
 
 type LDOObjectIdType = LDOIRI & {

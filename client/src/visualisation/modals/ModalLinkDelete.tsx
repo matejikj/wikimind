@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import axios from "axios";
 import { Node } from '../../models/types/Node'
-import { Link } from '../../models/types/Link'
+import { Connection } from '../../models/types/Connection'
 import { SessionContext } from "../../sessionContext";
 import { createNode } from "../../service/mindMapService";
 import { generate_uuidv4 } from "../../service/utils";
@@ -13,7 +13,7 @@ import { CanvasState } from '../models/CanvasState'
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalLinkDelete: React.FC<{
     datasetName: string,
-    clickedLink: Link | undefined,
+    clickedLink: Connection | undefined,
     showModal: boolean,
     setModal: Function
 }> = ({ datasetName, clickedLink, showModal, setModal }) => {

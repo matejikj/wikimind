@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { IProps } from "../models/types/types";
 import Sidenav, { SideNavType } from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
 import { Node } from "../models/types/Node";

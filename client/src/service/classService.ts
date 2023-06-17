@@ -49,7 +49,7 @@ import datasetLinkDefinition from "../definitions/datasetLink.json"
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
 import { NodeLDO } from "../models/things/NodeLDO";
-import { Link } from "../models/types/Link";
+import { Connection } from "../models/types/Connection";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
@@ -57,7 +57,7 @@ import { generate_uuidv4 } from "./utils";
 import { Class as TeachClass } from "../models/types/Class";
 import { ClassLDO } from "../models/things/ClassLDO";
 import { getProfile } from "./profileService";
-import { DatasetLink } from "../models/types/DatasetLink";
+import { Link } from "../models/types/Link";
 import { DatasetLinkLDO } from "../models/things/DatasetLinkLDO";
 import { LinkType } from "../models/types/LinkType";
 import { AccessRequest, issueAccessRequest, redirectToAccessManagementUi } from "@inrupt/solid-client-access-grants";
@@ -67,12 +67,12 @@ import { Exam } from "../models/types/Exam";
 import { Profile } from "../models/types/Profile";
 import { ExamLDO } from "../models/things/ExamLDO";
 import { ProfileLDO } from "../models/things/ProfileLDO";
-import { ClassRequest } from "../models/types/ClassRequest";
+import { Request } from "../models/types/Request";
 import { getMindMap } from "./mindMapService";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 import { initializeAcl } from "./accessService";
 import { ClassRequestLDO } from "../models/things/ClassRequestLDO";
-import { ClassRequestGrant } from "../models/types/ClassRequestGrant";
+import { Grant } from "../models/types/Grant";
 import { ClassRequestGrantLDO } from "../models/things/ClassRequestGrantLDO";
 
 // https://id.inrupt.com/matejikj?classId=d91f706d-ca0c-41aa-844b-cf47d1ef4c40
@@ -88,7 +88,7 @@ export async function createNewClass(name: string, userSession: UserSession) {
         storage: userSession.podUrl
     }
 
-    const datasetLink: DatasetLink = {
+    const datasetLink: Link = {
         id: generate_uuidv4(),
         url: userSession.podUrl + "Wikie/classes/" + blankClass.id + ".ttl",
         linkType: LinkType.CLASS_LINK
@@ -193,7 +193,7 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
             storage: newClass.storage,
             teacher: newClass.teacher,
             mindMaps: mindMaps,
-            pupils: profiles,
+            students: profiles,
             testResults: exams
         }
         return classDataset
@@ -202,7 +202,7 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
     }
 }
 
-export async function allowAccess(userSession: UserSession, classRequest: ClassRequest) {
+export async function allowAccess(userSession: UserSession, classRequest: Request) {
     // const accessGrant = await approveAccessRequest(
     //     classRequest.accessRequest,
     //     undefined,  // Optional modifications
@@ -226,7 +226,7 @@ export async function allowAccess(userSession: UserSession, classRequest: ClassR
         //         { slug: naame, contentType: file.type, fetch: fetch }
         //     );
 
-        const datasetLink: DatasetLink = {
+        const datasetLink: Link = {
             id: generate_uuidv4(),
             url: classRequest.requestor,
             linkType: LinkType.PROFILE_LINK
@@ -324,7 +324,7 @@ export async function allowAccess(userSession: UserSession, classRequest: ClassR
     // );
 }
 
-export async function denyRequest(userSession: UserSession, classRequest: ClassRequest) {
+export async function denyRequest(userSession: UserSession, classRequest: Request) {
     // const accessGrant = await denyAccessRequest(
     //     classRequest.accessRequest,
     //     {
@@ -344,14 +344,14 @@ export async function getRequests(userSession: UserSession) {
     );
     const resourceUrls = await getContainedResourceUrlAll(myDataset);
     console.log(resourceUrls)
-    const array: ClassRequest[] = []
+    const array: Request[] = []
 
     const things = await getThingAll(myDataset);
 
     let classRequestLDO = new ClassRequestLDO(classRequestDefinition)
     let classRequestGrantLDO = new ClassRequestGrantLDO(classRequestGrantDefinition)
-    let classRequests: ClassRequest[] = []
-    let classRequestGrants: ClassRequestGrant[] = []
+    let classRequests: Request[] = []
+    let classRequestGrants: Grant[] = []
 
     things.forEach(thing => {
         const types = getUrlAll(thing, RDF.type);
@@ -365,7 +365,7 @@ export async function getRequests(userSession: UserSession) {
     });
 
     await Promise.all(classRequestGrants.map(async (item) => {
-        const datasetLink: DatasetLink = {
+        const datasetLink: Link = {
             id: generate_uuidv4(),
             url: item.class,
             linkType: LinkType.CLASS_LINK
@@ -478,7 +478,7 @@ export async function requestClass(userSession: UserSession, classUri: string) {
 
 
 export async function getClassesList(userSession: UserSession) {
-    let classes: DatasetLink[] = []
+    let classes: Link[] = []
     const podUrl = userSession.podUrl + 'Wikie/classes/classes.ttl'
 
     const myDataset = await getSolidDataset(
@@ -500,7 +500,7 @@ export async function getClassesList(userSession: UserSession) {
 }
 
 export async function addGraphToClass(userSession: UserSession, graphUrl: string, classUrl: string) {
-    const datasetLink: DatasetLink = {
+    const datasetLink: Link = {
         id: generate_uuidv4(),
         url: graphUrl,
         linkType: LinkType.GRAPH_LINK
