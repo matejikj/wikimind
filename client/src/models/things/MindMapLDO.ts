@@ -28,7 +28,7 @@ import { NodeLDO } from "./NodeLDO";
 import { addAbortSignal } from "stream";
 import { LDOIRI } from '../LDOIRI'
 import { Connection } from "../types/Connection";
-import { LinkLDO } from "./LinkLDO";
+import { ConnectionLDO } from "./ConnectionLDO";
 
 export class MindMapLDO extends BaseLDO<MindMap> implements CRUDLDO<MindMap> {
     read(thing: any): MindMap {

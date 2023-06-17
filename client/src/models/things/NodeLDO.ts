@@ -11,6 +11,7 @@ export class NodeLDO extends BaseLDO<Node> implements CRUDLDO<Node> {
             cx: getInteger(thing, (this.rdf.properties.cx as LDOIRI).vocabulary)!,
             cy: getInteger(thing, (this.rdf.properties.cy as LDOIRI).vocabulary)!,
             title: getStringNoLocale(thing, (this.rdf.properties.title as LDOIRI).vocabulary)!,
+            uri: getStringNoLocale(thing, (this.rdf.properties.uri as LDOIRI).vocabulary)!,
             description: getStringNoLocale(thing, (this.rdf.properties.description as LDOIRI).vocabulary)!,
             visible: getBoolean(thing, (this.rdf.properties.description as LDOIRI).vocabulary)!
         }
@@ -26,6 +27,8 @@ export class NodeLDO extends BaseLDO<Node> implements CRUDLDO<Node> {
                 object.description)
             .addStringNoLocale((this.rdf.properties.id as LDOIRI).vocabulary,
                 object.id)
+            .addStringNoLocale((this.rdf.properties.uri as LDOIRI).vocabulary,
+                object.uri)
             .addStringNoLocale((this.rdf.properties.title as LDOIRI).vocabulary,
                 object.title)
             .build();

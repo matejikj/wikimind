@@ -30,6 +30,7 @@ const ModalNodeRecommends: React.FC<{
     function handleSave(event: any) {
         const newNode: Node = {
             id: generate_uuidv4(),
+            uri: '',
             title: formInputs.title,
             description: formInputs.description,
             cx: 100,

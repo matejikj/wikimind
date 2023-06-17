@@ -23,10 +23,9 @@ const ProfileView: React.FC = () => {
   const [profile, setProfile] = useState<Profile>({
     name: "",
     surname: "",
-    webId: sessionContext.sessionInfo.webId
+    webId: sessionContext.sessionInfo.webId,
+    profileImage: ''
   });
-
-
 
   useEffect(() => {
     const result = getProfile(sessionContext.sessionInfo).then((res: any) => {

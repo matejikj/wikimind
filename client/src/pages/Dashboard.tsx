@@ -11,15 +11,17 @@ import './Dashboard.css';
 import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
+import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
 
 const Dashboard: React.FC = () => {
   const [list, setList] = useState<{ url: string; title: string | null }[]>([]);
-  const [show, setShow] = useState(false);
-  const [name, setName] = useState("");
-  const sessionContext = useContext(SessionContext)
+  const [createNewModalVisible, setCreateNewModalVisible] = useState(false);
+  const [renameModalVisible, setRenameModalVisible] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [createName, setCreateName] = useState("");
+  const [rename, setRename] = useState("");
+
+  const sessionContext = useContext(SessionContext)
 
   const navigate = useNavigate();
 
@@ -32,21 +34,15 @@ const Dashboard: React.FC = () => {
 
 
   const showMindMap = (e: any) => {
-    console.log(e.target.name)
     navigate('/visualisation/', {
       state: {
-        id: e.target.name
+        id: e.url
       }
     })
   }
 
-  const creator = (e: any) => {
-    console.log(e.target.name)
-    navigate('/creator/', {
-      state: {
-        id: e.target.name
-      }
-    })
+  const renameMindMap = (e: any) => {
+
   }
 
   const removeMindMap = (e: any) => {
@@ -60,7 +56,7 @@ const Dashboard: React.FC = () => {
 
   const createNew = (e: any) => {
     if (sessionContext.sessionInfo.isLogged) {
-      createNewMindMap(name, sessionContext.sessionInfo).then((res) => {
+      createNewMindMap(createName, sessionContext.sessionInfo).then((res) => {
         console.log(res)
         navigate('/visualisation/', {
           state: {
@@ -73,7 +69,7 @@ const Dashboard: React.FC = () => {
 
   const createWithCreator = (e: any) => {
     if (sessionContext.sessionInfo.isLogged) {
-      navigate('/creator/')
+      
       // createNewMindMap(name, sessionContext.sessionInfo).then((res) => {
       //   console.log(res)
 
@@ -85,7 +81,7 @@ const Dashboard: React.FC = () => {
     <div className="App">
       <Sidenav type={SideNavType.COMMON} />
       <main className='dashboard-main'>
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={createNewModalVisible} onHide={() => setCreateNewModalVisible(false)}>
           <Modal.Header>
             <Modal.Title>Choose name</Modal.Title>
           </Modal.Header>
@@ -95,15 +91,41 @@ const Dashboard: React.FC = () => {
                 type="text"
                 placeholder="insert name"
                 aria-label="insert name"
-                value={name}
-                onChange={(e) => { setName(e.target.value) }}
+                value={createName}
+                onChange={(e) => { setCreateName(e.target.value) }}
               />
             </Form>
           </Modal.Body>
           <Modal.Footer>
             <Button
               className='my-btn'
-              variant="secondary" onClick={handleClose}>
+              variant="secondary" onClick={() => setCreateNewModalVisible(false)}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={createNew}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={renameModalVisible} onHide={() => setRenameModalVisible(false)}>
+          <Modal.Header>
+            <Modal.Title>Choose name</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Control
+                type="text"
+                placeholder="insert name"
+                aria-label="insert name"
+                value={createName}
+                onChange={(e) => { setCreateName(e.target.value) }}
+              />
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              className='my-btn'
+              variant="secondary" onClick={() => setCreateNewModalVisible(false)}>
               Close
             </Button>
             <Button variant="primary" onClick={createNew}>
@@ -119,34 +141,47 @@ const Dashboard: React.FC = () => {
           {list.map((item, index) => {
             return (
               <Row key={index}>
-                <Col sm={8}>{item.title}</Col>
-                <Col sm={4}>
-
-                  <Stack direction="horizontal" gap={2}>
+                <div className='aaa'>
+                  <div className='my-stack'>
+                    {item.title}
+                  </div>
+                  <div className='my-stack-reverse'>
                     <Button
+                      size='sm'
                       className='class-btn'
-                      name={item.url}
-                      onClick={showMindMap}
+                      onClick={() => removeMindMap(item)}
                       variant="success"
                     >
-                      Show
+                      <MdDeleteForever></MdDeleteForever>
+                    </Button>
+
+                    <Button
+                      size='sm'
+                      className='class-btn'
+                      onClick={() => renameMindMap(item)}
+                      variant="success"
+                    >
+                      <MdDriveFileRenameOutline></MdDriveFileRenameOutline>
                     </Button>
                     <Button
+                      size='sm'
                       className='class-btn'
-                      name={item.url}
-                      onClick={removeMindMap}
+                      onClick={() => showMindMap(item)}
                       variant="success"
-                    >Remove</Button>
+                    >
+                      <MdSlideshow></MdSlideshow>
+                    </Button>
 
-                  </Stack>
-                </Col>
+                  </div>
+
+                </div>
               </Row>
             )
           })}
           <Stack direction='horizontal'>
-            <Button onClick={handleShow} variant="outline-success">Create new</Button>
+            <Button onClick={() => setCreateNewModalVisible(true)} variant="outline-success">Create new</Button>
             <Button
-              onClick={createWithCreator}
+              onClick={() => navigate('/creator/')}
               variant="success"
             >
               Creator

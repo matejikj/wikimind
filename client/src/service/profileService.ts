@@ -31,7 +31,7 @@ import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
 import { NodeLDO } from "../models/things/NodeLDO";
 import { Connection } from "../models/types/Connection";
-import { LinkLDO } from "../models/things/LinkLDO";
+import { ConnectionLDO } from "../models/things/ConnectionLDO";
 import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
 import { generate_uuidv4 } from "./utils";
@@ -64,50 +64,67 @@ export async function createProfile(userSession: UserSession, profile: Profile) 
   // );
 }
 
-export async function getProfile(userSession: UserSession) {
-  const profiles = await getProfileAll(userSession.webId, { fetch });
+export async function getProfile(userSession: UserSession): Promise<Profile | undefined> {
 
-  const webIDProfileSolidDataset = profiles.webIdProfile;
-  const webIdThing = getThing(webIDProfileSolidDataset, userSession.webId);
-  if (webIdThing) {
-    const issuers = getUrlAll(webIdThing, SOLID.oidcIssuer);
-    const extendedProfilesSolidDatasets = profiles.altProfileAll;
-    let aaaa = await getWebIdDataset(userSession.webId);
+  const myDataset = await getSolidDataset(
+    userSession.podUrl + 'Wikie/profile/profile.ttl',
+    { fetch: fetch }
+  );
 
-    const prrr = getThing(aaaa, userSession.webId.split("#")[0] + "#Wikie")
-    const profile: Profile = {
-      webId: userSession.webId,
-      name: "aaa",
-      surname: "bbb"
-    }
-    let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+  const profileThing = getThing(myDataset, userSession.podUrl + 'Wikie/profile/profile.ttl#Wikie')
 
 
-    aaaa = setThing(aaaa, profileBuilder.create(profile));
-    const savedProfileDatatset = await saveSolidDatasetAt(
-      userSession.webId,
-      aaaa,
-      { fetch: fetch }
-    );
+  let profileLDO = new ProfileLDO(profileDefinition)
+  let profile: Profile | null = null;
 
-    if (extendedProfilesSolidDatasets.length === 0) {
+  profile = profileLDO.read(profileThing)
 
-      const profile: Profile = {
-        webId: userSession.webId,
-        name: "aaa",
-        surname: "bbb"
-      }
+  return profile
 
-      createProfile(userSession, profile)
-    } else {
-      let myExtendedProfile = profiles.altProfileAll[0];
-      let bb = getThing(myExtendedProfile, userSession.podUrl + "profile#Wikie");
-      let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+  // const profiles = await getProfileAll(userSession.webId, { fetch });
 
-    }
+  // const webIDProfileSolidDataset = profiles.webIdProfile;
+  // const webIdThing = getThing(webIDProfileSolidDataset, userSession.webId);
+  // if (webIdThing) {
+  //   const issuers = getUrlAll(webIdThing, SOLID.oidcIssuer);
+  //   const extendedProfilesSolidDatasets = profiles.altProfileAll;
+  //   let aaaa = await getWebIdDataset(userSession.webId);
 
-    console.log(extendedProfilesSolidDatasets)
-  }
+  //   const prrr = getThing(aaaa, userSession.webId.split("#")[0] + "#Wikie")
+  //   const profile: Profile = {
+  //     webId: userSession.webId,
+  //     name: "aaa",
+  //     surname: "bbb"
+  //   }
+  //   let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+
+
+  //   aaaa = setThing(aaaa, profileBuilder.create(profile));
+  //   const savedProfileDatatset = await saveSolidDatasetAt(
+  //     userSession.webId,
+  //     aaaa,
+  //     { fetch: fetch }
+  //   );
+
+  //   if (extendedProfilesSolidDatasets.length === 0) {
+
+  //     const profile: Profile = {
+  //       webId: userSession.webId,
+  //       name: "aaa",
+  //       profileImage: '',
+  //       surname: "bbb"
+  //     }
+
+  //     createProfile(userSession, profile)
+  //   } else {
+  //     let myExtendedProfile = profiles.altProfileAll[0];
+  //     let bb = getThing(myExtendedProfile, userSession.podUrl + "profile#Wikie");
+  //     let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+
+  //   }
+
+  //   console.log(extendedProfilesSolidDatasets)
+  // }
 
   // let myExtendedProfile = profiles.altProfileAll[0];
   // let bb = getThing(myExtendedProfile, userSession.podUrl + "profile#Wikie");

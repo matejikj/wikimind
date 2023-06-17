@@ -29,16 +29,19 @@ import { MindMapLDO } from "../models/things/MindMapLDO";
 import nodeDefinition from "../definitions/node.json"
 import linkDefinition from "../definitions/link.json"
 import mindMapDefinition from "../definitions/mindMapMetaData.json"
+import profileDefinition from "../definitions/profile.json"
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
 import { NodeLDO } from "../models/things/NodeLDO";
 import { Connection } from "../models/types/Connection";
-import { LinkLDO } from "../models/things/LinkLDO";
+import { ConnectionLDO } from "../models/things/ConnectionLDO";
 import { MindMap } from "../models/types/MindMap";
 import { UserSession } from "../models/types/UserSession";
 import { initializeAcl, isWacOrAcp } from "./accessService";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 import { getProfile } from "./profileService";
+import { Profile } from "../models/types/Profile";
+import { ProfileLDO } from "../models/things/ProfileLDO";
 
 function logAccessInfo(agent: any, agentAccess: any, resource: any) {
   console.log(`For resource::: ${resource}`);
@@ -108,8 +111,29 @@ export async function checkContainer(sessionId: string): Promise<{podUrl: string
         reqeustsDataset,
         { fetch: fetch }
       );
-
     }
+
+    if (!(await isUrlContainer(podUrl + 'Wikie/profile'))) {
+      const classes = await createContainerAt(podUrl + 'Wikie/profile', { fetch: fetch });
+      let classesDataset = createSolidDataset();
+
+      let profileSolidDataset = createSolidDataset();
+      let blankProfile: Profile = {
+        name: '',
+        surname: '',
+        profileImage: '',
+        webId: sessionId
+      }
+      const profileLDO = new ProfileLDO(profileDefinition).create(blankProfile)
+      const savedProfileSolidDataset = setThing(profileSolidDataset, profileLDO)
+      let newName = podUrl + "Wikie/profile/profile.ttl"
+      const savedSolidDataset = await saveSolidDatasetAt(
+        newName,
+        savedProfileSolidDataset,
+        { fetch: fetch }
+      );
+    }
+
     if (!(await isUrlContainer(podUrl + 'Wikie/messages'))) {
       const messages = await createContainerAt(podUrl + 'Wikie/messages', { fetch: fetch });
       let messagesDataset = await createSolidDataset();

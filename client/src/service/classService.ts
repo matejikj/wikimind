@@ -50,7 +50,7 @@ import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
 import { NodeLDO } from "../models/things/NodeLDO";
 import { Connection } from "../models/types/Connection";
-import { LinkLDO } from "../models/things/LinkLDO";
+import { ConnectionLDO } from "../models/things/ConnectionLDO";
 import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
 import { generate_uuidv4 } from "./utils";

@@ -29,7 +29,7 @@ import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
 import { NodeLDO } from "../models/things/NodeLDO";
 import { Connection } from "../models/types/Connection";
-import { LinkLDO } from "../models/things/LinkLDO";
+import { ConnectionLDO } from "../models/things/ConnectionLDO";
 import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
 import { generate_uuidv4 } from "./utils";
@@ -52,7 +52,7 @@ export async function getMindMap(url: string) {
   let nodes: Node[] = []
   let nodeBuilder = new NodeLDO(nodeDefinition)
   let links: Connection[] = []
-  let linkBuilder = new LinkLDO(linkDefinition)
+  let linkBuilder = new ConnectionLDO(linkDefinition)
 
   things.forEach(thing => {
     const types = getUrlAll(thing, RDF.type);
@@ -218,7 +218,7 @@ export async function addNewLink(name: string, sessionId: any, link: Connection)
     );
 
 
-    let linkBuilder = new LinkLDO((linkDefinition as LDO<Connection>))
+    let linkBuilder = new ConnectionLDO((linkDefinition as LDO<Connection>))
     courseSolidDataset = setThing(courseSolidDataset, linkBuilder.create(link));
 
     const savedSolidDataset = await saveSolidDatasetAt(

@@ -13,6 +13,9 @@
         "cy": {
             "vocabulary": "http://schema.org/email"
         },
+        "uri": {
+            "vocabulary": "http://schema.org/uri"
+        },
         "description": {
             "vocabulary": "http://schema.org/brand"
         },

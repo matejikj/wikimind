@@ -5,7 +5,7 @@ import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
 import { ThingLocal, buildThing, getBoolean, createThing, getStringNoLocale } from "@inrupt/solid-client";
 
-export class LinkLDO extends BaseLDO<Connection> implements CRUDLDO<Connection> {
+export class ConnectionLDO extends BaseLDO<Connection> implements CRUDLDO<Connection> {
     read(thing: any): Connection {
         return {
             id: getStringNoLocale(thing, (this.rdf.properties.id as LDOIRI).vocabulary)!,

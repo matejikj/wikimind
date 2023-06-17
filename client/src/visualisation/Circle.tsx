@@ -111,7 +111,7 @@ const Circle: React.FC<{
                 if (difX !== 0 || difY !== 0) {
 
                     const updatedNode: Node = {
-                        visible: true,
+                        visible: true,uri: '',
                         cx: Math.round(node.cx + difX),
                         cy: Math.round(node.cy + difY),
                         title: node.title,

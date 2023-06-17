@@ -12,6 +12,9 @@
         },
         "webId": {
             "vocabulary": "http://schema.org/identifier"
+        },
+        "profileImage": {
+            "vocabulary": "http://schema.org/identification"
         }
     }
 }

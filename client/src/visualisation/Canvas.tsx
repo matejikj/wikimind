@@ -25,7 +25,7 @@ import axios from "axios";
 
 const nodeEx: Node = {
   id: '',
-  cx: 0,
+  cx: 0,uri: '',
   cy: 0,
   title: '',
   description: '',
