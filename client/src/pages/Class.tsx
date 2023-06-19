@@ -107,12 +107,12 @@ const Class: React.FC = () => {
   }
 
   const showExam = (e: any) => {
-    console.log(e.target.name)
-    navigate('/exam/', {
-      state: {
-        id: e.target.name
-      }
-    })
+    console.log(e)
+    // navigate('/exam/', {
+    //   state: {
+    //     id: e.target.name
+    //   }
+    // })
   }
 
   const copyToClipboard = (e: any) => {
