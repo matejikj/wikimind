@@ -1,0 +1,26 @@
+{
+    "identity": {
+        "vocabulary": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#Node"
+    },
+    "properties": {
+        "id": {
+            "vocabulary": "http://schema.org/identifier"
+        },
+        "owner": {
+            "vocabulary": "http://schema.org/email"
+        },
+        "guest": {
+            "vocabulary": "http://schema.org/uri"
+        },
+        "storage": {
+            "vocabulary": "http://schema.org/brand"
+        },
+        "modified": {
+            "vocabulary": "http://schema.org/name"
+        },
+        "lastMessage": {
+            "vocabulary": "https://schema.org/Product"
+        }
+    }
+}

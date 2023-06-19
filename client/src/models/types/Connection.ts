@@ -4,7 +4,7 @@ export type Connection = {
     from: string;
     to: string;
     title: string;
-    source?: Array<any>;
-    target?: Array<any>;
-    visible: boolean;
+    source?: any;
+    target?: any;
+    testable: boolean;
 }

@@ -17,13 +17,15 @@ import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { AccessRequest } from '@inrupt/solid-client-access-grants';
 import { Request } from '../models/types/Request';
 import { WebsocketNotification } from '@inrupt/solid-client-notifications';
+import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
+import { RxCheck, RxCross2 } from 'react-icons/rx';
 
 const authOptions = {
   clientName: "Learnee",
 };
 
 const Classes: React.FC = () => {
-  const [list, setList] = useState<Link[]>([]);
+  const [list, setList] = useState<Class[]>([]);
   const [requestsCount, setRequestsCount] = useState(0);
   const [show, setShow] = useState(false);
   const [request, setRequest] = useState(false);
@@ -91,11 +93,11 @@ const Classes: React.FC = () => {
 
   }, []);
 
-  const showClass = (e: any) => {
-    console.log(e.target.name)
+  const showClass = (e: Class) => {
+    const name = e.storage + 'Wikie/classes/' + e.id + '.ttl'
     navigate('/class/', {
       state: {
-        url: e.target.name
+        url: name
       }
     })
   }
@@ -179,15 +181,46 @@ const Classes: React.FC = () => {
           {list.map((item, index) => {
             return (
               <Row key={index}>
-                <Col sm={9}>{item.id}</Col>
+                <div className='aaa'>
+                  <div className='my-stack'>
+                    {item.name}
+                  </div>
+                  <div className='my-stack-reverse'>
+                    <Button
+                      className='class-btn'
+                      onClick={() => deleteClass(item)}
+                      variant="primary"
+                    >
+                      <MdDeleteForever></MdDeleteForever>
+                    </Button>
+
+                    <Button
+                      className='class-btn'
+                      onClick={() => showClass(item)}
+                      variant="primary"
+                    >
+                      <MdSlideshow></MdSlideshow>
+                    </Button>
+
+                  </div>
+
+                </div>
+              </Row>
+            )
+          })}
+
+
+          {/* {list.map((item, index) => {
+            return (
+              <Row key={index}>
+                <Col sm={9}>{item.name}</Col>
                 <Col sm={3}>
 
                   <Stack direction="horizontal" gap={2}>
                     <div>
                       <Button
                         className='class-btn'
-                        name={item.url}
-                        onClick={showClass}
+                        onClick={() => showClass(item)}
                         variant="primary"
                       >
                         Show
@@ -195,7 +228,12 @@ const Classes: React.FC = () => {
                       <br />
                     </div>
                     <div>
-                      <Button className='class-btn' name={item.url} onClick={deleteClass} variant="primary">Remove</Button>
+                      <Button
+                        className='class-btn'
+                        onClick={() => deleteClass(item)}
+                        variant="primary"
+                      >
+                        Remove</Button>
                       <br />
                     </div>
 
@@ -203,7 +241,7 @@ const Classes: React.FC = () => {
                 </Col>
               </Row>
             )
-          })}
+          })} */}
           <Row>
 
             {request ?
@@ -217,8 +255,18 @@ const Classes: React.FC = () => {
                   style={{ maxWidth: '600px' }}
                   onChange={(e) => { setRequestUrl(e.target.value) }}
                 />
-                <Button onClick={sendRequest} variant="success">Request</Button>
-                <Button onClick={() => { setRequest(false) }} variant="danger">Cancel</Button>
+                <Button
+                  onClick={sendRequest}
+                  variant="success"
+                >
+                  Request
+                </Button>
+                <Button
+                  onClick={() => { setRequest(false) }}
+                  variant="danger"
+                >
+                  Cancel
+                </Button>
               </Stack> :
               <Stack direction="horizontal" gap={1}>
                 <Button onClick={handleShow} variant="primary">Create new class</Button>
@@ -250,7 +298,9 @@ const Classes: React.FC = () => {
                                 name={item.requestor}
                                 onClick={allowRequest}
                                 variant="success"
-                              >Allow</Button>
+                              >
+                                <RxCheck></RxCheck>
+                              </Button>
                               <br />
                             </div>
                             <div>
@@ -259,7 +309,9 @@ const Classes: React.FC = () => {
                                 name={item.requestor}
                                 onClick={denyAccess}
                                 variant="outline-danger"
-                              >Deny</Button>
+                              >
+                                <RxCross2></RxCross2>
+                              </Button>
                               <br />
                             </div>
 

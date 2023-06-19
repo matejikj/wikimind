@@ -16,10 +16,7 @@ import { AddCoords, getIdsMapping } from "../visualisation/utils";
 
 const defaultBlankDataset: MindMapDataset = {
   id: "",
-  title: "",
-  url: "",
   created: "",
-  acccessType: "",
   links: [],
   nodes: []
 }

@@ -35,10 +35,7 @@ export class MindMapLDO extends BaseLDO<MindMap> implements CRUDLDO<MindMap> {
 
         return {
             id: getStringNoLocale(thing, (this.rdf.properties.id as LDOIRI).vocabulary)!,
-            title: getStringNoLocale(thing, (this.rdf.properties.title as LDOIRI).vocabulary)!,
-            acccessType: getStringNoLocale(thing, (this.rdf.properties.acccessType as LDOIRI).vocabulary)!,
             created: getStringNoLocale(thing, (this.rdf.properties.created as LDOIRI).vocabulary)!,
-            url: getStringNoLocale(thing, (this.rdf.properties.url as LDOIRI).vocabulary)!,
         }
     };
 
@@ -46,10 +43,7 @@ export class MindMapLDO extends BaseLDO<MindMap> implements CRUDLDO<MindMap> {
         const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
             .addUrl(this.rdf.identity.vocabulary, this.rdf.identity.subject)
             .addStringNoLocale((this.rdf.properties.id as LDOIRI).vocabulary, object.id)
-            .addStringNoLocale((this.rdf.properties.title as LDOIRI).vocabulary, object.title)
             .addStringNoLocale((this.rdf.properties.created as LDOIRI).vocabulary, object.created)
-            .addStringNoLocale((this.rdf.properties.acccessType as LDOIRI).vocabulary, object.acccessType)
-            .addStringNoLocale((this.rdf.properties.url as LDOIRI).vocabulary, object.url)
             .build();
         return newThing;
     };

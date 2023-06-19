@@ -149,7 +149,7 @@ const Circle: React.FC<{
                     to: node.id,
                     title: "",
                     id: generate_uuidv4(),
-                    visible: true
+                    testable: true
 
                 }
                 setClickedLink(newLink)

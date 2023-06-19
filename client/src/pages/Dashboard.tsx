@@ -12,9 +12,11 @@ import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
+import { MindMap } from '../models/types/MindMap';
+import { ListItem } from '../models/ListItem';
 
 const Dashboard: React.FC = () => {
-  const [list, setList] = useState<{ url: string; title: string | null }[]>([]);
+  const [list, setList] = useState<ListItem[]>([]);
   const [createNewModalVisible, setCreateNewModalVisible] = useState(false);
   const [renameModalVisible, setRenameModalVisible] = useState(false);
 
@@ -29,11 +31,10 @@ const Dashboard: React.FC = () => {
     const result = getMindMapList(sessionContext.sessionInfo).then((res) => {
       setList(res)
     });
-
   }, []);
 
 
-  const showMindMap = (e: any) => {
+  const showMindMap = (e: ListItem) => {
     navigate('/visualisation/', {
       state: {
         id: e.url
@@ -41,12 +42,11 @@ const Dashboard: React.FC = () => {
     })
   }
 
-  const renameMindMap = (e: any) => {
+  const renameMindMap = (e: ListItem) => {
 
   }
 
-  const removeMindMap = (e: any) => {
-    console.log(e.target.name)
+  const removeMindMap = (e: ListItem) => {
     // navigate('/visualisation/', {
     //   state: {
     //     id: e.target.name
@@ -64,16 +64,6 @@ const Dashboard: React.FC = () => {
           }
         })
       })
-    }
-  }
-
-  const createWithCreator = (e: any) => {
-    if (sessionContext.sessionInfo.isLogged) {
-      
-      // createNewMindMap(name, sessionContext.sessionInfo).then((res) => {
-      //   console.log(res)
-
-      // })
     }
   }
 
@@ -163,6 +153,7 @@ const Dashboard: React.FC = () => {
                     >
                       <MdDriveFileRenameOutline></MdDriveFileRenameOutline>
                     </Button>
+                    
                     <Button
                       size='sm'
                       className='class-btn'

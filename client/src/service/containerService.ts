@@ -43,15 +43,6 @@ import { getProfile } from "./profileService";
 import { Profile } from "../models/types/Profile";
 import { ProfileLDO } from "../models/things/ProfileLDO";
 
-function logAccessInfo(agent: any, agentAccess: any, resource: any) {
-  console.log(`For resource::: ${resource}`);
-  if (agentAccess === null) {
-    console.log(`Could not load ${agent}'s access details.`);
-  } else {
-    console.log(`${agent}'s Access:: ${JSON.stringify(agentAccess)}`);
-  }
-}
-
 /**
  * 
  * Checks whether a given URL represents a container.
@@ -82,17 +73,12 @@ export async function getPodUrl(sessionId: string) {
 
 export async function checkContainer(sessionId: string): Promise<{podUrl: string,
   accessControlPolicy: AccessControlPolicy}> {
-  // if (!getDefaultSession().info.isLoggedIn) {
-  //   await login({
-  //     oidcIssuer: "https://login.inrupt.com/",
-  //     redirectUrl: window.location.href,
-  //     clientName: "My application"
-  //   });
-  // }
   
   const podUrls = await getPodUrl(sessionId)
   if (podUrls !== null) {
     const podUrl = podUrls[0]
+
+    let accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl + 'Wikie/')
   
     if (!(await isUrlContainer(podUrl + 'Wikie/mindMaps'))) {
       const cont = await createContainerAt(podUrl + 'Wikie/mindMaps', { fetch: fetch });
@@ -132,6 +118,16 @@ export async function checkContainer(sessionId: string): Promise<{podUrl: string
         savedProfileSolidDataset,
         { fetch: fetch }
       );
+      if (accessControlPolicy === AccessControlPolicy.WAC) {
+        await initializeAcl(podUrl + 'Wikie/profile/profile.ttl')
+      }
+      universalAccess.setPublicAccess(
+        podUrl + 'Wikie/profile/profile.ttl',         // Resource
+        { append: true, read: true, write: false },          // Access object
+        { fetch: fetch }                         // fetch function from authenticated session
+      ).then((newAccess) => {
+        console.log("newAccess       contacts.ttl")
+      });  
     }
 
     if (!(await isUrlContainer(podUrl + 'Wikie/messages'))) {
@@ -144,24 +140,22 @@ export async function checkContainer(sessionId: string): Promise<{podUrl: string
       );
     }
 
-    let accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl + 'Wikie/')
-
     if (accessControlPolicy === AccessControlPolicy.WAC) {
       await initializeAcl(podUrl + 'Wikie/classes/requests.ttl')
       await initializeAcl(podUrl + 'Wikie/messages/contacts.ttl')
     }
 
     universalAccess.setPublicAccess(
-      podUrl + 'Wikie/messages/contacts.ttl',         // Resource
-      { append: true, read: true, write: false },          // Access object
-      { fetch: fetch }                         // fetch function from authenticated session
+      podUrl + 'Wikie/messages/contacts.ttl',
+      { append: true, read: true, write: false },
+      { fetch: fetch }
     ).then((newAccess) => {
       console.log("newAccess       contacts.ttl")
     });
     universalAccess.setPublicAccess(
-      podUrl + 'Wikie/classes/requests.ttl',         // Resource
-      { append: true, read: true, write: false },          // Access object
-      { fetch: fetch }                         // fetch function from authenticated session
+      podUrl + 'Wikie/classes/requests.ttl',
+      { append: true, read: true, write: false },
+      { fetch: fetch }
     ).then((newAccess) => {
       console.log("newAccess  vrequests")
     });
@@ -176,20 +170,16 @@ export async function getMindMapList(userSession: UserSession) {
   const readingListUrl: string = userSession.podUrl + 'Wikie/mindMaps/'
   const myDataset = await getSolidDataset(
     readingListUrl,
-    { fetch: fetch }          // fetch from authenticated session
+    { fetch: fetch }
   );
 
-  // const myDataset = await getSolidDatasetWithAcl(readingListUrl);
   const resourceUrls = await getContainedResourceUrlAll(myDataset);
 
   const resultResources: { url: string; title: string | null }[] = []
   for (var res of resourceUrls) {
     const dat = await getSolidDataset(res, { fetch: fetch })
     const things = getThingAll(dat);
-    things.forEach(thing => {
-
-
-      
+    things.forEach(thing => {      
       const types = getUrlAll(thing, RDF.type);
       if (types.some(type => type === mindMapDefinition.identity.subject)) {
         resultResources.push({
@@ -199,14 +189,6 @@ export async function getMindMapList(userSession: UserSession) {
       }
     });
   }
-  console.log(resultResources)
 
-  // const thing = getThing(myDataset, 'https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/');
-  // const thing = getThingAll(myDataset);
-  // console.log(thing)
-
-  // if (thing !== null) {
-  //   return getUrlAll(thing, 'http://www.w3.org/ns/ldp#contains');
-  // }
   return resultResources
 }

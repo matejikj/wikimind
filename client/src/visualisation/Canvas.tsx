@@ -101,7 +101,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
           if (node !== undefined) {
 
             node.visible = false
-            updateNode(data.title, theme.sessionInfo.webId, node)
+            updateNode(data.id, theme.sessionInfo.webId, node)
             console.log(url, theme.sessionInfo.webId, node)
           }
         }
@@ -154,7 +154,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
     >
       <Button id="float-btn-add" onClick={() => { setModalNodeCreate(true) }} variant="success">Add</Button>
       <ModalNodeCreate
-        datasetName={data.title}
+        datasetName={data.id}
         clickedNode={clickedNode}
         canvasState={canvasState}
         setCanvasState={setCanvasState}
@@ -162,25 +162,25 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
         setModal={setModalNodeCreate}
       />
       <ModalNodeDelete
-        datasetName={data.title}
+        datasetName={data.id}
         clickedNode={clickedNode}
         showModal={modalNodeDelete}
         setModal={setModalNodeDelete}
       />
       <ModalNodeRecommends
-        datasetName={data.title}
+        datasetName={data.id}
         clickedNode={clickedNode}
         showModal={modalNodeRecommends}
         setModal={setModalNodeRecommends}
       />
       <ModalNodeDetail
-        datasetName={data.title}
+        datasetName={data.id}
         clickedNode={clickedNode}
         showModal={modalNodeDetail}
         setModal={setModalNodeDetail}
       />
       <ModalLinkRename
-        datasetName={data.title}
+        datasetName={data.id}
         clickedLink={clickedLink}
         canvasState={canvasState}
         setCanvasState={setCanvasState}
@@ -188,7 +188,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
         setModal={setModalLinkRename}
       />
       <ModalLinkDelete
-        datasetName={data.title}
+        datasetName={data.id}
         clickedLink={clickedLink}
         showModal={modalLinkDelete}
         setModal={setModalLinkDelete}
@@ -236,7 +236,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
               <Circle
                 key={index}
                 node={node}
-                datasetName={data.title}
+                datasetName={data.id}
                 clickedLink={clickedLink}
                 setClickedLink={setClickedLink}
                 setClickedNode={setClickedNode}

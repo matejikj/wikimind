@@ -1,0 +1,203 @@
+@prefix voc: <https://ayazdyshin.inrupt.net/plannerApp/vocab.ttl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+voc:Habit
+    a rdfs:Class;
+    rdfs:label "habit"@en ;
+    rdfs:comment "a task that is repeated with specifed interval"@en .
+
+voc:defaultFolder
+    a rdfs:Property ;
+    rdfs:label "default folder"@en ;
+    rdfs:comment "links to default folder url"@en ;
+    rdfs:domain xsd:anyURI ;
+    rdfs:range xsd:anyURI . 
+
+voc:accessType
+    a rdfs:Property ;
+    rdfs:label "access type"@en ;
+    rdfs:comment "access type of an entry"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:domain xsd:TexDigitalDocument ;
+    rdfs:range xsd:string .
+
+voc:recurrence
+    a rdfs:Property ;
+    rdfs:label "recurrence"@en ;
+    rdfs:comment "recurrence of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:string .
+
+voc:custom
+    a rdfs:Property ;
+    rdfs:label "custom"@en ;
+    rdfs:comment "custom recurrence of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:string .
+
+voc:lastCheckInDate
+    a rdfs:Property ;
+    rdfs:label "last check-in date"@en ;
+    rdfs:comment "last check-in date of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:date .
+
+voc:bestSteak
+    a rdfs:Property ;
+    rdfs:label "best streak"@en ;
+    rdfs:comment "biggest number of consecutive check-ins of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:positiveInteger .
+
+voc:currentStreak 
+    a rdfs:Property ;
+    rdfs:label "current steak"@en ;
+    rdfs:comment "current number of consecutive check-ins of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:positiveInteger .
+
+voc:checkInDate
+    a rdfs:Property ;
+    rdfs:label "check-in date"@en ;
+    rdfs:comment "check-in date of a habit"@en ;
+    rdfs:domain voc:Habit ;
+    rdfs:range xsd:date .
+
+
+@prefix solidhotel: <https://github.com/gergelyth/solid-hotel/blob/master/solidhotel.ttl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix schema: <https://schema.org/> .
+@prefix solid: <http://www.w3.org/ns/solid/terms#> .
+
+solidhotel: rdf:type owl:Ontology ;
+    dcterms:title "Solid Hotel project ontology" ;
+    dcterms:description "The ontology adding RDF terms required for the Solid Hotel project." ;
+    vann:preferredNamespacePrefix "solidhotel" ;
+    vann:preferredNamespaceURI <https://github.com/gergelyth/solid-hotel/blob/master/solidhotel.ttl#> .
+
+### Classes
+solidhotel:ReservationLink
+    a rdfs:Class ;
+    rdfs:comment "A resource containing information which helps to pair Solid Pods to reservations."@en ;
+    rdfs:label "ReservationLink"@en .
+
+solidhotel:PrivacyToken
+    a rdfs:Class ;
+    rdfs:comment "A resource helping to identify what personal information fields are kept at the hotel."@en ;
+    rdfs:label "PrivacyToken"@en .
+
+solidhotel:PrivacyTokenDeletion
+    a rdfs:Class ;
+    rdfs:comment "A resource containing information about the deletion request of a privacy token."@en ;
+    rdfs:label "PrivacyTokenDeletion"@en .
+
+solidhotel:ReservationStateChange
+    a rdfs:Class ;
+    rdfs:comment "A resource containing information about a reservation state change."@en ;
+    rdfs:label "ReservationStateChange"@en .
+
+### Enumerates
+solidhotel:ReservationActive a schema:ReservationStatusType ;
+    rdfs:label "ReservationActive"@en;
+    rdfs:comment "The status for a currently active reservation where the guest is checked-in."@en .
+
+solidhotel:ReservationPast a schema:ReservationStatusType ;
+    rdfs:label "ReservationPast"@en ;
+    rdfs:comment "The status for a reservation in the past where the guest has already checked-out"@en .
+
+solidhotel:IdType a rdfs:Class ;
+    rdfs:label "IdType"@en ;
+    rdfs:comment "Enumerated ID document type values."@en ;
+    rdfs:subClassOf schema:StatusEnumeration .
+
+solidhotel:PassportIdDocumentType a solidhotel:IdType ;
+    rdfs:label "PassportIdDocumentType"@en ;
+    rdfs:comment "Passport as an ID document type."@en .
+
+solidhotel:IdCardIdDocumentType a solidhotel:IdType ;
+    rdfs:label "IdCardIdDocumentType"@en ;
+    rdfs:comment "The ID card as an ID document type."@en .
+
+solidhotel:NotificationType a rdfs:Class ;
+    rdfs:label "NotificationType"@en ;
+    rdfs:comment "Enumerated type values for a Notification."@en ;
+    rdfs:subClassOf schema:StatusEnumeration .
+
+solidhotel:BookingRequestNotification a solidhotel:NotificationType ;
+    rdfs:label "BookingRequestNotification"@en ;
+    rdfs:comment "The notification submitted to the hotel to create a reservation"@en .
+
+solidhotel:ReservationStateChangeNotification a solidhotel:NotificationType ;
+    rdfs:label "ReservationStateChangeNotification"@en ;
+    rdfs:comment "The notification requesting a reservation status change at the counterparty"@en .
+
+solidhotel:FailureReportNotification a solidhotel:NotificationType ;
+    rdfs:label "FailureReportNotification"@en ;
+    rdfs:comment "The notification reporting an error to the counterparty"@en .
+
+solidhotel:ProfileModificationNotification a solidhotel:NotificationType ;
+    rdfs:label "ProfileModificationNotification"@en ;
+    rdfs:comment "The notification reporting a change in a local guest profile to the counterparty"@en .
+
+solidhotel:InitialPairingRequestNotification a solidhotel:NotificationType ;
+    rdfs:label "InitialPairingRequestNotification"@en ;
+    rdfs:comment "The notification which starts the reservation pairing operation"@en .
+
+solidhotel:PairingRequestWithInformationNotification a solidhotel:NotificationType ;
+    rdfs:label "PairingRequestWithInformationNotification"@en ;
+    rdfs:comment "The notification completing the reservation pairing operation carrying the required data"@en .
+
+solidhotel:PrivacyTokenNotification a solidhotel:NotificationType ;
+    rdfs:label "PrivacyTokenNotification"@en ;
+    rdfs:comment "The notification informing the counterparty about a personal information held"@en .
+
+solidhotel:PrivacyTokenDeletionNotification a solidhotel:NotificationType ;
+    rdfs:label "PrivacyTokenDeletionNotification"@en ;
+    rdfs:comment "The notification submitted to request the removal of a personal information field"@en .
+
+### Properties
+solidhotel:isProcessed
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
+
+solidhotel:notificationType
+    a rdf:Property ;
+    rdfs:comment "Defines the type of the notification"@en ;
+    rdfs:label "notificationType"@en ;
+    schema:domainIncludes solid:Notification ;
+    schema:rangeIncludes solidhotel:NotificationType .
+
+solidhotel:idDocumentType
+    a rdf:Property ;
+    rdfs:comment "Defines the identification document type of the person."@en ;
+    rdfs:label "idDocumentType"@en .
+
+solidhotel:idDocumentNumber
+    a rdf:Property ;
+    rdfs:comment "Defines the identification document number of the person."@en ;
+    rdfs:label "idDocumentNumber"@en .
+
+solidhotel:targetDataset
+    a rdf:Property ;
+    rdfs:comment "Refers to the target Solid dataset."@en ;
+    rdfs:label "targetDataset"@en .
+
+solidhotel:forHotel
+    a rdf:Property ;
+    rdfs:comment "Refers to the target hotel of the dataset."@en ;
+    rdfs:label "forHotel"@en .
+
+solidhotel:forReservation
+    a rdf:Property ;
+    rdfs:comment "Refers to the target reservation in the Solid Pod."@en ;
+    rdfs:label "forReservation"@en .
+
+solidhotel:targetFields
+    a rdf:Property ;
+    rdfs:comment "The array of the personal information fields targeted by this resource."@en ;
+    rdfs:label "targetFields"@en .

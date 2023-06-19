@@ -10,6 +10,7 @@ import {
     createSolidDataset,
     createThing,
     setThing,
+    removeThing,
     getFile, getProfileAll, getPodUrlAllFrom,
     deleteFile,
     setUrl,
@@ -37,6 +38,7 @@ import { SCHEMA_INRUPT, RDF } from "@inrupt/vocab-common-rdf";
 import { Node } from "../models/types/Node";
 import { MindMapLDO } from "../models/things/MindMapLDO";
 import examDefinition from "../definitions/examDefinition.json"
+import chatDefinition from "../definitions/chat.json"
 import classRequestDefinition from "../definitions/classRequest.json"
 import classRequestGrantDefinition from "../definitions/classRequestGrant.json"
 import profileDefinition from "../definitions/profile.json"
@@ -54,7 +56,7 @@ import { ConnectionLDO } from "../models/things/ConnectionLDO";
 import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
 import { generate_uuidv4 } from "./utils";
-import { Class as TeachClass } from "../models/types/Class";
+import { Class, Class as TeachClass } from "../models/types/Class";
 import { ClassLDO } from "../models/things/ClassLDO";
 import { getProfile } from "./profileService";
 import { Link } from "../models/types/Link";
@@ -74,6 +76,8 @@ import { initializeAcl } from "./accessService";
 import { ClassRequestLDO } from "../models/things/ClassRequestLDO";
 import { Grant } from "../models/types/Grant";
 import { ClassRequestGrantLDO } from "../models/things/ClassRequestGrantLDO";
+import { ChatLDO } from "../models/things/ChatLDO";
+import { storage } from "rdf-namespaces/dist/space";
 
 // https://id.inrupt.com/matejikj?classId=d91f706d-ca0c-41aa-844b-cf47d1ef4c40
 
@@ -147,32 +151,20 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
         if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
             const newLink = datasetLinkBuilder.read(thing)
             if (newLink.linkType === LinkType.PROFILE_LINK) {
-                console.log(newLink)
-                console.log("newLink")
-                const pupilProfiles = await getProfileAll(newLink.url, { fetch });
-
-                console.log(pupilProfiles)
-                let myExtendedProfile = pupilProfiles.altProfileAll[0];
-
-                const profile = await getWebIdDataset(newLink.url);
-                const podRoot = getPodUrlAllFrom({ webIdProfile: profile, altProfileAll: [] }, newLink.url);
-
-
-                const podUrls = await getPodUrl(newLink.url)
-                if (podUrls !== null) {
-                    const podUrl = podUrls[0]
-                    let bb = getThing(myExtendedProfile, podUrl + "profile#Wikie");
-                    let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-                    let userProfile = profileBuilder.read(bb)
-                    console.log(userProfile)
-                    profiles.push(userProfile)
-                }
+                // const podUrls = await getPodUrl(newLink.url)
+                // if (podUrls !== null) {
+                //     const podUrl = podUrls[0]
+                //     let bb = getThing(myExtendedProfile, podUrl + "profile#Wikie");
+                //     let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+                //     let userProfile = profileBuilder.read(bb)
+                //     console.log(userProfile)
+                //     profiles.push(userProfile)
+                // }
             }
             if (newLink.linkType === LinkType.GRAPH_LINK) {
-                const a = await getMindMap(newLink.url)
-                if (a !== null) {
-                    a.url = newLink.url
-                    mindMaps.push(a)
+                const mindMap = await getMindMap(newLink.url)
+                if (mindMap !== null) {
+                    mindMaps.push(mindMap)
                 }
             }
         }
@@ -203,29 +195,11 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
 }
 
 export async function allowAccess(userSession: UserSession, classRequest: Request) {
-    // const accessGrant = await approveAccessRequest(
-    //     classRequest.accessRequest,
-    //     undefined,  // Optional modifications
-    //     {
-    //         fetch: fetch, // From the resource owner's (i.e., snoringsue's) authenticated session
-    //     }
-    // );
-
     const podUrls = await getPodUrl(classRequest.requestor)
     console.log(podUrls)
     if (podUrls !== null) {
-        const dataUrl = podUrls[0] + "Wikie/classes/requests.ttl"
 
-        //     const cc = JSON.stringify(accessGrant)
-        //     const file = new Blob([cc], { type: 'text/plain' })
-        //     console.log(file)
-        //     const naame = generate_uuidv4() + ".json"
-        //     const savedFile = await saveFileInContainer(
-        //         dataUrl,           // Container URL
-        //         file,                         // File 
-        //         { slug: naame, contentType: file.type, fetch: fetch }
-        //     );
-
+        // VLOZIT ZAKA DO TRIDY
         const datasetLink: Link = {
             id: generate_uuidv4(),
             url: classRequest.requestor,
@@ -252,12 +226,12 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
             console.log(newAccess)
         });
 
+        // ODESLAT ZAKOVI POTVRZENI
+
         const newRequst = new ClassRequestGrantLDO(classRequestGrantDefinition).create({
             id: generate_uuidv4(),
             class: classRequest.class
         })
-
-        console.log(podUrls[0] + "Wikie/classes/requests.ttl")
 
         let grantDataset = await getSolidDataset(
             podUrls[0] + "Wikie/classes/requests.ttl",
@@ -271,16 +245,24 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
             { fetch: fetch }
         );
 
+        // VYTVORIT CHAT
 
+        let messageDatasetUrl = userSession.podUrl + "Wikie/messages/" + generate_uuidv4() + ".ttl"
 
-        let courseSolidDataset = createSolidDataset();
+        const newChat = new ChatLDO(chatDefinition).create({
+            id: generate_uuidv4(),
+            owner: userSession.webId,
+            guest: classRequest.requestor,
+            modified: '19.6.2023',
+            lastMessage: '',
+            storage: userSession.podUrl
+        })
 
-
-        let messageDatasetUrl = userSession.podUrl + "Wikie/messages/" + encodeURIComponent(classRequest.requestor) + ".ttl"
-
+        let chatSolidDataset = createSolidDataset();
+        const newProfileDataset = setThing(chatSolidDataset, newChat)
         const messageDataset = await saveSolidDatasetAt(
             messageDatasetUrl,
-            courseSolidDataset,
+            newProfileDataset,
             { fetch: fetch }
         );
 
@@ -288,57 +270,62 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
             await initializeAcl(messageDatasetUrl)
         }
 
+        // PRIDELIT ZAKOVI PRISTUP KE SPOLECNEMU CHATU
         universalAccess.setAgentAccess(
             messageDatasetUrl,
-            classRequest.requestor,     // Agent
-            { append: true, read: true, write: false },          // Access object
-            { fetch: fetch }    // fetch function from authenticated session
+            classRequest.requestor,
+            { append: true, read: true, write: false },
+            { fetch: fetch }
         ).then((newAccess) => {
             console.log(newAccess)
         });
 
-        const newProfileLink = new DatasetLinkLDO(datasetLinkDefinition).create({
+
+        // VYTVORIT CHAT LINK
+
+        const newChatLink = new DatasetLinkLDO(datasetLinkDefinition).create({
             id: generate_uuidv4(),
-            linkType: LinkType.PROFILE_LINK,
-            url: userSession.webId
+            linkType: LinkType.CHAT_LINK,
+            url: messageDatasetUrl
         })
 
-        console.log(podUrls[0] + "Wikie/messages/contacts.ttl")
+
+        // ULOZIT CHAT ZAKOVI DO KONTAKTU
 
         let myContactsDataset = await getSolidDataset(
+            userSession.podUrl + "Wikie/messages/contacts.ttl",
+            { fetch: fetch }
+        );
+
+        const newTeacherProfileThing = setThing(myContactsDataset, newChatLink)
+        const savedTeacherProfileDatatset = await saveSolidDatasetAt(
+            userSession.podUrl + "Wikie/messages/contacts.ttl",
+            newTeacherProfileThing,
+            { fetch: fetch }
+        );
+
+
+        // ULOZIT CHAT ZAKOVI DO KONTAKTU
+
+        let studentsContactsDataset = await getSolidDataset(
             podUrls[0] + "Wikie/messages/contacts.ttl",
             { fetch: fetch }
         );
-        console.log(myContactsDataset)
-        const newProfileThing = setThing(myContactsDataset, newProfileLink)
+
+        const newProfileThing = setThing(studentsContactsDataset, newChatLink)
         const savedProfileDatatset = await saveSolidDatasetAt(
             podUrls[0] + "Wikie/messages/contacts.ttl",
             newProfileThing,
             { fetch: fetch }
         );
     }
-    // console.log(accessGrant)
-    // await deleteFile(
-    //     classRequest.requestFile,  // File to delete
-    //     { fetch: fetch }                         // fetch function from authenticated session
-    // );
 }
 
 export async function denyRequest(userSession: UserSession, classRequest: Request) {
-    // const accessGrant = await denyAccessRequest(
-    //     classRequest.accessRequest,
-    //     {
-    //         fetch: fetch, // From the resource owner's (i.e., snoringsue's) authenticated session
-    //     }
-    // );
-    // await deleteFile(
-    //     classRequest.requestFile,  // File to delete
-    //     { fetch: fetch }                         // fetch function from authenticated session
-    // );
 }
 
 export async function getRequests(userSession: UserSession) {
-    const myDataset = await getSolidDataset(
+    let myDataset = await getSolidDataset(
         userSession.podUrl + "Wikie/classes/requests.ttl",
         { fetch: fetch }          // fetch from authenticated session
     );
@@ -361,8 +348,15 @@ export async function getRequests(userSession: UserSession) {
         }
         if (types.some(type => type === classRequestGrantDefinition.identity.subject)) {
             classRequestGrants.push(classRequestGrantLDO.read(thing))
+            myDataset = removeThing(myDataset, thing)
         }
     });
+
+    const savedSolidDatasetContainer = await saveSolidDatasetAt(
+        userSession.podUrl + "Wikie/classes/requests.ttl",
+        myDataset,
+        { fetch: fetch }
+    );
 
     await Promise.all(classRequestGrants.map(async (item) => {
         const datasetLink: Link = {
@@ -382,41 +376,8 @@ export async function getRequests(userSession: UserSession) {
             { fetch: fetch }
         );
     }))
-    // await Promise.all(resourceUrls.map(async (item) => {
-    //     const file = await getFile(item, { fetch: fetch })
-    //     let fileText = await file.text()
-    //     let credentialObject = JSON.parse(fileText)
-    //     let objectTypes = credentialObject.type as string[]
-    //     if (objectTypes.includes("SolidAccessRequest")) {
-    //         const accessRequest = credentialObject as AccessRequest
-    //         const classUrl = accessRequest.credentialSubject.hasConsent.forPersonalData[0]
-    //         const id = accessRequest.credentialSubject.hasConsent.forPersonalData[0].split('Wikie/classes/')[1]
-    //         const myDataset = await getSolidDataset(
-    //             classUrl,
-    //             { fetch: fetch }          // fetch from authenticated session
-    //         )
-    //         const classThing = await getThing(myDataset, classUrl + "#" + id.split(".ttl")[0])
-    //         let classBuilder = new ClassLDO(classDefinition)
-    //         if (classThing !== null) {
-    //             const classObject = classBuilder.read(classThing)
-    //             array.push({
-    //                 accessRequest: accessRequest,
-    //                 className: classObject.name,
-    //                 requestFile: item
-    //             })
-    //         }
-    //     }
-    //     if (objectTypes.includes("SolidAccessGrant")) {
-    //         const accessGrant = credentialObject as AccessGrant
-    //         // console.log(accessGrant)
-
-    //     }
-    // }))
     return classRequests
 }
-
-// https://id.inrupt.com/matejikj?classId=d91f706d-ca0c-41aa-844b-cf47d1ef4c40
-
 
 export async function requestClass(userSession: UserSession, classUri: string) {
     let paramString = classUri.split('?')[1];
@@ -436,6 +397,16 @@ export async function requestClass(userSession: UserSession, classUri: string) {
             requestor: userSession.webId
         })
 
+        universalAccess.setAgentAccess(
+            userSession.podUrl + 'Wikie/messages/contacts.ttl',
+            webId,     // Agent
+            { append: true, read: true, write: false },          // Access object
+            { fetch: fetch }    // fetch function from authenticated session
+        ).then((newAccess) => {
+            console.log('newAccess')
+        });
+
+
         console.log(podUrls[0] + "Wikie/classes/requests.ttl")
 
         let myContactsDataset = await getSolidDataset(
@@ -449,36 +420,12 @@ export async function requestClass(userSession: UserSession, classUri: string) {
             newProfileThing,
             { fetch: fetch }
         );
-
-
-        // let accessExpiration = new Date(Date.now() + 60 * 60 * 60 * 60000);
-        // const requestVC = await issueAccessRequest(
-        //     {
-        //         "access": { read: true },
-        //         "resources": [dataUrl],   // Array of URLs
-        //         "resourceOwner": webId,
-        //         "expirationDate": accessExpiration,
-        //         "purpose": ["https://example.com/purposes#print"]
-        //     },
-        //     { fetch: fetch } // From the requestor's (i.e., ExamplePrinter's) authenticated session
-        // );
-        // console.log(requestVC)
-        // const cc = JSON.stringify(requestVC)
-        // const dd = podUrls[0] + "Wikie/classes/requests/"
-        // const file = new Blob([cc], { type: 'text/plain' })
-        // console.log(file)
-        // const naame = generate_uuidv4() + ".json"
-        // const savedFile = await saveFileInContainer(
-        //     dd,           // Container URL
-        //     file,                         // File 
-        //     { slug: naame, contentType: file.type, fetch: fetch }
-        // );
     }
 }
 
 
 export async function getClassesList(userSession: UserSession) {
-    let classes: Link[] = []
+    let classes: Class[] = []
     const podUrl = userSession.podUrl + 'Wikie/classes/classes.ttl'
 
     const myDataset = await getSolidDataset(
@@ -487,15 +434,34 @@ export async function getClassesList(userSession: UserSession) {
     );
     const things = await getThingAll(myDataset);
     let datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
-    things.forEach(thing => {
+    await Promise.all(things.map(async (thing) => {
+
+        // things.forEach(async thing => {
         const types = getUrlAll(thing, RDF.type);
         if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
             const link = datasetLinkBuilder.read(thing)
             if (link.linkType === LinkType.CLASS_LINK) {
-                classes.push(link)
+
+                // classes.push(link)
+
+                const myDataset = await getSolidDataset(
+                    link.url,
+                    { fetch: fetch }
+                );
+                const things = await getThingAll(myDataset);
+
+                let classBuilder = new ClassLDO(classDefinition)
+                let mindMap: Class | null = null;
+
+                things.forEach(thing => {
+                    const types = getUrlAll(thing, RDF.type);
+                    if (types.some(type => type === classDefinition.identity.subject)) {
+                        classes.push(classBuilder.read(thing))
+                    }
+                });
             }
         }
-    });
+    }));
     return classes;
 }
 
@@ -520,8 +486,8 @@ export async function addGraphToClass(userSession: UserSession, graphUrl: string
         graphUrl,         // Resource
         { append: true, read: true, write: false },          // Access object
         { fetch: fetch }                         // fetch function from authenticated session
-      ).then((newAccess) => {
+    ).then((newAccess) => {
         console.log("newAccess       contacts.ttl")
-      });
-  
+    });
+
 }

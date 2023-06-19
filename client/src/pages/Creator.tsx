@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import { SessionContext } from "../sessionContext";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getMindMap } from "../service/mindMapService";
+import { createPreparedMindMap, getMindMap } from "../service/mindMapService";
 import { getDefaultSession, fetch, login } from "@inrupt/solid-client-authn-browser";
 import {
     WebsocketNotification,
@@ -48,16 +48,22 @@ const Creator: React.FC = () => {
     const sessionContext = useContext(SessionContext)
     const [currentProvider, setCurrentProvider] = useState<string>('');
 
-    const [searchedKeyword, setFormInputs] = useState('');
+    const [searchedKeyword, setSearchedKeyword] = useState('');
     const [results, setResults] = useState<ResultItem[]>([]);
 
     const [recommends, setRecommends] = useState<ResultItem[]>([]);
     const [path, setPath] = useState<ResultItem[]>([]);
 
 
-    const [show, setShow] = useState<boolean>(false);
+    const [selectedItemsVisible, setSelectedItemsVisible] = useState<boolean>(false);
+    const [nameVisible, setNameVisible] = useState<boolean>(false);
+    const [name, setName] = useState('');
+
     const [nodes, setNodes] = useState<any[]>([]);
     const [links, setLinks] = useState<{ source: any; target: any; type: string; }[]>([]);
+
+    const [aaa, setaaa] = useState<any[]>([]);
+    const [bbb, setbbb] = useState<any[]>([]);
 
 
     let items: any[] = [];
@@ -116,13 +122,44 @@ const Creator: React.FC = () => {
         }
     }
 
-    async function addLink(to: ResultItem) {
-        const isInNodes = nodes.find((item) => item.entity.value === to.entity.value)
-        if (isInNodes === undefined) {
-            nodes.push(to)
+    function isInLinks(source: string, target: string, type: string): boolean {
+        let result = false;
+        links.forEach((link) => {
+            if (link.source === source && link.target === target && link.type === type) {
+                result = true
+            }
+        })
+        return result
+    }
+
+    async function addLink(addedItem: ResultItem) {
+        for (let i = 0; i < path.length - 1; i++) {
+            let from: ResultItem = path[i];
+            let to: ResultItem = path[i + 1]
+            if (!isInLinks(from.entity.value, to.entity.value, to.type.value)) {
+                const isPathTargetInNodes = nodes.find((item) => item.entity.value === from.entity.value)
+                if (isPathTargetInNodes === undefined) {
+                    nodes.push(from)
+                }
+                const isPathSourceInNodes = nodes.find((item) => item.entity.value === to.entity.value)
+                if (isPathSourceInNodes === undefined) {
+                    nodes.push(to)
+                }
+                links.push({ source: from.entity.value, target: to.entity.value, type: to.type.value })
+            }
+        }
+
+        const isTargetInNodes = nodes.find((item) => item.entity.value === addedItem.entity.value)
+        if (isTargetInNodes === undefined) {
+            nodes.push(addedItem)
         }
         const lastElement = path[path.length - 1];
-        links.push({ source: lastElement.entity.value, target: to.entity.value, type: to.type.value })
+        const isSourceInNodes = nodes.find((item) => item.entity.value === lastElement.entity.value)
+        if (isSourceInNodes === undefined) {
+            nodes.push(lastElement)
+        }
+
+        links.push({ source: lastElement.entity.value, target: addedItem.entity.value, type: addedItem.type.value })
     }
 
     async function backspace() {
@@ -137,17 +174,23 @@ const Creator: React.FC = () => {
     // function 
 
     function createVis() {
-        const simulation = d3.forceSimulation(nodes)
+        const simNodes = JSON.parse(JSON.stringify(nodes))
+        const simLinks = JSON.parse(JSON.stringify(links))
+        const simulation = d3.forceSimulation(simNodes)
             // @ts-ignore
-            .force("link", d3.forceLink(links).id(d => d.url))
-            .force("center", d3.forceCenter(800 / 2, 600 / 2))
-            .force("charge", d3.forceManyBody().strength(-400))
+            .force("link", d3.forceLink(simLinks).id(d => d.entity.value))
+            .force("center", d3.forceCenter(1000 / 2, 1000 / 2))
+            .force("collide", d3.forceCollide())
+            .force("charge", d3.forceManyBody().strength(-1000))
             .force("x", d3.forceX())
-            .force("y", d3.forceY());
+            .force("y", d3.forceY())
+            .stop()
+            .tick(100)
+
 
         const mindMapNodes: Node[] = []
-        const mindMapLinks: Connection[] = []
-        nodes.forEach((item) => {
+        const connections: Connection[] = []
+        simNodes.forEach((item: any) => {
             mindMapNodes.push({
                 id: generate_uuidv4(),
                 title: item.label.value,
@@ -159,18 +202,23 @@ const Creator: React.FC = () => {
             })
         })
 
-        // links.forEach((item) => {
-        //     mindMapNodes.push({
-        //         id: generate_uuidv4(),
-        //         title: item..value,
-        //         uri: item.entity.value,
-        //         description: '',
-        //         cx: item.x,
-        //         cy: item.y,
-        //         visible: true
-        //     })
-        // })
+        let res = new Map()
+        mindMapNodes.map((x) => {
+            res.set(x.uri, x.id)
+        })
 
+        simLinks.forEach((item: any) => {
+            connections.push({
+                id: generate_uuidv4(),
+                title: item.type,
+                from: res.get(item.source.entity.value),
+                to: res.get(item.target.entity.value),
+                testable: true
+            })
+        })
+        setaaa(simNodes)
+        setbbb(simLinks)
+        createPreparedMindMap(mindMapNodes, connections, name, sessionContext.sessionInfo)
         console.log('fdfds')
     }
 
@@ -178,10 +226,10 @@ const Creator: React.FC = () => {
         <div className="App">
             <Sidenav type={SideNavType.COMMON} />
             <main ref={ref}>
-                <Button id="float-btn-add" onClick={() => setShow(true)} variant="success">Selected</Button>
+                <Button id="float-btn-add" onClick={() => setSelectedItemsVisible(true)} variant="success">Selected</Button>
                 <Modal
-                    show={show}
-                    onHide={() => setShow(false)}
+                    show={selectedItemsVisible}
+                    onHide={() => setSelectedItemsVisible(false)}
                 >
                     <Modal.Header>
                         <Modal.Title>Choose name</Modal.Title>
@@ -205,7 +253,42 @@ const Creator: React.FC = () => {
                         <Button
                             className='my-btn'
                             variant="secondary"
-                            onClick={() => setShow(false)}
+                            onClick={() => setSelectedItemsVisible(false)}
+                        >
+                            Close
+                        </Button>
+                        <Button
+                            className='my-btn'
+                            variant="warning"
+                            onClick={() => { setSelectedItemsVisible(false); setNameVisible(true) }}
+                        >
+                            Done
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Modal
+                    show={nameVisible}
+                    onHide={() => setNameVisible(false)}
+                >
+                    <Modal.Header>
+                        <Modal.Title>Choose name</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form.Label htmlFor="inputKeyword">Searching keyword:</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Title"
+                            name="title"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            className='my-btn'
+                            variant="secondary"
+                            onClick={() => setNameVisible(false)}
                         >
                             Close
                         </Button>
@@ -214,7 +297,7 @@ const Creator: React.FC = () => {
                             variant="warning"
                             onClick={() => createVis()}
                         >
-                            Done
+                            Create
                         </Button>
                     </Modal.Footer>
                 </Modal>
@@ -229,7 +312,7 @@ const Creator: React.FC = () => {
                                     placeholder="Keyword"
                                     name="keyword"
                                     value={searchedKeyword}
-                                    onChange={(e) => setFormInputs(e.target.value)}
+                                    onChange={(e) => setSearchedKeyword(e.target.value)}
                                 />
                                 <Button onClick={searchKeyword}>Search</Button>
                                 <Form.Select
@@ -294,12 +377,25 @@ const Creator: React.FC = () => {
                                 </div>
                             </Col>
                         </Row>
-                        {/* <Row>
+                        <Row>
                             <svg
-                                width={800}
-                                height={600}
+                                width={500}
+                                height={500}
                             >
-                                {nodes.map((node, index) => {
+                                <defs>
+                                    <marker
+                                        id="triangle"
+                                        viewBox="0 0 10 10"
+                                        refX="50"
+                                        refY="5"
+                                        markerUnits="strokeWidth"
+                                        markerWidth="4"
+                                        markerHeight="9"
+                                        orient="auto">
+                                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#876" />
+                                    </marker>
+                                </defs>
+                                {aaa.map((node, index) => {
                                     return (
                                         <circle
                                             cx={node.x}
@@ -310,18 +406,18 @@ const Creator: React.FC = () => {
                                         </circle>
                                     )
                                 })}
-                                {nodes.map((node, index) => {
+                                {aaa.map((node, index) => {
                                     return (
                                         <text
                                             x={node.x}
                                             r={20}
                                             stroke="green"
                                             y={node.y}
-                                        >{node.url}
+                                        >{node.label.value}
                                         </text>
                                     )
                                 })}
-                                {links.map((node, index) => {
+                                {bbb.map((node, index) => {
                                     return (
                                         <line
                                             x1={node.source.x}
@@ -329,12 +425,14 @@ const Creator: React.FC = () => {
                                             y1={node.source.y}
                                             y2={node.target.y}
                                             stroke={'rgb(255,0,0)'}
+                                            markerEnd="url(#triangle)"
+
                                         />
                                     )
                                 })}
 
                             </svg>
-                        </Row> */}
+                        </Row>
                     </Container>
                 ) : (
                     <Container>

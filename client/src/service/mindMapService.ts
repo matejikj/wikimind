@@ -72,10 +72,7 @@ export async function getMindMap(url: string) {
     mindMap = mindMap as MindMap
     const mindMapDataset: MindMapDataset = {
       id: mindMap.id,
-      title: mindMap.title,
-      acccessType: mindMap.acccessType,
       created: mindMap.created,
-      url: mindMap.url,
       links: links,
       nodes: nodes
     }
@@ -88,10 +85,7 @@ export async function getMindMap(url: string) {
 export async function createNewMindMap(name: string, userSession: UserSession) {
     let courseSolidDataset = createSolidDataset();
     let blankMindMap: MindMap = {
-      title: name,
-      id: generate_uuidv4(),
-      acccessType: "",
-      url: "",
+      id: name,
       created: ""
     }
     const mindMapLDO = new MindMapLDO(mindMapDefinition).create(blankMindMap)
@@ -112,20 +106,35 @@ export async function createNewMindMap(name: string, userSession: UserSession) {
 }
 
 export async function createPreparedMindMap(nodes: Node[], links: Connection[], name: string, userSession: UserSession) {
-  let courseSolidDataset = createSolidDataset();
+  let mindMapSolidDataset = createSolidDataset();
+
   let blankMindMap: MindMap = {
-    title: name,
-    id: generate_uuidv4(),
-    acccessType: "",
-    url: "",
+    id: name,
     created: ""
   }
+
+  let nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
+  let linkBuilder = new ConnectionLDO((linkDefinition as LDO<Connection>))
+
+  nodes.forEach((node) => {
+    mindMapSolidDataset = setThing(mindMapSolidDataset, nodeBuilder.create(node));
+  })
+
+  links.forEach((link) => {
+    mindMapSolidDataset = setThing(mindMapSolidDataset, linkBuilder.create(link));
+  })
+
+
   const mindMapLDO = new MindMapLDO(mindMapDefinition).create(blankMindMap)
-  courseSolidDataset = setThing(courseSolidDataset, mindMapLDO)
+  mindMapSolidDataset = setThing(mindMapSolidDataset, mindMapLDO)
   let newName = userSession.podUrl + "Wikie/mindMaps/" + name + ".ttl"
+
+
+  
+  
   const savedSolidDataset = await saveSolidDatasetAt(
     newName,
-    courseSolidDataset,
+    mindMapSolidDataset,
     { fetch: fetch }
   );
 
@@ -133,7 +142,6 @@ export async function createPreparedMindMap(nodes: Node[], links: Connection[], 
     initializeAcl(newName)
   }
 
-  return newName
 
 }
 

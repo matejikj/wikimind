@@ -19,10 +19,7 @@ import { Form } from "react-bootstrap";
 
 const defaultBlankDataset: MindMapDataset = {
     id: "",
-    title: "",
-    url: "",
     created: "",
-    acccessType: "",
     links: [],
     nodes: []
 }

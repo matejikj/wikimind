@@ -16,7 +16,7 @@
         "id": {
             "vocabulary": "http://schema.org/identifier"
         },
-        "visible": {
+        "testable": {
             "vocabulary": "http://schema.org/distance"
         }
     }
