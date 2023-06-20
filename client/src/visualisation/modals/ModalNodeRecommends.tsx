@@ -14,8 +14,9 @@ const ModalNodeRecommends: React.FC<{
     datasetName: string,
     clickedNode: Node | undefined,
     showModal: boolean,
-    setModal: Function
-}> = ({ datasetName, clickedNode, showModal, setModal }) => {
+    setModal: Function,
+    recommends: any[]
+}> = ({ datasetName, clickedNode, recommends, showModal, setModal }) => {
     const theme = useContext(SessionContext)
     const [formInputs, setFormInputs] = useState({
         title: 'title_',
@@ -28,16 +29,17 @@ const ModalNodeRecommends: React.FC<{
         setFormInputs({ ...formInputs, [key]: value })
     }
     function handleSave(event: any) {
-        const newNode: Node = {
-            id: generate_uuidv4(),
-            uri: '',
-            title: formInputs.title,
-            description: formInputs.description,
-            cx: 100,
-            cy: 100,
-            visible: true
-        }
-        createNode(datasetName, theme.sessionInfo.webId, newNode)
+        console.log(recommends)
+        // const newNode: Node = {
+        //     id: generate_uuidv4(),
+        //     uri: '',
+        //     title: formInputs.title,
+        //     description: formInputs.description,
+        //     cx: 100,
+        //     cy: 100,
+        //     visible: true
+        // }
+        // createNode(datasetName, theme.sessionInfo.webId, newNode)
     }
 
     return (
@@ -45,24 +47,19 @@ const ModalNodeRecommends: React.FC<{
             show={showModal}
         >
             <Modal.Body>
-                <Form.Label htmlFor="inputKeyword">Searching keyword:</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Title"
-                    name="title"
-                    value={formInputs.title}
-                    onChange={handleChange}
-                />
-                <Form.Control
-                    type="text"
-                    name="description"
-                    placeholder="Description"
-                    value={formInputs.description}
-                    onChange={handleChange}
-                />
+                {
+                    recommends.map((item) => {
+                        return (
+                            <p>
+                                {item.label.value}
+                            </p>
+                        )
+                    })
+                }
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={handleSave}>Add</Button>
+                <Button onClick={() => setModal(false)}>Close</Button>
             </Modal.Footer>
         </Modal>
 

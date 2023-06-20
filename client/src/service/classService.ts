@@ -151,15 +151,21 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
         if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
             const newLink = datasetLinkBuilder.read(thing)
             if (newLink.linkType === LinkType.PROFILE_LINK) {
-                // const podUrls = await getPodUrl(newLink.url)
-                // if (podUrls !== null) {
-                //     const podUrl = podUrls[0]
-                //     let bb = getThing(myExtendedProfile, podUrl + "profile#Wikie");
-                //     let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-                //     let userProfile = profileBuilder.read(bb)
-                //     console.log(userProfile)
-                //     profiles.push(userProfile)
-                // }
+
+                const podUrls = await getPodUrl(newLink.url)
+                if (podUrls !== null) {
+                    const podUrl = podUrls[0]
+                    const userProfileDataset = await getSolidDataset(
+                        podUrl + 'Wikie/profile/profile.ttl',
+                        { fetch: fetch }
+                    );
+                
+                    let bb = getThing(userProfileDataset, podUrl + 'Wikie/profile/profile.ttl#Wikie');
+                    let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+                    let userProfile = profileBuilder.read(bb)
+                    console.log(userProfile)
+                    profiles.push(userProfile)
+                }
             }
             if (newLink.linkType === LinkType.GRAPH_LINK) {
                 const mindMap = await getMindMap(newLink.url)

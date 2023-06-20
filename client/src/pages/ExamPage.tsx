@@ -11,11 +11,13 @@ import { getDefaultSession, fetch, login } from "@inrupt/solid-client-authn-brow
 import {
     WebsocketNotification,
 } from "@inrupt/solid-client-notifications";
-import { generate_uuidv4 } from "../service/utils";
+import { generate_uuidv4, levenshteinDistance } from "../service/utils";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import Line from "../visualisation/Line";
 import { Form } from "react-bootstrap";
+import { Exam } from "../models/types/Exam";
+import { addExamResult } from "../service/examService";
 
 const defaultBlankDataset: MindMapDataset = {
     id: "",
@@ -24,7 +26,7 @@ const defaultBlankDataset: MindMapDataset = {
     nodes: []
 }
 
-const Exam: React.FC = () => {
+const ExamPage: React.FC = () => {
     const d3Container = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
@@ -36,9 +38,10 @@ const Exam: React.FC = () => {
     const [url, setUrl] = useState('');
     const [width, setWidth] = useState(4000);
     const [dataset, setDataset] = useState<MindMapDataset>(defaultBlankDataset);
-    const theme = useContext(SessionContext)
+    const [fillDataset, setFillDataset] = useState<Map<string, string>>(new Map<string, string>());
+    const sessionContext = useContext(SessionContext)
     const [mounted, setMounted] = useState(false); // <-- new state variable
-    const wssUrl = new URL(theme.sessionInfo.podUrl);
+    const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
     wssUrl.protocol = 'wss';
     const [currentProvider, setCurrentProvider] = useState('');
 
@@ -63,6 +66,7 @@ const Exam: React.FC = () => {
                                     myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
                                     console.log(myr)
                                     setDataset(() => (myr))
+
                                 })
                             }
                         }
@@ -86,6 +90,13 @@ const Exam: React.FC = () => {
                         myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
                         console.log(myr)
                         setDataset(() => (myr))
+                        const dict = new Map<string, string>();
+                        const a = myr.nodes.forEach((item) => {
+                            if (item.visible === false) {
+                                dict.set(item.id, '')
+                            }
+                        })
+                        setFillDataset(dict)
                     })
                 } else {
                     navigate('/')
@@ -93,43 +104,43 @@ const Exam: React.FC = () => {
             }
         }, [mounted])
 
+    const done = async () => {
+        console.log(fillDataset)
+        let count = 0;
+        let good = 0;
+
+        dataset.nodes.forEach((item) => {
+            if (item.visible === false) {
+                count++;
+                const distance = levenshteinDistance(item.title.toLowerCase(), fillDataset.get(item.id)!.toLowerCase())
+                if (distance < 3) {
+                    good++
+                }
+            }
+        })
+        let blankProfile: Exam = {
+            id: generate_uuidv4(),
+            max: count,
+            result: good,
+            mindMap: location.state.id,
+            profile: sessionContext.sessionInfo.webId
+        }
+        addExamResult(sessionContext.sessionInfo, blankProfile, location.state.class)
+
+    }
+
+    const fillText = (id: string, text: string) => {
+        setFillDataset(new Map(fillDataset.set(id, text)));
+    }
+
     return (
         <div className="App">
             <Sidenav type={SideNavType.CANVAS} />
             <main ref={ref}>
-                {/* <svg
-                    id="svg-canvas"
-                    className="d3-component"
-                    width={500}
-                    height={550}
-
-                    ref={d3Container}
-                >
-                    <foreignObject
-                        x={100}
-                        y={100}
-                        width={100}
-                        height={100}
-                    // x={node.cx - node.title.length * 4}
-                    // y={node.cy}
-                    // width={node.title.length * 14}
-                    // height={node.title.length * 14}
-                    >
-                        <div>
-
-                            <Form.Control
-                                className='modal-input'
-                                type="text"
-                                value={currentProvider}
-                                onChange={(e) => { setCurrentProvider(e.target.value) }}
-                            />
-                        </div>
-                    </foreignObject>
-                </svg> */}
                 <TransformWrapper
                     disabled={disabled}
                 >
-                    <Button id="float-btn-add" onClick={() => { console.log("TEST") }} variant="primary">Done</Button>
+                    <Button id="float-btn-add" onClick={() => done()} variant="primary">Done</Button>
                     <TransformComponent
                         wrapperStyle={{
                             maxWidth: "100%",
@@ -189,13 +200,8 @@ const Exam: React.FC = () => {
                                             y={(node.cy) - 10}
                                             width={node.title.length * 7 + 20}
                                             height={40}
-                                        // x={node.cx - node.title.length * 4}
-                                        // y={node.cy}
-                                        // width={node.title.length * 14}
-                                        // height={node.title.length * 14}
                                         >
                                             <div>
-
                                                 <Form.Control
                                                     className='modal-input'
                                                     type="text"
@@ -204,8 +210,8 @@ const Exam: React.FC = () => {
                                                         e.preventDefault()
                                                         setDisabled(true)
                                                     }}
-                                                    value={currentProvider}
-                                                    onChange={(e) => { setCurrentProvider(e.target.value) }}
+                                                    value={fillDataset.get(node.id)}
+                                                    onChange={(e) => { fillText(node.id, e.target.value) }}
                                                 />
                                             </div>
                                         </foreignObject>
@@ -222,11 +228,6 @@ const Exam: React.FC = () => {
                                                 strokeOpacity={0.5}
                                                 rx="4" ry="4"
                                                 id={node.id}
-                                                // stroke={contextMenu.nodeId === node.id ? "green" : "orange"}
-                                                // onClick={addConnection}
-                                                // onTouchStart={handlePointerDown}
-                                                // onTouchEnd={handlePointerUp}
-                                                // onTouchMove={handlePointerMove}
                                                 fill={"#8FBC8F"}
                                             />
                                             <text
@@ -246,7 +247,7 @@ const Exam: React.FC = () => {
 
 };
 
-export default Exam;
+export default ExamPage;
 
 
 

@@ -20,6 +20,8 @@ import './Class.css';
 import { FcComments } from "react-icons/fc";
 import { Exam } from "../models/types/Exam";
 import { MindMap } from "../models/types/MindMap";
+import ModalClassAddMindMap from "./ModalClassAddMindMap";
+import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from "react-icons/md";
 
 const exampleExams: Exam[] = [{
   id: generate_uuidv4(),
@@ -77,8 +79,7 @@ const Class: React.FC = () => {
     }, [mounted])
 
   const showMindMap = (mindMap: MindMap) => {
-    const name = dataset?.storage + 'Wikie/mindMaps/' + mindMap.id + 'ttl';
-
+    const name = dataset?.storage + 'Wikie/mindMaps/' + mindMap.id + '.ttl';
     navigate('/visualisation/', {
       state: {
         id: name
@@ -106,13 +107,14 @@ const Class: React.FC = () => {
     })
   }
 
-  const showExam = (e: any) => {
-    console.log(e)
-    // navigate('/exam/', {
-    //   state: {
-    //     id: e.target.name
-    //   }
-    // })
+  const showExam = (mindMap: MindMap) => {
+    const name = dataset?.storage + 'Wikie/mindMaps/' + mindMap.id + '.ttl';
+    navigate('/exam/', {
+      state: {
+        id: name,
+        class: location.state.url
+      }
+    })
   }
 
   const copyToClipboard = (e: any) => {
@@ -124,6 +126,7 @@ const Class: React.FC = () => {
       <Sidenav type={SideNavType.COMMON} />
       <main ref={ref}>
         <Container>
+          <ModalClassAddMindMap showModal={modelClassAddShow} classUrl={dataset?.storage + 'Wikie/classes/' + dataset?.id + '.ttl'} setModal={setModelClassAddShow}></ModalClassAddMindMap>
           <Row>
             <Col sm="6">
               <h1>Class {dataset?.name}</h1>
@@ -158,36 +161,37 @@ const Class: React.FC = () => {
                   {dataset?.mindMaps.map((item, index) => {
                     return (
                       <Row key={index}>
-                        <Col>
-                          <Stack direction="horizontal" gap={2}>
+                        <div className='aaa'>
+                          <div className='my-stack'>
                             {item.id}
-                            <div>
-                              <Button
-                                className='class-btn'
-                                onClick={() => showMindMap(item)}
-                                variant="success"
-                              >Show</Button>
-                              <br />
-                            </div>
-                            <div>
-                              <Button
-                                className='class-btn'
-                                onClick={() => removeMindMap(item)}
-                                variant="success"
-                              >Remove</Button>
-                              <br />
-                            </div>
-                            <div>
-                              <Button
-                                className='class-btn'
-                                onClick={() => showExam(item)}
-                                variant="success"
-                              >Exam</Button>
-                              <br />
-                            </div>
-
-                          </Stack>
-                        </Col>
+                          </div>
+                          <div className='my-stack-reverse'>
+                            <Button
+                              size='sm'
+                              className='class-btn'
+                              onClick={() => removeMindMap(item)}
+                              variant="success"
+                            >
+                              <MdDeleteForever></MdDeleteForever>
+                            </Button>
+                            <Button
+                              size='sm'
+                              className='class-btn'
+                              onClick={() => showExam(item)}
+                              variant="success"
+                            >
+                              <MdDriveFileRenameOutline></MdDriveFileRenameOutline>
+                            </Button>
+                            <Button
+                              size='sm'
+                              className='class-btn'
+                              onClick={() => showMindMap(item)}
+                              variant="success"
+                            >
+                              <MdSlideshow></MdSlideshow>
+                            </Button>
+                          </div>
+                        </div>
                       </Row>
                     )
                   })}
@@ -205,24 +209,33 @@ const Class: React.FC = () => {
                     {dataset?.students.length === 0 &&
                       <p>No pupils already</p>
                     }
-
                   </Row>
                   {dataset?.students.map((item, index) => {
                     return (
                       <Row key={index}>
-                        <Col sm={9}>{item.name} {item.surname}</Col>
-                        <Col sm={3}>
-                          <Stack direction="horizontal" gap={2}>
-                            <Button className="class-message" variant="outline" onClick={() => { sendMessage(item.webId) }}><FcComments> </FcComments></Button>
-                          </Stack>
-                        </Col>
+                        <div className='aaa'>
+                          <div className='my-stack'>
+                            {item.name} {item.surname}
+                          </div>
+                          <div className='my-stack-reverse'>
+                            <Button
+                              size='sm'
+                              className="class-message"
+                              variant="outline"
+                              onClick={() => { sendMessage(item.webId) }}>
+                              <FcComments>
+                              </FcComments>
+                            </Button>
+
+                          </div>
+                        </div>
                       </Row>
                     )
                   })}
                 </Container>
               </Card>
             </Col>
-            
+
             <Col sm="6">
               <Card className="class-card">
                 <Container>

@@ -1,7 +1,7 @@
 {
     "identity": {
         "vocabulary": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#Class"
+        "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#Exam"
     },
     "properties": {
         "max": {

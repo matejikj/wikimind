@@ -12,7 +12,7 @@ import { CanvasState } from '../models/CanvasState'
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalNodeDetail: React.FC<{
     datasetName: string,
-    clickedNode: Node,
+    clickedNode: Node | undefined,
     showModal: boolean,
     setModal: Function
 }> = ({ datasetName, clickedNode, showModal, setModal }) => {

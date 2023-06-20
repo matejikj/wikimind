@@ -68,6 +68,8 @@ import { ProfileLDO } from "../models/things/ProfileLDO";
 import { Request } from "../models/types/Request";
 import { MessageLDO } from "../models/things/MessageLDO";
 import { Message } from "../models/types/Message";
+import { ChatLDO } from "../models/things/ChatLDO";
+import chatDefinition from "../definitions/chat.json"
 
 export async function getProfiles(userSession: UserSession) {
 
@@ -85,28 +87,40 @@ export async function getProfiles(userSession: UserSession) {
         const types = getUrlAll(thing, RDF.type);
         if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
             const newLink = datasetLinkBuilder.read(thing)
-            profiles.push({
-                webId: newLink.url,
-                name: '',
-                surname: '',
-                profileImage: ''
-            })
 
-            // if (newLink.linkType === LinkType.PROFILE_LINK) {
-            //     const pupilProfiles = await getProfileAll(newLink.url, { fetch });
+            if (newLink.linkType === LinkType.CHAT_LINK) {
+                const chatDataset = await getSolidDataset(
+                    newLink.url,
+                    { fetch: fetch }
+                )
 
-                // let myExtendedProfile = pupilProfiles.altProfileAll[0];
+                const chatThing = getThing(chatDataset, newLink.url + '#Wikie')
 
-                // const podUrls = await getPodUrl(newLink.url)
-                // if (podUrls !== null) {
-                //     const podUrl = podUrls[0]
-                //     let bb = getThing(myExtendedProfile, podUrl + "profile#Wikie");
-                //     let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-                //     let userProfile = profileBuilder.read(bb)
-                //     console.log(userProfile)
-                //     profiles.push(userProfile)
-                // }
-            // }
+                const newChat = new ChatLDO(chatDefinition).read(chatThing)
+
+                let podUrls = null
+                if (newChat.owner === userSession.webId) {
+                    podUrls = await getPodUrl(newChat.guest)
+                } else {
+                    podUrls = await getPodUrl(newChat.owner)
+                }
+
+                if (podUrls !== null) {
+                    const dataset = await getSolidDataset(
+                        podUrls[0] + 'Wikie/profile/profile.ttl',
+                        { fetch: fetch }
+                    )
+
+                    let bb = getThing(dataset, podUrls[0] + 'Wikie/profile/profile.ttl#Wikie');
+                    let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+                    let userProfile = profileBuilder.read(bb)
+                    console.log(userProfile)
+                    profiles.push(userProfile)
+
+
+                }
+
+            }
         }
     }))
 
@@ -131,7 +145,8 @@ export async function getProfiles(userSession: UserSession) {
 
 export async function getFriendMessages(userSession: UserSession, userId: string) {
     try {
-        const dataset = await getSolidDataset(userSession.podUrl + "Wikie/messages/" + encodeURIComponent(userId) + ".ttl")
+        const datasetUrl = userSession.podUrl + "Wikie/messages/" + encodeURIComponent(userId) + ".ttl"
+        const dataset = await getSolidDataset(datasetUrl,)
         const things = await getThingAll(dataset);
 
         let messageBuilder = new MessageLDO(messageDefinition)
@@ -154,8 +169,11 @@ export async function getFriendMessages(userSession: UserSession, userId: string
         if (podUrls !== null) {
             const dataUrl = podUrls[0] + "Wikie/classes/requests/"
             try {
-                const dataset = await getSolidDataset(podUrls[0] + "Wikie/messages/" + encodeURIComponent(userSession.webId) + ".ttl",
-                    { fetch: fetch })
+                const datasetUrl = podUrls[0] + "Wikie/messages/" + encodeURIComponent(userSession.webId) + ".ttl"
+                const dataset = await getSolidDataset(
+                    datasetUrl,
+                    { fetch: fetch }
+                )
                 const things = await getThingAll(dataset);
 
                 let messageBuilder = new MessageLDO(messageDefinition)

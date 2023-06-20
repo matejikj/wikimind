@@ -18,10 +18,10 @@ import Class from "./pages/Class";
 import { UserSession, defaultSessionValue } from "./models/types/UserSession";
 import { SessionContext } from "./sessionContext";
 import PrivateChat from "./pages/PrivateChat";
-import Exam from "./pages/Exam";
 import { AccessControlPolicy } from "./models/types/AccessControlPolicy";
 import { Profile } from "./models/types/Profile";
 import Creator from "./pages/Creator";
+import ExamPage from "./pages/ExamPage";
 
 const App: React.FC = () => {
 
@@ -66,7 +66,7 @@ const App: React.FC = () => {
             <Route path="/profile" element={<ProfileView />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/chat" element={<PrivateChat />} />
-            <Route path="/exam" element={<Exam />} />
+            <Route path="/exam" element={<ExamPage />} />
           </Routes>
         ) : (
           <Login></Login>

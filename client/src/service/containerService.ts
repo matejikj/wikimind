@@ -179,16 +179,15 @@ export async function getMindMapList(userSession: UserSession) {
   for (var res of resourceUrls) {
     const dat = await getSolidDataset(res, { fetch: fetch })
     const things = getThingAll(dat);
-    things.forEach(thing => {      
+    things.forEach(thing => {
       const types = getUrlAll(thing, RDF.type);
       if (types.some(type => type === mindMapDefinition.identity.subject)) {
         resultResources.push({
           url: res,
-          title: getStringNoLocale(thing, mindMapDefinition.properties.title.vocabulary)
+          title: getStringNoLocale(thing, mindMapDefinition.properties.id.vocabulary)
         })
       }
     });
   }
-
   return resultResources
 }

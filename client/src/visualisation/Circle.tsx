@@ -167,7 +167,8 @@ const Circle: React.FC<{
             // const x = node != undefined && node.cx : 0;
             // const y = node.source != undefined && node.target != undefined ?
             //     (node.source[1] + node.target[1]) / 2 + 10 : 0;
-            setClickedNode(node)
+
+            setClickedNode(JSON.parse(JSON.stringify(node)))
             setCanvasState(CanvasState.DEFAULT)
             setContextMenu({
                 ...contextMenu,

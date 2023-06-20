@@ -9,7 +9,8 @@ import { MindMapDataset } from "../models/types/MindMapDataset";
 import { SessionContext } from "../sessionContext";
 import ModalNodeDetail from "./modals/ModalNodeDetail";
 import ModalLinkRename from "./modals/ModalLinkRename";
-import ContextMenu from "./ContextMenu";
+import ContextCircleMenu from "./ContextCircleMenu";
+import ContextLinkMenu from "./ContextLinkMenu";
 import { ContextMenuType } from "./models/ContextMenuType";
 import { CanvasState } from "./models/CanvasState";
 import ModalLinkDelete from "./modals/ModalLinkDelete";
@@ -22,6 +23,7 @@ import { TransformWrapper } from "react-zoom-pan-pinch";
 import { TransformComponent } from "react-zoom-pan-pinch";
 import { updateNode } from "../service/mindMapService";
 import axios from "axios";
+import { getSingleReccomends } from "../service/dbpediaService";
 
 const nodeEx: Node = {
   id: '',
@@ -54,87 +56,77 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
   const [title, setTitle] = useState('ds');
 
   const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
-  const [clickedNode, setClickedNode] = useState<Node>(nodeEx);
+  const [clickedNode, setClickedNode] = useState<Node>();
   const [clickedLink, setClickedLink] = useState<Connection>();
   const [disabledCanvas, setDisabledCanvas] = useState(false);
+  const [recomendsResults, setRecomendsResults] = useState<any[]>([]);
+
+  const deleteNodeMethod = (node: Node) => {
+    const newLinked = JSON.parse(JSON.stringify(node))
+    setClickedNode(newLinked)
+    setModalNodeDetail(true)
+  }
+
+  const recommend = async () => {
+    let rrr = ''
+    // const name = node.title.replaceAll(' ', '_')
+    const results = await getSingleReccomends(clickedNode!.uri)
+
+    setRecomendsResults(results!)
+    console.log(results)
+    console.log(recomendsResults)
+    // axios.get("http://localhost:5000/recommends?entity=" + name).then((res) => {
+    //   const ress = res.data.map((item: string) => {
+    //     rrr = rrr + item.split("http://dbpedia.org/resource/")[1] + '\n'
+    //   })
+    //   setTitle(ress)
+    //   console.log(ress)
+    //   console.log(title)
+    //   alert(rrr)
+
+    // })
+
+    setModalNodeRecommends(true)
+  }
+  
+  const setForTest = (node: Node) => {
+    if (node !== undefined) {
+      node.visible = false
+      updateNode(data.id, theme.sessionInfo.webId, node)
+      console.log(url, theme.sessionInfo.webId, node)
+    }
+  }
+
+  const addConnection = (node: Node) => {
+    setCanvasState(CanvasState.ADD_CONNECTION)
+  }
+
+  const deleteNode = (node: Node) => {
+    setModalNodeDelete(true)
+  }
+
+  const deleteConnection = () => {
+    setModalLinkDelete(true)
+  }
+
+  const renameConnection = () => {
+    setModalLinkRename(true)
+  }
+  const setForTestConnection = () => {
+    setModalLinkRename(true)
+  }
+
+
   const [circleMenu, setCircleMenu] = useState<ContextMenuType>({
     posX: 0,
     posY: 0,
-    visible: "hidden",
-    items: [
-      {
-        title: DETAIL_METHOD,
-        action: (node: Node) => {
-          // setModalNodeDetail(true)
-        }
-      },
-      {
-        title: DELETE_NODE_METHOD,
-        action: () => {
-          setModalNodeDelete(true)
-        }
-      },
-      {
-        title: RECOMMENDS_METHOD,
-        action: (node: Node) => {
-          let rrr = ''
-          const name = node.title.replaceAll(' ', '_')
-          axios.get("http://localhost:5000/recommends?entity=" + name).then((res) => {
-            const ress = res.data.map((item: string) => {
-              rrr = rrr + item.split("http://dbpedia.org/resource/")[1] + '\n'
-            })
-            setTitle(ress)
-            console.log(ress)
-            console.log(title)
-            alert(rrr)
-
-          })
-
-          // setModalNodeRecommends(true)
-        }
-      },
-      {
-        title: VISIBILITY,
-        action: (node: any) => {
-          // console.log("AAAAAAAAA")
-          // console.log(node)
-          if (node !== undefined) {
-
-            node.visible = false
-            updateNode(data.id, theme.sessionInfo.webId, node)
-            console.log(url, theme.sessionInfo.webId, node)
-          }
-        }
-      },
-      {
-        title: CONNECTION_SELECTION_METHOD,
-        action: () => {
-          setCanvasState(CanvasState.ADD_CONNECTION)
-        }
-      }
-    ]
+    visible: "hidden"
   })
-
-
 
   const [linksMenu, setLinksMenu] = useState<ContextMenuType>({
     posX: 0,
     posY: 0,
-    visible: "hidden",
-    items: [
-      {
-        title: DELETE_LINK_METHOD,
-        action: () => {
-          setModalLinkDelete(true)
-        }
-      },
-      {
-        title: LINK_RENAME_METHOD,
-        action: () => {
-          setModalLinkRename(true)
-        }
-      },
-    ]
+    visible: "hidden"
   });
 
   const contextMenuFalse = () => {
@@ -170,6 +162,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
       <ModalNodeRecommends
         datasetName={data.id}
         clickedNode={clickedNode}
+        recommends={recomendsResults}
         showModal={modalNodeRecommends}
         setModal={setModalNodeRecommends}
       />
@@ -197,7 +190,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
 
         wrapperStyle={{
           maxWidth: "100%",
-          maxHeight: "calc(100vh - 50px)",
+          maxHeight: "calc(100vh - 70px)",
         }}
       >
         <svg
@@ -250,13 +243,20 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
               />
             );
           })}
-          <ContextMenu
+          <ContextCircleMenu
             clickedNode={clickedNode}
+            recommend={recommend}
+            deleteNodeMethod={deleteNodeMethod}
+            setForTest={setForTest}
+            addConnection={addConnection}
+            deleteNode={deleteNode}
             menu={circleMenu}
           />
-          <ContextMenu
-            clickedNode={clickedNode}
-
+          <ContextLinkMenu
+            clickedLink={clickedLink}
+            renameNode={renameConnection}
+            setForTest={setForTestConnection}
+            deleteNode={deleteConnection}
             menu={linksMenu}
           />
         </svg>

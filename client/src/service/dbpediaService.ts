@@ -6,35 +6,31 @@ import { ResultItem, SparqlResults } from "../models/SparqlResults";
 export async function getSingleReccomends(entity: string) {
 
     const sparqlQuery = `
+
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX dbo: <http://dbpedia.org/ontology/>
     
-    SELECT ?p (COUNT(?p) AS ?count)
+    SELECT ?entity (COUNT(?entity) AS ?type) ?label
     WHERE {
         {
-            <http://dbpedia.org/resource/${entity}> dbo:wikiPageWikiLink ?a.
-            <http://dbpedia.org/resource/${entity}> dcterms:subject ?c.
-            ?a dbo:wikiPageWikiLink ?p.
-            ?p dcterms:subject ?c.
+            <${entity}> dbo:wikiPageWikiLink ?a.
+            <${entity}> dcterms:subject ?c.
+            ?a dbo:wikiPageWikiLink ?entity.
+            ?entity dcterms:subject ?c.
+            ?entity rdfs:label ?label .
+            FILTER(LANG(?label) = "en")
         }
     }
-    GROUP BY ?p
-    ORDER BY DESC(COUNT(?p))
+    GROUP BY ?entity ?label
+    ORDER BY DESC(COUNT(?entity))
     LIMIT 50
-`;
+    `;
 
     const endpointUrl = 'https://dbpedia.org/sparql';
     const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
     try {
-        axios.get(queryUrl).then(async (response) => {
-
-            const result: Result = response.data;
-            const entities = result.results.bindings.map((item: Binding) => {
-                return item.entity.value
-            })
-            return entities;
-
-        });
+        const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings
+        return response;
     } catch (error) {
         console.log(error);
     }
