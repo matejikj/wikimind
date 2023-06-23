@@ -1,25 +1,9 @@
 .creator-btn {
     margin: 2px;
     padding: 2px;
-    border-radius: 5px;
-    background-color:forestgreen;
+    border: none;
     color: white;
-    border: 1px solid white;
-
-}
-
-.fckn-div {
-    float: left;
-}
-
-.creator-btn-category {
-    margin: 2px;
-    padding: 2px;
-    border-radius: 5px;
-    background-color:orangered;
-    color: white;
-    border: 1px solid white;
-
+        background-color:#46c2a5;
 }
 
 .creator-inline-btn {
@@ -27,9 +11,46 @@
     margin-right: 2px;
     border-radius: 5px;
     background-color:white;
-    color: black;
+}
 
-    /* padding-left: 2px; */
+.creator-inline-btn:hover {
+    background-color:red;
+}
+
+.creator-btn:hover {
+    border-radius: 5px;
+    background-color:white;
+    color:black;
+}
+
+.fckn-div {
+    background-color:#46c2a5;
+}
+
+.fckn-div {
+    margin: 4px;
+    color: white;
+    border: 1px solid white;
+    float: left;
+    /* border-radius: 5px; */
+}
+
+.fckn-div-category {
+    margin: 4px;
+    color: white;
+    border: 1px solid white;
+    float: left;
+    /* border-radius: 5px; */
+    box-shadow: 6px 4px #223360;
+
+}
+
+.creator-div-category {
+    /* border-radius: 5px; */
+    box-shadow: 3px 2px #227360;
+    background-color:#46c2a5;
+
+
 }
 
 .pagination-creator {
