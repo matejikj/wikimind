@@ -68,6 +68,8 @@ const Creator: React.FC = () => {
     const [name, setName] = useState('');
 
     const [node, setNode] = useState<TreeNode>()
+    const [root, setRoot] = useState<TreeNode>()
+    const [roots, setRoots] = useState<TreeNode[]>([])
 
     let items: any[] = [];
 
@@ -97,11 +99,14 @@ const Creator: React.FC = () => {
             const a = await getEntityNeighbours(selected.entity.value)
 
             if (a) {
-                setNode({
+                let newNode= {
                     value: selected,
                     children: [],
                     parent: undefined
-                })
+                }
+                setNode(newNode)
+                setRoot(newNode)
+                roots.push(newNode)
                 setRecommends(a)
             }
         }
@@ -109,17 +114,31 @@ const Creator: React.FC = () => {
     }
 
     async function refreshPath(item: ResultItem) {
+        if (node !== undefined) {
 
-        const newTreeNode: TreeNode = {
-            value: item,
-            children: [],
-            parent: node
-        }
-        setNode(newTreeNode)
+            const isAddedInNode = node.children.find((child) => (child.value.entity.value === item.entity.value ))
 
-        const a = await getEntityNeighbours(item.entity.value)
-        if (a) {
-            setRecommends(a)
+            if (isAddedInNode !== undefined) {
+                setNode(isAddedInNode)
+
+            } else {
+                const newTreeNode: TreeNode = {
+                    value: item,
+                    children: [],
+                    parent: node
+                }    
+    
+                node.children.push(newTreeNode)
+    
+                setNode(newTreeNode)
+    
+            }
+
+            const a = await getEntityNeighbours(item.entity.value)
+            if (a) {
+                setRecommends(a)
+            }
+    
         }
     }
 
@@ -128,12 +147,14 @@ const Creator: React.FC = () => {
         if (node !== undefined) {
             const lastNode = node.parent
             if (lastNode !== undefined) {
+                if (node.children.length === 0) {
+                    lastNode.children = []
+                }
                 setNode(lastNode)
                 const a = await getEntityNeighbours(lastNode.value.entity.value)
                 if (a) {
                     setRecommends(a)
                 }
-
             }
         }
     }
@@ -154,78 +175,79 @@ const Creator: React.FC = () => {
 
     async function addNewNodeToMindMap(item: ResultItem) {
         console.log(item)
-        if (addedEntity !== undefined) {
+        if (addedEntity !== undefined && node !== undefined) {
             addLink(addedEntity, item, node)
         }
     }
 
     // // function 
 
-    // function createVis(nmb: number) {
-    //     const simNodes = JSON.parse(JSON.stringify(nodes))
-    //     const simLinks = JSON.parse(JSON.stringify(links))
-    //     const simulation = d3.forceSimulation(simNodes)
-    //         // @ts-ignore
-    //         .force("link", d3.forceLink(simLinks).id(d => d.entity.value))
-    //         .force("center", d3.forceCenter(1000 / 2, 1000 / 2))
-    //         .force("collide", d3.forceCollide())
-    //         .force("charge", d3.forceManyBody().strength(-1000))
-    //         .force("x", d3.forceX())
-    //         .force("y", d3.forceY())
-    //         .stop()
-    //         .tick(100)
+    function createVis(nmb: number) {
+        
+        // const simNodes = JSON.parse(JSON.stringify(nodes))
+        // const simLinks = JSON.parse(JSON.stringify(links))
+        // const simulation = d3.forceSimulation(simNodes)
+        //     // @ts-ignore
+        //     .force("link", d3.forceLink(simLinks).id(d => d.entity.value))
+        //     .force("center", d3.forceCenter(1000 / 2, 1000 / 2))
+        //     .force("collide", d3.forceCollide())
+        //     .force("charge", d3.forceManyBody().strength(-1000))
+        //     .force("x", d3.forceX())
+        //     .force("y", d3.forceY())
+        //     .stop()
+        //     .tick(100)
 
 
-    //     const mindMapNodes: Node[] = []
-    //     const connections: Connection[] = []
-    //     simNodes.forEach((item: any) => {
-    //         mindMapNodes.push({
-    //             id: generate_uuidv4(),
-    //             title: item.label.value,
-    //             uri: item.entity.value,
-    //             description: '',
-    //             cx: item.x,
-    //             cy: item.y,
-    //             visible: true
-    //         })
-    //     })
+        // const mindMapNodes: Node[] = []
+        // const connections: Connection[] = []
+        // simNodes.forEach((item: any) => {
+        //     mindMapNodes.push({
+        //         id: generate_uuidv4(),
+        //         title: item.label.value,
+        //         uri: item.entity.value,
+        //         description: '',
+        //         cx: item.x,
+        //         cy: item.y,
+        //         visible: true
+        //     })
+        // })
 
-    //     let res = new Map()
-    //     mindMapNodes.map((x) => {
-    //         res.set(x.uri, x.id)
-    //     })
+        // let res = new Map()
+        // mindMapNodes.map((x) => {
+        //     res.set(x.uri, x.id)
+        // })
 
-    //     simLinks.forEach((item: any) => {
-    //         connections.push({
-    //             id: generate_uuidv4(),
-    //             title: item.type,
-    //             from: res.get(item.source.entity.value),
-    //             to: res.get(item.target.entity.value),
-    //             testable: true
-    //         })
-    //     })
-    //     setaaa(simNodes)
-    //     setbbb(simLinks)
-    //     createPreparedMindMap(mindMapNodes, connections, name, sessionContext.sessionInfo)
-    //     console.log('fdfds')
-    // }
+        // simLinks.forEach((item: any) => {
+        //     connections.push({
+        //         id: generate_uuidv4(),
+        //         title: item.type,
+        //         from: res.get(item.source.entity.value),
+        //         to: res.get(item.target.entity.value),
+        //         testable: true
+        //     })
+        // })
+        // setaaa(simNodes)
+        // setbbb(simLinks)
+        // createPreparedMindMap(mindMapNodes, connections, name, sessionContext.sessionInfo)
+        // console.log('fdfds')
+    }
 
     return (
         <div className="App">
             <Sidenav type={SideNavType.COMMON} />
             <main ref={ref}>
                 <Button id="float-btn-add" onClick={() => setSelectedItemsVisible(true)} variant="success">Selected</Button>
-                {/* <ModalCreatorSelected
+                <ModalCreatorSelected
                     selectedItemsVisible={selectedItemsVisible}
                     setSelectedItemsVisible={setSelectedItemsVisible}
                     setNameVisible={setNameVisible}
-                    nodes={nodes}
+                    roots={roots}
                 ></ModalCreatorSelected>
                 <ModalCreatorName
                     showModal={nameVisible}
                     classUrl={createVis}
                     setModal={setNameVisible}
-                ></ModalCreatorName> */}
+                ></ModalCreatorName>
                 <ModalNewCreatorNode
                     recommends={entitiesConections}
                     showModal={aaaaaaaa}
@@ -260,14 +282,19 @@ const Creator: React.FC = () => {
                     </Row>
                     <Row>
                         <Pagination className="pagination-creator">
-                            {(node !== undefined && node.parent !== undefined) &&
+                            {(node !== undefined && node.parent !== undefined && root !== undefined) &&
                                 <Pagination.Item key={generate_uuidv4()}>
-                                    {node.parent.value.label.value}
+                                    {root.value.label.value}
                                 </Pagination.Item>
                             }
                             {(node !== undefined && node.parent !== undefined) &&
                                 <Pagination.Item key={generate_uuidv4()}>
                                     ...
+                                </Pagination.Item>
+                            }
+                            {(node !== undefined && node.parent !== undefined) &&
+                                <Pagination.Item key={generate_uuidv4()}>
+                                    {node.value.label.value}
                                 </Pagination.Item>
                             }
 

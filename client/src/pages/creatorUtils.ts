@@ -1,4 +1,6 @@
 import { ResultItem } from "../models/SparqlResults";
+import { Connection } from "../models/types/Connection";
+import { Node } from "../models/types/Node";
 import { generate_uuidv4 } from "../service/utils";
 
 export type TreeNode = {
@@ -17,10 +19,66 @@ function isInLinks(links: any, source: string, target: string, type: string): bo
     return result
 }
 
-export async function addLink(addedItem: ResultItem, connectionNode: ResultItem, node: any) {
-    console.log(node)
+export async function addLink(addedItem: ResultItem, connectionNode: ResultItem, node: TreeNode) {
+    
+    if (connectionNode === undefined) {
+        const isAddedInNode = node.children.find((item) => (item.value.entity.value === addedItem.entity.value && item.value.label.value === addedItem.label.value ))
+        if (isAddedInNode === undefined) {
+            const newNode: TreeNode = {
+                value: addedItem,
+                parent: node,
+                children: []
+            }
+            node.children.push(newNode)
+        }    
+    } else {
+        const isConnectionInNodes = node.children.find((item) => (item.value.entity.value === connectionNode.entity.value && item.value.label.value === connectionNode.label.value ))
+        if (isConnectionInNodes === undefined) {
+            const newNode: TreeNode = {
+                value: connectionNode,
+                parent: node,
+                children: []
+            }
+            node.children.push(newNode)
+            const newChild: TreeNode = {
+                value: addedItem,
+                parent: newNode,
+                children: []
+            }
+            newNode.children.push(newChild)
+            
+        } else {
+            const newChild: TreeNode = {
+                value: addedItem,
+                parent: isConnectionInNodes,
+                children: []
+            }
+            isConnectionInNodes.children.push(newChild)
+        }
 
+    }
 }
+
+function bfs(root: TreeNode): void {
+    const nodes: Node[] = []
+    const links: Connection[] = []
+
+    const queue: TreeNode[] = [root];
+  
+    while (queue.length > 0) {
+      const current = queue.shift();
+      if (current) {
+        // Process the current node (e.g., perform desired operations)
+        console.log(current.value);
+  
+        // Enqueue the children of the current node
+        current.children.forEach((child) => {
+          queue.push(child);
+        });
+      }
+    }
+  }
+  
 
 
 // export async function addLink(addedItem: ResultItem, connectionNode: ResultItem, path: any, nodes: any[], links: any) {

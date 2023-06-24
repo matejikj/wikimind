@@ -9,14 +9,16 @@ import { ListItem } from "../models/ListItem";
 import { MdAdd, MdDeleteForever, MdDriveFileRenameOutline, MdPlusOne, MdSlideshow } from "react-icons/md";
 import { Row } from "react-bootstrap";
 import { addGraphToClass } from "../service/classService";
+import { TreeNode } from "./creatorUtils";
+import TreeView from "./TreeView";
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalCreatorSelected: React.FC<{
     selectedItemsVisible: boolean,
     setSelectedItemsVisible: Function,
     setNameVisible: Function,
-    nodes: any[],
-}> = ({ selectedItemsVisible, setSelectedItemsVisible, setNameVisible, nodes }) => {
+    roots: TreeNode[],
+}> = ({ selectedItemsVisible, setSelectedItemsVisible, setNameVisible, roots }) => {
     const sessionContext = useContext(SessionContext)
     const [list, setList] = useState<ListItem[]>([]);
 
@@ -35,19 +37,7 @@ const ModalCreatorSelected: React.FC<{
                 <Modal.Title>Choose name</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <div className="">
-                    {nodes.map((item, index) => {
-                        return (
-                            <button key={index} className="creator-btn">
-                                {item.label.value}
-                                {/* <button className="creator-delete-btn" onClick={(e) => { e.stopPropagation(); alert('minus') }}>
-                                <FaMinus></FaMinus>
-                            </button> */}
-                            </button>
-                        )
-                    })}
-                </div>
-
+                <TreeView root={roots[0]} /> {/* Recursively render child nodes */}
             </Modal.Body>
             <Modal.Footer>
                 <Button
