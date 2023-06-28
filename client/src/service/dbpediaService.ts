@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ResultItem } from "../models/SparqlResults";
+import { ResultItem } from "../models/ResultItem";
 
 export async function getSingleReccomends(entity: string) {
 

@@ -6,7 +6,7 @@ import { SessionContext } from "../sessionContext";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { Col, Container, Row } from "react-bootstrap";
 import '../styles/style.css';
-import { ResultItem } from "../models/SparqlResults";
+import { ResultItem } from "../models/ResultItem";
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalNewCreatorNode: React.FC<{

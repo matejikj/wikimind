@@ -9,7 +9,6 @@ import {
 } from "@inrupt/solid-client";
 
 import { MindMap } from "../types/MindMap";
-import { LDOIRI } from '../LDOIRI'
 import { rdf_type } from "../LDO";
 
 export class MindMapLDO extends BaseLDO<MindMap> implements CRUDLDO<MindMap> {

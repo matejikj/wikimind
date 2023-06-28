@@ -11,7 +11,7 @@ import { Profile } from "../models/types/Profile";
 import { Message } from "../models/types/Message";
 import { getEntitiesConnection, getEntityNeighbours, getKeywords } from "../service/dbpediaService";
 import { FaBackspace, FaInfo, FaPlus } from "react-icons/fa";
-import { ResultItem } from "../models/SparqlResults";
+import { ResultItem } from "../models/ResultItem";
 import ModalCreatorName from "../components/ModalCreatorName";
 import ModalCreatorSelected from "../components/ModalCreatorSelected";
 import ModalNewCreatorNode from "../components/ModalNewCreatorNode";

@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { ResultItem } from "../models/SparqlResults";
+import { ResultItem } from "../models/ResultItem";
 import { Connection } from "../models/types/Connection";
 import { Node } from "../models/types/Node";
 import { generate_uuidv4 } from "./utils";

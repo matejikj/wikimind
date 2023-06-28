@@ -1,5 +1,4 @@
 import { rdf_type } from "../LDO";
-import { LDOIRI } from "../LDOIRI";
 import { Message } from "../types/Message";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";

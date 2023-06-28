@@ -1,5 +1,4 @@
 import { rdf_type } from "../LDO";
-import { LDOIRI } from "../LDOIRI";
 import { Link } from "../types/Link";
 import { LinkType } from "../types/LinkType";
 import { BaseLDO } from "./BaseLDO";
