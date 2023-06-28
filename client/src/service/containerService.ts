@@ -160,10 +160,10 @@ export async function getMindMapList(userSession: UserSession) {
     const things = getThingAll(dat);
     things.forEach(thing => {
       const types = getUrlAll(thing, RDF.type);
-      if (types.some(type => type === mindMapDefinition.identity.subject)) {
+      if (types.some(type => type === mindMapDefinition.identity)) {
         resultResources.push({
           url: res,
-          title: getStringNoLocale(thing, mindMapDefinition.properties.id.vocabulary)
+          title: getStringNoLocale(thing, mindMapDefinition.properties.id)
         })
       }
     });

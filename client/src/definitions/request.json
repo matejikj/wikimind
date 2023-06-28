@@ -1,14 +1,14 @@
 {
     "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Request",
     "properties": {
-        "requestor": {
-            "vocabulary": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#requestor"
-        },
-        "id": {
-            "vocabulary": "http://schema.org/identifier"
-        },
-        "class": {
-            "vocabulary": "http://schema.org/url"
-        }
+        "requestor": 
+            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#requestor"
+        ,
+        "id": 
+            "http://schema.org/identifier"
+        ,
+        "class": 
+            "http://schema.org/url"
+        
     }
 }

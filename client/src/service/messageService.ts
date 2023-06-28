@@ -40,7 +40,7 @@ export async function getProfiles(userSession: UserSession) {
 
     await Promise.all(things.map(async (thing) => {
         const types = getUrlAll(thing, RDF.type);
-        if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
+        if (types.some(type => type === datasetLinkDefinition.identity)) {
             const newLink = datasetLinkBuilder.read(thing)
 
             if (newLink.linkType === LinkType.CHAT_LINK) {
@@ -110,7 +110,7 @@ export async function getFriendMessages(userSession: UserSession, userId: string
         things.forEach(thing => {
             const types = getUrlAll(thing, RDF.type);
             console.log(types)
-            if (types.some(type => type === mindMapDefinition.identity.subject)) {
+            if (types.some(type => type === mindMapDefinition.identity)) {
                 console.log(thing)
                 const message = messageBuilder.read(thing)
                 messages.push(message)
@@ -137,7 +137,7 @@ export async function getFriendMessages(userSession: UserSession, userId: string
                 things.forEach(thing => {
                     const types = getUrlAll(thing, RDF.type);
                     console.log(types)
-                    if (types.some(type => type === mindMapDefinition.identity.subject)) {
+                    if (types.some(type => type === mindMapDefinition.identity)) {
                         console.log(thing)
                         const message = messageBuilder.read(thing)
                         messages.push(message)

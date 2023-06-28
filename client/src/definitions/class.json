@@ -1,17 +1,9 @@
 {
     "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Class",
     "properties": {
-        "name": {
-            "vocabulary": "http://schema.org/distance"
-        },
-        "id": {
-            "vocabulary": "http://schema.org/identifier"
-        },
-        "teacher": {
-            "vocabulary": "http://schema.org/email"
-        },
-        "storage": {
-            "vocabulary": "http://schema.org/brand"
-        }
+        "name": "http://schema.org/name",
+        "id": "http://schema.org/identifier",
+        "teacher": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#teacher",
+        "storage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage"
     }
 }

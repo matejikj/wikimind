@@ -116,7 +116,7 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
 
     await Promise.all(things.map(async (thing) => {
         const types = getUrlAll(thing, RDF.type);
-        if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
+        if (types.some(type => type === datasetLinkDefinition.identity)) {
             const newLink = datasetLinkBuilder.read(thing)
             if (newLink.linkType === LinkType.PROFILE_LINK) {
 
@@ -142,10 +142,10 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
                 }
             }
         }
-        if (types.some(type => type === examDefinition.identity.subject)) {
+        if (types.some(type => type === examDefinition.identity)) {
             // const newLink = datasetLinkBuilder.read(thing)
         }
-        if (types.some(type => type === classDefinition.identity.subject)) {
+        if (types.some(type => type === classDefinition.identity)) {
             newClass = classBuilder.read(thing)
             console.log(newClass)
         }
@@ -318,10 +318,10 @@ export async function getRequests(userSession: UserSession) {
     things.forEach(thing => {
         const types = getUrlAll(thing, RDF.type);
         console.log(types)
-        if (types.some(type => type === classRequestDefinition.identity.subject)) {
+        if (types.some(type => type === classRequestDefinition.identity)) {
             classRequests.push(classRequestLDO.read(thing))
         }
-        if (types.some(type => type === classRequestGrantDefinition.identity.subject)) {
+        if (types.some(type => type === classRequestGrantDefinition.identity)) {
             classRequestGrants.push(classRequestGrantLDO.read(thing))
             myDataset = removeThing(myDataset, thing)
         }
@@ -413,7 +413,7 @@ export async function getClassesList(userSession: UserSession) {
 
         // things.forEach(async thing => {
         const types = getUrlAll(thing, RDF.type);
-        if (types.some(type => type === datasetLinkDefinition.identity.subject)) {
+        if (types.some(type => type === datasetLinkDefinition.identity)) {
             const link = datasetLinkBuilder.read(thing)
             if (link.linkType === LinkType.CLASS_LINK) {
 
@@ -430,7 +430,7 @@ export async function getClassesList(userSession: UserSession) {
 
                 things.forEach(thing => {
                     const types = getUrlAll(thing, RDF.type);
-                    if (types.some(type => type === classDefinition.identity.subject)) {
+                    if (types.some(type => type === classDefinition.identity)) {
                         classes.push(classBuilder.read(thing))
                     }
                 });

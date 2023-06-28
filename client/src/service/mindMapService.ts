@@ -45,14 +45,14 @@ export async function getMindMap(url: string) {
   things.forEach(thing => {
     const types = getUrlAll(thing, RDF.type);
     console.log(types)
-    if (types.some(type => type === mindMapDefinition.identity.subject)) {
+    if (types.some(type => type === mindMapDefinition.identity)) {
       console.log(thing)
       mindMap = minMapBuilder.read(thing)
     }
-    if (types.some(type => type === nodeDefinition.identity.subject)) {
+    if (types.some(type => type === nodeDefinition.identity)) {
       nodes.push(nodeBuilder.read(thing))
     }
-    if (types.some(type => type === linkDefinition.identity.subject)) {
+    if (types.some(type => type === linkDefinition.identity)) {
       links.push(linkBuilder.read(thing))
     }
   });

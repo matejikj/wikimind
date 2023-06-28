@@ -1,11 +1,11 @@
 {
     "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Grant",
     "properties": {
-        "id": {
-            "vocabulary": "http://schema.org/identifier"
-        },
-        "class": {
-            "vocabulary": "https://schema.org/url"
-        }
+        "id": 
+            "http://schema.org/identifier"
+        ,
+        "class": 
+            "https://schema.org/url"
+        
     }
 }

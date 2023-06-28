@@ -1,26 +1,26 @@
 {
     "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Node",
     "properties": {
-        "id": {
-            "vocabulary": "http://schema.org/identifier"
-        },
-        "uri": {
-            "vocabulary": "http://schema.org/uri"
-        },
-        "description": {
-            "vocabulary": "https://schema.org/description"
-        },
-        "title": {
-            "vocabulary": "http://schema.org/name"
-        },
-        "cx": {
-            "vocabulary": "http://schema.org/distance"
-        },
-        "cy": {
-            "vocabulary": "http://schema.org/email"
-        },
-        "visible": {
-            "vocabulary": "https://schema.org/Product"
-        }
+        "id": 
+            "http://schema.org/identifier"
+        ,
+        "uri": 
+            "http://schema.org/uri"
+        ,
+        "description": 
+            "https://schema.org/description"
+        ,
+        "title": 
+            "http://schema.org/name"
+        ,
+        "cx": 
+            "http://schema.org/distance"
+        ,
+        "cy": 
+            "http://schema.org/email"
+        ,
+        "visible": 
+            "https://schema.org/Product"
+        
     }
 }

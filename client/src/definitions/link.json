@@ -1,14 +1,14 @@
 {
     "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Link",
     "properties": {
-        "url": {
-            "vocabulary": "https://schema.org/url"
-        },
-        "id": {
-            "vocabulary": "http://schema.org/identifier"
-        },
-        "linkType": {
-            "vocabulary": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#LinkType"
-        }
+        "url": 
+            "https://schema.org/url"
+        ,
+        "id": 
+            "http://schema.org/identifier"
+        ,
+        "linkType": 
+            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#LinkType"
+        
     }
 }

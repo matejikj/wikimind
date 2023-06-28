@@ -1,11 +1,11 @@
 {
     "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#MindMap",
     "properties": {
-        "created": {
-            "vocabulary": "https://schema.org/dateCreated"
-        },
-        "id": {
-            "vocabulary": "http://schema.org/identifier"
-        }
+        "created": 
+            "https://schema.org/dateCreated"
+        ,
+        "id": 
+            "http://schema.org/identifier"
+        
     }
 }

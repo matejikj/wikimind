@@ -1,20 +1,20 @@
 {
     "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Exam",
     "properties": {
-        "max": {
-            "vocabulary": "http://schema.org/distance"
-        },
-        "result": {
-            "vocabulary": "http://schema.org/identifier"
-        },
-        "id": {
-            "vocabulary": "http://schema.org/email"
-        },
-        "mindMap": {
-            "vocabulary": "http://schema.org/uri"
-        },
-        "profile": {
-            "vocabulary": "http://schema.org/brand"
-        }
+        "max": 
+        "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#max"
+        ,
+        "result": 
+        "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#result"
+        ,
+        "id": 
+            "http://schema.org/email"
+        ,
+        "mindMap": 
+        "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#mindMap"
+        ,
+        "profile": 
+        "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profile"
+        
     }
 }

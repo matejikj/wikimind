@@ -1,17 +1,17 @@
 {
     "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Profile",
     "properties": {
-        "surname": {
-            "vocabulary": "http://xmlns.com/foaf/0.1/#term_surname"
-        },
-        "name": {
-            "vocabulary": "http://xmlns.com/foaf/0.1/#term_name"
-        },
-        "webId": {
-            "vocabulary": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#webId"
-        },
-        "profileImage": {
-            "vocabulary": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profileImage"
-        }
+        "surname": 
+            "http://xmlns.com/foaf/0.1/#term_surname"
+        ,
+        "name": 
+            "http://xmlns.com/foaf/0.1/#term_name"
+        ,
+        "webId": 
+            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#webId"
+        ,
+        "profileImage": 
+            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profileImage"
+        
     }
 }
