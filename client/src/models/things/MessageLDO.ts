@@ -1,3 +1,4 @@
+import { rdf_type } from "../LDO";
 import { LDOIRI } from "../LDOIRI";
 import { Message } from "../types/Message";
 import { BaseLDO } from "./BaseLDO";
@@ -7,26 +8,26 @@ import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/
 export class MessageLDO extends BaseLDO<Message> implements CRUDLDO<Message> {
     read(thing: any): Message {
         return {
-            id: getStringNoLocale(thing, (this.rdf.properties.id as LDOIRI).vocabulary)!,
-            from: getStringNoLocale(thing, (this.rdf.properties.from as LDOIRI).vocabulary)!,
-            to: getStringNoLocale(thing, (this.rdf.properties.to as LDOIRI).vocabulary)!,
-            text: getStringNoLocale(thing, (this.rdf.properties.text as LDOIRI).vocabulary)!,
-            date: getStringNoLocale(thing, (this.rdf.properties.date as LDOIRI).vocabulary)!,
+            id: getStringNoLocale(thing, (this.rdf.properties.id))!,
+            from: getStringNoLocale(thing, (this.rdf.properties.from))!,
+            to: getStringNoLocale(thing, (this.rdf.properties.to))!,
+            text: getStringNoLocale(thing, (this.rdf.properties.text))!,
+            date: getStringNoLocale(thing, (this.rdf.properties.date))!,
         }
     }
 
     create(object: Message) {
         const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))
-            .addUrl(this.rdf.identity.vocabulary, this.rdf.identity.subject)
-            .addStringNoLocale((this.rdf.properties.id as LDOIRI).vocabulary,
+            .addUrl(rdf_type, this.rdf.identity)
+            .addStringNoLocale((this.rdf.properties.id),
                 object.id)
-            .addStringNoLocale((this.rdf.properties.date as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.date),
                 object.date)
-            .addStringNoLocale((this.rdf.properties.text as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.text),
                 object.text)
-            .addStringNoLocale((this.rdf.properties.from as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.from),
                 object.from)
-            .addStringNoLocale((this.rdf.properties.to as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.to),
                 object.to)
             .build();
         return newThing;

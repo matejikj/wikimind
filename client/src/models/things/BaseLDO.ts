@@ -7,5 +7,4 @@ export class BaseLDO<T> {
     constructor(rdf: LDO<T>) {
         this.rdf = rdf;
     }
-
 }

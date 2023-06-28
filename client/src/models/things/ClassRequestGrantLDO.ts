@@ -1,4 +1,4 @@
-import { LDOIRI } from "../LDOIRI";
+import { rdf_type } from "../LDO";
 import { Grant } from "../types/Grant";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
@@ -7,17 +7,17 @@ import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/
 export class ClassRequestGrantLDO extends BaseLDO<Grant> implements CRUDLDO<Grant> {
     read(thing: any): Grant {
         return {
-            id: getStringNoLocale(thing, (this.rdf.properties.id as LDOIRI).vocabulary)!,
-            class: getStringNoLocale(thing, (this.rdf.properties.class as LDOIRI).vocabulary)!,
+            id: getStringNoLocale(thing, (this.rdf.properties.id))!,
+            class: getStringNoLocale(thing, (this.rdf.properties.class))!,
         }
     }
 
     create(object: Grant) {
         const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
-            .addUrl(this.rdf.identity.vocabulary, this.rdf.identity.subject)
-            .addStringNoLocale((this.rdf.properties.id as LDOIRI).vocabulary,
+            .addUrl(rdf_type, this.rdf.identity)
+            .addStringNoLocale((this.rdf.properties.id),
                 object.id)
-            .addStringNoLocale((this.rdf.properties.class as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.class),
                 object.class)
             .build();
         return newThing;

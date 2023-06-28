@@ -5,7 +5,7 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix vann: <http://purl.org/vocab/vann/> .
 @prefix schema: <https://schema.org/> .
-@prefix solid: <http://www.w3.org/ns/solid/terms#> .
+@prefix wikimind: <http://www.w3.org/ns/solid/terms#> .
 
 wikimind: rdf:type owl:Ontology ;
     dcterms:title "WikiMind project ontology" ;
@@ -69,123 +69,128 @@ wikimind:Profile
     rdfs:comment "A resource containing information about a reservation state change."@en ;
     rdfs:label "ReservationStateChange"@en .
 
-wikimind:AccessControlPolicyType
-    a rdfs:Class ;
-    rdfs:comment "A resource containing information about a reservation state change."@en ;
-    rdfs:label "ReservationStateChange"@en .
-
 wikimind:LinkType
     a rdfs:Class ;
     rdfs:comment "A resource containing information about a reservation state change."@en ;
     rdfs:label "ReservationStateChange"@en .
 
+wikimind:LinkTypeEnum
+    a rdfs:Class ;
+    rdfs:comment "A resource containing information about a reservation state change."@en ;
+    rdfs:label "ReservationStateChange"@en .
+
 ### Enumerates
-wikimind:ACL a wikimind:AccessControlPolicyType ;
-    rdfs:label "ACL"@en ;
-    rdfs:comment "ACL access control policy for solid pod"@en .
 
-wikimind:WAC a wikimind:AccessControlPolicyType ;
-    rdfs:label "WAC"@en ;
-    rdfs:comment "WAC access control policy for solid pod"@en .
-
-wikimind:GRAPH a wikimind:LinkType ;
+wikimind:GRAPH a wikimind:LinkTypeEnum ;
     rdfs:label "GRAPH link type"@en ;
     rdfs:comment "GRAPH"@en .
 
-wikimind:CLASS a wikimind:LinkType ;
+wikimind:CLASS a wikimind:LinkTypeEnum ;
     rdfs:label "CLASS link type"@en ;
     rdfs:comment "CLASS"@en .
 
-wikimind:PROFILE a wikimind:LinkType ;
+wikimind:PROFILE a wikimind:LinkTypeEnum ;
     rdfs:label "PROFILE link type"@en ;
     rdfs:comment "PROFILE"@en .
 
-wikimind:CHAT a wikimind:LinkType ;
+wikimind:CHAT a wikimind:LinkTypeEnum ;
     rdfs:label "CHAT link type"@en ;
     rdfs:comment "CHAT"@en .
 
 ### Properties
-solid:webId
+wikimind:webId
     a rdf:Property ;
     rdfs:comment "WebID of user."@en ;
     rdfs:label "webId"@en ;
 
-solid:profileImage
+wikimind:profileImage
     a rdf:Property ;
     rdfs:comment "Link to profile image."@en ;
     rdfs:label "profileImage"@en ;
 
+wikimind:linkType
+    a rdf:Property ;
+    rdfs:comment "Defines the type of the notification"@en ;
+    rdfs:label "notificationType"@en ;
+    schema:domainIncludes wikimind:LinkType ;
+    schema:rangeIncludes wikimind:LinkTypeEnum .
 
-
-
-wikimind:isProcessed
+wikimind:owner
     a rdf:Property ;
     rdfs:comment "Defines if the subject has been processed already."@en ;
     rdfs:label "isProcessed"@en .
 
-wikimind:notificationType
+wikimind:guest
     a rdf:Property ;
-    rdfs:comment "Defines the type of the notification"@en ;
-    rdfs:label "notificationType"@en ;
-    schema:domainIncludes solid:Notification ;
-    schema:rangeIncludes wikimind:NotificationType .
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
+wikimind:lastMessage
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
+wikimind:storage
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
+wikimind:cx
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
-        "owner": {
-            "vocabulary": "http://schema.org/email"
-        },
-        "guest": {
-            "vocabulary": "http://schema.org/uri"
-        },
-        "storage": {
-            "vocabulary": "http://schema.org/brand"
-        },
-        "lastMessage": {
-            "vocabulary": "http://schema.org/uri"
-        }
+wikimind:cy
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
+wikimind:visible
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
-        "cx": {
-            "vocabulary": "http://schema.org/distance"
-        },
-        "cy": {
-            "vocabulary": "http://schema.org/email"
-        },
-        "visible": {
-            "vocabulary": "https://schema.org/Product"
-        }
+wikimind:teacher
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
+        
+wikimind:max
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
+wikimind:result
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
-        "teacher": {
-            "vocabulary": "http://schema.org/email"
-        },
+wikimind:mindMap
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
+wikimind:profile
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
-        "max": {
-            "vocabulary": "http://schema.org/distance"
-        },
-        "result": {
-            "vocabulary": "http://schema.org/identifier"
-        },
-        "mindMap": {
-            "vocabulary": "http://schema.org/name"
-        },
-        "profile": {
-            "vocabulary": "http://schema.org/brand"
-        }
+wikimind:from
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
-        "from": {
-            "vocabulary": "http://schema.org/email"
-        },
-        "to": {
-            "vocabulary": "http://schema.org/brand"
-        },
-        "testable": {
-            "vocabulary": "http://schema.org/distance"
-        }
+wikimind:to
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
 
-        "requestor": {
-            "vocabulary": "http://schema.org/distance"
-        },
+wikimind:testable
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .
+
+wikimind:requestor
+    a rdf:Property ;
+    rdfs:comment "Defines if the subject has been processed already."@en ;
+    rdfs:label "isProcessed"@en .

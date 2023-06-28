@@ -1,3 +1,4 @@
+import { rdf_type } from "../LDO";
 import { LDOIRI } from "../LDOIRI";
 import { Request } from "../types/Request";
 import { BaseLDO } from "./BaseLDO";
@@ -7,20 +8,20 @@ import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/
 export class ClassRequestLDO extends BaseLDO<Request> implements CRUDLDO<Request> {
     read(thing: any): Request {
         return {
-            id: getStringNoLocale(thing, (this.rdf.properties.id as LDOIRI).vocabulary)!,
-            class: getStringNoLocale(thing, (this.rdf.properties.class as LDOIRI).vocabulary)!,
-            requestor: getStringNoLocale(thing, (this.rdf.properties.requestor as LDOIRI).vocabulary)!,
+            id: getStringNoLocale(thing, (this.rdf.properties.id))!,
+            class: getStringNoLocale(thing, (this.rdf.properties.class))!,
+            requestor: getStringNoLocale(thing, (this.rdf.properties.requestor))!,
         }
     }
 
     create(object: Request) {
         const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
-            .addUrl(this.rdf.identity.vocabulary, this.rdf.identity.subject)
-            .addStringNoLocale((this.rdf.properties.id as LDOIRI).vocabulary,
+            .addUrl(rdf_type, this.rdf.identity)
+            .addStringNoLocale((this.rdf.properties.id),
                 object.id)
-            .addStringNoLocale((this.rdf.properties.class as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.class),
                 object.class)
-            .addStringNoLocale((this.rdf.properties.requestor as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.requestor),
                 object.requestor.toString())
             .build();
         return newThing;

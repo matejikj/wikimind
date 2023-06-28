@@ -1,3 +1,4 @@
+import { rdf_type } from "../LDO";
 import { LDOIRI } from "../LDOIRI";
 import { Connection } from "../types/Connection";
 import { BaseLDO } from "./BaseLDO";
@@ -7,22 +8,22 @@ import { ThingLocal, buildThing, createThing, getBoolean, getStringNoLocale } fr
 export class ConnectionLDO extends BaseLDO<Connection> implements CRUDLDO<Connection> {
     read(thing: any): Connection {
         return {
-            id: getStringNoLocale(thing, (this.rdf.properties.id as LDOIRI).vocabulary)!,
-            to: getStringNoLocale(thing, (this.rdf.properties.to as LDOIRI).vocabulary)!,
-            from: getStringNoLocale(thing, (this.rdf.properties.from as LDOIRI).vocabulary)!,
-            title: getStringNoLocale(thing, (this.rdf.properties.title as LDOIRI).vocabulary)!,
-            testable: getBoolean(thing, (this.rdf.properties.testable as LDOIRI).vocabulary)!,
+            id: getStringNoLocale(thing, (this.rdf.properties.id))!,
+            to: getStringNoLocale(thing, (this.rdf.properties.to))!,
+            from: getStringNoLocale(thing, (this.rdf.properties.from))!,
+            title: getStringNoLocale(thing, (this.rdf.properties.title))!,
+            testable: getBoolean(thing, (this.rdf.properties.testable))!,
         }
     }
 
     create(object: Connection) {
         const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
-        .addUrl(this.rdf.identity.vocabulary, this.rdf.identity.subject)
-        .addStringNoLocale((this.rdf.properties.from as LDOIRI).vocabulary, object.from)
-        .addBoolean((this.rdf.properties.testable as LDOIRI).vocabulary, object.testable)
-            .addStringNoLocale((this.rdf.properties.to as LDOIRI).vocabulary, object.to)
-            .addStringNoLocale((this.rdf.properties.id as LDOIRI).vocabulary, object.id)
-            .addStringNoLocale((this.rdf.properties.title as LDOIRI).vocabulary, object.title)
+        .addUrl(rdf_type, this.rdf.identity)
+        .addStringNoLocale((this.rdf.properties.from), object.from)
+        .addBoolean((this.rdf.properties.testable), object.testable)
+            .addStringNoLocale((this.rdf.properties.to), object.to)
+            .addStringNoLocale((this.rdf.properties.id), object.id)
+            .addStringNoLocale((this.rdf.properties.title), object.title)
             .build();
         return newThing;
     }

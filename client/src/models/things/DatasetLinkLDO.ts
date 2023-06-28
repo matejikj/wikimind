@@ -1,3 +1,4 @@
+import { rdf_type } from "../LDO";
 import { LDOIRI } from "../LDOIRI";
 import { Link } from "../types/Link";
 import { LinkType } from "../types/LinkType";
@@ -7,22 +8,22 @@ import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/
 
 export class DatasetLinkLDO extends BaseLDO<Link> implements CRUDLDO<Link> {
     read(thing: any): Link {
-        const str = getStringNoLocale(thing, (this.rdf.properties.linkType as LDOIRI).vocabulary)! as unknown as LinkType
+        const str = getStringNoLocale(thing, (this.rdf.properties.linkType))! as unknown as LinkType
         return {
-            url: getStringNoLocale(thing, (this.rdf.properties.url as LDOIRI).vocabulary)!,
-            id: getStringNoLocale(thing, (this.rdf.properties.id as LDOIRI).vocabulary)!,
+            url: getStringNoLocale(thing, (this.rdf.properties.url))!,
+            id: getStringNoLocale(thing, (this.rdf.properties.id))!,
             linkType: str,
         }
     }
 
     create(object: Link) {
         const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
-            .addUrl(this.rdf.identity.vocabulary, this.rdf.identity.subject)
-            .addStringNoLocale((this.rdf.properties.id as LDOIRI).vocabulary,
+            .addUrl(rdf_type, this.rdf.identity)
+            .addStringNoLocale((this.rdf.properties.id),
                 object.id)
-            .addStringNoLocale((this.rdf.properties.url as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.url),
                 object.url)
-            .addStringNoLocale((this.rdf.properties.linkType as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.linkType),
                 object.linkType.toString())
             .build();
         return newThing;

@@ -2,15 +2,13 @@ import { LDOIRI } from "./LDOIRI";
 import { Connection } from "./types/Connection";
 import { Node } from "./types/Node";
 
-type LDOProperties<T> = {
-    [Property in keyof T]: LDOIRI | LDO<Node> | LDO<Connection>;
-}
+export const rdf_type = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 
-type LDOObjectIdType = LDOIRI & {
-    subject: string;
+type LDOProperties<T> = {
+    [Property in keyof T]: string;
 }
 
 export type LDO<T> = {
-    identity: LDOObjectIdType;
+    identity: string;
     properties: LDOProperties<T>;
 }

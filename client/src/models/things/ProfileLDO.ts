@@ -1,3 +1,4 @@
+import { rdf_type } from "../LDO";
 import { LDOIRI } from "../LDOIRI";
 import { Profile } from "../types/Profile";
 import { BaseLDO } from "./BaseLDO";
@@ -7,23 +8,23 @@ import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/
 export class ProfileLDO extends BaseLDO<Profile> implements CRUDLDO<Profile> {
     read(thing: any): Profile {
         return {
-            name: getStringNoLocale(thing, (this.rdf.properties.name as LDOIRI).vocabulary)!,
-            surname: getStringNoLocale(thing, (this.rdf.properties.surname as LDOIRI).vocabulary)!,
-            webId: getStringNoLocale(thing, (this.rdf.properties.webId as LDOIRI).vocabulary)!,
-            profileImage: getStringNoLocale(thing, (this.rdf.properties.profileImage as LDOIRI).vocabulary)!
+            name: getStringNoLocale(thing, (this.rdf.properties.name))!,
+            surname: getStringNoLocale(thing, (this.rdf.properties.surname))!,
+            webId: getStringNoLocale(thing, (this.rdf.properties.webId))!,
+            profileImage: getStringNoLocale(thing, (this.rdf.properties.profileImage))!
         }
     }
 
     create(object: Profile) {
         const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))
-            .addUrl(this.rdf.identity.vocabulary, this.rdf.identity.subject)
-            .addStringNoLocale((this.rdf.properties.name as LDOIRI).vocabulary,
+            .addUrl(rdf_type, this.rdf.identity)
+            .addStringNoLocale((this.rdf.properties.name),
                 object.name)
-            .addStringNoLocale((this.rdf.properties.webId as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.webId),
                 object.webId)
-            .addStringNoLocale((this.rdf.properties.surname as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.surname),
                 object.surname)
-            .addStringNoLocale((this.rdf.properties.profileImage as LDOIRI).vocabulary,
+            .addStringNoLocale((this.rdf.properties.profileImage),
                 object.profileImage)
             .build();
         return newThing;
