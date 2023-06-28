@@ -5,7 +5,7 @@ global.TextDecoder = TextDecoder
 
 import React from 'react';
 import { render } from '@testing-library/react';
-import App from './App';
+import App from '../App';
 
 
 window.matchMedia = window.matchMedia || function() {

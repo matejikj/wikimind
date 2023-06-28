@@ -11,9 +11,9 @@ import {
 
 import { RDF } from "@inrupt/vocab-common-rdf";
 import profileDefinition from "../definitions/profile.json"
-import messageDefinition from "../definitions/messageDefinition.json"
-import mindMapDefinition from "../definitions/mindMapMetaData.json"
-import datasetLinkDefinition from "../definitions/datasetLink.json"
+import messageDefinition from "../definitions/message.json"
+import mindMapDefinition from "../definitions/mindMap.json"
+import datasetLinkDefinition from "../definitions/link.json"
 import { LDO } from "../models/LDO";
 import { getPodUrl } from "./containerService";
 import { DatasetLinkLDO } from "../models/things/DatasetLinkLDO";

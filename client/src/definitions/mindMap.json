@@ -4,17 +4,8 @@
         "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#MindMap"
     },
     "properties": {
-        "title": {
-            "vocabulary": "http://schema.org/name"
-        },
-        "acccessType": {
-            "vocabulary": "http://schema.org/brand"
-        },
-        "url": {
-            "vocabulary": "http://schema.org/distance"
-        },
         "created": {
-            "vocabulary": "http://schema.org/alternateName"
+            "vocabulary": "https://schema.org/dateCreated"
         },
         "id": {
             "vocabulary": "http://schema.org/identifier"

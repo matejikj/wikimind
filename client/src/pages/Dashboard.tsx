@@ -6,12 +6,12 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-import './Dashboard.css';
 import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
 import { Container, Row, Stack } from 'react-bootstrap';
 import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
 import { ListItem } from '../models/ListItem';
+import '../styles/style.css';
 
 const Dashboard: React.FC = () => {
   const [list, setList] = useState<ListItem[]>([]);

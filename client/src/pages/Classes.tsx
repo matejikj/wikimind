@@ -5,7 +5,6 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-import './Login.css';
 import { SessionContext } from '../sessionContext';
 import { allowAccess, createNewClass, denyRequest, getClassesList, getRequests, requestClass } from '../service/classService';
 import { Class } from '../models/types/Class';
@@ -13,6 +12,8 @@ import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { Request } from '../models/types/Request';
 import { MdDeleteForever, MdSlideshow } from 'react-icons/md';
 import { RxCheck, RxCross2 } from 'react-icons/rx';
+
+import '../styles/style.css';
 
 const authOptions = {
   clientName: "Learnee",

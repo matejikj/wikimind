@@ -5,7 +5,7 @@ import {
     saveSolidDatasetAt,
     setThing,
 } from "@inrupt/solid-client";
-import examDefinition from "../definitions/examDefinition.json"
+import examDefinition from "../definitions/exam.json"
 import { UserSession } from "../models/types/UserSession";
 import { Exam } from "../models/types/Exam";
 import { ExamLDO } from "../models/things/ExamLDO";

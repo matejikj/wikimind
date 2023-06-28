@@ -1,4 +1,3 @@
-import './Login.css';
 import React, { useState } from "react";
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
@@ -7,6 +6,8 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { login } from "@inrupt/solid-client-authn-browser";
 import { Card } from 'react-bootstrap';
+
+import '../styles/style.css';
 
 const authOptions = {
   clientName: "Learnee",

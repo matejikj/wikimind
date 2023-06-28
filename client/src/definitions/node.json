@@ -4,23 +4,23 @@
         "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#Node"
     },
     "properties": {
-        "cx": {
-            "vocabulary": "http://schema.org/distance"
-        },
         "id": {
             "vocabulary": "http://schema.org/identifier"
-        },
-        "cy": {
-            "vocabulary": "http://schema.org/email"
         },
         "uri": {
             "vocabulary": "http://schema.org/uri"
         },
         "description": {
-            "vocabulary": "http://schema.org/brand"
+            "vocabulary": "https://schema.org/description"
         },
         "title": {
             "vocabulary": "http://schema.org/name"
+        },
+        "cx": {
+            "vocabulary": "http://schema.org/distance"
+        },
+        "cy": {
+            "vocabulary": "http://schema.org/email"
         },
         "visible": {
             "vocabulary": "https://schema.org/Product"

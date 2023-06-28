@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import { SessionContext } from "../sessionContext";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { Col, Container, Row } from "react-bootstrap";
-import "./ModalNewCreatorNode.css";
+import '../styles/style.css';
 import { ResultItem } from "../models/SparqlResults";
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
@@ -29,6 +29,26 @@ const ModalNewCreatorNode: React.FC<{
     }
 
     function addCustomNode() {
+        const resultItem: ResultItem = {
+            entity: {
+                type: "uri",
+                value: '',
+            },
+            type: {
+                type: "uri",
+                value: 'CUSTOM',
+            },
+            label: {
+                type: "literal",
+                "xml:lang": "en",
+                value: formInputs.title
+            },
+        };
+        console.log(resultItem)
+        classUrl(resultItem)
+    }
+
+    function add() {
         const resultItem: ResultItem = {
             entity: {
                 type: "uri",

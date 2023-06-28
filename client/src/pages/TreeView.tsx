@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
 import { SessionContext } from "../sessionContext";
 import { Accordion } from "react-bootstrap";
-import { TreeNode } from "./creatorUtils";
-import './TreeView.css'
+import { TreeNode } from "../service/creatorUtils";
+import '../styles/style.css';
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const TreeView: React.FC<{
     root: TreeNode,

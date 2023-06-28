@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC&family=Nothing+You+Could+Do&family=Playfair:wght@300&display=swap');
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    margin: 0;
+    padding: 0;
+
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+}
+
+.node rect {
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.node text {
+    font-size: 20px;
+    color: black;
+}
+
+svg.drag-over {
+    border: 3px dashed red;
+}
+
+.canvas-back {
+    background-color: #f5f5f5;
+
+}
+
+.row>* {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.my-btn {
+    color: aquamarine;
+}
+
+/* END APP */
+
+.node rect {
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.node text {
+    font-size: 20px;
+    color: black;
+}
+
+svg.drag-over {
+    border: 3px dashed red;
+}
+
+.canvas-back {
+    background-color: #f5f5f5;
+
+}
+
+.row>* {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.my-btn {
+    color: aquamarine;
+}
+
+
+.menuItem {
+    fill: rgb(121, 0, 121);
+    stroke-width: 3;
+    stroke: rgb(0, 0, 0)
+}
+
+#svg-canvas {
+    background-color: #f5f5f5;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+text {
+    font-family: 'Nothing You Could Do', cursive;
+    font-size: 12px;
+}
+
+#float-btn-save {
+    position: absolute;
+    top: 10px;
+    right: 70px;
+}
+
+#float-btn-add {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000;
+
+}
+
+/* CLASS */
+
+
+.class-card {
+    padding: 8px;
+    margin: 10px;
+}
+
+.class-message {
+    cursor: pointer;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td,
+th {
+    border: 1px solid black;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+
+.accordion-class {
+    overflow: auto;
+    max-height: 45vh;
+}
+
+
+/* Creator */
+
+.creator-btn {
+    margin: 2px;
+    padding: 2px;
+    border: none;
+    color: white;
+    background-color: #46c2a5;
+}
+
+.creator-inline-btn {
+    border: 0px solid green;
+    margin-right: 2px;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.creator-inline-btn:hover {
+    background-color: red;
+}
+
+.creator-btn:hover {
+    border-radius: 5px;
+    background-color: white;
+    color: black;
+}
+
+.fckn-div {
+    background-color: #46c2a5;
+}
+
+.fckn-div {
+    margin: 4px;
+    color: white;
+    border: 1px solid white;
+    float: left;
+    /* border-radius: 5px; */
+}
+
+.fckn-div-category {
+    margin: 4px;
+    color: white;
+    border: 1px solid white;
+    float: left;
+    /* border-radius: 5px; */
+    box-shadow: 6px 4px #223360;
+
+}
+
+.creator-div-category {
+    /* border-radius: 5px; */
+    box-shadow: 3px 2px #227360;
+    background-color: #46c2a5;
+
+
+}
+
+.pagination-creator {
+    margin: 12px;
+}
+
+/* TREEVIEW */
+
+.collapsible-list {
+    border: 1px solid black;
+}
+
+/* DASHBOARD/ */
+.dashboard-main {
+    padding: 10px;
+  }
+  
+  .class-btn {
+    margin-left: 6px;
+    margin-bottom: 6px;
+    float: right;
+    flex-direction: row-reverse;
+  }
+  
+  .my-stack {
+    float: left;
+    /* display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-self: stretch; */
+  }
+  
+  .my-stack-reverse {
+    float: right;
+  
+    /* display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    align-self: stretch; */
+  }
+  
+  .aaa {
+  
+    display: block;
+  }
+
+  /* LOGIN */
+
+  .center-container {
+    display: flex;
+    top: 20px;
+    width: 60%;
+    justify-content:center;
+    margin:0 auto;
+    position:relative;
+}
+
+#login {
+    background-image: url('../../public/learn.jpg');
+    height: 100vh;
+    background-size: cover;
+}
+
+/* MESSAGE */
+
+.message-box {
+    overflow: auto;
+    height: 74vh;
+}
+
+.message-bubble {
+    margin-bottom: 10px;
+    width: fit-content;
+}
+
+.message-card {
+    margin-top: 10px;
+}
+
+/* PRFOILE VIEW */
+
+.center-container {
+    display: flex;
+    width: 60%;
+    justify-content:center;
+    margin:0 auto;
+}
+
+.logo {
+    max-height: 45px;
+
+}

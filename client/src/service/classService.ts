@@ -15,13 +15,13 @@ import {
 
 
 import { RDF } from "@inrupt/vocab-common-rdf";
-import examDefinition from "../definitions/examDefinition.json"
+import examDefinition from "../definitions/exam.json"
 import chatDefinition from "../definitions/chat.json"
-import classRequestDefinition from "../definitions/classRequest.json"
-import classRequestGrantDefinition from "../definitions/classRequestGrant.json"
+import classRequestDefinition from "../definitions/request.json"
+import classRequestGrantDefinition from "../definitions/grant.json"
 import profileDefinition from "../definitions/profile.json"
 import classDefinition from "../definitions/class.json"
-import datasetLinkDefinition from "../definitions/datasetLink.json"
+import datasetLinkDefinition from "../definitions/link.json"
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
 import { getPodUrl } from "./containerService";

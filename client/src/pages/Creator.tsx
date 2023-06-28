@@ -9,15 +9,15 @@ import { generate_uuidv4 } from "../service/utils";
 import { Col, Container, Form, Pagination, Row, Stack } from "react-bootstrap";
 import { Profile } from "../models/types/Profile";
 import { Message } from "../models/types/Message";
-import './Messages.css';
 import { getEntitiesConnection, getEntityNeighbours, getKeywords } from "../service/dbpediaService";
 import { FaBackspace, FaInfo, FaPlus } from "react-icons/fa";
-import './Creator.css';
 import { ResultItem } from "../models/SparqlResults";
-import ModalCreatorName from "./ModalCreatorName";
-import ModalCreatorSelected from "./ModalCreatorSelected";
-import ModalNewCreatorNode from "./ModalNewCreatorNode";
-import { TreeNode, addLink } from "./creatorUtils";
+import ModalCreatorName from "../components/ModalCreatorName";
+import ModalCreatorSelected from "../components/ModalCreatorSelected";
+import ModalNewCreatorNode from "../components/ModalNewCreatorNode";
+import { TreeNode, addLink, bfs } from "../service/creatorUtils";
+
+import '../styles/style.css';
 
 const divWidth = 770
 
@@ -169,8 +169,13 @@ const Creator: React.FC = () => {
 
     // // function 
 
-    function createVis(nmb: number) {
-        
+    function createVis(name: string) {
+        if (root !== undefined) {
+            bfs(root, name, sessionContext.sessionInfo)
+
+        }
+
+        console.log(name)
         // const simNodes = JSON.parse(JSON.stringify(nodes))
         // const simLinks = JSON.parse(JSON.stringify(links))
         // const simulation = d3.forceSimulation(simNodes)

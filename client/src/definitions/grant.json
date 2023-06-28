@@ -8,7 +8,7 @@
             "vocabulary": "http://schema.org/identifier"
         },
         "class": {
-            "vocabulary": "http://schema.org/brand"
+            "vocabulary": "https://schema.org/url"
         }
     }
 }

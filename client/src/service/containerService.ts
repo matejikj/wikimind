@@ -14,7 +14,7 @@ import {
   universalAccess,
 } from "@inrupt/solid-client";
 import { RDF } from "@inrupt/vocab-common-rdf";
-import mindMapDefinition from "../definitions/mindMapMetaData.json"
+import mindMapDefinition from "../definitions/mindMap.json"
 import profileDefinition from "../definitions/profile.json"
 import { UserSession } from "../models/types/UserSession";
 import { initializeAcl, isWacOrAcp } from "./accessService";

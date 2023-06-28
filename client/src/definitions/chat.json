@@ -20,7 +20,7 @@
             "vocabulary": "http://schema.org/name"
         },
         "lastMessage": {
-            "vocabulary": "https://schema.org/Product"
+            "vocabulary": "http://schema.org/uri"
         }
     }
 }

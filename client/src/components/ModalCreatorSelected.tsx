@@ -4,8 +4,8 @@ import Button from 'react-bootstrap/Button';
 import { SessionContext } from "../sessionContext";
 import { getMindMapList } from "../service/containerService";
 import { ListItem } from "../models/ListItem";
-import { TreeNode } from "./creatorUtils";
-import TreeView from "./TreeView";
+import { TreeNode } from "../service/creatorUtils";
+import TreeView from "../pages/TreeView";
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalCreatorSelected: React.FC<{

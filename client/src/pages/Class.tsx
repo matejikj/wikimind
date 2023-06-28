@@ -11,11 +11,11 @@ import {
 import { generate_uuidv4 } from "../service/utils";
 import { getClassDataset } from "../service/classService";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
-import './Class.css';
+import '../styles/style.css';
 import { FcComments } from "react-icons/fc";
 import { Exam } from "../models/types/Exam";
 import { MindMap } from "../models/types/MindMap";
-import ModalClassAddMindMap from "./ModalClassAddMindMap";
+import ModalClassAddMindMap from "../components/ModalClassAddMindMap";
 import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from "react-icons/md";
 
 const exampleExams: Exam[] = [{

@@ -9,7 +9,7 @@ import { getFriendMessages, getProfiles } from "../service/messageService";
 import { Profile } from "../models/types/Profile";
 import { Message } from "../models/types/Message";
 import { MdSend } from "react-icons/md";
-import './Messages.css';
+import '../styles/style.css';
 
 const divWidth = 770
 

@@ -1,0 +1,23 @@
+{
+    "identity": {
+        "vocabulary": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#Class"
+    },
+    "properties": {
+        "to": {
+            "vocabulary": "https://schema.org/recipient"
+        },
+        "from": {
+            "vocabulary": "https://schema.org/sender"
+        },
+        "id": {
+            "vocabulary": "http://schema.org/identifier"
+        },
+        "text": {
+            "vocabulary": "https://schema.org/text"
+        },
+        "date": {
+            "vocabulary": "https://schema.org/dateCreated"
+        }
+    }
+}

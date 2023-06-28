@@ -12,8 +12,8 @@ import { RDF } from "@inrupt/vocab-common-rdf";
 import { Node } from "../models/types/Node";
 import { MindMapLDO } from "../models/things/MindMapLDO";
 import nodeDefinition from "../definitions/node.json"
-import linkDefinition from "../definitions/link.json"
-import mindMapDefinition from "../definitions/mindMapMetaData.json"
+import linkDefinition from "../definitions/connection.json"
+import mindMapDefinition from "../definitions/mindMap.json"
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
 import { NodeLDO } from "../models/things/NodeLDO";

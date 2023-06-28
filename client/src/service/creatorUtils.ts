@@ -1,11 +1,17 @@
+import * as d3 from "d3";
 import { ResultItem } from "../models/SparqlResults";
 import { Connection } from "../models/types/Connection";
 import { Node } from "../models/types/Node";
+import { generate_uuidv4 } from "./utils";
+import { SessionContext } from "../sessionContext";
+import { UserSession } from "../models/types/UserSession";
+import { createPreparedMindMap } from "./mindMapService";
 
 export type TreeNode = {
     value: ResultItem,
     parent: TreeNode | undefined,
-    children: TreeNode[]
+    children: TreeNode[],
+    id?: string
 }
 
 function isInLinks(links: any, source: string, target: string, type: string): boolean {
@@ -58,25 +64,76 @@ export async function addLink(addedItem: ResultItem, connectionNode: ResultItem,
     }
 }
 
-function bfs(root: TreeNode): void {
+export function bfs(root: TreeNode, name: string, sessionContext: UserSession): void {
     const nodes: Node[] = []
     const links: Connection[] = []
 
-    const queue: TreeNode[] = [root];
+    const visNodes: any[] = []
+    const visLinks: any[] = []
+
+    const idQueue: TreeNode[] = [root];
   
-    while (queue.length > 0) {
-      const current = queue.shift();
+    while (idQueue.length > 0) {
+      const current = idQueue.shift();
       if (current) {
-        // Process the current node (e.g., perform desired operations)
-        console.log(current.value);
-  
+        if (current.id === undefined) {
+            current.id = generate_uuidv4()
+        }
+        visNodes.push(current)
         // Enqueue the children of the current node
         current.children.forEach((child) => {
-          queue.push(child);
+            if (child.id === undefined) {
+                child.id = generate_uuidv4()
+            }
+            visLinks.push({
+                source: current.id,
+                target: child.id
+            })            
+            idQueue.push(child);
         });
       }
     }
-  }
+
+    const simulation = d3.forceSimulation(visNodes)
+        // @ts-ignore
+        .force("link", d3.forceLink(visLinks).id(d => d.id))
+        .force("center", d3.forceCenter(1000 / 2, 1000 / 2))
+        .force("collide", d3.forceCollide())
+        .force("charge", d3.forceManyBody().strength(-1000))
+        .force("x", d3.forceX())
+        .force("y", d3.forceY())
+        .stop()
+        .tick(100)
+
+        visNodes.forEach((item: any) => {
+            nodes.push({
+                id: item.id,
+                title: item.value.label.value,
+                uri: item.value.entity.value,
+                description: '',
+                cx: item.x,
+                cy: item.y,
+                visible: true
+            })
+        })
+
+        visLinks.forEach((item: any) => {
+            links.push({
+                id: generate_uuidv4(),
+                title: '',
+                from: item.source.id,
+                to: item.target.id,
+                testable: true
+            })
+        })
+        createPreparedMindMap(nodes, links, name, sessionContext)
+
+    
+    console.log("fadss")
+
+
+
+}
   
 
 

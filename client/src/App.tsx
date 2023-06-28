@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import './App.css';
+import './styles/style.css';
 import { Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from "./pages/Dashboard";

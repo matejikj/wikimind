@@ -5,16 +5,16 @@
     },
     "properties": {
         "surname": {
-            "vocabulary": "http://schema.org/brand"
+            "vocabulary": "http://xmlns.com/foaf/0.1/#term_surname"
         },
         "name": {
-            "vocabulary": "http://schema.org/name"
+            "vocabulary": "http://xmlns.com/foaf/0.1/#term_name"
         },
         "webId": {
             "vocabulary": "http://schema.org/identifier"
         },
         "profileImage": {
-            "vocabulary": "http://schema.org/identification"
+            "vocabulary": "http://schema.org/uri"
         }
     }
 }

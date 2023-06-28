@@ -1,23 +1,17 @@
 {
     "identity": {
         "vocabulary": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#Link"
+        "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#DatasetLink"
     },
     "properties": {
-        "from": {
-            "vocabulary": "http://schema.org/email"
-        },
-        "to": {
-            "vocabulary": "http://schema.org/brand"
-        },
-        "title": {
-            "vocabulary": "http://schema.org/name"
+        "url": {
+            "vocabulary": "https://schema.org/url"
         },
         "id": {
             "vocabulary": "http://schema.org/identifier"
         },
-        "testable": {
-            "vocabulary": "http://schema.org/distance"
+        "linkType": {
+            "vocabulary": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#LinkType"
         }
     }
 }

@@ -1,22 +1,22 @@
 {
     "identity": {
         "vocabulary": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#Class"
+        "subject": "https://matejikj.inrupt.net/Wikie/vocabulary.ttl#Exam"
     },
     "properties": {
-        "to": {
+        "max": {
             "vocabulary": "http://schema.org/distance"
         },
-        "from": {
+        "result": {
             "vocabulary": "http://schema.org/identifier"
         },
         "id": {
             "vocabulary": "http://schema.org/email"
         },
-        "text": {
-            "vocabulary": "http://schema.org/name"
+        "mindMap": {
+            "vocabulary": "http://schema.org/uri"
         },
-        "date": {
+        "profile": {
             "vocabulary": "http://schema.org/brand"
         }
     }

@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import Circle from "./Circle";
 import Line from "./Line";
-import './Canvas.css';
+import '../styles/style.css';
 import Button from 'react-bootstrap/Button';
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { SessionContext } from "../sessionContext";

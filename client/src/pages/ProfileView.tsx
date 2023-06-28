@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 
-import './ProfileView.css';
+import '../styles/style.css';
 import { SessionContext } from '../sessionContext';
 import { getProfile, updateProfile } from '../service/profileService';
 import Row from 'react-bootstrap/Row';
