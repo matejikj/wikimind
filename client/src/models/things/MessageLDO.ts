@@ -1,11 +1,8 @@
 import { LDOIRI } from "../LDOIRI";
-import { Exam } from "../types/Exam";
 import { Message } from "../types/Message";
-import { Node } from "../types/Node";
-import { Profile } from "../types/Profile";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
-import { ThingLocal, buildThing, getStringNoLocale, getInteger, createThing } from "@inrupt/solid-client";
+import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
 
 export class MessageLDO extends BaseLDO<Message> implements CRUDLDO<Message> {
     read(thing: any): Message {
@@ -16,7 +13,7 @@ export class MessageLDO extends BaseLDO<Message> implements CRUDLDO<Message> {
             text: getStringNoLocale(thing, (this.rdf.properties.text as LDOIRI).vocabulary)!,
             date: getStringNoLocale(thing, (this.rdf.properties.date as LDOIRI).vocabulary)!,
         }
-    };
+    }
 
     create(object: Message) {
         const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))

@@ -1,16 +1,11 @@
-import { useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from "react";
 import Sidenav, { SideNavType } from "../components/Sidenav";
-import { getMindMapList } from "../service/containerService";
 import Button from 'react-bootstrap/Button';
-import { generate_uuidv4 } from "../service/utils";
-import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 
 import './ProfileView.css';
-import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
 import { getProfile, updateProfile } from '../service/profileService';
 import Row from 'react-bootstrap/Row';

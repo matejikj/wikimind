@@ -2,7 +2,7 @@ import { Node } from "../models/types/Node"
 import { Connection } from "../models/types/Connection"
 
 export const getIdsMapping = (list: Array<Node>) => {
-    let res = new Map()
+    const res = new Map()
     list.map((x) => {
         res.set(x.id, { "x": x.cx, "y": x.cy })
     })

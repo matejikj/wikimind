@@ -1,12 +1,6 @@
-import { TextDecoder, TextEncoder } from 'util'
-global.TextEncoder = TextEncoder
-// @ts-expect-error
-global.TextDecoder = TextDecoder
-
 import React from 'react';
 import { render } from '@testing-library/react';
-import App from './App';
-
+import Sidenav, { SideNavType } from '../Sidenav';
 
 window.matchMedia = window.matchMedia || function() {
   return {
@@ -23,8 +17,5 @@ jest.mock('react-router-dom', () => ({
 }));
 
 test('renders learn react link', () => {
-  console.log(TextDecoder)
-  Object.assign(global, { TextDecoder, TextEncoder });
-
-  render(<App/>);
+  render(<Sidenav type={SideNavType.COMMON} />);
 });

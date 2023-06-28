@@ -1,4 +1,4 @@
-import { SCHEMA_INRUPT, RDF } from "@inrupt/vocab-common-rdf";
+import { RDF, SCHEMA_INRUPT } from "@inrupt/vocab-common-rdf";
 
 export const mindMapDefinition = {
   "identity": {

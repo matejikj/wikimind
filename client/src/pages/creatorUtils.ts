@@ -1,7 +1,6 @@
 import { ResultItem } from "../models/SparqlResults";
 import { Connection } from "../models/types/Connection";
 import { Node } from "../models/types/Node";
-import { generate_uuidv4 } from "../service/utils";
 
 export type TreeNode = {
     value: ResultItem,

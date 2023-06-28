@@ -1,4 +1,3 @@
-// export type Link = Entity & {
 export type Exam = {
     id: string,
     profile: string;

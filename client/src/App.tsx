@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from "react";
-import logo from './logo.svg';
+import React, { useEffect } from "react";
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from "./pages/Dashboard";
-import Container from 'react-bootstrap/Container';
-import Sidenav from "./components/Sidenav";
 import Visualisation from "./pages/Visualisation";
-import { Session, fetch, getDefaultSession, handleIncomingRedirect, onSessionRestore } from "@inrupt/solid-client-authn-browser";
+import { handleIncomingRedirect } from "@inrupt/solid-client-authn-browser";
 import { BrowserRouter } from 'react-router-dom';
-import { checkStructure } from "./service/utils";
 import { checkContainer } from "./service/containerService";
 import Classes from "./pages/Classes";
 import Messages from "./pages/Messages";
@@ -18,8 +14,6 @@ import Class from "./pages/Class";
 import { UserSession, defaultSessionValue } from "./models/types/UserSession";
 import { SessionContext } from "./sessionContext";
 import PrivateChat from "./pages/PrivateChat";
-import { AccessControlPolicy } from "./models/types/AccessControlPolicy";
-import { Profile } from "./models/types/Profile";
 import Creator from "./pages/Creator";
 import ExamPage from "./pages/ExamPage";
 

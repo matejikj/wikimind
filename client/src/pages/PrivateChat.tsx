@@ -1,22 +1,12 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useContext, useRef, useState } from "react";
 import Sidenav, { SideNavType } from "../components/Sidenav";
-import Canvas from "../visualisation/Canvas";
-import { Node } from "../models/types/Node";
-import Button from 'react-bootstrap/Button';
 import { SessionContext } from "../sessionContext";
-import { MindMapDataset } from "../models/types/MindMapDataset";
-import { useNavigate, useLocation } from "react-router-dom";
-import { getMindMap } from "../service/mindMapService";
-import { getDefaultSession, fetch, login } from "@inrupt/solid-client-authn-browser";
-import {
-    WebsocketNotification,
-} from "@inrupt/solid-client-notifications";
-import { generate_uuidv4 } from "../service/utils";
-import { AddCoords, getIdsMapping } from "../visualisation/utils";
-import { Card, Col, Container, Form, Row, Stack } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
+
+
+import { Card, Form, Stack } from "react-bootstrap";
 import { MdSend } from "react-icons/md";
 import { Message } from "../models/types/Message";
-import { flushSync } from "react-dom";
 
 const PrivateChat: React.FC = () => {
     const d3Container = useRef(null);

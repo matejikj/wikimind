@@ -1,19 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import axios from "axios";
 import { SessionContext } from "../sessionContext";
-import { getMindMapList } from "../service/containerService";
-import { ListItem } from "../models/ListItem";
-import { MdAdd, MdDeleteForever, MdDriveFileRenameOutline, MdPlusOne, MdSlideshow } from "react-icons/md";
 import { AiFillCheckCircle } from "react-icons/ai";
-import { Accordion, Card, Col, Container, Row } from "react-bootstrap";
-import { addGraphToClass } from "../service/classService";
+import { Col, Container, Row } from "react-bootstrap";
 import "./ModalNewCreatorNode.css";
-import { getEntitiesConnection } from "../service/dbpediaService";
 import { ResultItem } from "../models/SparqlResults";
-import { generate_uuidv4 } from "../service/utils";
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalNewCreatorNode: React.FC<{

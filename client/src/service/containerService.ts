@@ -1,45 +1,24 @@
-import { login, handleIncomingRedirect, getDefaultSession, fetch } from "@inrupt/solid-client-authn-browser";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 
 import {
-  addUrl,
-  getThing,
-  getSolidDataset,
-  addStringNoLocale,
-  buildThing,
+  createContainerAt,
   createSolidDataset,
-  createThing,
-  setThing, hasResourceAcl, hasAccessibleAcl, createAclFromFallbackAcl, getResourceAcl,
-  setUrl,
-  getThingAll,
-  createContainerAt, saveAclFor, acp_ess_2,
-  getStringNoLocale, hasFallbackAcl,
-  getUrlAll,
-  getSolidDatasetWithAcl,
-  getUrl,
-  getPodUrlAll,
-  isContainer,
   getContainedResourceUrlAll,
-  Thing, universalAccess,
-  getLinkedResourceUrlAll,
-  saveSolidDatasetAt,
+  getPodUrlAll,
+  getSolidDataset,
+  getStringNoLocale,
+  getThingAll,
+  getUrlAll,
+  isContainer,
+  saveSolidDatasetAt, setThing,
+  universalAccess,
 } from "@inrupt/solid-client";
-import { SCHEMA_INRUPT, RDF } from "@inrupt/vocab-common-rdf";
-import { Node } from "../models/types/Node";
-import { MindMapLDO } from "../models/things/MindMapLDO";
-import nodeDefinition from "../definitions/node.json"
-import linkDefinition from "../definitions/link.json"
+import { RDF } from "@inrupt/vocab-common-rdf";
 import mindMapDefinition from "../definitions/mindMapMetaData.json"
 import profileDefinition from "../definitions/profile.json"
-import { MindMapDataset } from "../models/types/MindMapDataset";
-import { LDO } from "../models/LDO";
-import { NodeLDO } from "../models/things/NodeLDO";
-import { Connection } from "../models/types/Connection";
-import { ConnectionLDO } from "../models/things/ConnectionLDO";
-import { MindMap } from "../models/types/MindMap";
 import { UserSession } from "../models/types/UserSession";
 import { initializeAcl, isWacOrAcp } from "./accessService";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
-import { getProfile } from "./profileService";
 import { Profile } from "../models/types/Profile";
 import { ProfileLDO } from "../models/things/ProfileLDO";
 
@@ -78,20 +57,20 @@ export async function checkContainer(sessionId: string): Promise<{podUrl: string
   if (podUrls !== null) {
     const podUrl = podUrls[0]
 
-    let accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl + 'Wikie/')
+    const accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl + 'Wikie/')
   
     if (!(await isUrlContainer(podUrl + 'Wikie/mindMaps'))) {
       const cont = await createContainerAt(podUrl + 'Wikie/mindMaps', { fetch: fetch });
     }
     if (!(await isUrlContainer(podUrl + 'Wikie/classes'))) {
       const classes = await createContainerAt(podUrl + 'Wikie/classes', { fetch: fetch });
-      let classesDataset = createSolidDataset();
+      const classesDataset = createSolidDataset();
       const savedSolidDatasetContainer = await saveSolidDatasetAt(
         podUrl + 'Wikie/classes/classes.ttl',
         classesDataset,
         { fetch: fetch }
       );
-      let reqeustsDataset = createSolidDataset();
+      const reqeustsDataset = createSolidDataset();
       const savedSolidDataset = await saveSolidDatasetAt(
         podUrl + 'Wikie/classes/requests.ttl',
         reqeustsDataset,
@@ -101,10 +80,10 @@ export async function checkContainer(sessionId: string): Promise<{podUrl: string
 
     if (!(await isUrlContainer(podUrl + 'Wikie/profile'))) {
       const classes = await createContainerAt(podUrl + 'Wikie/profile', { fetch: fetch });
-      let classesDataset = createSolidDataset();
+      const classesDataset = createSolidDataset();
 
-      let profileSolidDataset = createSolidDataset();
-      let blankProfile: Profile = {
+      const profileSolidDataset = createSolidDataset();
+      const blankProfile: Profile = {
         name: '',
         surname: '',
         profileImage: '',
@@ -112,7 +91,7 @@ export async function checkContainer(sessionId: string): Promise<{podUrl: string
       }
       const profileLDO = new ProfileLDO(profileDefinition).create(blankProfile)
       const savedProfileSolidDataset = setThing(profileSolidDataset, profileLDO)
-      let newName = podUrl + "Wikie/profile/profile.ttl"
+      const newName = podUrl + "Wikie/profile/profile.ttl"
       const savedSolidDataset = await saveSolidDatasetAt(
         newName,
         savedProfileSolidDataset,
@@ -132,7 +111,7 @@ export async function checkContainer(sessionId: string): Promise<{podUrl: string
 
     if (!(await isUrlContainer(podUrl + 'Wikie/messages'))) {
       const messages = await createContainerAt(podUrl + 'Wikie/messages', { fetch: fetch });
-      let messagesDataset = await createSolidDataset();
+      const messagesDataset = await createSolidDataset();
       const savedSolidDatasetContainer = await saveSolidDatasetAt(
         podUrl + 'Wikie/messages/contacts.ttl',
         messagesDataset,

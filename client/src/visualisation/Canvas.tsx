@@ -1,8 +1,6 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useContext, useRef, useState } from "react";
 import Circle from "./Circle";
 import Line from "./Line";
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
 import './Canvas.css';
 import Button from 'react-bootstrap/Button';
 import { MindMapDataset } from "../models/types/MindMapDataset";
@@ -22,7 +20,6 @@ import { Node } from "../models/types/Node";
 import { TransformWrapper } from "react-zoom-pan-pinch";
 import { TransformComponent } from "react-zoom-pan-pinch";
 import { updateNode } from "../service/mindMapService";
-import axios from "axios";
 import { getSingleReccomends } from "../service/dbpediaService";
 
 const nodeEx: Node = {
@@ -68,7 +65,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
   }
 
   const recommend = async () => {
-    let rrr = ''
+    const rrr = ''
     // const name = node.title.replaceAll(' ', '_')
     const results = await getSingleReccomends(clickedNode!.uri)
 

@@ -1,6 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
-import { SessionContext } from "../sessionContext";
-import { Node } from '../models/types/Node'
+import React from "react";
 import { ContextMenuType } from "./models/ContextMenuType";
 import { Connection } from "../models/types/Connection";
 

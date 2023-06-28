@@ -1,41 +1,8 @@
-import { login, handleIncomingRedirect, getDefaultSession, fetch } from "@inrupt/solid-client-authn-browser";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 
-import {
-    addUrl,
-    getThing,
-    getSolidDataset,
-    addStringNoLocale,
-    buildThing,
-    createSolidDataset,
-    createThing,
-    setThing, hasResourceAcl, hasAccessibleAcl, createAclFromFallbackAcl, getResourceAcl,
-    setUrl,
-    getThingAll,
-    createContainerAt, saveAclFor, acp_ess_2,
-    getStringNoLocale, hasFallbackAcl,
-    getUrlAll,
-    getSolidDatasetWithAcl,
-    getUrl,
-    getPodUrlAll,
-    isContainer,
-    getContainedResourceUrlAll,
-    Thing, universalAccess,
-    getLinkedResourceUrlAll,
-    saveSolidDatasetAt,
+import { acp_ess_2, createAclFromFallbackAcl, getResourceAcl, getSolidDatasetWithAcl, hasAccessibleAcl, hasFallbackAcl, hasResourceAcl,
+    saveAclFor,
 } from "@inrupt/solid-client";
-import { SCHEMA_INRUPT, RDF } from "@inrupt/vocab-common-rdf";
-import { Node } from "../models/types/Node";
-import { MindMapLDO } from "../models/things/MindMapLDO";
-import nodeDefinition from "../definitions/node.json"
-import linkDefinition from "../definitions/link.json"
-import mindMapDefinition from "../definitions/mindMapMetaData.json"
-import { MindMapDataset } from "../models/types/MindMapDataset";
-import { LDO } from "../models/LDO";
-import { NodeLDO } from "../models/things/NodeLDO";
-import { Connection } from "../models/types/Connection";
-import { ConnectionLDO } from "../models/things/ConnectionLDO";
-import { MindMap } from "../models/types/MindMap";
-import { UserSession } from "../models/types/UserSession";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 
 /**

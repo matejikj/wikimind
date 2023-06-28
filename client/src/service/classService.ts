@@ -1,59 +1,29 @@
-import { login, handleIncomingRedirect, getDefaultSession, fetch } from "@inrupt/solid-client-authn-browser";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 
 import {
-    addUrl,
-    getThing,
-    getSolidDataset,
-    addStringNoLocale,
-    buildThing,
-    getPodOwner,
     createSolidDataset,
-    createThing,
-    setThing,
-    removeThing,
-    getFile, getProfileAll, getPodUrlAllFrom,
-    deleteFile,
-    setUrl,
+    getContainedResourceUrlAll,
+    getSolidDataset,
+    getThing,
     getThingAll,
-    getSolidDatasetWithAcl,
-    createContainerAt,
-    getResourceInfo,
-    getStringNoLocale,
     getUrlAll,
-    getUrl, getContainedResourceUrlAll,
-    getAgentAccessAll,
-    saveFileInContainer, getSourceUrl,
+    removeThing, saveSolidDatasetAt,
+    setThing,
     universalAccess,
-    Thing, getWebIdDataset,
-    getLinkedResourceUrlAll,
-    saveSolidDatasetAt,
 } from "@inrupt/solid-client";
-import {
-    AccessGrant,
-    approveAccessRequest,
-    denyAccessRequest
-}
-    from "@inrupt/solid-client-access-grants"
-import { SCHEMA_INRUPT, RDF } from "@inrupt/vocab-common-rdf";
-import { Node } from "../models/types/Node";
-import { MindMapLDO } from "../models/things/MindMapLDO";
+
+
+
+import { RDF } from "@inrupt/vocab-common-rdf";
 import examDefinition from "../definitions/examDefinition.json"
 import chatDefinition from "../definitions/chat.json"
 import classRequestDefinition from "../definitions/classRequest.json"
 import classRequestGrantDefinition from "../definitions/classRequestGrant.json"
 import profileDefinition from "../definitions/profile.json"
-import messageDefinition from "../definitions/messageDefinition.json"
-import nodeDefinition from "../definitions/node.json"
-import linkDefinition from "../definitions/link.json"
-import mindMapDefinition from "../definitions/mindMapMetaData.json"
 import classDefinition from "../definitions/class.json"
 import datasetLinkDefinition from "../definitions/datasetLink.json"
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
-import { NodeLDO } from "../models/things/NodeLDO";
-import { Connection } from "../models/types/Connection";
-import { ConnectionLDO } from "../models/things/ConnectionLDO";
-import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
 import { generate_uuidv4 } from "./utils";
 import { Class, Class as TeachClass } from "../models/types/Class";
@@ -62,7 +32,6 @@ import { getProfile } from "./profileService";
 import { Link } from "../models/types/Link";
 import { DatasetLinkLDO } from "../models/things/DatasetLinkLDO";
 import { LinkType } from "../models/types/LinkType";
-import { AccessRequest, issueAccessRequest, redirectToAccessManagementUi } from "@inrupt/solid-client-access-grants";
 import { UserSession } from "../models/types/UserSession";
 import { ClassDataset } from "../models/types/ClassDataset";
 import { Exam } from "../models/types/Exam";
@@ -77,7 +46,6 @@ import { ClassRequestLDO } from "../models/things/ClassRequestLDO";
 import { Grant } from "../models/types/Grant";
 import { ClassRequestGrantLDO } from "../models/things/ClassRequestGrantLDO";
 import { ChatLDO } from "../models/things/ChatLDO";
-import { storage } from "rdf-namespaces/dist/space";
 
 // https://id.inrupt.com/matejikj?classId=d91f706d-ca0c-41aa-844b-cf47d1ef4c40
 
@@ -103,12 +71,12 @@ export async function createNewClass(name: string, userSession: UserSession) {
         { fetch: fetch }
     );
     myDataset = setThing(myDataset, classLDO)
-    let newName = podUrl + "Wikie/classes/" + "classes" + ".ttl"
+    const newName = podUrl + "Wikie/classes/" + "classes" + ".ttl"
 
     let courseSolidDataset = createSolidDataset();
     const classDataset = new ClassLDO(classDefinition).create(blankClass)
     courseSolidDataset = setThing(courseSolidDataset, classDataset)
-    let newClassDataset = userSession.podUrl + "Wikie/classes/" + blankClass.id + ".ttl"
+    const newClassDataset = userSession.podUrl + "Wikie/classes/" + blankClass.id + ".ttl"
 
     const savedSolidDatasetContainer = await saveSolidDatasetAt(
         podUrl,
@@ -138,13 +106,13 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
     console.log(things)
 
     let newClass: TeachClass | null = null;
-    let classBuilder = new ClassLDO(classDefinition)
-    let mindMaps: MindMapDataset[] = []
-    let exams: Exam[] = []
-    let examBuilder = new ExamLDO(examDefinition)
-    let profiles: Profile[] = []
-    let profileBuilder = new ProfileLDO(profileDefinition);
-    let datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
+    const classBuilder = new ClassLDO(classDefinition)
+    const mindMaps: MindMapDataset[] = []
+    const exams: Exam[] = []
+    const examBuilder = new ExamLDO(examDefinition)
+    const profiles: Profile[] = []
+    const profileBuilder = new ProfileLDO(profileDefinition);
+    const datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
 
     await Promise.all(things.map(async (thing) => {
         const types = getUrlAll(thing, RDF.type);
@@ -160,9 +128,9 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
                         { fetch: fetch }
                     );
                 
-                    let bb = getThing(userProfileDataset, podUrl + 'Wikie/profile/profile.ttl#Wikie');
-                    let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-                    let userProfile = profileBuilder.read(bb)
+                    const bb = getThing(userProfileDataset, podUrl + 'Wikie/profile/profile.ttl#Wikie');
+                    const profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+                    const userProfile = profileBuilder.read(bb)
                     console.log(userProfile)
                     profiles.push(userProfile)
                 }
@@ -212,7 +180,7 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
             linkType: LinkType.PROFILE_LINK
         }
         const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
-        let myDataset = await getSolidDataset(
+        const myDataset = await getSolidDataset(
             classRequest.class,
             { fetch: fetch }
         );
@@ -239,7 +207,7 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
             class: classRequest.class
         })
 
-        let grantDataset = await getSolidDataset(
+        const grantDataset = await getSolidDataset(
             podUrls[0] + "Wikie/classes/requests.ttl",
             { fetch: fetch }
         );
@@ -253,7 +221,7 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
 
         // VYTVORIT CHAT
 
-        let messageDatasetUrl = userSession.podUrl + "Wikie/messages/" + generate_uuidv4() + ".ttl"
+        const messageDatasetUrl = userSession.podUrl + "Wikie/messages/" + generate_uuidv4() + ".ttl"
 
         const newChat = new ChatLDO(chatDefinition).create({
             id: generate_uuidv4(),
@@ -264,7 +232,7 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
             storage: userSession.podUrl
         })
 
-        let chatSolidDataset = createSolidDataset();
+        const chatSolidDataset = createSolidDataset();
         const newProfileDataset = setThing(chatSolidDataset, newChat)
         const messageDataset = await saveSolidDatasetAt(
             messageDatasetUrl,
@@ -298,7 +266,7 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
 
         // ULOZIT CHAT ZAKOVI DO KONTAKTU
 
-        let myContactsDataset = await getSolidDataset(
+        const myContactsDataset = await getSolidDataset(
             userSession.podUrl + "Wikie/messages/contacts.ttl",
             { fetch: fetch }
         );
@@ -313,7 +281,7 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
 
         // ULOZIT CHAT ZAKOVI DO KONTAKTU
 
-        let studentsContactsDataset = await getSolidDataset(
+        const studentsContactsDataset = await getSolidDataset(
             podUrls[0] + "Wikie/messages/contacts.ttl",
             { fetch: fetch }
         );
@@ -328,6 +296,7 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
 }
 
 export async function denyRequest(userSession: UserSession, classRequest: Request) {
+    console.log("aa")
 }
 
 export async function getRequests(userSession: UserSession) {
@@ -341,10 +310,10 @@ export async function getRequests(userSession: UserSession) {
 
     const things = await getThingAll(myDataset);
 
-    let classRequestLDO = new ClassRequestLDO(classRequestDefinition)
-    let classRequestGrantLDO = new ClassRequestGrantLDO(classRequestGrantDefinition)
-    let classRequests: Request[] = []
-    let classRequestGrants: Grant[] = []
+    const classRequestLDO = new ClassRequestLDO(classRequestDefinition)
+    const classRequestGrantLDO = new ClassRequestGrantLDO(classRequestGrantDefinition)
+    const classRequests: Request[] = []
+    const classRequestGrants: Grant[] = []
 
     things.forEach(thing => {
         const types = getUrlAll(thing, RDF.type);
@@ -371,7 +340,7 @@ export async function getRequests(userSession: UserSession) {
             linkType: LinkType.CLASS_LINK
         }
         const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
-        let myDataset = await getSolidDataset(
+        const myDataset = await getSolidDataset(
             userSession.podUrl + "Wikie/classes/classes.ttl",
             { fetch: fetch }
         );
@@ -386,10 +355,10 @@ export async function getRequests(userSession: UserSession) {
 }
 
 export async function requestClass(userSession: UserSession, classUri: string) {
-    let paramString = classUri.split('?')[1];
-    let webId = classUri.split('?')[0];
+    const paramString = classUri.split('?')[1];
+    const webId = classUri.split('?')[0];
     const urlParams = new URLSearchParams(paramString);
-    let classId = (urlParams.get("classId"))
+    const classId = (urlParams.get("classId"))
 
     const podUrls = await getPodUrl(webId)
     console.log(podUrls)
@@ -415,7 +384,7 @@ export async function requestClass(userSession: UserSession, classUri: string) {
 
         console.log(podUrls[0] + "Wikie/classes/requests.ttl")
 
-        let myContactsDataset = await getSolidDataset(
+        const myContactsDataset = await getSolidDataset(
             podUrls[0] + "Wikie/classes/requests.ttl",
             { fetch: fetch }
         );
@@ -431,7 +400,7 @@ export async function requestClass(userSession: UserSession, classUri: string) {
 
 
 export async function getClassesList(userSession: UserSession) {
-    let classes: Class[] = []
+    const classes: Class[] = []
     const podUrl = userSession.podUrl + 'Wikie/classes/classes.ttl'
 
     const myDataset = await getSolidDataset(
@@ -439,7 +408,7 @@ export async function getClassesList(userSession: UserSession) {
         { fetch: fetch }
     );
     const things = await getThingAll(myDataset);
-    let datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
+    const datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
     await Promise.all(things.map(async (thing) => {
 
         // things.forEach(async thing => {
@@ -456,8 +425,8 @@ export async function getClassesList(userSession: UserSession) {
                 );
                 const things = await getThingAll(myDataset);
 
-                let classBuilder = new ClassLDO(classDefinition)
-                let mindMap: Class | null = null;
+                const classBuilder = new ClassLDO(classDefinition)
+                const mindMap: Class | null = null;
 
                 things.forEach(thing => {
                     const types = getUrlAll(thing, RDF.type);
@@ -478,7 +447,7 @@ export async function addGraphToClass(userSession: UserSession, graphUrl: string
         linkType: LinkType.GRAPH_LINK
     }
     const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
-    let myDataset = await getSolidDataset(
+    const myDataset = await getSolidDataset(
         classUrl,
         { fetch: fetch }
     );

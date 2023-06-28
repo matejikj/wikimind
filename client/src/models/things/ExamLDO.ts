@@ -1,10 +1,8 @@
 import { LDOIRI } from "../LDOIRI";
 import { Exam } from "../types/Exam";
-import { Node } from "../types/Node";
-import { Profile } from "../types/Profile";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
-import { ThingLocal, buildThing, getStringNoLocale, getInteger, createThing } from "@inrupt/solid-client";
+import { ThingLocal, buildThing, createThing, getInteger, getStringNoLocale } from "@inrupt/solid-client";
 
 export class ExamLDO extends BaseLDO<Exam> implements CRUDLDO<Exam> {
     read(thing: any): Exam {
@@ -15,7 +13,7 @@ export class ExamLDO extends BaseLDO<Exam> implements CRUDLDO<Exam> {
             profile: getStringNoLocale(thing, (this.rdf.properties.profile as LDOIRI).vocabulary)!,
             id: getStringNoLocale(thing, (this.rdf.properties.id as LDOIRI).vocabulary)!,
         }
-    };
+    }
 
     create(object: Exam) {
         const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))

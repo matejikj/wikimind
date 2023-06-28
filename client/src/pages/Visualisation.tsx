@@ -1,17 +1,14 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Sidenav, { SideNavType } from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
-import { Node } from "../models/types/Node";
-import Button from 'react-bootstrap/Button';
 import { SessionContext } from "../sessionContext";
 import { MindMapDataset } from "../models/types/MindMapDataset";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getMindMap } from "../service/mindMapService";
-import { getDefaultSession, fetch, login } from "@inrupt/solid-client-authn-browser";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
   WebsocketNotification,
 } from "@inrupt/solid-client-notifications";
-import { generate_uuidv4 } from "../service/utils";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
 
 const defaultBlankDataset: MindMapDataset = {

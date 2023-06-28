@@ -1,12 +1,8 @@
 import { LDOIRI } from "../LDOIRI";
 import { Chat } from "../types/Chat";
-import { Exam } from "../types/Exam";
-import { Message } from "../types/Message";
-import { Node } from "../types/Node";
-import { Profile } from "../types/Profile";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
-import { ThingLocal, buildThing, getStringNoLocale, getInteger, createThing } from "@inrupt/solid-client";
+import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
 
 export class ChatLDO extends BaseLDO<Chat> implements CRUDLDO<Chat> {
     read(thing: any): Chat {
@@ -18,7 +14,7 @@ export class ChatLDO extends BaseLDO<Chat> implements CRUDLDO<Chat> {
             lastMessage: getStringNoLocale(thing, (this.rdf.properties.lastMessage as LDOIRI).vocabulary)!,
             guest: getStringNoLocale(thing, (this.rdf.properties.guest as LDOIRI).vocabulary)!,
         }
-    };
+    }
 
     create(object: Chat) {
         const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))

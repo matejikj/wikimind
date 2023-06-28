@@ -1,32 +1,19 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Sidenav, { SideNavType } from "../components/Sidenav";
-import Canvas from "../visualisation/Canvas";
-import { Node } from "../models/types/Node";
 import Button from 'react-bootstrap/Button';
 import { SessionContext } from "../sessionContext";
-import { MindMapDataset } from "../models/types/MindMapDataset";
-import { useNavigate, useLocation } from "react-router-dom";
-import { createPreparedMindMap, getMindMap } from "../service/mindMapService";
-import { getDefaultSession, fetch, login } from "@inrupt/solid-client-authn-browser";
-import {
-    WebsocketNotification,
-} from "@inrupt/solid-client-notifications";
+import { useLocation, useNavigate } from "react-router-dom";
+
+
 import { generate_uuidv4 } from "../service/utils";
-import { AddCoords, getIdsMapping } from "../visualisation/utils";
-import { Card, Col, Container, Form, ListGroup, Modal, Pagination, Row, Stack } from "react-bootstrap";
-import { getFriendMessages, getProfiles } from "../service/messageService";
+import { Col, Container, Form, Pagination, Row, Stack } from "react-bootstrap";
 import { Profile } from "../models/types/Profile";
 import { Message } from "../models/types/Message";
-import { MdSend } from "react-icons/md";
 import './Messages.css';
-import { flushSync } from "react-dom";
-import axios from "axios";
-import * as d3 from "d3";
-import { getEntitiesConnection, getEntityNeighbours, getKeywords, getLabels } from "../service/dbpediaService";
-import { FaBackspace, FaInfo, FaMinus, FaPlus } from "react-icons/fa";
+import { getEntitiesConnection, getEntityNeighbours, getKeywords } from "../service/dbpediaService";
+import { FaBackspace, FaInfo, FaPlus } from "react-icons/fa";
 import './Creator.css';
 import { ResultItem } from "../models/SparqlResults";
-import { Connection } from "../models/types/Connection";
 import ModalCreatorName from "./ModalCreatorName";
 import ModalCreatorSelected from "./ModalCreatorSelected";
 import ModalNewCreatorNode from "./ModalNewCreatorNode";
@@ -71,7 +58,7 @@ const Creator: React.FC = () => {
     const [root, setRoot] = useState<TreeNode>()
     const [roots, setRoots] = useState<TreeNode[]>([])
 
-    let items: any[] = [];
+    const items: any[] = [];
 
     useEffect(() => {
         function handleResize() {
@@ -99,7 +86,7 @@ const Creator: React.FC = () => {
             const a = await getEntityNeighbours(selected.entity.value)
 
             if (a) {
-                let newNode= {
+                const newNode= {
                     value: selected,
                     children: [],
                     parent: undefined

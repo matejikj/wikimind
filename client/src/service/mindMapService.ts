@@ -1,25 +1,14 @@
-import { login, handleIncomingRedirect, getDefaultSession, fetch } from "@inrupt/solid-client-authn-browser";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 
 import {
-  addUrl,
-  getThing,
-  getSolidDataset,
-  addStringNoLocale,
-  buildThing,
   createSolidDataset,
-  createThing,
-  setThing,
-  setUrl,
+  getSolidDataset,
   getThingAll,
-  createContainerAt,
-  getStringNoLocale,
   getUrlAll,
-  getUrl,
-  Thing,
-  getLinkedResourceUrlAll,
   saveSolidDatasetAt,
+  setThing,
 } from "@inrupt/solid-client";
-import { SCHEMA_INRUPT, RDF } from "@inrupt/vocab-common-rdf";
+import { RDF } from "@inrupt/vocab-common-rdf";
 import { Node } from "../models/types/Node";
 import { MindMapLDO } from "../models/things/MindMapLDO";
 import nodeDefinition from "../definitions/node.json"
@@ -32,7 +21,6 @@ import { Connection } from "../models/types/Connection";
 import { ConnectionLDO } from "../models/things/ConnectionLDO";
 import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
-import { generate_uuidv4 } from "./utils";
 import { UserSession } from "../models/types/UserSession";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 import { initializeAcl } from "./accessService";
@@ -47,12 +35,12 @@ export async function getMindMap(url: string) {
 
   const things = await getThingAll(myDataset);
 
-  let minMapBuilder = new MindMapLDO(mindMapDefinition)
+  const minMapBuilder = new MindMapLDO(mindMapDefinition)
   let mindMap: MindMap | null = null;
-  let nodes: Node[] = []
-  let nodeBuilder = new NodeLDO(nodeDefinition)
-  let links: Connection[] = []
-  let linkBuilder = new ConnectionLDO(linkDefinition)
+  const nodes: Node[] = []
+  const nodeBuilder = new NodeLDO(nodeDefinition)
+  const links: Connection[] = []
+  const linkBuilder = new ConnectionLDO(linkDefinition)
 
   things.forEach(thing => {
     const types = getUrlAll(thing, RDF.type);
@@ -84,13 +72,13 @@ export async function getMindMap(url: string) {
 
 export async function createNewMindMap(name: string, userSession: UserSession) {
     let courseSolidDataset = createSolidDataset();
-    let blankMindMap: MindMap = {
+    const blankMindMap: MindMap = {
       id: name,
       created: ""
     }
     const mindMapLDO = new MindMapLDO(mindMapDefinition).create(blankMindMap)
     courseSolidDataset = setThing(courseSolidDataset, mindMapLDO)
-    let newName = userSession.podUrl + "Wikie/mindMaps/" + name + ".ttl"
+    const newName = userSession.podUrl + "Wikie/mindMaps/" + name + ".ttl"
     const savedSolidDataset = await saveSolidDatasetAt(
       newName,
       courseSolidDataset,
@@ -108,13 +96,13 @@ export async function createNewMindMap(name: string, userSession: UserSession) {
 export async function createPreparedMindMap(nodes: Node[], links: Connection[], name: string, userSession: UserSession) {
   let mindMapSolidDataset = createSolidDataset();
 
-  let blankMindMap: MindMap = {
+  const blankMindMap: MindMap = {
     id: name,
     created: ""
   }
 
-  let nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
-  let linkBuilder = new ConnectionLDO((linkDefinition as LDO<Connection>))
+  const nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
+  const linkBuilder = new ConnectionLDO((linkDefinition as LDO<Connection>))
 
   nodes.forEach((node) => {
     mindMapSolidDataset = setThing(mindMapSolidDataset, nodeBuilder.create(node));
@@ -127,7 +115,7 @@ export async function createPreparedMindMap(nodes: Node[], links: Connection[], 
 
   const mindMapLDO = new MindMapLDO(mindMapDefinition).create(blankMindMap)
   mindMapSolidDataset = setThing(mindMapSolidDataset, mindMapLDO)
-  let newName = userSession.podUrl + "Wikie/mindMaps/" + name + ".ttl"
+  const newName = userSession.podUrl + "Wikie/mindMaps/" + name + ".ttl"
 
 
   
@@ -161,8 +149,8 @@ export async function updateNode(name: string, sessionId: string, node: Node) {
       podUrl,
       { fetch: fetch }
     );
-    let nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
-    let thingUrl = podUrl + "#" + node.id
+    const nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
+    const thingUrl = podUrl + "#" + node.id
     // // let thingUrl = "https://storage.inrupt.com/46ada2e2-e4d0-4f63-85cc-5dbc467a527a/Wikie/mindMaps/ahojda.ttl#44274717-8e40-41d3-a372-94d85bd5e686"
     // console.log(thingUrl)
     //     let book1Thing = await getThing(courseSolidDataset, thingUrl);
@@ -204,7 +192,7 @@ export async function createNode(name: string, sessionId: string, node: Node) {
     );
 
 
-    let nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
+    const nodeBuilder = new NodeLDO((nodeDefinition as LDO<Node>))
     courseSolidDataset = setThing(courseSolidDataset, nodeBuilder.create(node));
 
     const savedSolidDataset = await saveSolidDatasetAt(
@@ -226,7 +214,7 @@ export async function addNewLink(name: string, sessionId: any, link: Connection)
     );
 
 
-    let linkBuilder = new ConnectionLDO((linkDefinition as LDO<Connection>))
+    const linkBuilder = new ConnectionLDO((linkDefinition as LDO<Connection>))
     courseSolidDataset = setThing(courseSolidDataset, linkBuilder.create(link));
 
     const savedSolidDataset = await saveSolidDatasetAt(

@@ -1,71 +1,26 @@
-import { login, handleIncomingRedirect, getDefaultSession, fetch } from "@inrupt/solid-client-authn-browser";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 
 import {
-    addUrl,
-    getThing,
     getSolidDataset,
-    addStringNoLocale,
-    buildThing,
-    getPodOwner,
-    createSolidDataset,
-    createThing,
-    setThing,
-    getFile, getProfileAll,
-    deleteFile,
-    setUrl,
+    getThing,
     getThingAll,
-    getSolidDatasetWithAcl,
-    createContainerAt,
-    getResourceInfo,
-    getStringNoLocale,
     getUrlAll,
-    getUrl, getContainedResourceUrlAll,
-    getAgentAccessAll,
-    saveFileInContainer, getSourceUrl,
-    universalAccess,
-    Thing,
-    getLinkedResourceUrlAll,
-    saveSolidDatasetAt,
 } from "@inrupt/solid-client";
-import {
-    AccessGrant,
-    approveAccessRequest,
-    denyAccessRequest
-}
-    from "@inrupt/solid-client-access-grants"
-import { SCHEMA_INRUPT, RDF } from "@inrupt/vocab-common-rdf";
-import { Node } from "../models/types/Node";
-import { MindMapLDO } from "../models/things/MindMapLDO";
-import examDefinition from "../definitions/examDefinition.json"
+
+
+
+import { RDF } from "@inrupt/vocab-common-rdf";
 import profileDefinition from "../definitions/profile.json"
 import messageDefinition from "../definitions/messageDefinition.json"
-import nodeDefinition from "../definitions/node.json"
-import linkDefinition from "../definitions/link.json"
 import mindMapDefinition from "../definitions/mindMapMetaData.json"
-import classDefinition from "../definitions/class.json"
 import datasetLinkDefinition from "../definitions/datasetLink.json"
-import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
-import { NodeLDO } from "../models/things/NodeLDO";
-import { Connection } from "../models/types/Connection";
-import { ConnectionLDO } from "../models/things/ConnectionLDO";
-import { MindMap } from "../models/types/MindMap";
 import { getPodUrl } from "./containerService";
-import { generate_uuidv4 } from "./utils";
-import { Class as TeachClass } from "../models/types/Class";
-import { ClassLDO } from "../models/things/ClassLDO";
-import { getProfile } from "./profileService";
-import { Link } from "../models/types/Link";
 import { DatasetLinkLDO } from "../models/things/DatasetLinkLDO";
 import { LinkType } from "../models/types/LinkType";
-import { AccessRequest, issueAccessRequest, redirectToAccessManagementUi } from "@inrupt/solid-client-access-grants";
 import { UserSession } from "../models/types/UserSession";
-import { ClassDataset } from "../models/types/ClassDataset";
-import { Exam } from "../models/types/Exam";
 import { Profile } from "../models/types/Profile";
-import { ExamLDO } from "../models/things/ExamLDO";
 import { ProfileLDO } from "../models/things/ProfileLDO";
-import { Request } from "../models/types/Request";
 import { MessageLDO } from "../models/things/MessageLDO";
 import { Message } from "../models/types/Message";
 import { ChatLDO } from "../models/things/ChatLDO";
@@ -73,10 +28,10 @@ import chatDefinition from "../definitions/chat.json"
 
 export async function getProfiles(userSession: UserSession) {
 
-    let datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
-    let profiles: Profile[] = []
+    const datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
+    const profiles: Profile[] = []
 
-    let msgDataset = await getSolidDataset(
+    const msgDataset = await getSolidDataset(
         userSession.podUrl + "Wikie/messages/contacts.ttl",
         { fetch: fetch }
     );
@@ -111,9 +66,9 @@ export async function getProfiles(userSession: UserSession) {
                         { fetch: fetch }
                     )
 
-                    let bb = getThing(dataset, podUrls[0] + 'Wikie/profile/profile.ttl#Wikie');
-                    let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-                    let userProfile = profileBuilder.read(bb)
+                    const bb = getThing(dataset, podUrls[0] + 'Wikie/profile/profile.ttl#Wikie');
+                    const profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
+                    const userProfile = profileBuilder.read(bb)
                     console.log(userProfile)
                     profiles.push(userProfile)
 
@@ -149,8 +104,8 @@ export async function getFriendMessages(userSession: UserSession, userId: string
         const dataset = await getSolidDataset(datasetUrl,)
         const things = await getThingAll(dataset);
 
-        let messageBuilder = new MessageLDO(messageDefinition)
-        let messages: Message[] = [];
+        const messageBuilder = new MessageLDO(messageDefinition)
+        const messages: Message[] = [];
 
         things.forEach(thing => {
             const types = getUrlAll(thing, RDF.type);
@@ -176,8 +131,8 @@ export async function getFriendMessages(userSession: UserSession, userId: string
                 )
                 const things = await getThingAll(dataset);
 
-                let messageBuilder = new MessageLDO(messageDefinition)
-                let messages: Message[] = [];
+                const messageBuilder = new MessageLDO(messageDefinition)
+                const messages: Message[] = [];
 
                 things.forEach(thing => {
                     const types = getUrlAll(thing, RDF.type);
@@ -192,7 +147,7 @@ export async function getFriendMessages(userSession: UserSession, userId: string
                 return messages;
 
             } catch (e) {
-                let messages: Message[] = [];
+                const messages: Message[] = [];
                 return messages;
             }
         }

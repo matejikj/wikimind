@@ -1,9 +1,8 @@
 import { LDOIRI } from "../LDOIRI";
-import { Node } from "../types/Node";
 import { Profile } from "../types/Profile";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
-import { ThingLocal, buildThing, getStringNoLocale, getInteger, createThing } from "@inrupt/solid-client";
+import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
 
 export class ProfileLDO extends BaseLDO<Profile> implements CRUDLDO<Profile> {
     read(thing: any): Profile {
@@ -13,7 +12,7 @@ export class ProfileLDO extends BaseLDO<Profile> implements CRUDLDO<Profile> {
             webId: getStringNoLocale(thing, (this.rdf.properties.webId as LDOIRI).vocabulary)!,
             profileImage: getStringNoLocale(thing, (this.rdf.properties.profileImage as LDOIRI).vocabulary)!
         }
-    };
+    }
 
     create(object: Profile) {
         const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))

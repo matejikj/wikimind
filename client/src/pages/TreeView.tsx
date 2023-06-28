@@ -1,14 +1,6 @@
-import { useContext, useEffect, useState } from "react";
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import axios from "axios";
+import { useContext, useState } from "react";
 import { SessionContext } from "../sessionContext";
-import { getMindMapList } from "../service/containerService";
-import { ListItem } from "../models/ListItem";
-import { MdAdd, MdDeleteForever, MdDriveFileRenameOutline, MdPlusOne, MdSlideshow } from "react-icons/md";
-import { Accordion, Row } from "react-bootstrap";
-import { addGraphToClass } from "../service/classService";
+import { Accordion } from "react-bootstrap";
 import { TreeNode } from "./creatorUtils";
 import './TreeView.css'
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {

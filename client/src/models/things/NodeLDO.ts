@@ -1,9 +1,8 @@
-import { Integer } from "rdf-namespaces/dist/schema";
 import { LDOIRI } from "../LDOIRI";
 import { Node } from "../types/Node";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
-import { ThingLocal, getBoolean, buildThing, getStringNoLocale, getInteger, createThing } from "@inrupt/solid-client";
+import { ThingLocal, buildThing, createThing, getBoolean, getInteger, getStringNoLocale } from "@inrupt/solid-client";
 
 export class NodeLDO extends BaseLDO<Node> implements CRUDLDO<Node> {
     read(thing: any): Node {
@@ -16,7 +15,7 @@ export class NodeLDO extends BaseLDO<Node> implements CRUDLDO<Node> {
             description: getStringNoLocale(thing, (this.rdf.properties.description as LDOIRI).vocabulary)!,
             visible: getBoolean(thing, (this.rdf.properties.visible as LDOIRI).vocabulary)!
         }
-    };
+    }
 
     create(object: Node) {
         const newThing: ThingLocal = buildThing(createThing({ name: object.id }))

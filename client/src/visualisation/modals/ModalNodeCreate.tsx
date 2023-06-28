@@ -10,7 +10,6 @@ import { generate_uuidv4 } from "../../service/utils";
 import { CanvasState } from '../models/CanvasState'
 import Container from 'react-bootstrap/Container';
 import { Accordion, Col, Row } from "react-bootstrap";
-import ModalHeader from 'react-bootstrap/ModalHeader'
 import './ModalNodeCreate.css';
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {

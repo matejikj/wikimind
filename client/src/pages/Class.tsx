@@ -1,19 +1,14 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Sidenav, { SideNavType } from "../components/Sidenav";
-import Canvas from "../visualisation/Canvas";
-import { Node } from "../models/types/Node";
 import { ClassDataset } from "../models/types/ClassDataset";
 import Button from 'react-bootstrap/Button';
 import { SessionContext } from "../sessionContext";
-import { MindMapDataset } from "../models/types/MindMapDataset";
-import { useNavigate, useLocation } from "react-router-dom";
-import { getMindMap } from "../service/mindMapService";
-import { getDefaultSession, fetch, login } from "@inrupt/solid-client-authn-browser";
+import { useLocation, useNavigate } from "react-router-dom";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
   WebsocketNotification,
 } from "@inrupt/solid-client-notifications";
 import { generate_uuidv4 } from "../service/utils";
-import { Link } from "../models/types/Link";
 import { getClassDataset } from "../service/classService";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import './Class.css';

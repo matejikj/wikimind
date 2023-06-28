@@ -1,5 +1,4 @@
 import { LDO } from "../LDO";
-import { CRUDLDO } from "./CRUDLDO";
 
 export class BaseLDO<T> {
     

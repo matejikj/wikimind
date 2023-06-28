@@ -3,16 +3,14 @@ import React, { useContext, useEffect, useState } from "react";
 import Sidenav, { SideNavType } from "../components/Sidenav";
 import { getMindMapList } from "../service/containerService";
 import Button from 'react-bootstrap/Button';
-import { generate_uuidv4 } from "../service/utils";
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
 import './Dashboard.css';
 import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
-import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
+import { Container, Row, Stack } from 'react-bootstrap';
 import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
-import { MindMap } from '../models/types/MindMap';
 import { ListItem } from '../models/ListItem';
 
 const Dashboard: React.FC = () => {

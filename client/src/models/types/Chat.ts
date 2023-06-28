@@ -1,5 +1,3 @@
-import { Message } from "./Message";
-
 export type Chat = {
     id: string;
     owner: string;

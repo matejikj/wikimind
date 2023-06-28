@@ -1,15 +1,9 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { TiThMenu, TiThMenuOutline, TiTag, TiVendorAndroid, TiLockOpenOutline } from 'react-icons/ti';
-import styles from "./Sidenav.module.css"
+import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
-import { handleIncomingRedirect, onSessionRestore, logout, getDefaultSession } from "@inrupt/solid-client-authn-browser";
 import { SessionContext } from "../sessionContext";
-import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import './Sidenav.css';
 

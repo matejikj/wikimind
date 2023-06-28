@@ -2,12 +2,9 @@ import { useContext, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import axios from "axios";
-import { Node } from '../../models/types/Node'
 import { Connection } from '../../models/types/Connection'
 import { SessionContext } from "../../sessionContext";
-import { addNewLink, createNode } from "../../service/mindMapService";
-import { generate_uuidv4 } from "../../service/utils";
+import { addNewLink } from "../../service/mindMapService";
 import { CanvasState } from '../models/CanvasState'
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {

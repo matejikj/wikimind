@@ -1,23 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from "react";
 import Sidenav, { SideNavType } from "../components/Sidenav";
-import { getMindMapList } from "../service/containerService";
 import Button from 'react-bootstrap/Button';
-import { generate_uuidv4 } from "../service/utils";
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
 import './Login.css';
-import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
 import { allowAccess, createNewClass, denyRequest, getClassesList, getRequests, requestClass } from '../service/classService';
 import { Class } from '../models/types/Class';
-import { Link } from '../models/types/Link';
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
-import { AccessRequest } from '@inrupt/solid-client-access-grants';
 import { Request } from '../models/types/Request';
-import { WebsocketNotification } from '@inrupt/solid-client-notifications';
-import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
+import { MdDeleteForever, MdSlideshow } from 'react-icons/md';
 import { RxCheck, RxCross2 } from 'react-icons/rx';
 
 const authOptions = {
@@ -113,7 +107,7 @@ const Classes: React.FC = () => {
 
   const allowRequest = (e: any) => {
     console.log(e.target.name)
-    let aa = requests.find((item) => { return item.requestor === e.target.name })
+    const aa = requests.find((item) => { return item.requestor === e.target.name })
     if (aa !== undefined) {
       allowAccess(sessionContext.sessionInfo, aa)
     }
@@ -127,7 +121,7 @@ const Classes: React.FC = () => {
 
   const denyAccess = (e: any) => {
     console.log(e.target.name)
-    let aa = requests.find((item) => { return item.requestor === e.target.name })
+    const aa = requests.find((item) => { return item.requestor === e.target.name })
     if (aa !== undefined) {
       denyRequest(sessionContext.sessionInfo, aa)
     }

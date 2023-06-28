@@ -1,9 +1,8 @@
 import { LDOIRI } from "../LDOIRI";
 import { Connection } from "../types/Connection";
-import { Node } from "../types/Node";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
-import { ThingLocal, buildThing, getBoolean, createThing, getStringNoLocale } from "@inrupt/solid-client";
+import { ThingLocal, buildThing, createThing, getBoolean, getStringNoLocale } from "@inrupt/solid-client";
 
 export class ConnectionLDO extends BaseLDO<Connection> implements CRUDLDO<Connection> {
     read(thing: any): Connection {
@@ -14,7 +13,7 @@ export class ConnectionLDO extends BaseLDO<Connection> implements CRUDLDO<Connec
             title: getStringNoLocale(thing, (this.rdf.properties.title as LDOIRI).vocabulary)!,
             testable: getBoolean(thing, (this.rdf.properties.testable as LDOIRI).vocabulary)!,
         }
-    };
+    }
 
     create(object: Connection) {
         const newThing: ThingLocal = buildThing(createThing({ name: object.id }))

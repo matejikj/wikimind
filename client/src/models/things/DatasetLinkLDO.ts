@@ -1,12 +1,9 @@
 import { LDOIRI } from "../LDOIRI";
-import { Class } from "../types/Class";
 import { Link } from "../types/Link";
 import { LinkType } from "../types/LinkType";
-import { Node } from "../types/Node";
-import { Profile } from "../types/Profile";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
-import { ThingLocal, buildThing, getStringNoLocale, getInteger, createThing } from "@inrupt/solid-client";
+import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
 
 export class DatasetLinkLDO extends BaseLDO<Link> implements CRUDLDO<Link> {
     read(thing: any): Link {
@@ -16,7 +13,7 @@ export class DatasetLinkLDO extends BaseLDO<Link> implements CRUDLDO<Link> {
             id: getStringNoLocale(thing, (this.rdf.properties.id as LDOIRI).vocabulary)!,
             linkType: str,
         }
-    };
+    }
 
     create(object: Link) {
         const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
