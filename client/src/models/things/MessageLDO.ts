@@ -4,7 +4,15 @@ import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
 import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
 
+/**
+ * Represents a Linked Data Object (LDO) for a message.
+ */
 export class MessageLDO extends BaseLDO<Message> implements CRUDLDO<Message> {
+    /**
+     * Reads the provided Linked Data Object (LDO) and returns a Message object.
+     * @param thing The Linked Data Object (LDO) to read.
+     * @returns The Message object.
+     */
     read(thing: any): Message {
         return {
             id: getStringNoLocale(thing, (this.rdf.properties.id))!,
@@ -12,22 +20,22 @@ export class MessageLDO extends BaseLDO<Message> implements CRUDLDO<Message> {
             to: getStringNoLocale(thing, (this.rdf.properties.to))!,
             text: getStringNoLocale(thing, (this.rdf.properties.text))!,
             date: getStringNoLocale(thing, (this.rdf.properties.date))!,
-        }
+        };
     }
 
+    /**
+     * Creates a new Linked Data Object (LDO) from the provided Message object.
+     * @param object The Message object to create.
+     * @returns The newly created ThingLocal instance representing the Message object.
+     */
     create(object: Message) {
         const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))
             .addUrl(rdf_type, this.rdf.identity)
-            .addStringNoLocale((this.rdf.properties.id),
-                object.id)
-            .addStringNoLocale((this.rdf.properties.date),
-                object.date)
-            .addStringNoLocale((this.rdf.properties.text),
-                object.text)
-            .addStringNoLocale((this.rdf.properties.from),
-                object.from)
-            .addStringNoLocale((this.rdf.properties.to),
-                object.to)
+            .addStringNoLocale((this.rdf.properties.id), object.id)
+            .addStringNoLocale((this.rdf.properties.date), object.date)
+            .addStringNoLocale((this.rdf.properties.text), object.text)
+            .addStringNoLocale((this.rdf.properties.from), object.from)
+            .addStringNoLocale((this.rdf.properties.to), object.to)
             .build();
         return newThing;
     }

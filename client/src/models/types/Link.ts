@@ -1,7 +1,21 @@
 import { LinkType } from "./LinkType";
 
+/**
+ * Represents a hyperlink.
+ */
 export type Link = {
-    id: string;
-    url: string;
-    linkType: LinkType;
+  /**
+   * The unique identifier of the link.
+   */
+  id: string;
+  
+  /**
+   * The URL associated with the link.
+   */
+  url: string;
+  
+  /**
+   * The type of the link.
+   */
+  linkType: LinkType;
 }

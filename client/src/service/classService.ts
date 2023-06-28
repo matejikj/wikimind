@@ -30,7 +30,7 @@ import { Class, Class as TeachClass } from "../models/types/Class";
 import { ClassLDO } from "../models/things/ClassLDO";
 import { getProfile } from "./profileService";
 import { Link } from "../models/types/Link";
-import { DatasetLinkLDO } from "../models/things/DatasetLinkLDO";
+import { LinkLDO } from "../models/things/LinkLDO";
 import { LinkType } from "../models/types/LinkType";
 import { UserSession } from "../models/types/UserSession";
 import { ClassDataset } from "../models/types/ClassDataset";
@@ -42,9 +42,9 @@ import { Request } from "../models/types/Request";
 import { getMindMap } from "./mindMapService";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 import { initializeAcl } from "./accessService";
-import { ClassRequestLDO } from "../models/things/ClassRequestLDO";
+import { RequestLDO } from "../models/things/RequestLDO";
 import { Grant } from "../models/types/Grant";
-import { ClassRequestGrantLDO } from "../models/things/ClassRequestGrantLDO";
+import { GrantLDO } from "../models/things/GrantLDO";
 import { ChatLDO } from "../models/things/ChatLDO";
 
 // https://id.inrupt.com/matejikj?classId=d91f706d-ca0c-41aa-844b-cf47d1ef4c40
@@ -65,7 +65,7 @@ export async function createNewClass(name: string, userSession: UserSession) {
         url: userSession.podUrl + "Wikie/classes/" + blankClass.id + ".ttl",
         linkType: LinkType.CLASS_LINK
     }
-    const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
+    const classLDO = new LinkLDO(datasetLinkDefinition).create(datasetLink)
     let myDataset = await getSolidDataset(
         podUrl,
         { fetch: fetch }
@@ -112,7 +112,7 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
     const examBuilder = new ExamLDO(examDefinition)
     const profiles: Profile[] = []
     const profileBuilder = new ProfileLDO(profileDefinition);
-    const datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
+    const datasetLinkBuilder = new LinkLDO(datasetLinkDefinition)
 
     await Promise.all(things.map(async (thing) => {
         const types = getUrlAll(thing, RDF.type);
@@ -179,7 +179,7 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
             url: classRequest.requestor,
             linkType: LinkType.PROFILE_LINK
         }
-        const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
+        const classLDO = new LinkLDO(datasetLinkDefinition).create(datasetLink)
         const myDataset = await getSolidDataset(
             classRequest.class,
             { fetch: fetch }
@@ -202,7 +202,7 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
 
         // ODESLAT ZAKOVI POTVRZENI
 
-        const newRequst = new ClassRequestGrantLDO(classRequestGrantDefinition).create({
+        const newRequst = new GrantLDO(classRequestGrantDefinition).create({
             id: generate_uuidv4(),
             class: classRequest.class
         })
@@ -257,7 +257,7 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
 
         // VYTVORIT CHAT LINK
 
-        const newChatLink = new DatasetLinkLDO(datasetLinkDefinition).create({
+        const newChatLink = new LinkLDO(datasetLinkDefinition).create({
             id: generate_uuidv4(),
             linkType: LinkType.CHAT_LINK,
             url: messageDatasetUrl
@@ -310,8 +310,8 @@ export async function getRequests(userSession: UserSession) {
 
     const things = await getThingAll(myDataset);
 
-    const classRequestLDO = new ClassRequestLDO(classRequestDefinition)
-    const classRequestGrantLDO = new ClassRequestGrantLDO(classRequestGrantDefinition)
+    const classRequestLDO = new RequestLDO(classRequestDefinition)
+    const classRequestGrantLDO = new GrantLDO(classRequestGrantDefinition)
     const classRequests: Request[] = []
     const classRequestGrants: Grant[] = []
 
@@ -339,7 +339,7 @@ export async function getRequests(userSession: UserSession) {
             url: item.class,
             linkType: LinkType.CLASS_LINK
         }
-        const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
+        const classLDO = new LinkLDO(datasetLinkDefinition).create(datasetLink)
         const myDataset = await getSolidDataset(
             userSession.podUrl + "Wikie/classes/classes.ttl",
             { fetch: fetch }
@@ -366,7 +366,7 @@ export async function requestClass(userSession: UserSession, classUri: string) {
         const dataUrl = podUrls[0] + "Wikie/classes/" + classId + ".ttl"
         console.log(dataUrl)
 
-        const newRequst = new ClassRequestLDO(classRequestDefinition).create({
+        const newRequst = new RequestLDO(classRequestDefinition).create({
             id: generate_uuidv4(),
             class: dataUrl,
             requestor: userSession.webId
@@ -408,7 +408,7 @@ export async function getClassesList(userSession: UserSession) {
         { fetch: fetch }
     );
     const things = await getThingAll(myDataset);
-    const datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
+    const datasetLinkBuilder = new LinkLDO(datasetLinkDefinition)
     await Promise.all(things.map(async (thing) => {
 
         // things.forEach(async thing => {
@@ -446,7 +446,7 @@ export async function addGraphToClass(userSession: UserSession, graphUrl: string
         url: graphUrl,
         linkType: LinkType.GRAPH_LINK
     }
-    const classLDO = new DatasetLinkLDO(datasetLinkDefinition).create(datasetLink)
+    const classLDO = new LinkLDO(datasetLinkDefinition).create(datasetLink)
     const myDataset = await getSolidDataset(
         classUrl,
         { fetch: fetch }

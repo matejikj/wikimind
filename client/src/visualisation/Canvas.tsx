@@ -22,6 +22,7 @@ import { TransformComponent } from "react-zoom-pan-pinch";
 import { updateNode } from "../service/mindMapService";
 import { getSingleReccomends } from "../service/dbpediaService";
 
+// Initial example node
 const nodeEx: Node = {
   id: '',
   cx: 0,uri: '',
@@ -30,9 +31,10 @@ const nodeEx: Node = {
   description: '',
   visible: false
 }
+
+// Constants for different methods
 const DELETE_LINK_METHOD = "delete";
 const LINK_RENAME_METHOD = "rename";
-
 const DELETE_NODE_METHOD = "delete";
 const DETAIL_METHOD = "detail";
 const RECOMMENDS_METHOD = "recommendations";
@@ -40,10 +42,14 @@ const VISIBILITY = "vidibility";
 const CONNECTION_METHOD = "add connection";
 const CONNECTION_SELECTION_METHOD = "add connection";
 
+/**
+ * Canvas component for rendering the mind map canvas.
+ */
 const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, height: number, setPosition: Function }> = ({ url, data, width, height, setPosition }) => {
   const d3Container = useRef(null);
-  const theme = useContext(SessionContext)
+  const theme = useContext(SessionContext);
 
+  // Modal state hooks
   const [modalNodeCreate, setModalNodeCreate] = useState(false);
   const [modalNodeDetail, setModalNodeDetail] = useState(false);
   const [modalNodeDelete, setModalNodeDelete] = useState(false);
@@ -52,73 +58,92 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
   const [modalLinkDelete, setModalLinkDelete] = useState(false);
   const [title, setTitle] = useState('ds');
 
+  // Canvas state hooks
   const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
   const [clickedNode, setClickedNode] = useState<Node>();
   const [clickedLink, setClickedLink] = useState<Connection>();
   const [disabledCanvas, setDisabledCanvas] = useState(false);
   const [recomendsResults, setRecomendsResults] = useState<any[]>([]);
 
+  /**
+   * Handles the delete node method.
+   * @param node - The node to delete.
+   */
   const deleteNodeMethod = (node: Node) => {
-    const newLinked = JSON.parse(JSON.stringify(node))
-    setClickedNode(newLinked)
-    setModalNodeDetail(true)
+    const newLinked = JSON.parse(JSON.stringify(node));
+    setClickedNode(newLinked);
+    setModalNodeDetail(true);
   }
 
+  /**
+   * Retrieves recommendations for the clicked node.
+   */
   const recommend = async () => {
-    const rrr = ''
     // const name = node.title.replaceAll(' ', '_')
-    const results = await getSingleReccomends(clickedNode!.uri)
+    const results = await getSingleReccomends(clickedNode!.uri);
 
-    setRecomendsResults(results!)
-    console.log(results)
-    console.log(recomendsResults)
-    // axios.get("http://localhost:5000/recommends?entity=" + name).then((res) => {
-    //   const ress = res.data.map((item: string) => {
-    //     rrr = rrr + item.split("http://dbpedia.org/resource/")[1] + '\n'
-    //   })
-    //   setTitle(ress)
-    //   console.log(ress)
-    //   console.log(title)
-    //   alert(rrr)
+    setRecomendsResults(results!);
+    console.log(results);
+    console.log(recomendsResults);
 
-    // })
-
-    setModalNodeRecommends(true)
+    setModalNodeRecommends(true);
   }
   
+  /**
+   * Sets the node visibility for testing purposes.
+   * @param node - The node to update visibility.
+   */
   const setForTest = (node: Node) => {
     if (node !== undefined) {
-      node.visible = false
-      updateNode(data.id, theme.sessionInfo.webId, node)
-      console.log(url, theme.sessionInfo.webId, node)
+      node.visible = false;
+      updateNode(data.id, theme.sessionInfo.webId, node);
+      console.log(url, theme.sessionInfo.webId, node);
     }
   }
 
+  /**
+   * Adds a connection for the clicked node.
+   * @param node - The node to add a connection to.
+   */
   const addConnection = (node: Node) => {
-    setCanvasState(CanvasState.ADD_CONNECTION)
+    setCanvasState(CanvasState.ADD_CONNECTION);
   }
 
+  /**
+   * Deletes the clicked node.
+   * @param node - The node to delete.
+   */
   const deleteNode = (node: Node) => {
-    setModalNodeDelete(true)
+    setModalNodeDelete(true);
   }
 
+  /**
+   * Deletes the connection.
+   */
   const deleteConnection = () => {
-    setModalLinkDelete(true)
+    setModalLinkDelete(true);
   }
 
+  /**
+   * Renames the connection.
+   */
   const renameConnection = () => {
-    setModalLinkRename(true)
+    setModalLinkRename(true);
   }
+
+  /**
+   * Sets the connection for testing purposes.
+   */
   const setForTestConnection = () => {
-    setModalLinkRename(true)
+    setModalLinkRename(true);
   }
 
-
+  // Context menu hooks
   const [circleMenu, setCircleMenu] = useState<ContextMenuType>({
     posX: 0,
     posY: 0,
     visible: "hidden"
-  })
+  });
 
   const [linksMenu, setLinksMenu] = useState<ContextMenuType>({
     posX: 0,
@@ -126,15 +151,18 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
     visible: "hidden"
   });
 
+  /**
+   * Hides the context menus.
+   */
   const contextMenuFalse = () => {
     setCircleMenu({
       ...circleMenu,
       visible: "hidden"
-    })
+    });
     setLinksMenu({
       ...linksMenu,
       visible: "hidden"
-    })
+    });
   }
 
   return (
@@ -184,7 +212,6 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
         setModal={setModalLinkDelete}
       />
       <TransformComponent
-
         wrapperStyle={{
           maxWidth: "100%",
           maxHeight: "calc(100vh - 70px)",
@@ -207,7 +234,8 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
               markerUnits="strokeWidth"
               markerWidth="4"
               markerHeight="9"
-              orient="auto">
+              orient="auto"
+            >
               <path d="M 0 0 L 10 5 L 0 10 z" fill="#876" />
             </marker>
           </defs>
@@ -259,8 +287,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
         </svg>
       </TransformComponent>
     </TransformWrapper>
-
-  )
+  );
 };
 
 export default Canvas;

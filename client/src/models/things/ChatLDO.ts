@@ -4,34 +4,42 @@ import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
 import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
 
+/**
+ * Represents a Chat Linked Data Object (LDO) extending the BaseLDO class.
+ * Provides CRUD operations for Chat objects.
+ */
 export class ChatLDO extends BaseLDO<Chat> implements CRUDLDO<Chat> {
-    read(thing: any): Chat {
-        return {
-            id: getStringNoLocale(thing, (this.rdf.properties.id))!,
-            owner: getStringNoLocale(thing, (this.rdf.properties.owner))!,
-            storage: getStringNoLocale(thing, (this.rdf.properties.storage))!,
-            modified: getStringNoLocale(thing, (this.rdf.properties.modified))!,
-            lastMessage: getStringNoLocale(thing, (this.rdf.properties.lastMessage))!,
-            guest: getStringNoLocale(thing, (this.rdf.properties.guest))!,
-        }
-    }
+  /**
+   * Reads the provided Linked Data Object (LDO) and returns a Chat object.
+   * @param thing The Linked Data Object (LDO) to read.
+   * @returns The Chat object.
+   */
+  read(thing: any): Chat {
+    return {
+      id: getStringNoLocale(thing, this.rdf.properties.id)!,
+      owner: getStringNoLocale(thing, this.rdf.properties.owner)!,
+      storage: getStringNoLocale(thing, this.rdf.properties.storage)!,
+      modified: getStringNoLocale(thing, this.rdf.properties.modified)!,
+      lastMessage: getStringNoLocale(thing, this.rdf.properties.lastMessage)!,
+      guest: getStringNoLocale(thing, this.rdf.properties.guest)!,
+    };
+  }
 
-    create(object: Chat) {
-        const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))
-            .addUrl(rdf_type, this.rdf.identity)
-            .addStringNoLocale((this.rdf.properties.id),
-                object.id)
-            .addStringNoLocale((this.rdf.properties.owner),
-                object.owner)
-            .addStringNoLocale((this.rdf.properties.guest),
-                object.guest)
-            .addStringNoLocale((this.rdf.properties.storage),
-                object.storage)
-            .addStringNoLocale((this.rdf.properties.modified),
-                object.modified)
-            .addStringNoLocale((this.rdf.properties.lastMessage),
-                object.lastMessage)
-            .build();
-        return newThing;
-    }
+  /**
+   * Creates a new Linked Data Object (LDO) from the provided Chat object.
+   * @param object The Chat object to create.
+   * @returns The newly created ThingLocal instance representing the Chat object.
+   */
+  create(object: Chat): ThingLocal {
+    const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))
+      .addUrl(rdf_type, this.rdf.identity)
+      .addStringNoLocale(this.rdf.properties.id, object.id)
+      .addStringNoLocale(this.rdf.properties.owner, object.owner)
+      .addStringNoLocale(this.rdf.properties.guest, object.guest)
+      .addStringNoLocale(this.rdf.properties.storage, object.storage)
+      .addStringNoLocale(this.rdf.properties.modified, object.modified)
+      .addStringNoLocale(this.rdf.properties.lastMessage, object.lastMessage)
+      .build();
+    return newThing;
+  }
 }

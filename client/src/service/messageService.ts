@@ -16,7 +16,7 @@ import mindMapDefinition from "../definitions/mindMap.json"
 import datasetLinkDefinition from "../definitions/link.json"
 import { LDO } from "../models/LDO";
 import { getPodUrl } from "./containerService";
-import { DatasetLinkLDO } from "../models/things/DatasetLinkLDO";
+import { LinkLDO } from "../models/things/LinkLDO";
 import { LinkType } from "../models/types/LinkType";
 import { UserSession } from "../models/types/UserSession";
 import { Profile } from "../models/types/Profile";
@@ -28,7 +28,7 @@ import chatDefinition from "../definitions/chat.json"
 
 export async function getProfiles(userSession: UserSession) {
 
-    const datasetLinkBuilder = new DatasetLinkLDO(datasetLinkDefinition)
+    const datasetLinkBuilder = new LinkLDO(datasetLinkDefinition)
     const profiles: Profile[] = []
 
     const msgDataset = await getSolidDataset(
