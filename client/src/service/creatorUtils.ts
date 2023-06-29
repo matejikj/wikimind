@@ -92,43 +92,46 @@ export async function addLink(addedItem: ResultItem, connectionNode: ResultItem,
  * @param name - Name of the mind map.
  * @param sessionContext - User session context.
  */
-export function bfs(root: TreeNode, name: string, sessionContext: UserSession): void {
+export function bfs(roots: TreeNode[]) {
   const nodes: Node[] = [];
   const links: Connection[] = [];
 
   const visNodes: any[] = [];
   const visLinks: any[] = [];
 
-  const idQueue: TreeNode[] = [root];
+  roots.forEach((root) => {
+    const idQueue: TreeNode[] = [root];
 
-  while (idQueue.length > 0) {
-    const current = idQueue.shift();
-    if (current) {
-      if (current.id === undefined) {
-        current.id = generate_uuidv4();
-      }
-      visNodes.push(current);
-      // Enqueue the children of the current node
-      current.children.forEach((child) => {
-        if (child.id === undefined) {
-          child.id = generate_uuidv4();
+    while (idQueue.length > 0) {
+      const current = idQueue.shift();
+      if (current) {
+        if (current.id === undefined) {
+          current.id = generate_uuidv4();
         }
-        visLinks.push({
-          source: current.id,
-          target: child.id
+        visNodes.push(current);
+        // Enqueue the children of the current node
+        current.children.forEach((child) => {
+          if (child.id === undefined) {
+            child.id = generate_uuidv4();
+          }
+          visLinks.push({
+            source: current.id,
+            target: child.id
+          });
+          idQueue.push(child);
         });
-        idQueue.push(child);
-      });
+      }
     }
-  }
+  })
+
 
   const simulation = d3
     .forceSimulation(visNodes)
     // @ts-ignore
     .force("link", d3.forceLink(visLinks).id((d: any) => d.id))
     .force("center", d3.forceCenter(1000 / 2, 1000 / 2))
-    .force("collide", d3.forceCollide())
-    .force("charge", d3.forceManyBody().strength(-1000))
+    .force("collide", d3.forceCollide(10))
+    .force("charge", d3.forceManyBody().strength(-600))
     .force("x", d3.forceX())
     .force("y", d3.forceY())
     .stop()
@@ -155,8 +158,11 @@ export function bfs(root: TreeNode, name: string, sessionContext: UserSession): 
       testable: true
     });
   });
+  return {
+    nodes: nodes,
+    links: links
+  }
+  // createPreparedMindMap(nodes, links, name, sessionContext);
 
-  createPreparedMindMap(nodes, links, name, sessionContext);
-
-  console.log("fadss");
+  // console.log("fadss");
 }

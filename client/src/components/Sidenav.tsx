@@ -33,7 +33,7 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
   }
 
   return (
-    <Navbar key={"false"} bg="light" expand={false}>
+    <Navbar key={"false"} bg="light" fixed="top" expand={false}>
       <Container fluid>
         <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${false}`} />
         <img className="logo" src={'../logo.png'}/>

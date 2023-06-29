@@ -49,8 +49,8 @@ const App: React.FC = () => {
       setSessionInfo
     }}>
       <BrowserRouter>
-      {sessionInfo.isLogged ? (
-        // {true ? (
+      {/* {sessionInfo.isLogged ? ( */}
+        {true ? (
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/visualisation" element={<Visualisation />} />

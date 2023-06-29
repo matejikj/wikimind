@@ -13,6 +13,37 @@ body {
 
 }
 
+.App {
+    padding-top: 61px;
+}
+
+main {
+    height: calc(100vh - 99px);
+}
+
+/* CREATOR */
+
+.creator-top {
+    height: 50%;
+    overflow: auto;
+}
+
+.creator-bottom {
+    height: 50%;
+    overflow: auto;
+}
+
+#creator-btn-add {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+#creator-canvas > g > text {
+    font-size: 7px;
+}
+
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
         monospace;
@@ -264,10 +295,10 @@ tr:nth-child(even) {
 
 /* MESSAGE */
 
-.message-box {
+/* .message-box {
     overflow: auto;
     height: 74vh;
-}
+} */
 
 .message-bubble {
     margin-bottom: 10px;
@@ -288,6 +319,6 @@ tr:nth-child(even) {
 }
 
 .logo {
-    max-height: 45px;
+    max-height: 40px;
 
 }
