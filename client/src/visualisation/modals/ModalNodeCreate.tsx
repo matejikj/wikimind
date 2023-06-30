@@ -2,29 +2,25 @@ import { useContext, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import axios from "axios";
 import { Node } from '../../models/types/Node'
 import { SessionContext } from "../../sessionContext";
 import { createNode } from "../../service/mindMapService";
 import { generate_uuidv4 } from "../../service/utils";
-import { CanvasState } from '../models/CanvasState'
 import Container from 'react-bootstrap/Container';
-import { Accordion, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import '../../styles/style.css';
+import { MindMapDataset } from "../../models/types/MindMapDataset";
 
-// const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalNodeCreate: React.FC<{
-    datasetName: string,
+    dataset: MindMapDataset | undefined,
     showModal: boolean,
     setModal: Function
-}> = ({ datasetName, showModal, setModal }) => {
+}> = ({ dataset, showModal, setModal }) => {
     const sessionContext = useContext(SessionContext)
     const [formInputs, setFormInputs] = useState({
         title: '',
         description: '',
-        keyword: ''
     });
-    const [results, setResults] = useState<{ title: string; comment: any; }[]>([]);
 
     function handleChange(event: any) {
         const key = event.target.name;
@@ -32,40 +28,7 @@ const ModalNodeCreate: React.FC<{
         setFormInputs({ ...formInputs, [key]: value })
     }
 
-    const searchTerm = 'musk';
-    const language = 'en';
-
-
-    async function searchKeyword(event: any) {
-        const url = "https://lookup.dbpedia.org/api/search?label=" + formInputs.keyword
-        axios.get("https://lookup.dbpedia.org/api/search", {
-            params: {
-                format: 'json',
-                label: formInputs.keyword,
-                languages: language
-            },
-            headers: {
-                Accept: 'application/json'
-            }
-        })
-            .then(response => {
-                // Handle the response data
-                let a = response.data.docs.slice(0, 30)
-                a = a.map((item: any) => {
-                    return {
-                        title: item.label === undefined ? '' : item.label[0].replace('<B>', '').replace('</B>', ''),
-                        comment: item.comment === undefined ? '' : item.comment[0]
-                    }
-                })
-                setResults(a)
-            })
-            .catch(error => {
-                // Handle the error
-                console.error(error);
-            });
-    }
-
-    function handleSave(event: any) {
+    async function handleSave(event: any) {
         const newNode: Node = {
             id: generate_uuidv4(),
             uri: '',
@@ -75,7 +38,7 @@ const ModalNodeCreate: React.FC<{
             cy: 100,
             visible: true
         }
-        createNode(datasetName, sessionContext.sessionInfo, newNode)
+        createNode(dataset?.id, sessionContext.sessionInfo, newNode)
     }
 
     return (
@@ -124,7 +87,6 @@ const ModalNodeCreate: React.FC<{
                 </Button>
             </Modal.Footer>
         </Modal>
-
     );
 };
 

@@ -7,12 +7,13 @@ import { Connection } from '../../models/types/Connection';
 import { SessionContext } from "../../sessionContext";
 import { createNode } from "../../service/mindMapService";
 import { generate_uuidv4 } from "../../service/utils";
+import { MindMapDataset } from "../../models/types/MindMapDataset";
 
 /**
  * Modal component for deleting a link.
  */
 const ModalLinkDelete: React.FC<{
-  datasetName: string,
+  datasetName: MindMapDataset | undefined,
   clickedLink: Connection | undefined,
   showModal: boolean,
   setModal: Function

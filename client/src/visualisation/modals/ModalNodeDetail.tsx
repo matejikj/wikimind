@@ -4,9 +4,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Node } from '../../models/types/Node'
 import { SessionContext } from "../../sessionContext";
+import { MindMapDataset } from "../../models/types/MindMapDataset";
 
 const ModalNodeDetail: React.FC<{
-    datasetName: string,
+    datasetName: MindMapDataset | undefined,
     clickedNode: Node | undefined,
     showModal: boolean,
     setModal: Function
@@ -22,17 +23,6 @@ const ModalNodeDetail: React.FC<{
         const value = event.target.value;
         setFormInputs({ ...formInputs, [key]: value })
     }
-    // function handleSave(event: any) {
-    //     const newNode: Node = {
-    //         id: generate_uuidv4(),
-    //         title: formInputs.title,
-    //         description: formInputs.description,
-    //         cx: 100,
-    //         cy: 100,
-    //         visible: true
-    //     }
-    //     createNode(datasetName, theme.sessionInfo.webId, newNode)
-    // }
 
     const handleClose = () => setModal(false);
 

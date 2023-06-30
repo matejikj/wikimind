@@ -84,20 +84,15 @@ export async function createNewMindMap(name: string, userSession: UserSession) {
     courseSolidDataset,
     { fetch: fetch }
   );
-
   if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
     initializeAcl(newName)
   }
-
   return newName
-
 }
 
-export async function updateNode(name: string, sessionId: string, node: Node) {
-
-  const podUrls = await getPodUrl(sessionId)
-  if (podUrls !== null) {
-    const podUrl = podUrls[0] + "Wikie/mindMaps/" + name + ".ttl"
+export async function updateNode(name: string | undefined, userSession: UserSession, node: Node) {
+  if (name) {
+    const podUrl = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + name + TTLFILETYPE
     let courseSolidDataset = await getSolidDataset(
       podUrl,
       { fetch: fetch }
@@ -115,11 +110,11 @@ export async function updateNode(name: string, sessionId: string, node: Node) {
 }
 
 
-export async function createNode(name: string, userSession: UserSession, node: Node) {
-  // const datasetPath = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + name + TTLFILETYPE
-  const datasetPath = name
-  let mindMapDataset = await getSolidDataset(
-      datasetPath,
+export async function createNode(name: string | undefined, userSession: UserSession, node: Node) {
+  if (name) {
+    const mindMapPath = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + name + TTLFILETYPE
+    let mindMapDataset = await getSolidDataset(
+      mindMapPath,
       { fetch: fetch }
     );
 
@@ -127,23 +122,22 @@ export async function createNode(name: string, userSession: UserSession, node: N
     mindMapDataset = setThing(mindMapDataset, nodeBuilder.create(node));
 
     const savedSolidDataset = await saveSolidDatasetAt(
-      datasetPath,
+      mindMapPath,
       mindMapDataset,
       { fetch: fetch }
     );
-
+  }
 }
 
 
-export async function addNewLink(name: string, sessionId: any, link: Connection) {
-  const podUrls = await getPodUrl(sessionId)
+export async function addNewLink(name: string | undefined, userSession: UserSession, link: Connection) {
+  const podUrls = await getPodUrl(userSession.webId)
   if (podUrls !== null) {
     const podUrl = podUrls[0] + "Wikie/mindMaps/" + name + ".ttl"
     let courseSolidDataset = await getSolidDataset(
       podUrl,
       { fetch: fetch }
     );
-
 
     const linkBuilder = new ConnectionLDO((linkDefinition as LDO<Connection>))
     courseSolidDataset = setThing(courseSolidDataset, linkBuilder.create(link));
@@ -155,7 +149,4 @@ export async function addNewLink(name: string, sessionId: any, link: Connection)
     );
 
   }
-  console.log(name)
-  console.log(sessionId)
-  console.log(link)
 }

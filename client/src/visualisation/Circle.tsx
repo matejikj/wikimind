@@ -6,11 +6,12 @@ import { ContextMenuType } from "./models/ContextMenuType";
 import { Connection } from "../models/types/Connection";
 import { generate_uuidv4 } from "../service/utils";
 import { updateNode } from "../service/mindMapService";
+import { MindMapDataset } from "../models/types/MindMapDataset";
 
 const Circle: React.FC<{
     node: Node,
     clickedLink: Connection | undefined,
-    datasetName: string,
+    dataset: MindMapDataset | undefined,
     setClickedLink: Function,
     clickedNode: Node | undefined,
     setClickedNode: Function,
@@ -24,7 +25,7 @@ const Circle: React.FC<{
     node,
     clickedLink,
     setClickedLink,
-    datasetName,
+    dataset,
     clickedNode,
     setClickedNode,
     setModalLinkRename,
@@ -40,76 +41,45 @@ const Circle: React.FC<{
         const [difX, setDifX] = React.useState(0);
         const [difY, setDifY] = React.useState(0);
 
-        const theme = useContext(SessionContext)
+        const sessionContext = useContext(SessionContext)
 
         const handlePointerDown = (e: any) => {
             e.stopPropagation()
-            // e.preventDefault()
             setDisabledCanvas(true)
             if (!(canvasState === CanvasState.ADD_CONNECTION)) {
                 if (e.type === "touchstart") {
                     setMoveX(Math.round(e.touches[0].clientX))
                     setMoveY(Math.round(e.touches[0].clientY))
-                    // console.log(moveX)
-                    // console.log(moveY)
-
                 } else {
                     e.target.setPointerCapture(e.pointerId);
                     setMoveX(Math.round(e.clientX))
                     setMoveY(Math.round(e.clientY))
                 }
-                try {
-
-                } catch (error) {
-
-                }
-
-                // setX(x)
-                // setY(y)
                 setActive(true);
             }
         };
         const handlePointerMove = (e: any) => {
-            // console.log(e)
-            // e.stopPropagation()
-            // e.preventDefault()
             if (!(canvasState === CanvasState.ADD_CONNECTION)) {
                 if (active) {
                     if (e.type === "touchmove") {
                         console.log(Math.round(e.touches[0].clientX - moveX))
                         setDifX(Math.round(e.touches[0].clientX - moveX))
                         setDifY(Math.round(e.touches[0].clientY - moveY))
-                                        console.log("111111111")
-
                     } else {
-                                        console.log("222222222222")
-
                         setDifX(Math.round(e.clientX - moveX))
                         setDifY(Math.round(e.clientY - moveY))
-                    }
-                    // console.log(difX)
-                    // console.log(difY)
-    
+                    }    
                     try {
                         e.target.setPointerCapture(e.pointerId);
-
-                    } catch (error) {
-
-                    }
-                    // setX(e.clientX)
-                    // setY(e.clientY)
+                    } catch (error) {}
                 }
             }
         };
         const handlePointerUp = async (e: any) => {
             setDisabledCanvas(false)
-            // e.stopPropagation()
-            // e.preventDefault()
             if (!(canvasState === CanvasState.ADD_CONNECTION)) {
-                // parentSetPosition(x, y, e.target.id)
                 setActive(false);
                 if (difX !== 0 || difY !== 0) {
-
                     const updatedNode: Node = {
                         visible: true,uri: '',
                         cx: Math.round(node.cx + difX),
@@ -118,8 +88,7 @@ const Circle: React.FC<{
                         id: node.id,
                         description: node.description,
                     }
-
-                    await updateNode(datasetName, theme.sessionInfo.webId, updatedNode)
+                    await updateNode(dataset?.id, sessionContext.sessionInfo, updatedNode)
                     setDifX(0)
                     setDifY(0)
                     setMoveX(0)
@@ -129,17 +98,10 @@ const Circle: React.FC<{
             }
         };
 
-        const addConnection = (e: any) => {
-            if (canvasState === CanvasState.ADD_CONNECTION) {
-                // const idMaster = contextMenu.nodeId
-                // const idSlave = e.target.id
+        const nodeOnClick = (e: any) => {
+            e.stopPropagation()
 
-                // setContextMenu({
-                //     ...contextMenu,
-                //     node: node
-                // })
-                console.log(clickedNode)
-                console.log(node)
+            if (canvasState === CanvasState.ADD_CONNECTION) {
                 let fromId = ""
                 if (clickedNode !== undefined) {
                     fromId = clickedNode.id
@@ -155,19 +117,14 @@ const Circle: React.FC<{
                 setClickedLink(newLink)
                 setCanvasState(CanvasState.DEFAULT)
                 setModalLinkRename(true)
-                // parentSetPosition(x, y, e.target.id)
+            } else {
+                setClickedNode(node)
             }
         };
 
         const handleContextMenu = async (e: any) => {
             e.stopPropagation()
             e.preventDefault()
-
-            // const bbox = e.target.getBoundingClientRect();
-            // const x = node != undefined && node.cx : 0;
-            // const y = node.source != undefined && node.target != undefined ?
-            //     (node.source[1] + node.target[1]) / 2 + 10 : 0;
-
             setClickedNode(JSON.parse(JSON.stringify(node)))
             setCanvasState(CanvasState.DEFAULT)
             setContextMenu({
@@ -191,12 +148,11 @@ const Circle: React.FC<{
                     strokeWidth="2"
                     strokeOpacity={0.5}
                     rx="4" ry="4"
-                    // stroke={contextMenu.nodeId === node.id ? "green" : "orange"}
                     onContextMenu={handleContextMenu}
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
                     onPointerMove={handlePointerMove}
-                    // onClick={addConnection}
+                    onClick={nodeOnClick}
                     onTouchStart={handlePointerDown}
                     onTouchEnd={handlePointerUp}
                     onTouchMove={handlePointerMove}
@@ -214,7 +170,7 @@ const Circle: React.FC<{
                     onTouchEnd={handlePointerUp}
                     onTouchMove={handlePointerMove}
                     fill={active ? "#8FBC8F" : "black"}
-                    onClick={addConnection}
+                    onClick={nodeOnClick}
                 >{node.title}{node.visible ? '' : '❓'}</text>
             </g>
         );

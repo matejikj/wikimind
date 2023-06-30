@@ -17,14 +17,6 @@ import { getKeywords } from "../service/dbpediaService";
 import { ResultItem } from "../models/ResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 
-
-const defaultBlankDataset: MindMapDataset = {
-  id: "",
-  created: "",
-  links: [],
-  nodes: []
-}
-
 const Visualisation: React.FC = () => {
   const d3Container = useRef(null);
   const navigate = useNavigate();
@@ -35,7 +27,7 @@ const Visualisation: React.FC = () => {
   const [height, setHeight] = useState(4000);
   const [url, setUrl] = useState('');
   const [width, setWidth] = useState(4000);
-  const [dataset, setDataset] = useState<MindMapDataset>(defaultBlankDataset);
+  const [dataset, setDataset] = useState<MindMapDataset>();
   const theme = useContext(SessionContext)
   const [mounted, setMounted] = useState(false); // <-- new state variable
   const wssUrl = new URL(theme.sessionInfo.podUrl);
@@ -108,22 +100,24 @@ const Visualisation: React.FC = () => {
     }, [mounted])
 
   const setPosition = (x: number, y: number, id: string) => {
-    dataset.nodes = dataset.nodes.map((todo) => {
-      if (todo.id === id) {
-        return { ...todo, cx: x, cy: y };
-      }
-      return todo;
-    });
+    if (dataset) {
+      dataset.nodes = dataset.nodes.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, cx: x, cy: y };
+        }
+        return todo;
+      });  
+    }
   }
   return (
     <div className="App">
       <Sidenav type={SideNavType.CANVAS} />
       <main ref={ref}>
-      <ModalNodeCreate
-        datasetName={url}
-        setModal={setModalNodeCreate}
-        showModal={modalNodeCreate}
-      />
+        <ModalNodeCreate
+          dataset={dataset}
+          setModal={setModalNodeCreate}
+          showModal={modalNodeCreate}
+        />
         {creatorVisible &&
           <Container>
             <Row>
@@ -157,10 +151,14 @@ const Visualisation: React.FC = () => {
                   <Button>
                     {clickedNode.title}
                   </Button>
-                  <Button onClick={() => { }}><FaRemoveFormat></FaRemoveFormat></Button>
+                  <Button onClick={() => { setClickedNode(undefined) }}><FaMinus></FaMinus></Button>
                 </Stack>
               }
             </Row>
+
+          </Container>
+          <Container fluid>
+
             <Row>
               <Col sm="12">
                 <div className="message-box">
@@ -198,7 +196,7 @@ const Visualisation: React.FC = () => {
           </Container>
         </div>
         <div className={creatorVisible ? "creator-bottom" : "canvas-full"}>
-          <Canvas clickedNode={clickedNode} setClickedNode={setClickedNode} url={url} data={dataset} height={height} width={width} setPosition={setPosition}></Canvas>
+          <Canvas clickedNode={clickedNode} setClickedNode={setClickedNode} data={dataset} height={height} width={width} setPosition={setPosition}></Canvas>
         </div>
       </main>
     </div>

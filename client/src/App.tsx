@@ -14,7 +14,6 @@ import Class from "./pages/Class";
 import { UserSession, defaultSessionValue } from "./models/types/UserSession";
 import { SessionContext } from "./sessionContext";
 import PrivateChat from "./pages/PrivateChat";
-import Creator from "./pages/Creator";
 import ExamPage from "./pages/ExamPage";
 
 const App: React.FC = () => {
@@ -58,7 +57,6 @@ const App: React.FC = () => {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/visualisation" element={<Visualisation />} />
-                <Route path="/creator" element={<Creator />} />
                 <Route path="/classes" element={<Classes />} />
                 <Route path="/class" element={<Class />} />
                 <Route path="/profile" element={<ProfileView />} />

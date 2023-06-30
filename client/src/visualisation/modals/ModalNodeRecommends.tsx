@@ -3,9 +3,10 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { Node } from '../../models/types/Node'
 import { SessionContext } from "../../sessionContext";
+import { MindMapDataset } from "../../models/types/MindMapDataset";
 
 const ModalNodeRecommends: React.FC<{
-    datasetName: string,
+    datasetName: MindMapDataset | undefined,
     clickedNode: Node | undefined,
     showModal: boolean,
     setModal: Function,

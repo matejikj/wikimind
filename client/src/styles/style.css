@@ -25,6 +25,7 @@ main {
 
 .creator-top {
     height: 40%;
+    width: 100%;
     overflow: auto;
 }
 

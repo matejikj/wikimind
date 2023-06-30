@@ -6,17 +6,18 @@ import { Connection } from '../../models/types/Connection'
 import { SessionContext } from "../../sessionContext";
 import { addNewLink } from "../../service/mindMapService";
 import { CanvasState } from '../models/CanvasState'
+import { MindMapDataset } from "../../models/types/MindMapDataset";
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalLinkRename: React.FC<{
-    datasetName: string,
+    datasetName: MindMapDataset | undefined,
     clickedLink: Connection | undefined,
     canvasState: CanvasState,
     setCanvasState: Function,
     showModal: boolean,
     setModal: Function
 }> = ({     datasetName, clickedLink, canvasState, setCanvasState, showModal, setModal }) => {
-    const theme = useContext(SessionContext)
+    const sessionContext = useContext(SessionContext)
     const [formInputs, setFormInputs] = useState({
         title: 'title_',
         description: 'description_'
@@ -31,7 +32,7 @@ const ModalLinkRename: React.FC<{
         
         if (clickedLink !== undefined) {
             clickedLink.title = formInputs.title
-            addNewLink(datasetName, theme.sessionInfo.webId, clickedLink)
+            addNewLink(datasetName?.id, sessionContext.sessionInfo, clickedLink)
         }
         setModal(false)
     }
