@@ -16,12 +16,7 @@ export type Connection = {
      * The identifier of the entity where the connection leads to.
      */
     to: string;
-    
-    /**
-     * The title or description of the connection.
-     */
-    title: string;
-    
+        
     /**
      * The source information related to the connection.
      */
@@ -31,10 +26,5 @@ export type Connection = {
      * The target information related to the connection.
      */
     target?: any;
-    
-    /**
-     * Indicates whether the connection is testable or not.
-     */
-    testable: boolean;
-  }
+}
   

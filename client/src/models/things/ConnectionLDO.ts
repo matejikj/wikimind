@@ -19,8 +19,6 @@ export class ConnectionLDO extends BaseLDO<Connection> implements CRUDLDO<Connec
       id: getStringNoLocale(thing, this.rdf.properties.id)!,
       to: getStringNoLocale(thing, this.rdf.properties.to)!,
       from: getStringNoLocale(thing, this.rdf.properties.from)!,
-      title: getStringNoLocale(thing, this.rdf.properties.title)!,
-      testable: getBoolean(thing, this.rdf.properties.testable)!,
     };
   }
 
@@ -33,10 +31,8 @@ export class ConnectionLDO extends BaseLDO<Connection> implements CRUDLDO<Connec
     const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
       .addUrl(rdf_type, this.rdf.identity)
       .addStringNoLocale(this.rdf.properties.from, object.from)
-      .addBoolean(this.rdf.properties.testable, object.testable)
       .addStringNoLocale(this.rdf.properties.to, object.to)
       .addStringNoLocale(this.rdf.properties.id, object.id)
-      .addStringNoLocale(this.rdf.properties.title, object.title)
       .build();
     return newThing;
   }

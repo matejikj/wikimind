@@ -109,10 +109,7 @@ const Circle: React.FC<{
                 const newLink: Connection = {
                     from: fromId,
                     to: node.id,
-                    title: "",
                     id: generate_uuidv4(),
-                    testable: true
-
                 }
                 setClickedLink(newLink)
                 setCanvasState(CanvasState.DEFAULT)

@@ -79,7 +79,6 @@ const ExamPage: React.FC = () => {
                     //   })
                     // });
                     // websocket4.connect();
-                    console.log(location.state)
                     getMindMap(location.state.id).then((res: any) => {
                         const myr = res as MindMapDataset;
                         myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
@@ -177,12 +176,6 @@ const ExamPage: React.FC = () => {
                                             strokeWidth="3"
                                             markerEnd="url(#triangle)"
                                         ></line>
-                                        <text
-                                            x={link.source != undefined && link.target != undefined ?
-                                                (link.source[0] + link.target[0]) / 2 : 0}
-                                            y={link.source != undefined && link.target != undefined ?
-                                                (link.source[1] + link.target[1]) / 2 : 0}
-                                        >{link.title}</text>
                                     </g>
                                 );
                             })}

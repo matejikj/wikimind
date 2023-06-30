@@ -5,13 +5,10 @@ import '../styles/style.css';
 import Button from 'react-bootstrap/Button';
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { SessionContext } from "../sessionContext";
-import ModalNodeDetail from "./modals/ModalNodeDetail";
-import ModalLinkRename from "./modals/ModalLinkRename";
 import ContextCircleMenu from "./ContextCircleMenu";
 import ContextLinkMenu from "./ContextLinkMenu";
 import { ContextMenuType } from "./models/ContextMenuType";
 import { CanvasState } from "./models/CanvasState";
-import ModalLinkDelete from "./modals/ModalLinkDelete";
 import ModalNodeCreate from "./modals/ModalNodeCreate";
 import ModalNodeDelete from "./modals/ModalNodeDelete";
 import ModalNodeRecommends from "./modals/ModalNodeRecommends";
@@ -176,26 +173,6 @@ const Canvas: React.FC<{
           recommends={recomendsResults}
           showModal={modalNodeRecommends}
           setModal={setModalNodeRecommends}
-        />
-        <ModalNodeDetail
-          datasetName={data}
-          clickedNode={clickedNode}
-          showModal={modalNodeDetail}
-          setModal={setModalNodeDetail}
-        />
-        <ModalLinkRename
-          datasetName={data}
-          clickedLink={clickedLink}
-          canvasState={canvasState}
-          setCanvasState={setCanvasState}
-          showModal={modalLinkRename}
-          setModal={setModalLinkRename}
-        />
-        <ModalLinkDelete
-          datasetName={data}
-          clickedLink={clickedLink}
-          showModal={modalLinkDelete}
-          setModal={setModalLinkDelete}
         />
         <TransformComponent
           wrapperStyle={{

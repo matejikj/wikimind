@@ -4,7 +4,7 @@ import Canvas from "../visualisation/Canvas";
 import { SessionContext } from "../sessionContext";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getMindMap } from "../service/mindMapService";
+import { createConnection, createNode, getMindMap } from "../service/mindMapService";
 import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
   WebsocketNotification,
@@ -13,9 +13,11 @@ import { AddCoords, getIdsMapping } from "../visualisation/utils";
 import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 import { FaBackspace, FaInfo, FaMinus, FaMinusCircle, FaPlus, FaRemoveFormat } from "react-icons/fa";
 import { Node } from "../models/types/Node";
-import { getKeywords } from "../service/dbpediaService";
+import { getEntityNeighbours, getKeywords } from "../service/dbpediaService";
 import { ResultItem } from "../models/ResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
+import { generate_uuidv4 } from "../service/utils";
+import { Connection } from "../models/types/Connection";
 
 const Visualisation: React.FC = () => {
   const d3Container = useRef(null);
@@ -28,9 +30,9 @@ const Visualisation: React.FC = () => {
   const [url, setUrl] = useState('');
   const [width, setWidth] = useState(4000);
   const [dataset, setDataset] = useState<MindMapDataset>();
-  const theme = useContext(SessionContext)
+  const sessionContext = useContext(SessionContext)
   const [mounted, setMounted] = useState(false); // <-- new state variable
-  const wssUrl = new URL(theme.sessionInfo.podUrl);
+  const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
   wssUrl.protocol = 'wss';
 
   const [clickedNode, setClickedNode] = useState<Node>();
@@ -39,14 +41,6 @@ const Visualisation: React.FC = () => {
 
   const [creatorVisible, setCreatorVisible] = useState(false); // <-- new state variable
   const [modalNodeCreate, setModalNodeCreate] = useState(false); // <-- new state variable
-
-  async function searchKeyword() {
-    const keywords = await getKeywords(searchedKeyword)
-    if (keywords !== undefined) {
-      setRecommends(keywords)
-    }
-    setClickedNode(undefined)
-  }
 
   useEffect(() => {
     setMounted(true); // set the mounted state variable to true after the component mounts
@@ -106,9 +100,45 @@ const Visualisation: React.FC = () => {
           return { ...todo, cx: x, cy: y };
         }
         return todo;
-      });  
+      });
     }
   }
+
+  function addNode(item: ResultItem) {
+    const newNode: Node = {
+      id: generate_uuidv4(),
+      uri: item.entity.value,
+      title: item.label.value,
+      description: '',
+      cx: 100,
+      cy: 100,
+      visible: true
+    }
+    if (clickedNode) {
+      const newConnection: Connection = {
+        id: generate_uuidv4(),
+        from: clickedNode.id,
+        to: newNode.id
+      }
+      createConnection(dataset?.id, sessionContext.sessionInfo, newConnection)
+    }
+    createNode(dataset?.id, sessionContext.sessionInfo, newNode)
+  }
+
+  async function searchKeyword() {
+    const keywords = await getKeywords(searchedKeyword)
+    if (keywords !== undefined) {
+      setRecommends(keywords)
+    }
+  }
+
+  async function getSimilar(item: ResultItem) {
+    const a = await getEntityNeighbours(item.entity.value)
+    if (a) {
+      setRecommends(a)
+    }
+  }
+
   return (
     <div className="App">
       <Sidenav type={SideNavType.CANVAS} />
@@ -176,13 +206,13 @@ const Visualisation: React.FC = () => {
                     return (
                       <div key={index} className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'fckn-div' : 'fckn-div-category'}>
                         <div className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'creator-div' : 'creator-div-category'}>
-                          <button className={'creator-btn'} onClick={() => { }}>
+                          <button className={'creator-btn'} onClick={() => { getSimilar(item); }}>
                             {item.label.value}
                           </button>
                           <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); alert('item') }}>
                             <FaInfo></FaInfo>
                           </button>
-                          <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); { }; }}>
+                          <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); { addNode(item) }; }}>
                             {/* <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); }}> */}
                             <FaPlus></FaPlus>
                           </button>
@@ -201,7 +231,6 @@ const Visualisation: React.FC = () => {
       </main>
     </div>
   )
-
 };
 
 export default Visualisation;

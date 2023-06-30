@@ -33,13 +33,6 @@ const Line: React.FC<{ link: Connection, contextMenu: any, setContextMenu: Funct
                 strokeWidth="1.5"
                 markerEnd="url(#triangle)"
             ></line>
-            <text
-                x={link.source !== undefined && link.target !== undefined ?
-                    (link.source[0] + link.target[0]) / 2 : 0}
-                y={link.source !== undefined && link.target !== undefined ?
-                    (link.source[1] + link.target[1]) / 2 : 0}
-                onContextMenu={handleContextMenu}
-            >{link.title}</text>
         </g>
 
     );
