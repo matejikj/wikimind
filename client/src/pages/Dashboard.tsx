@@ -26,9 +26,9 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const result = getMindMapList(sessionContext.sessionInfo).then((res) => {
-      setList(res)
-    });
+    // const result = getMindMapList(sessionContext.sessionInfo).then((res) => {
+    //   setList(res)
+    // });
   }, []);
 
 

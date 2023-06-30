@@ -9,7 +9,7 @@ import {
   getThingAll,
   getUrlAll,
   isContainer,
-  saveSolidDatasetAt,
+  saveSolidDatasetAt,createContainerInContainer,
   setThing,
   universalAccess,
 } from "@inrupt/solid-client";
@@ -21,6 +21,16 @@ import { initializeAcl, isWacOrAcp } from "./accessService";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 import { Profile } from "../models/types/Profile";
 import { ProfileLDO } from "../models/things/ProfileLDO";
+
+export const WIKIMIND = 'WikiMind'
+export const MINDMAPS = 'mindMaps'
+export const SLASH = '/'
+export const CLASSES = 'classes'
+export const TTLFILETYPE = '.ttl'
+export const REQUESTS = 'requests'
+export const PROFILE = 'profile'
+export const MESSAGES = 'messages'
+export const CONTACTS = 'contacts'
 
 /**
  * Checks whether a given URL represents a container.
@@ -50,6 +60,84 @@ export async function getPodUrl(sessionId: string): Promise<string[] | null> {
   }
 }
 
+async function checkMainContainer(podUrl: string): Promise<void> {
+  if (!(await isUrlContainer(podUrl + WIKIMIND))) {
+    await createContainerAt(podUrl + WIKIMIND, { fetch: fetch });
+  }
+
+}
+
+async function checkMindMapsContainer(podUrl: string): Promise<void> {
+  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + MINDMAPS))) {
+    createContainerAt(podUrl + WIKIMIND + SLASH + MINDMAPS, { fetch: fetch });
+  }
+}
+
+async function checkClassesContainer(podUrl: string): Promise<void> {
+  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + CLASSES))) {
+    await createContainerAt(podUrl + WIKIMIND + SLASH + CLASSES, { fetch: fetch });
+    const classesDataset = createSolidDataset();
+    saveSolidDatasetAt(
+      podUrl + WIKIMIND + SLASH + CLASSES + SLASH + CLASSES + TTLFILETYPE,
+      classesDataset,
+      { fetch: fetch }
+    );
+    const reqeustsDataset = createSolidDataset();
+    saveSolidDatasetAt(
+      podUrl + WIKIMIND + SLASH + CLASSES + SLASH + REQUESTS + TTLFILETYPE,
+      reqeustsDataset,
+      { fetch: fetch }
+    );
+  }
+}
+
+async function checkProfileContainer(podUrl: string, sessionId: string, accessControlPolicy: AccessControlPolicy): Promise<void> {
+  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + PROFILE))) {
+    await createContainerAt(podUrl + WIKIMIND + SLASH + PROFILE, { fetch: fetch });
+
+    const profileSolidDataset = createSolidDataset();
+    const blankProfile: Profile = {
+      name: '',
+      surname: '',
+      profileImage: '',
+      webId: sessionId,
+    };
+    const profileLDO = new ProfileLDO(profileDefinition).create(blankProfile);
+    const savedProfileSolidDataset = setThing(profileSolidDataset, profileLDO);
+    const profilePath = WIKIMIND + SLASH + PROFILE + SLASH + PROFILE + TTLFILETYPE
+    await saveSolidDatasetAt(
+      podUrl + profilePath,
+      savedProfileSolidDataset,
+      { fetch: fetch }
+    );
+
+    if (accessControlPolicy === AccessControlPolicy.WAC) {
+      initializeAcl(podUrl + profilePath).then(() => {
+        universalAccess.setPublicAccess(
+          podUrl + profilePath,
+          { append: true, read: true, write: false },
+          { fetch: fetch }
+        ).then((newAccess) => {
+          console.log(newAccess);
+        });
+      })
+    }
+  }
+}
+
+async function checkMessagesContainer(podUrl: string): Promise<void> {
+  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + MESSAGES))) {
+    await createContainerAt(podUrl + WIKIMIND + SLASH + MESSAGES, { fetch: fetch });
+
+    const messagesDataset = await createSolidDataset();
+    await saveSolidDatasetAt(
+      podUrl + WIKIMIND + SLASH + MESSAGES + SLASH+ CONTACTS + TTLFILETYPE,
+      messagesDataset,
+      { fetch: fetch }
+    );
+  }
+}
+
 /**
  * Checks and initializes necessary containers and access control policies for a given session ID.
  *
@@ -61,90 +149,30 @@ export async function checkContainer(sessionId: string): Promise<{ podUrl: strin
   const podUrls = await getPodUrl(sessionId);
   if (podUrls !== null) {
     const podUrl = podUrls[0];
-    const accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl + 'Wikie/');
 
-    if (!(await isUrlContainer(podUrl + 'Wikie/mindMaps'))) {
-      const cont = await createContainerAt(podUrl + 'Wikie/mindMaps', { fetch: fetch });
-    }
+    await checkMainContainer(podUrl)
 
-    if (!(await isUrlContainer(podUrl + 'Wikie/classes'))) {
-      const classes = await createContainerAt(podUrl + 'Wikie/classes', { fetch: fetch });
-      const classesDataset = createSolidDataset();
-      const savedSolidDatasetContainer = await saveSolidDatasetAt(
-        podUrl + 'Wikie/classes/classes.ttl',
-        classesDataset,
-        { fetch: fetch }
-      );
-      const reqeustsDataset = createSolidDataset();
-      const savedSolidDataset = await saveSolidDatasetAt(
-        podUrl + 'Wikie/classes/requests.ttl',
-        reqeustsDataset,
-        { fetch: fetch }
-      );
-    }
+    const accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl + WIKIMIND + SLASH);
 
-    if (!(await isUrlContainer(podUrl + 'Wikie/profile'))) {
-      const classes = await createContainerAt(podUrl + 'Wikie/profile', { fetch: fetch });
-      const classesDataset = createSolidDataset();
+    await Promise.all([checkMindMapsContainer(podUrl), checkProfileContainer(podUrl, sessionId, accessControlPolicy), checkMessagesContainer(podUrl), checkClassesContainer(podUrl)]);
 
-      const profileSolidDataset = createSolidDataset();
-      const blankProfile: Profile = {
-        name: '',
-        surname: '',
-        profileImage: '',
-        webId: sessionId,
-      };
-      const profileLDO = new ProfileLDO(profileDefinition).create(blankProfile);
-      const savedProfileSolidDataset = setThing(profileSolidDataset, profileLDO);
-      const newName = podUrl + "Wikie/profile/profile.ttl";
-      const savedSolidDataset = await saveSolidDatasetAt(
-        newName,
-        savedProfileSolidDataset,
-        { fetch: fetch }
-      );
-
-      if (accessControlPolicy === AccessControlPolicy.WAC) {
-        await initializeAcl(podUrl + 'Wikie/profile/profile.ttl');
-      }
-
-      universalAccess.setPublicAccess(
-        podUrl + 'Wikie/profile/profile.ttl',
-        { append: true, read: true, write: false },
-        { fetch: fetch }
-      ).then((newAccess) => {
-        console.log("newAccess       contacts.ttl");
-      });
-    }
-
-    if (!(await isUrlContainer(podUrl + 'Wikie/messages'))) {
-      const messages = await createContainerAt(podUrl + 'Wikie/messages', { fetch: fetch });
-      const messagesDataset = await createSolidDataset();
-      const savedSolidDatasetContainer = await saveSolidDatasetAt(
-        podUrl + 'Wikie/messages/contacts.ttl',
-        messagesDataset,
-        { fetch: fetch }
-      );
-    }
-
+    const contactsPath = WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE
+    const requestsPath = WIKIMIND + SLASH + CLASSES + SLASH + REQUESTS + TTLFILETYPE
     if (accessControlPolicy === AccessControlPolicy.WAC) {
-      await initializeAcl(podUrl + 'Wikie/classes/requests.ttl');
-      await initializeAcl(podUrl + 'Wikie/messages/contacts.ttl');
+      await initializeAcl(podUrl + requestsPath);
+      await initializeAcl(podUrl + contactsPath);
     }
 
     universalAccess.setPublicAccess(
-      podUrl + 'Wikie/messages/contacts.ttl',
+      podUrl + contactsPath,
       { append: true, read: true, write: false },
       { fetch: fetch }
-    ).then((newAccess) => {
-      console.log("newAccess       contacts.ttl");
-    });
+    )
     universalAccess.setPublicAccess(
-      podUrl + 'Wikie/classes/requests.ttl',
+      podUrl + requestsPath,
       { append: true, read: true, write: false },
       { fetch: fetch }
-    ).then((newAccess) => {
-      console.log("newAccess  vrequests");
-    });
+    )
 
     return { podUrl, accessControlPolicy };
   }

@@ -21,6 +21,7 @@ const App: React.FC = () => {
 
   const [sessionInfo, setSessionInfo]
     = React.useState<UserSession>(defaultSessionValue);
+  const [waiting, setWaiting] = React.useState(false);
 
   useEffect(() => {
     handleIncomingRedirect({
@@ -28,6 +29,7 @@ const App: React.FC = () => {
     }).then((info) => {
       if (info?.isLoggedIn && info?.webId !== undefined) {
         try {
+          setWaiting(true)
           checkContainer(info?.webId).then((value) => {
             setSessionInfo({
               isLogged: true,
@@ -35,9 +37,10 @@ const App: React.FC = () => {
               podUrl: value.podUrl,
               podAccessControlPolicy: value.accessControlPolicy
             })
+            setWaiting(false)
           })
         } catch (error) {
-          alert("There is problem with  logging.")
+          console.log("There is problem when logging: ", error)
         }
       }
     })
@@ -49,22 +52,38 @@ const App: React.FC = () => {
       setSessionInfo
     }}>
       <BrowserRouter>
-      {/* {sessionInfo.isLogged ? ( */}
-        {true ? (
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/visualisation" element={<Visualisation />} />
-            <Route path="/creator" element={<Creator />} />
-            <Route path="/classes" element={<Classes />} />
-            <Route path="/class" element={<Class />} />
-            <Route path="/profile" element={<ProfileView />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/chat" element={<PrivateChat />} />
-            <Route path="/exam" element={<ExamPage />} />
-          </Routes>
-        ) : (
-          <Login></Login>
-        )}
+        {(() => {
+          if (sessionInfo.isLogged) {
+            return (
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/visualisation" element={<Visualisation />} />
+                <Route path="/creator" element={<Creator />} />
+                <Route path="/classes" element={<Classes />} />
+                <Route path="/class" element={<Class />} />
+                <Route path="/profile" element={<ProfileView />} />
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/chat" element={<PrivateChat />} />
+                <Route path="/exam" element={<ExamPage />} />
+              </Routes>
+            )
+          } else if (!sessionInfo.isLogged && waiting) {
+            return (
+              <div className="loader-wrapper">
+                <div className="loader">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            )
+          } else {
+            return (
+              <Login></Login>
+            )
+          }
+        })()}
       </BrowserRouter>
     </SessionContext.Provider>
 
