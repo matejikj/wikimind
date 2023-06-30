@@ -31,6 +31,7 @@ export const REQUESTS = 'requests'
 export const PROFILE = 'profile'
 export const MESSAGES = 'messages'
 export const CONTACTS = 'contacts'
+export const MRIZKA = "#"
 
 /**
  * Checks whether a given URL represents a container.
@@ -186,7 +187,7 @@ export async function checkContainer(sessionId: string): Promise<{ podUrl: strin
  * @returns {Promise<{ url: string; title: string | null }[]>} - A Promise resolving to an array of objects containing the URL and title of each mind map.
  */
 export async function getMindMapList(userSession: UserSession): Promise<{ url: string; title: string | null }[]> {
-  const readingListUrl: string = userSession.podUrl + 'Wikie/mindMaps/';
+  const readingListUrl: string = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH;
   const myDataset = await getSolidDataset(
     readingListUrl,
     { fetch: fetch }

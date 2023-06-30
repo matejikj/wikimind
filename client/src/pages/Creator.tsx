@@ -174,7 +174,7 @@ const Creator: React.FC = () => {
     return (
         <div ref={navRef} className="App">
             <Sidenav type={SideNavType.COMMON} />
-            <main className="div0">
+            <main>
                 <Button id="creator-btn-add" onClick={() => setSelectedItemsVisible(true)} variant="success">Selected</Button>
                 <ModalCreatorSelected
                     selectedItemsVisible={selectedItemsVisible}

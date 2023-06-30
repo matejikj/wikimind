@@ -1,3 +1,4 @@
+import { WIKIMIND } from "../../service/containerService";
 import { rdf_type } from "../LDO";
 import { Profile } from "../types/Profile";
 import { BaseLDO } from "./BaseLDO";
@@ -28,7 +29,7 @@ export class ProfileLDO extends BaseLDO<Profile> implements CRUDLDO<Profile> {
      * @returns The newly created ThingLocal instance representing the Profile object.
      */
     create(object: Profile) {
-        const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))
+        const newThing: ThingLocal = buildThing(createThing({ name: WIKIMIND }))
             .addUrl(rdf_type, this.rdf.identity)
             .addStringNoLocale(this.rdf.properties.name, object.name)
             .addStringNoLocale(this.rdf.properties.webId, object.webId)

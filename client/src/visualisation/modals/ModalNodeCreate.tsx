@@ -15,13 +15,10 @@ import '../../styles/style.css';
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalNodeCreate: React.FC<{
     datasetName: string,
-    clickedNode: Node | undefined,
-    canvasState: CanvasState,
-    setCanvasState: Function,
     showModal: boolean,
     setModal: Function
-}> = ({ datasetName, canvasState, showModal, setModal }) => {
-    const theme = useContext(SessionContext)
+}> = ({ datasetName, showModal, setModal }) => {
+    const sessionContext = useContext(SessionContext)
     const [formInputs, setFormInputs] = useState({
         title: '',
         description: '',
@@ -78,32 +75,18 @@ const ModalNodeCreate: React.FC<{
             cy: 100,
             visible: true
         }
-        createNode(datasetName, theme.sessionInfo.webId, newNode)
-        if (canvasState === CanvasState.ADD_CONNECTED_NODE) {
-            // createLink()
-        }
+        createNode(datasetName, sessionContext.sessionInfo, newNode)
     }
-
-    function bbb(event: any) {
-        console.log(results[event])
-        console.log()
-        setFormInputs({ ...formInputs, description: results[event].comment, title: results[event].title })
-    }
-
-
-    const handleClose = () => setModal(false);
 
     return (
         <Modal
             show={showModal}
         >
             <Modal.Header closeButton>
-                <Modal.Title>Find and add new node</Modal.Title>
+                <Modal.Title>Create custom node</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Container fluid>
-                    <Form.Label htmlFor="inputKeyword">Entity info:</Form.Label>
-
                     <Row>
                         <Col xs={6}>
                             <Form.Control
@@ -114,7 +97,11 @@ const ModalNodeCreate: React.FC<{
                                 onChange={handleChange}
                             />
                         </Col>
-                    </Row><Row>
+                    </Row>
+                    <Row>
+                        <br />
+                    </Row>
+                    <Row>
                         <Col xs={12}>
                             <Form.Control
                                 as="textarea"
@@ -125,59 +112,15 @@ const ModalNodeCreate: React.FC<{
                                 onChange={handleChange}
                             />
                         </Col>
-
-                    </Row><Row><br /></Row>
-                    <Form.Label htmlFor="inputKeyword">Searching keyword:</Form.Label>
-
-                    <Row>
-                        <Col xs={9}>
-                            <Form.Control
-                                type="text"
-                                placeholder="Keyword"
-                                name="keyword"
-                                value={formInputs.keyword}
-                                onChange={handleChange}
-                            />
-                        </Col>
-                        <Col xs={3}>
-                            <Button onClick={searchKeyword}>Search</Button>
-                        </Col>
-
-                    </Row><Row><br /></Row>
-                    <Row>
-                        <Accordion className="accordion-class" defaultActiveKey="0">
-                            {results.map((item: any, index: any) => {
-                                return (
-                                    <Accordion.Item key={index} eventKey={index}>
-                                        <Accordion.Header>{item.title}
-                                        </Accordion.Header>
-                                        <Accordion.Body>
-                                            <p>{item.comment}</p>
-                                            <Button variant="secondary" onClick={() => { bbb(index) }}>
-                                                select
-                                            </Button>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                )
-                            })}
-                        </Accordion>
                     </Row>
                 </Container>
-
-                {/* <Form.Control
-                    type="text"
-                    name="description"
-                    placeholder="Description"
-                    value={formInputs.description}
-                    onChange={handleChange}
-                /> */}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                    Close
+                <Button variant="secondary" onClick={() => setModal(false)}>
+                    Cancel
                 </Button>
                 <Button variant="primary" onClick={handleSave}>
-                    Save Changes
+                    Add node
                 </Button>
             </Modal.Footer>
         </Modal>

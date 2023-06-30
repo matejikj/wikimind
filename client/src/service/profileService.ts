@@ -10,6 +10,7 @@ import profileDefinition from "../definitions/profile.json"
 import { Profile } from "../models/types/Profile";
 import { ProfileLDO } from "../models/things/ProfileLDO";
 import { UserSession } from "../models/types/UserSession";
+import { MRIZKA, PROFILE, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";
 
 // export async function createProfile(userSession: UserSession, profile: Profile) {
 //   const profiles = await getProfileAll(userSession.webId, { fetch });
@@ -38,10 +39,10 @@ import { UserSession } from "../models/types/UserSession";
 export async function getProfile(userSession: UserSession): Promise<Profile | undefined> {
 
   const myDataset = await getSolidDataset(
-    userSession.podUrl + 'Wikie/profile/profile.ttl',
+    userSession.podUrl + WIKIMIND + SLASH + PROFILE + SLASH + PROFILE + TTLFILETYPE,
     { fetch: fetch }
   );
-  const profileThing = getThing(myDataset, userSession.podUrl + 'Wikie/profile/profile.ttl#Wikie')
+  const profileThing = getThing(myDataset, userSession.podUrl + WIKIMIND + SLASH + PROFILE + SLASH + PROFILE + TTLFILETYPE + MRIZKA + WIKIMIND)
 
   const profileLDO = new ProfileLDO(profileDefinition)
   let profile: Profile | null = null;
@@ -52,13 +53,13 @@ export async function getProfile(userSession: UserSession): Promise<Profile | un
 export async function updateProfile(userSession: UserSession, profile: Profile): Promise<Profile | undefined> {
 
   const myDataset = await getSolidDataset(
-    userSession.podUrl + 'Wikie/profile/profile.ttl',
+    userSession.podUrl + WIKIMIND + SLASH + PROFILE + SLASH + PROFILE + TTLFILETYPE,
     { fetch: fetch }
   );
 
   const profileLDO = new ProfileLDO(profileDefinition).create(profile)
   const savedProfileSolidDataset = setThing(myDataset, profileLDO)
-  const newName = userSession.podUrl + "Wikie/profile/profile.ttl"
+  const newName = userSession.podUrl + WIKIMIND + SLASH + PROFILE + SLASH + PROFILE + TTLFILETYPE
   const savedSolidDataset = await saveSolidDatasetAt(
     newName,
     savedProfileSolidDataset,

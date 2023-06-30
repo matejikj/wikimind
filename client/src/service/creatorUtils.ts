@@ -5,7 +5,6 @@ import { Node } from "../models/types/Node";
 import { generate_uuidv4 } from "./utils";
 import { SessionContext } from "../sessionContext";
 import { UserSession } from "../models/types/UserSession";
-import { createPreparedMindMap } from "./mindMapService";
 
 /**
  * Represents a node in the mind map tree.

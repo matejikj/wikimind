@@ -22,30 +22,10 @@ import { TransformComponent } from "react-zoom-pan-pinch";
 import { updateNode } from "../service/mindMapService";
 import { getSingleReccomends } from "../service/dbpediaService";
 
-// Initial example node
-const nodeEx: Node = {
-  id: '',
-  cx: 0,uri: '',
-  cy: 0,
-  title: '',
-  description: '',
-  visible: false
-}
-
-// Constants for different methods
-const DELETE_LINK_METHOD = "delete";
-const LINK_RENAME_METHOD = "rename";
-const DELETE_NODE_METHOD = "delete";
-const DETAIL_METHOD = "detail";
-const RECOMMENDS_METHOD = "recommendations";
-const VISIBILITY = "vidibility";
-const CONNECTION_METHOD = "add connection";
-const CONNECTION_SELECTION_METHOD = "add connection";
-
 /**
  * Canvas component for rendering the mind map canvas.
  */
-const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, height: number, setPosition: Function }> = ({ url, data, width, height, setPosition }) => {
+const Canvas: React.FC<{ clickedNode: Node | undefined, setClickedNode: Function, url: string, data: MindMapDataset, width: number, height: number, setPosition: Function }> = ({ clickedNode, setClickedNode, url, data, width, height, setPosition }) => {
   const d3Container = useRef(null);
   const theme = useContext(SessionContext);
 
@@ -60,7 +40,6 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
 
   // Canvas state hooks
   const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
-  const [clickedNode, setClickedNode] = useState<Node>();
   const [clickedLink, setClickedLink] = useState<Connection>();
   const [disabledCanvas, setDisabledCanvas] = useState(false);
   const [recomendsResults, setRecomendsResults] = useState<any[]>([]);
@@ -169,15 +148,7 @@ const Canvas: React.FC<{ url: string, data: MindMapDataset, width: number, heigh
     <TransformWrapper
       disabled={disabledCanvas}
     >
-      <Button id="float-btn-add" onClick={() => { setModalNodeCreate(true) }} variant="success">Add</Button>
-      <ModalNodeCreate
-        datasetName={data.id}
-        clickedNode={clickedNode}
-        canvasState={canvasState}
-        setCanvasState={setCanvasState}
-        showModal={modalNodeCreate}
-        setModal={setModalNodeCreate}
-      />
+
       <ModalNodeDelete
         datasetName={data.id}
         clickedNode={clickedNode}

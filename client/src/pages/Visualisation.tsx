@@ -10,6 +10,13 @@ import {
   WebsocketNotification,
 } from "@inrupt/solid-client-notifications";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
+import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
+import { FaBackspace, FaInfo, FaMinus, FaMinusCircle, FaPlus, FaRemoveFormat } from "react-icons/fa";
+import { Node } from "../models/types/Node";
+import { getKeywords } from "../service/dbpediaService";
+import { ResultItem } from "../models/ResultItem";
+import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
+
 
 const defaultBlankDataset: MindMapDataset = {
   id: "",
@@ -33,6 +40,21 @@ const Visualisation: React.FC = () => {
   const [mounted, setMounted] = useState(false); // <-- new state variable
   const wssUrl = new URL(theme.sessionInfo.podUrl);
   wssUrl.protocol = 'wss';
+
+  const [clickedNode, setClickedNode] = useState<Node>();
+  const [searchedKeyword, setSearchedKeyword] = useState('');
+  const [recommends, setRecommends] = useState<ResultItem[]>([]);
+
+  const [creatorVisible, setCreatorVisible] = useState(false); // <-- new state variable
+  const [modalNodeCreate, setModalNodeCreate] = useState(false); // <-- new state variable
+
+  async function searchKeyword() {
+    const keywords = await getKeywords(searchedKeyword)
+    if (keywords !== undefined) {
+      setRecommends(keywords)
+    }
+    setClickedNode(undefined)
+  }
 
   useEffect(() => {
     setMounted(true); // set the mounted state variable to true after the component mounts
@@ -92,21 +114,92 @@ const Visualisation: React.FC = () => {
       }
       return todo;
     });
-    // dataset.links = dataset.links.map((todo) => {
-    //   if (todo.from === id) {
-    //     return { ...todo, source: [x, y] };
-    //   }
-    //   if (todo.to === id) {
-    //     return { ...todo, target: [x, y] };
-    //   }
-    //   return todo;
-    // });
   }
   return (
     <div className="App">
       <Sidenav type={SideNavType.CANVAS} />
-      <main className="canvas-back" ref={ref}>
-        <Canvas url={url} data={dataset} height={height} width={width} setPosition={setPosition}></Canvas>
+      <main ref={ref}>
+      <ModalNodeCreate
+        datasetName={url}
+        setModal={setModalNodeCreate}
+        showModal={modalNodeCreate}
+      />
+        {creatorVisible &&
+          <Container>
+            <Row>
+              <Stack direction="horizontal" gap={2}>
+                <Form.Control
+                  type="text"
+                  placeholder="Keyword"
+                  name="keyword"
+                  value={searchedKeyword}
+                  onChange={(e) => setSearchedKeyword(e.target.value)}
+                />
+                <Button onClick={searchKeyword}>Search</Button>
+              </Stack>
+            </Row>
+          </Container>
+        }
+        {creatorVisible ? (
+          <Button id="creator-btn-add" onClick={() => setCreatorVisible(false)} variant="success">
+            <FaMinusCircle></FaMinusCircle>
+          </Button>
+        ) : (
+          <Button id="creator-btn-add" onClick={() => setCreatorVisible(true)} variant="success">
+            <FaPlus></FaPlus>
+          </Button>
+        )}
+        <div className={creatorVisible ? "creator-top" : "creator-hidden"}>
+          <Container>
+            <Row>
+              {(clickedNode !== undefined) &&
+                <Stack direction="horizontal" gap={2}>
+                  <Button>
+                    {clickedNode.title}
+                  </Button>
+                  <Button onClick={() => { }}><FaRemoveFormat></FaRemoveFormat></Button>
+                </Stack>
+              }
+            </Row>
+            <Row>
+              <Col sm="12">
+                <div className="message-box">
+                  <div className={'fckn-div'}>
+                    <div className={'creator-div'}>
+                      <button
+                        className="creator-btn"
+                        onClick={(e) => { e.stopPropagation(); setModalNodeCreate(true); }}
+                      >
+                        Add custom
+                      </button>
+                    </div>
+                  </div>
+                  {recommends.map((item, index) => {
+                    return (
+                      <div key={index} className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'fckn-div' : 'fckn-div-category'}>
+                        <div className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'creator-div' : 'creator-div-category'}>
+                          <button className={'creator-btn'} onClick={() => { }}>
+                            {item.label.value}
+                          </button>
+                          <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); alert('item') }}>
+                            <FaInfo></FaInfo>
+                          </button>
+                          <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); { }; }}>
+                            {/* <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); }}> */}
+                            <FaPlus></FaPlus>
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+        <div className={creatorVisible ? "creator-bottom" : "canvas-full"}>
+          <Canvas clickedNode={clickedNode} setClickedNode={setClickedNode} url={url} data={dataset} height={height} width={width} setPosition={setPosition}></Canvas>
+        </div>
       </main>
     </div>
   )

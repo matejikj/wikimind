@@ -34,7 +34,7 @@ const ModalNodeDelete: React.FC<{
             cy: 100,
             visible: true
         }
-        createNode(datasetName, theme.sessionInfo.webId, newNode)
+        // deleteNode(datasetName, theme.sessionInfo, newNode)
     }
 
     return (

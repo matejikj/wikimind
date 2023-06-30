@@ -24,13 +24,24 @@ main {
 /* CREATOR */
 
 .creator-top {
-    height: 50%;
+    height: 40%;
     overflow: auto;
 }
 
 .creator-bottom {
-    height: 50%;
-    overflow: auto;
+    height: 60%;
+    overflow: hidden;
+}
+
+.creator-hidden {
+    height: 0%;
+    overflow: hidden;
+}
+
+.canvas-full {
+    height: 100%;
+    overflow: hidden;
+
 }
 
 #creator-btn-add {
@@ -38,10 +49,6 @@ main {
     bottom: 10px;
     right: 10px;
     z-index: 1000;
-}
-
-#creator-canvas>g>text {
-    font-size: 7px;
 }
 
 code {
@@ -61,11 +68,6 @@ code {
 
 svg.drag-over {
     border: 3px dashed red;
-}
-
-.canvas-back {
-    background-color: #f5f5f5;
-
 }
 
 .row>* {
@@ -91,11 +93,6 @@ svg.drag-over {
 
 svg.drag-over {
     border: 3px dashed red;
-}
-
-.canvas-back {
-    background-color: #f5f5f5;
-
 }
 
 .row>* {
