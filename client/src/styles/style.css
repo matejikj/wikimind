@@ -14,23 +14,24 @@ body {
 }
 
 .App {
-    padding-top: 61px;
+    padding-top: 56px;
 }
 
 main {
-    height: calc(100vh - 99px);
+    height: calc(100vh - 56px);
 }
 
 /* CREATOR */
 
 .creator-top {
-    height: 40%;
+    height: calc(65% - 80px);
     width: 100%;
     overflow: auto;
+    border-bottom-style: outset;
 }
 
 .creator-bottom {
-    height: 60%;
+    height: 35%;
     overflow: hidden;
 }
 
@@ -45,11 +46,27 @@ main {
 
 }
 
-#creator-btn-add {
+#visualisation-btn-toggle {
     position: fixed;
     bottom: 10px;
     right: 10px;
     z-index: 1000;
+}
+
+#visualisation-btn-save {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.visualisation-active-container {
+    margin-left: 1px;
+    padding: 2px;
+}
+
+.visualisation-searchbar-container {
+    padding: 4px;
 }
 
 code {
@@ -175,41 +192,36 @@ tr:nth-child(even) {
 
 /* Creator */
 
-.creator-btn {
-    margin: 2px;
-    padding: 2px;
-    border: none;
-    color: white;
-    background-color: #46c2a5;
+.recommend-btn {
+    background-color: #17a66d !important;
+    border: none !important;
 }
 
-.creator-inline-btn {
-    border: 0px solid green;
-    margin-right: 2px;
-    border-radius: 5px;
-    background-color: white;
+.recommend-btn:hover {
+    background-color: #81a76d !important;
 }
 
-.creator-inline-btn:hover {
-    background-color: red;
-}
-
-.creator-btn:hover {
-    border-radius: 5px;
-    background-color: white;
-    color: black;
-}
-
-.fckn-div {
-    background-color: #46c2a5;
-}
-
-.fckn-div {
-    margin: 4px;
-    color: white;
-    border: 1px solid white;
+.recommends-div {
     float: left;
-    /* border-radius: 5px; */
+    border-radius: 5px;
+    margin: 2px;
+    background-color: #17a66d;
+}
+
+.recommends-inline-div {}
+
+.recommends-div-category {
+    float: left;
+    border-radius: 5px;
+    margin: 2px;
+    background-color: #17a66d;
+    box-shadow: rgba(0, 0, 0, 0.8) 4px 4px 0px 0px;
+}
+
+.recommends-inline-div-category {
+    border-radius: 5px;
+    box-shadow: rgba(8, 82, 44, 0.8) 2px 2px 0px 0px;
+
 }
 
 .fckn-div-category {
@@ -346,6 +358,7 @@ tr:nth-child(even) {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }

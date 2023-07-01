@@ -177,7 +177,7 @@ const Canvas: React.FC<{
         <TransformComponent
           wrapperStyle={{
             maxWidth: "100%",
-            maxHeight: "calc(100vh - 70px)",
+            maxHeight: "calc(100vh - 56px)",
           }}
         >
           <svg

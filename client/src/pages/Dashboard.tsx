@@ -169,13 +169,6 @@ const Dashboard: React.FC = () => {
           })}
           <Stack direction='horizontal'>
             <Button onClick={() => setCreateNewModalVisible(true)} variant="outline-success">Create new</Button>
-            <Button
-              onClick={() => navigate('/creator/')}
-              variant="success"
-            >
-              Creator
-            </Button>
-
           </Stack>
         </Container>
       </main>

@@ -12,12 +12,15 @@ import {
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
 import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 import { FaBackspace, FaInfo, FaMinus, FaMinusCircle, FaPlus, FaRemoveFormat } from "react-icons/fa";
+import { FiZoomIn } from "react-icons/fi";
+import { ImInfo } from "react-icons/im";
 import { Node } from "../models/types/Node";
 import { getEntityNeighbours, getKeywords } from "../service/dbpediaService";
 import { ResultItem } from "../models/ResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 import { generate_uuidv4 } from "../service/utils";
 import { Connection } from "../models/types/Connection";
+import { MdOutlineCancel } from "react-icons/md";
 
 const Visualisation: React.FC = () => {
   const d3Container = useRef(null);
@@ -48,48 +51,20 @@ const Visualisation: React.FC = () => {
 
   useEffect(
     () => {
+
       if (mounted) {
         if (location.state !== null && location.state.id !== null) {
-          setUrl(location.state.id)
-          const socket = new WebSocket(wssUrl, ['solid-0.1']);
-          socket.onopen = function () {
-            this.send(`sub ${location.state.id}`);
-          };
-          socket.onmessage = function (msg) {
-            if (msg.data && msg.data.slice(0, 3) === 'pub') {
-              if (msg.data === `pub ${location.state.id}`) {
-                getMindMap(location.state.id).then((res: any) => {
-                  const myr = res as MindMapDataset;
-                  myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
-                  console.log(myr)
-                  setDataset(() => (myr))
-                })
-              }
-            }
-          };
-          const websocket4 = new WebsocketNotification(
-            location.state.id,
-            { fetch: fetch }
-          );
-          websocket4.on("message", (e: any) => {
-            getMindMap(location.state.id).then((res: any) => {
-              const myr = res as MindMapDataset;
-              myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
-              console.log(myr)
-              setDataset(() => (myr))
-            })
-          });
-          websocket4.connect();
-          console.log(location.state)
           getMindMap(location.state.id).then((res: any) => {
             const myr = res as MindMapDataset;
             myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
             console.log(myr)
             setDataset(() => (myr))
           })
+
         } else {
           navigate('/')
         }
+
       }
     }, [mounted])
 
@@ -123,6 +98,7 @@ const Visualisation: React.FC = () => {
       createConnection(dataset?.id, sessionContext.sessionInfo, newConnection)
     }
     createNode(dataset?.id, sessionContext.sessionInfo, newNode)
+    // zazoomovat na novou node po
   }
 
   async function searchKeyword() {
@@ -149,7 +125,7 @@ const Visualisation: React.FC = () => {
           showModal={modalNodeCreate}
         />
         {creatorVisible &&
-          <Container>
+          <Container className="visualisation-searchbar-container">
             <Row>
               <Stack direction="horizontal" gap={2}>
                 <Form.Control
@@ -162,65 +138,78 @@ const Visualisation: React.FC = () => {
                 <Button onClick={searchKeyword}>Search</Button>
               </Stack>
             </Row>
+            <Row>
+              {(clickedNode !== undefined) &&
+                <Stack className="visualisation-active-container" direction="horizontal" gap={1}>
+                  <Button size="sm">
+                    {clickedNode.title}
+                  </Button>
+                  <Button size="sm" onClick={() => { setClickedNode(undefined) }}><MdOutlineCancel></MdOutlineCancel></Button>
+                  <Button size="sm" onClick={() => { setClickedNode(undefined) }}><FiZoomIn></FiZoomIn></Button>
+                  <Button size="sm" onClick={() => { setClickedNode(undefined) }}><ImInfo></ImInfo></Button>
+                </Stack>
+              }
+              {(clickedNode === undefined) &&
+                <Stack className="visualisation-active-container" direction="horizontal" gap={1}>
+                  <Button disabled variant="light" size="sm">
+                    {"No active node"}
+                  </Button>
+                </Stack>
+              }
+            </Row>
           </Container>
         }
         {creatorVisible ? (
-          <Button id="creator-btn-add" onClick={() => setCreatorVisible(false)} variant="success">
-            <FaMinusCircle></FaMinusCircle>
+          <Button size="sm" className="rounded-circle" id="visualisation-btn-toggle" onClick={() => setCreatorVisible(false)} variant="success">
+            <FaMinus></FaMinus>
           </Button>
         ) : (
-          <Button id="creator-btn-add" onClick={() => setCreatorVisible(true)} variant="success">
+          <Button size="sm" className="rounded-circle" id="visualisation-btn-toggle" onClick={() => setCreatorVisible(true)} variant="success">
             <FaPlus></FaPlus>
           </Button>
         )}
         <div className={creatorVisible ? "creator-top" : "creator-hidden"}>
-          <Container>
-            <Row>
-              {(clickedNode !== undefined) &&
-                <Stack direction="horizontal" gap={2}>
-                  <Button>
-                    {clickedNode.title}
-                  </Button>
-                  <Button onClick={() => { setClickedNode(undefined) }}><FaMinus></FaMinus></Button>
-                </Stack>
-              }
-            </Row>
-
-          </Container>
           <Container fluid>
-
             <Row>
               <Col sm="12">
-                <div className="message-box">
-                  <div className={'fckn-div'}>
-                    <div className={'creator-div'}>
-                      <button
-                        className="creator-btn"
-                        onClick={(e) => { e.stopPropagation(); setModalNodeCreate(true); }}
-                      >
-                        Add custom
-                      </button>
-                    </div>
-                  </div>
-                  {recommends.map((item, index) => {
-                    return (
-                      <div key={index} className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'fckn-div' : 'fckn-div-category'}>
-                        <div className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'creator-div' : 'creator-div-category'}>
-                          <button className={'creator-btn'} onClick={() => { getSimilar(item); }}>
-                            {item.label.value}
-                          </button>
-                          <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); alert('item') }}>
-                            <FaInfo></FaInfo>
-                          </button>
-                          <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); { addNode(item) }; }}>
-                            {/* <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); }}> */}
-                            <FaPlus></FaPlus>
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })}
+                <div className="recommends-div">
+                  <Button className="recommend-btn" size="sm">
+                    {"Add custom"}
+                  </Button>
                 </div>
+
+                {recommends.map((item, index) => {
+                  return (
+                    <div key={index} className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'recommends-div' : 'recommends-div-category'}>
+                      <div className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'recommends-inline-div' : 'recommends-inline-div-category'}>
+
+                        <Stack direction="horizontal" gap={0}>
+                          <Button onClick={() => { getSimilar(item); }} className="recommend-btn" size="sm">
+                            {item.label.value}
+                          </Button>
+                          <Button size="sm" className="recommend-btn" onClick={() => { alert('item') }}><FaInfo></FaInfo></Button>
+                          <Button size="sm" className="recommend-btn" onClick={() => { addNode(item) }}><FaPlus></FaPlus></Button>
+
+                        </Stack>
+
+                      </div>
+                    </div>
+                    // <div key={index} className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'fckn-div' : 'fckn-div-category'}>
+                    //   <div className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'creator-div' : 'creator-div-category'}>
+                    //     <button className={'creator-btn'} onClick={() => { getSimilar(item); }}>
+                    //       {item.label.value}
+                    //     </button>
+                    //     <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); alert('item') }}>
+                    //       <FaInfo></FaInfo>
+                    //     </button>
+                    //     <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); { addNode(item) }; }}>
+                    //       {/* <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); }}> */}
+                    //       <FaPlus></FaPlus>
+                    //     </button>
+                    //   </div>
+                    // </div>
+                  )
+                })}
               </Col>
             </Row>
           </Container>

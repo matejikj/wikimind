@@ -309,7 +309,7 @@ const Classes: React.FC = () => {
                               </Button>
                               <br />
                             </div>
-
+                            
                           </Stack>
                         </Col>
                       </Row>
