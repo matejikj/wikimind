@@ -6,128 +6,52 @@ import Button from 'react-bootstrap/Button';
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { SessionContext } from "../sessionContext";
 import { CanvasState } from "./models/CanvasState";
-import ModalNodeDelete from "./modals/ModalNodeDelete";
-import ModalNodeRecommends from "./modals/ModalNodeRecommends";
 import { Connection } from "../models/types/Connection";
 import { Node } from "../models/types/Node";
 import { TransformWrapper } from "react-zoom-pan-pinch";
 import { TransformComponent } from "react-zoom-pan-pinch";
-import { updateNode } from "../service/mindMapService";
-import { getSingleReccomends } from "../service/dbpediaService";
 
 /**
  * Canvas component for rendering the mind map canvas.
  */
 const Canvas: React.FC<{
+  clickedLink: Connection | undefined,
+  setClickedLink: Function,
   clickedNode: Node | undefined,
   setClickedNode: Function,
-  data: MindMapDataset | undefined,
+  dataset: MindMapDataset | undefined,
+  setDataset: Function,
   width: number,
   height: number,
-  setPosition: Function
+  setPosition: Function,
+  canvasState: CanvasState,
+  setCanvasState: Function,
+  disabledCanvas: boolean,
+  setDisabledCanvas: Function,
+  updateCanvasAxis: Function
 }> = ({
   clickedNode,
   setClickedNode,
-  data,
+  dataset,
   width,
   height,
-  setPosition }) => {
+  setPosition,
+  setDataset,
+  clickedLink,
+  setClickedLink,
+  canvasState,
+  setCanvasState,
+  disabledCanvas,
+  setDisabledCanvas,
+  updateCanvasAxis
+}) => {
     const d3Container = useRef(null);
     const sessionContext = useContext(SessionContext);
-
-    // Modal state hooks
-    const [modalNodeCreate, setModalNodeCreate] = useState(false);
-    const [modalNodeDetail, setModalNodeDetail] = useState(false);
-    const [modalNodeDelete, setModalNodeDelete] = useState(false);
-    const [modalNodeRecommends, setModalNodeRecommends] = useState(false);
-    const [modalLinkRename, setModalLinkRename] = useState(false);
-    const [modalLinkDelete, setModalLinkDelete] = useState(false);
-    const [title, setTitle] = useState('ds');
-
-    // Canvas state hooks
-    const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
-    const [clickedLink, setClickedLink] = useState<Connection>();
-    const [disabledCanvas, setDisabledCanvas] = useState(false);
-    const [recomendsResults, setRecomendsResults] = useState<any[]>([]);
-
-    /**
-     * Handles the delete node method.
-     * @param node - The node to delete.
-     */
-    const deleteNodeMethod = (node: Node) => {
-      const newLinked = JSON.parse(JSON.stringify(node));
-      setClickedNode(newLinked);
-      setModalNodeDetail(true);
-    }
-
-    /**
-     * Retrieves recommendations for the clicked node.
-     */
-    const recommend = async () => {
-      // const name = node.title.replaceAll(' ', '_')
-      const results = await getSingleReccomends(clickedNode!.uri);
-
-      setRecomendsResults(results!);
-      console.log(results);
-      console.log(recomendsResults);
-
-      setModalNodeRecommends(true);
-    }
-
-    /**
-     * Sets the node visibility for testing purposes.
-     * @param node - The node to update visibility.
-     */
-    const setForTest = (node: Node) => {
-      if (node !== undefined) {
-        node.visible = false;
-        if (data) {
-          updateNode(data.id, sessionContext.sessionInfo, node);
-        }
-      }
-    }
-
-    /**
-     * Adds a connection for the clicked node.
-     * @param node - The node to add a connection to.
-     */
-    const addConnection = (node: Node) => {
-      setCanvasState(CanvasState.ADD_CONNECTION);
-    }
-
-    /**
-     * Deletes the clicked node.
-     * @param node - The node to delete.
-     */
-    const deleteNode = (node: Node) => {
-      setModalNodeDelete(true);
-    }
-
-    /**
-     * Deletes the connection.
-     */
-    const deleteConnection = () => {
-      setModalLinkDelete(true);
-    }
 
     return (
       <TransformWrapper
         disabled={disabledCanvas}
       >
-
-        <ModalNodeDelete
-          datasetName={data}
-          clickedNode={clickedNode}
-          showModal={modalNodeDelete}
-          setModal={setModalNodeDelete}
-        />
-        <ModalNodeRecommends
-          datasetName={data}
-          clickedNode={clickedNode}
-          recommends={recomendsResults}
-          showModal={modalNodeRecommends}
-          setModal={setModalNodeRecommends}
-        />
         <TransformComponent
           wrapperStyle={{
             maxWidth: "100%",
@@ -155,7 +79,7 @@ const Canvas: React.FC<{
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#876" />
               </marker>
             </defs>
-            {data && data.links.map((link, index) => {
+            {dataset && dataset.links.map((link, index) => {
               return (
                 <Line
                   key={index}
@@ -163,16 +87,15 @@ const Canvas: React.FC<{
                 />
               );
             })}
-            {data && data.nodes.map((node, index) => {
+            {dataset && dataset.nodes.map((node, index) => {
               return (
                 <Circle
                   key={index}
                   node={node}
-                  dataset={data}
-                  clickedLink={clickedLink}
-                  setClickedLink={setClickedLink}
+                  dataset={dataset}
+                  setDataset={setDataset}
+                  updateCanvasAxis={updateCanvasAxis}
                   setClickedNode={setClickedNode}
-                  setModalLinkRename={setModalLinkRename}
                   clickedNode={clickedNode}
                   canvasState={canvasState}
                   setCanvasState={setCanvasState}

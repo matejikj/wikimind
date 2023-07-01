@@ -14,15 +14,19 @@ import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 import { FaBackspace, FaInfo, FaMinus, FaMinusCircle, FaPlus, FaRemoveFormat } from "react-icons/fa";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { ImInfo } from "react-icons/im";
-import { BsNodePlus } from "react-icons/bs";
+import { FiSave } from "react-icons/fi";
+import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
 import { Node } from "../models/types/Node";
 import { getEntityNeighbours, getKeywords } from "../service/dbpediaService";
 import { ResultItem } from "../models/ResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 import { generate_uuidv4 } from "../service/utils";
 import { Connection } from "../models/types/Connection";
-import { MdColorLens, MdDriveFileRenameOutline, MdKeyboardReturn, MdOutlineCancel } from "react-icons/md";
+import { MdColorLens, MdDriveFileRenameOutline, MdKeyboardReturn, MdOutlineCancel, MdScreenShare } from "react-icons/md";
 import { HistoryItem, HistoryItemType } from "../models/HistoryItem";
+import ModalNodeDelete from "../visualisation/modals/ModalNodeDelete";
+import ModalNodeDetail from "../visualisation/modals/ModalNodeDetail";
+import { CanvasState } from "../visualisation/models/CanvasState";
 
 const Visualisation: React.FC = () => {
   const d3Container = useRef(null);
@@ -31,23 +35,31 @@ const Visualisation: React.FC = () => {
   const countRef = useRef(0);
 
   const ref = useRef(null);
-  const [height, setHeight] = useState(4000);
+  const [height, setHeight] = useState(0);
   const [url, setUrl] = useState('');
-  const [width, setWidth] = useState(4000);
+  const [width, setWidth] = useState(0);
   const [dataset, setDataset] = useState<MindMapDataset>();
+
   const sessionContext = useContext(SessionContext)
   const [mounted, setMounted] = useState(false); // <-- new state variable
   const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
   wssUrl.protocol = 'wss';
 
   const [clickedNode, setClickedNode] = useState<Node>();
+
   const [searchedKeyword, setSearchedKeyword] = useState('');
   const [recommends, setRecommends] = useState<ResultItem[]>([]);
   const [recommendPath, setRecommendPath] = useState<HistoryItem[]>([]);
-  const [lastQuery, setLastQuery] = useState<HistoryItem | undefined>( undefined);
+  const [lastQuery, setLastQuery] = useState<HistoryItem | undefined>(undefined);
 
   const [creatorVisible, setCreatorVisible] = useState(false); // <-- new state variable
   const [modalNodeCreate, setModalNodeCreate] = useState(false); // <-- new state variable
+  const [modalNodeDetail, setModalNodeDetail] = useState(false);
+  const [modalNodeDelete, setModalNodeDelete] = useState(false);
+
+  const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
+  const [clickedLink, setClickedLink] = useState<Connection>();
+  const [disabledCanvas, setDisabledCanvas] = useState(false);
 
   useEffect(() => {
     setMounted(true); // set the mounted state variable to true after the component mounts
@@ -62,6 +74,7 @@ const Visualisation: React.FC = () => {
             if (res) {
               res.links = AddCoords(res.links, getIdsMapping(res.nodes))
               setDataset(res)
+              updateCanvasAxis(res)
             }
           })
 
@@ -72,6 +85,14 @@ const Visualisation: React.FC = () => {
       }
     }, [mounted])
 
+  const updateCanvasAxis = (res: MindMapDataset) => {
+    if (res) {
+      const xAxes = res.nodes.map((node) => { return node.cx })
+      const yAxes = res.nodes.map((node) => { return node.cy })
+      setWidth(Math.max(...xAxes) + 500)
+      setHeight(Math.max(...yAxes) + 500)
+    }
+  }
   const setPosition = (x: number, y: number, id: string) => {
     if (dataset) {
       dataset.nodes = dataset.nodes.map((todo) => {
@@ -83,15 +104,23 @@ const Visualisation: React.FC = () => {
     }
   }
 
+  function saveDataset() {
+    console.log("saveDataset")
+  }
+
+  function createPicture() {
+    console.log("createPicture")
+  }
+
   function addNode(item: ResultItem) {
     const newNode: Node = {
       id: generate_uuidv4(),
       uri: item.entity.value,
       title: item.label.value,
       description: '',
-      cx: 100,
+      cx: 200,
       color: "#8FBC8F",
-      cy: 100,
+      cy: 600,
       visible: true
     }
     if (clickedNode) {
@@ -100,10 +129,24 @@ const Visualisation: React.FC = () => {
         from: clickedNode.id,
         to: newNode.id
       }
-      createConnection(dataset?.id, sessionContext.sessionInfo, newConnection)
+      if (dataset) {
+        dataset.links.push(newConnection)
+
+      }
     }
-    createNode(dataset?.id, sessionContext.sessionInfo, newNode)
+    if (dataset) {
+      dataset.nodes.push(newNode)
+      updateCanvasAxis(dataset)
+      setDataset({
+        ...dataset,
+        created: '1.7.2023 21:08:08'
+      });
+    }
+    // TODOOOOOO
+    // 
     // zazoomovat na novou node po
+    //
+    // Odstranit connection - kliknout na nej
   }
 
   async function searchKeyword() {
@@ -130,7 +173,7 @@ const Visualisation: React.FC = () => {
       setLastQuery({
         type: HistoryItemType.ITEM,
         value: item.entity.value,
-        label: item.label.value        
+        label: item.label.value
       })
       setSearchedKeyword(item.label.value)
       setRecommends(a)
@@ -160,12 +203,24 @@ const Visualisation: React.FC = () => {
 
   return (
     <div className="App">
-      <Sidenav/>
+      <Sidenav />
       <main className="visualisation-tools" ref={ref}>
         <ModalNodeCreate
           dataset={dataset}
+          setDataset={setDataset}
           setModal={setModalNodeCreate}
           showModal={modalNodeCreate}
+        />
+        <ModalNodeDelete
+          datasetName={dataset}
+          clickedNode={clickedNode}
+          showModal={modalNodeDelete}
+          setModal={setModalNodeDelete}
+        />
+        <ModalNodeDetail
+          showModal={modalNodeDetail}
+          setModal={setModalNodeDetail}
+          node={clickedNode}
         />
         {creatorVisible &&
           <Container className="visualisation-searchbar-container">
@@ -189,7 +244,7 @@ const Visualisation: React.FC = () => {
                     {clickedNode.title.length > 15 ? clickedNode.title.slice(0, 15) + '...' : clickedNode.title}
                   </Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><ImInfo></ImInfo></Button>
-                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdDriveFileRenameOutline></MdDriveFileRenameOutline></Button>
+                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><BsQuestionSquare></BsQuestionSquare></Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><HiMagnifyingGlass></HiMagnifyingGlass></Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><BsNodePlus></BsNodePlus></Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdColorLens></MdColorLens></Button>
@@ -207,20 +262,42 @@ const Visualisation: React.FC = () => {
           </Container>
         }
         {creatorVisible ? (
-          <Button size="sm" className="rounded-circle" id="visualisation-btn-toggle" onClick={() => setCreatorVisible(false)} variant="success">
-            <FaMinus></FaMinus>
+          <Button
+            size="sm"
+            className="rounded-circle"
+            id="visualisation-btn-toggle"
+            onClick={() => setCreatorVisible(false)}
+            variant="success"><FaMinus></FaMinus>
           </Button>
         ) : (
           <Button size="sm" className="rounded-circle" id="visualisation-btn-toggle" onClick={() => setCreatorVisible(true)} variant="success">
             <FaPlus></FaPlus>
           </Button>
         )}
+        {creatorVisible &&
+          <Button
+            size="sm"
+            className="rounded-circle"
+            id="visualisation-btn-save"
+            onClick={() => saveDataset()}
+            variant="success"><FiSave></FiSave>
+          </Button>
+        }
+        {creatorVisible &&
+          <Button
+            size="sm"
+            className="rounded-circle"
+            id="visualisation-btn-picture"
+            onClick={() => createPicture()}
+            variant="success"><MdScreenShare></MdScreenShare>
+          </Button>
+        }
         <div className={creatorVisible ? "creator-top" : "creator-hidden"}>
           <Container fluid>
             <Row>
               <Col sm="12">
                 <div className="recommends-div">
-                  <Button className="recommend-btn" size="sm">
+                  <Button onClick={() => setModalNodeCreate(true)} className="recommend-btn" size="sm">
                     {"Add custom entity"}
                   </Button>
                 </div>
@@ -236,9 +313,7 @@ const Visualisation: React.FC = () => {
                           </Button>
                           <Button size="sm" className="recommend-btn" onClick={() => { alert('item') }}><FaInfo></FaInfo></Button>
                           <Button size="sm" className="recommend-btn" onClick={() => { addNode(item) }}><FaPlus></FaPlus></Button>
-
                         </Stack>
-
                       </div>
                     </div>
                   )
@@ -248,7 +323,22 @@ const Visualisation: React.FC = () => {
           </Container>
         </div>
         <div className={creatorVisible ? "creator-bottom" : "canvas-full"}>
-          <Canvas clickedNode={clickedNode} setClickedNode={setClickedNode} data={dataset} height={height} width={width} setPosition={setPosition}></Canvas>
+          <Canvas
+            clickedNode={clickedNode}
+            setClickedNode={setClickedNode}
+            dataset={dataset}
+            setDataset={setDataset}
+            height={height}
+            width={width}
+            updateCanvasAxis={updateCanvasAxis}
+            setPosition={setPosition}
+            canvasState={canvasState}
+            setCanvasState={setCanvasState}
+            clickedLink={clickedLink}
+            setClickedLink={setClickedLink}
+            disabledCanvas={disabledCanvas}
+            setDisabledCanvas={setDisabledCanvas}
+          ></Canvas>
         </div>
       </main>
     </div>

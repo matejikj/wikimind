@@ -64,9 +64,17 @@ main {
 
 #visualisation-btn-save {
     position: fixed;
-    bottom: 10px;
+    bottom: 42px;
     right: 10px;
     z-index: 1000;
+}
+
+#visualisation-btn-picture {
+    position: fixed;
+    bottom: 74px;
+    right: 10px;
+    z-index: 1000;
+
 }
 
 .visualisation-active-container {

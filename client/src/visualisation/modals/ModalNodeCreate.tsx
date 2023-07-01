@@ -1,26 +1,25 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { Node } from '../../models/types/Node'
-import { SessionContext } from "../../sessionContext";
-import { createNode } from "../../service/mindMapService";
 import { generate_uuidv4 } from "../../service/utils";
 import Container from 'react-bootstrap/Container';
 import { Col, Row } from "react-bootstrap";
 import '../../styles/style.css';
 import { MindMapDataset } from "../../models/types/MindMapDataset";
 
+const blankFormInput = {
+    title: '',
+    description: ''
+}
+
 const ModalNodeCreate: React.FC<{
     dataset: MindMapDataset | undefined,
+    setDataset: Function,
     showModal: boolean,
     setModal: Function
-}> = ({ dataset, showModal, setModal }) => {
-    const sessionContext = useContext(SessionContext)
-    const [formInputs, setFormInputs] = useState({
-        title: '',
-        description: '',
-    });
+}> = ({ dataset, setDataset, showModal, setModal }) => {
+    const [formInputs, setFormInputs] = useState(blankFormInput);
 
     function handleChange(event: any) {
         const key = event.target.name;
@@ -29,17 +28,24 @@ const ModalNodeCreate: React.FC<{
     }
 
     async function handleSave(event: any) {
-        const newNode: Node = {
-            id: generate_uuidv4(),
-            uri: '',
-            title: formInputs.title,
-            description: formInputs.description,
-            cx: 100,
-            cy: 100,
-            visible: true,
-            color: '#8FBC8F'
+        if (dataset) {
+            dataset.nodes.push({
+                id: generate_uuidv4(),
+                uri: '',
+                title: formInputs.title,
+                description: formInputs.description,
+                cx: 100,
+                cy: 100,
+                visible: true,
+                color: '#8FBC8F'
+            })
+            setDataset({
+                ...dataset,
+                created: '1.7.2023 21:08:08'
+            });
         }
-        createNode(dataset?.id, sessionContext.sessionInfo, newNode)
+        setFormInputs(blankFormInput)
+        setModal(false)
     }
 
     return (

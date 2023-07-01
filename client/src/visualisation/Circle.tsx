@@ -7,67 +7,65 @@ import { generate_uuidv4 } from "../service/utils";
 import { updateNode } from "../service/mindMapService";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 
+const TOUCH_MOVE = 'touchmove'
+const TOUCH_START = 'touchstart'
+
 const Circle: React.FC<{
     node: Node,
-    clickedLink: Connection | undefined,
     dataset: MindMapDataset | undefined,
-    setClickedLink: Function,
+    setDataset: Function,
     clickedNode: Node | undefined,
     setClickedNode: Function,
-    setModalLinkRename: Function,
     canvasState: CanvasState,
     setCanvasState: Function,
-    setDisabledCanvas: Function
+    setDisabledCanvas: Function,
+    updateCanvasAxis: Function
 }> = ({
     node,
-    clickedLink,
-    setClickedLink,
     dataset,
+    setDataset,
     clickedNode,
     setClickedNode,
-    setModalLinkRename,
     canvasState,
     setCanvasState,
-    setDisabledCanvas
+    setDisabledCanvas,
+    updateCanvasAxis
 }) => {
         const [active, setActive] = React.useState(false);
-        const [moveX, setMoveX] = React.useState(0);
-        const [moveY, setMoveY] = React.useState(0);
+        const [positionX, setPositionX] = React.useState(0);
+        const [positionY, setPositionY] = React.useState(0);
         const [difX, setDifX] = React.useState(0);
         const [difY, setDifY] = React.useState(0);
-
-        const sessionContext = useContext(SessionContext)
 
         const handlePointerDown = (e: any) => {
             e.stopPropagation()
             setDisabledCanvas(true)
             if (!(canvasState === CanvasState.ADD_CONNECTION)) {
-                if (e.type === "touchstart") {
-                    setMoveX(Math.round(e.touches[0].clientX))
-                    setMoveY(Math.round(e.touches[0].clientY))
+                if (e.type === TOUCH_START) {
+                    setPositionX(Math.round(e.touches[0].clientX))
+                    setPositionY(Math.round(e.touches[0].clientY))
                 } else {
                     e.target.setPointerCapture(e.pointerId);
-                    setMoveX(Math.round(e.clientX))
-                    setMoveY(Math.round(e.clientY))
+                    setPositionX(Math.round(e.clientX))
+                    setPositionY(Math.round(e.clientY))
                 }
                 setActive(true);
             }
         };
         const handlePointerMove = (e: any) => {
-            if (!(canvasState === CanvasState.ADD_CONNECTION)) {
-                if (active) {
-                    if (e.type === "touchmove") {
-                        console.log(Math.round(e.touches[0].clientX - moveX))
-                        setDifX(Math.round(e.touches[0].clientX - moveX))
-                        setDifY(Math.round(e.touches[0].clientY - moveY))
-                    } else {
-                        setDifX(Math.round(e.clientX - moveX))
-                        setDifY(Math.round(e.clientY - moveY))
-                    }    
-                    try {
-                        e.target.setPointerCapture(e.pointerId);
-                    } catch (error) {}
+            if (!(canvasState === CanvasState.ADD_CONNECTION) && active
+            ) {
+                if (e.type === TOUCH_MOVE) {
+                    console.log(Math.round(e.touches[0].clientX - positionX))
+                    setDifX(Math.round(e.touches[0].clientX - positionX))
+                    setDifY(Math.round(e.touches[0].clientY - positionY))
+                } else {
+                    setDifX(Math.round(e.clientX - positionX))
+                    setDifY(Math.round(e.clientY - positionY))
                 }
+                try {
+                    e.target.setPointerCapture(e.pointerId);
+                } catch (error) { }
             }
         };
         const handlePointerUp = async (e: any) => {
@@ -75,22 +73,20 @@ const Circle: React.FC<{
             if (!(canvasState === CanvasState.ADD_CONNECTION)) {
                 setActive(false);
                 if (difX !== 0 || difY !== 0) {
-                    const updatedNode: Node = {
-                        visible: true,uri: '',
-                        cx: Math.round(node.cx + difX),
-                        cy: Math.round(node.cy + difY),
-                        title: node.title,
-                        id: node.id,
-                        description: node.description,
-                        color: node.color
+                    if (dataset) {
+                        node.cx = Math.round(node.cx + difX)
+                        node.cy = Math.round(node.cy + difY)
+                        updateCanvasAxis(dataset)
+                        setDataset({
+                            ...dataset,
+                            created: '1.7.2023 21:08:08'
+                        });
                     }
-                    await updateNode(dataset?.id, sessionContext.sessionInfo, updatedNode)
                     setDifX(0)
                     setDifY(0)
-                    setMoveX(0)
-                    setMoveY(0)
+                    setPositionX(0)
+                    setPositionY(0)
                 }
-
             }
         };
 
@@ -98,18 +94,18 @@ const Circle: React.FC<{
             e.stopPropagation()
 
             if (canvasState === CanvasState.ADD_CONNECTION) {
-                let fromId = ""
-                if (clickedNode !== undefined) {
-                    fromId = clickedNode.id
+                if (clickedNode && dataset) {
+                    dataset.links.push({
+                        from: clickedNode.id,
+                        to: node.id,
+                        id: generate_uuidv4(),
+                    })
+                    setDataset({
+                        ...dataset,
+                        created: '1.7.2023 21:08:08'
+                    });
+                    setCanvasState(CanvasState.DEFAULT)
                 }
-                const newLink: Connection = {
-                    from: fromId,
-                    to: node.id,
-                    id: generate_uuidv4(),
-                }
-                setClickedLink(newLink)
-                setCanvasState(CanvasState.DEFAULT)
-                setModalLinkRename(true)
             } else {
                 setClickedNode(node)
             }
