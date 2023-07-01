@@ -12,15 +12,16 @@ import {
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
 import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 import { FaBackspace, FaInfo, FaMinus, FaMinusCircle, FaPlus, FaRemoveFormat } from "react-icons/fa";
-import { FiZoomIn } from "react-icons/fi";
+import { HiMagnifyingGlass } from "react-icons/hi2";
 import { ImInfo } from "react-icons/im";
+import { BsNodePlus } from "react-icons/bs";
 import { Node } from "../models/types/Node";
 import { getEntityNeighbours, getKeywords } from "../service/dbpediaService";
 import { ResultItem } from "../models/ResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 import { generate_uuidv4 } from "../service/utils";
 import { Connection } from "../models/types/Connection";
-import { MdOutlineCancel } from "react-icons/md";
+import { MdDriveFileRenameOutline, MdOutlineCancel } from "react-icons/md";
 
 const Visualisation: React.FC = () => {
   const d3Container = useRef(null);
@@ -118,7 +119,7 @@ const Visualisation: React.FC = () => {
   return (
     <div className="App">
       <Sidenav type={SideNavType.CANVAS} />
-      <main ref={ref}>
+      <main className="visualisation-tools" ref={ref}>
         <ModalNodeCreate
           dataset={dataset}
           setModal={setModalNodeCreate}
@@ -144,9 +145,11 @@ const Visualisation: React.FC = () => {
                   <Button size="sm">
                     {clickedNode.title}
                   </Button>
-                  <Button size="sm" onClick={() => { setClickedNode(undefined) }}><MdOutlineCancel></MdOutlineCancel></Button>
-                  <Button size="sm" onClick={() => { setClickedNode(undefined) }}><FiZoomIn></FiZoomIn></Button>
-                  <Button size="sm" onClick={() => { setClickedNode(undefined) }}><ImInfo></ImInfo></Button>
+                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><ImInfo></ImInfo></Button>
+                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdDriveFileRenameOutline></MdDriveFileRenameOutline></Button>
+                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><HiMagnifyingGlass></HiMagnifyingGlass></Button>
+                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><BsNodePlus></BsNodePlus></Button>
+                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdOutlineCancel></MdOutlineCancel></Button>
                 </Stack>
               }
               {(clickedNode === undefined) &&
@@ -174,7 +177,7 @@ const Visualisation: React.FC = () => {
               <Col sm="12">
                 <div className="recommends-div">
                   <Button className="recommend-btn" size="sm">
-                    {"Add custom"}
+                    {"Add custom entity"}
                   </Button>
                 </div>
 
@@ -194,20 +197,6 @@ const Visualisation: React.FC = () => {
 
                       </div>
                     </div>
-                    // <div key={index} className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'fckn-div' : 'fckn-div-category'}>
-                    //   <div className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'creator-div' : 'creator-div-category'}>
-                    //     <button className={'creator-btn'} onClick={() => { getSimilar(item); }}>
-                    //       {item.label.value}
-                    //     </button>
-                    //     <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); alert('item') }}>
-                    //       <FaInfo></FaInfo>
-                    //     </button>
-                    //     <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); { addNode(item) }; }}>
-                    //       {/* <button className="creator-inline-btn" onClick={(e) => { e.stopPropagation(); }}> */}
-                    //       <FaPlus></FaPlus>
-                    //     </button>
-                    //   </div>
-                    // </div>
                   )
                 })}
               </Col>

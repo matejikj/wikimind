@@ -21,6 +21,11 @@ main {
     height: calc(100dvh - 40px);
 }
 
+.visualisation-tools {
+    background-color: #f8f9fa;
+
+}
+
 .sidenav {
     padding: 0 !important;
 }
@@ -133,7 +138,8 @@ svg.drag-over {
 }
 
 #svg-canvas {
-    background-color: #f5f5f5;
+    background-color: white;
+    
     padding-left: 0;
     padding-right: 0;
 }

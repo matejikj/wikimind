@@ -144,7 +144,6 @@ const ExamPage: React.FC = () => {
                         <svg
                             onClick={() => setDisabled(false)}
                             id="svg-canvas"
-                            className="d3-component"
                             width={width}
                             height={height}
                             ref={d3Container}

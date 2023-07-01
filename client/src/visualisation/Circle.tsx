@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { SessionContext } from "../sessionContext";
 import { Node } from '../models/types/Node'
 import { CanvasState } from './models/CanvasState'
-import { ContextMenuType } from "./models/ContextMenuType";
 import { Connection } from "../models/types/Connection";
 import { generate_uuidv4 } from "../service/utils";
 import { updateNode } from "../service/mindMapService";
@@ -18,8 +17,6 @@ const Circle: React.FC<{
     setModalLinkRename: Function,
     canvasState: CanvasState,
     setCanvasState: Function,
-    contextMenu: ContextMenuType,
-    setContextMenu: Function
     setDisabledCanvas: Function
 }> = ({
     node,
@@ -31,8 +28,6 @@ const Circle: React.FC<{
     setModalLinkRename,
     canvasState,
     setCanvasState,
-    contextMenu,
-    setContextMenu,
     setDisabledCanvas
 }) => {
         const [active, setActive] = React.useState(false);
@@ -119,19 +114,6 @@ const Circle: React.FC<{
             }
         };
 
-        const handleContextMenu = async (e: any) => {
-            e.stopPropagation()
-            e.preventDefault()
-            setClickedNode(JSON.parse(JSON.stringify(node)))
-            setCanvasState(CanvasState.DEFAULT)
-            setContextMenu({
-                ...contextMenu,
-                posX: node.cx + difX,
-                posY: node.cy + difY,
-                visible: "visible"
-            })
-        }
-
         return (
             <g>
                 <rect
@@ -145,7 +127,6 @@ const Circle: React.FC<{
                     strokeWidth="2"
                     strokeOpacity={0.5}
                     rx="4" ry="4"
-                    onContextMenu={handleContextMenu}
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
                     onPointerMove={handlePointerMove}
@@ -159,7 +140,6 @@ const Circle: React.FC<{
                     x={(node.cx + difX) - node.title.length * 4 + 8}
                     y={(node.cy + difY) + 5}
                     id={node.id}
-                    onContextMenu={handleContextMenu}
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
                     onPointerMove={handlePointerMove}

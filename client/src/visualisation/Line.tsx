@@ -1,24 +1,9 @@
 import React from "react";
 import { Connection } from '../models/types/Connection'
 
-const Line: React.FC<{ link: Connection, contextMenu: any, setContextMenu: Function }> = ({ link, contextMenu, setContextMenu }) => {
-
-    const handleContextMenu = (e: any) => {
-        const bbox = e.target.getBoundingClientRect();
-        const x = link.source !== undefined && link.target !== undefined ?
-            (link.source[0] + link.target[0]) / 2 + 40 : 0;
-        const y = link.source !== undefined && link.target !== undefined ?
-            (link.source[1] + link.target[1]) / 2 + 10 : 0;
-        setContextMenu({
-            ...contextMenu,
-            x: x,
-            y: y,
-            visibility: "visible",
-            nodeId: link.id
-        })
-        e.preventDefault()
-        // parentContextMenu({x, y});
-    };
+const Line: React.FC<{
+    link: Connection
+}> = ({ link }) => {
 
     return (
         <g>
@@ -34,7 +19,6 @@ const Line: React.FC<{ link: Connection, contextMenu: any, setContextMenu: Funct
                 markerEnd="url(#triangle)"
             ></line>
         </g>
-
     );
 };
 

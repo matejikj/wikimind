@@ -5,11 +5,7 @@ import '../styles/style.css';
 import Button from 'react-bootstrap/Button';
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { SessionContext } from "../sessionContext";
-import ContextCircleMenu from "./ContextCircleMenu";
-import ContextLinkMenu from "./ContextLinkMenu";
-import { ContextMenuType } from "./models/ContextMenuType";
 import { CanvasState } from "./models/CanvasState";
-import ModalNodeCreate from "./modals/ModalNodeCreate";
 import ModalNodeDelete from "./modals/ModalNodeDelete";
 import ModalNodeRecommends from "./modals/ModalNodeRecommends";
 import { Connection } from "../models/types/Connection";
@@ -114,48 +110,6 @@ const Canvas: React.FC<{
       setModalLinkDelete(true);
     }
 
-    /**
-     * Renames the connection.
-     */
-    const renameConnection = () => {
-      setModalLinkRename(true);
-    }
-
-    /**
-     * Sets the connection for testing purposes.
-     */
-    const setForTestConnection = () => {
-      setModalLinkRename(true);
-    }
-
-    // Context menu hooks
-    const [circleMenu, setCircleMenu] = useState<ContextMenuType>({
-      posX: 0,
-      posY: 0,
-      visible: "hidden"
-    });
-
-    const [linksMenu, setLinksMenu] = useState<ContextMenuType>({
-      posX: 0,
-      posY: 0,
-      visible: "hidden"
-    });
-
-    /**
-     * Hides the context menus.
-     */
-    const contextMenuFalse = () => {
-      setCircleMenu({
-        ...circleMenu,
-        visible: "hidden"
-      });
-      setLinksMenu({
-        ...linksMenu,
-        visible: "hidden"
-      });
-      setClickedNode(undefined)
-    }
-
     return (
       <TransformWrapper
         disabled={disabledCanvas}
@@ -182,8 +136,7 @@ const Canvas: React.FC<{
         >
           <svg
             id="svg-canvas"
-            onClick={contextMenuFalse}
-            className="d3-component"
+            onClick={() => setClickedNode(undefined)}
             width={width}
             height={height}
             ref={d3Container}
@@ -207,8 +160,6 @@ const Canvas: React.FC<{
                 <Line
                   key={index}
                   link={link}
-                  contextMenu={linksMenu}
-                  setContextMenu={setLinksMenu}
                 />
               );
             })}
@@ -225,28 +176,10 @@ const Canvas: React.FC<{
                   clickedNode={clickedNode}
                   canvasState={canvasState}
                   setCanvasState={setCanvasState}
-                  contextMenu={circleMenu}
-                  setContextMenu={setCircleMenu}
                   setDisabledCanvas={setDisabledCanvas}
                 />
               );
             })}
-            <ContextCircleMenu
-              clickedNode={clickedNode}
-              recommend={recommend}
-              deleteNodeMethod={deleteNodeMethod}
-              setForTest={setForTest}
-              addConnection={addConnection}
-              deleteNode={deleteNode}
-              menu={circleMenu}
-            />
-            <ContextLinkMenu
-              clickedLink={clickedLink}
-              renameNode={renameConnection}
-              setForTest={setForTestConnection}
-              deleteNode={deleteConnection}
-              menu={linksMenu}
-            />
           </svg>
         </TransformComponent>
       </TransformWrapper>
