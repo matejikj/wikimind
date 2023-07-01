@@ -82,6 +82,7 @@ const Circle: React.FC<{
                         title: node.title,
                         id: node.id,
                         description: node.description,
+                        color: node.color
                     }
                     await updateNode(dataset?.id, sessionContext.sessionInfo, updatedNode)
                     setDifX(0)
@@ -123,9 +124,9 @@ const Circle: React.FC<{
                     height={20}
                     fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 0.9) : 0.9}
                     id={node.id}
-                    stroke="green"
-                    strokeWidth="2"
-                    strokeOpacity={0.5}
+                    stroke="black"
+                    strokeWidth="0.5"
+                    strokeOpacity={1}
                     rx="4" ry="4"
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
@@ -134,7 +135,7 @@ const Circle: React.FC<{
                     onTouchStart={handlePointerDown}
                     onTouchEnd={handlePointerUp}
                     onTouchMove={handlePointerMove}
-                    fill={active ? "white" : "#8FBC8F"}
+                    fill={active ? "white" : node.color}
                 />
                 <text
                     x={(node.cx + difX) - node.title.length * 4 + 8}
@@ -146,7 +147,7 @@ const Circle: React.FC<{
                     onTouchStart={handlePointerDown}
                     onTouchEnd={handlePointerUp}
                     onTouchMove={handlePointerMove}
-                    fill={active ? "#8FBC8F" : "black"}
+                    fill={active ? node.color : "white"}
                     onClick={nodeOnClick}
                 >{node.title}{node.visible ? '' : '❓'}</text>
             </g>

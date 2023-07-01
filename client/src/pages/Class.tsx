@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Sidenav, { SideNavType } from "../components/Sidenav";
+import Sidenav from "../components/Sidenav";
 import { ClassDataset } from "../models/types/ClassDataset";
 import Button from 'react-bootstrap/Button';
 import { SessionContext } from "../sessionContext";
@@ -118,7 +118,7 @@ const Class: React.FC = () => {
 
   return (
     <div className="App">
-      <Sidenav type={SideNavType.COMMON} />
+      <Sidenav/>
       <main ref={ref}>
         <Container>
           <ModalClassAddMindMap showModal={modelClassAddShow} classUrl={dataset?.storage + 'Wikie/classes/' + dataset?.id + '.ttl'} setModal={setModelClassAddShow}></ModalClassAddMindMap>

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import Sidenav, { SideNavType } from "../components/Sidenav";
+import Sidenav from "../components/Sidenav";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
@@ -43,7 +43,7 @@ const ProfileView: React.FC = () => {
 
   return (
     <div className="App">
-      <Sidenav type={SideNavType.COMMON} />
+      <Sidenav/>
       <main>
         <Container className='center-container'>
           <Row>

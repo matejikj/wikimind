@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from "react";
-import Sidenav, { SideNavType } from "../components/Sidenav";
+import Sidenav from "../components/Sidenav";
 import { getMindMapList } from "../service/containerService";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="App">
-      <Sidenav type={SideNavType.COMMON} />
+      <Sidenav/>
       <main className='dashboard-main'>
         <Modal show={createNewModalVisible} onHide={() => setCreateNewModalVisible(false)}>
           <Modal.Header>
@@ -136,7 +136,7 @@ const Dashboard: React.FC = () => {
                   <div className='my-stack-reverse'>
                     <Button
                       size='sm'
-                      className='class-btn'
+                      className='class-btn rounded-circle'
                       onClick={() => removeMindMap(item)}
                       variant="success"
                     >
@@ -145,7 +145,7 @@ const Dashboard: React.FC = () => {
 
                     <Button
                       size='sm'
-                      className='class-btn'
+                      className='class-btn rounded-circle'
                       onClick={() => renameMindMap(item)}
                       variant="success"
                     >
@@ -154,7 +154,7 @@ const Dashboard: React.FC = () => {
                     
                     <Button
                       size='sm'
-                      className='class-btn'
+                      className='class-btn rounded-circle'
                       onClick={() => showMindMap(item)}
                       variant="success"
                     >

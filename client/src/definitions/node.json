@@ -19,6 +19,9 @@
         "cy": 
             "http://schema.org/email"
         ,
+        "color": 
+            "http://schema.org/color"
+        ,
         "visible": 
             "https://schema.org/Product"
         

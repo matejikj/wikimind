@@ -7,6 +7,7 @@ import { SessionContext } from "../../sessionContext";
 import { createNode } from "../../service/mindMapService";
 import { generate_uuidv4 } from "../../service/utils";
 import { MindMapDataset } from "../../models/types/MindMapDataset";
+import { color } from "d3";
 
 const ModalNodeDelete: React.FC<{
     datasetName: MindMapDataset | undefined,
@@ -33,7 +34,8 @@ const ModalNodeDelete: React.FC<{
             description: formInputs.description,
             cx: 100,
             cy: 100,
-            visible: true
+            visible: true,
+            color: "#8FBC8F"
         }
         // deleteNode(datasetName, theme.sessionInfo, newNode)
     }

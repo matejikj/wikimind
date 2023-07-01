@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from "react";
-import Sidenav, { SideNavType } from "../components/Sidenav";
+import Sidenav from "../components/Sidenav";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
@@ -142,7 +142,7 @@ const Classes: React.FC = () => {
 
   return (
     <div className="App">
-      <Sidenav type={SideNavType.COMMON} />
+      <Sidenav/>
       <main>
         <Modal show={show} onHide={handleClose}>
           <Modal.Header>

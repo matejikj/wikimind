@@ -8,29 +8,20 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import '../styles/style.css';
 import { MdOutlineCancel } from "react-icons/md";
 import { ImMenu } from "react-icons/im";
+import { logout } from "@inrupt/solid-client-authn-browser";
 
-export enum SideNavType {
-  COMMON,
-  CANVAS
-}
-
-const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
+const Sidenav: React.FC = () => {
   const navigate = useNavigate();
 
-  const [open, setopen] = useState(true)
-  const toggleOpen = () => {
-    setopen(!open)
-  }
-
-  const theme = useContext(SessionContext);
-
-  const logout = async () => {
-    // const logged = await logout()
-    theme.setSessionInfo({
-      webId: "",
-      podUrl: "",
-      isLogged: false,
-      podAccessControlPolicy: null
+  const sessionContext = useContext(SessionContext);
+  const logoutSession = async () => {
+    logout().then(() => {
+      sessionContext.setSessionInfo({
+        webId: "",
+        podUrl: "",
+        isLogged: false,
+        podAccessControlPolicy: null
+      })
     })
   }
 
@@ -38,9 +29,9 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
     <Navbar className="sidenav" key={"false"} bg="light" fixed="top" expand={false}>
       <Container fluid>
         <Navbar.Toggle bsPrefix={"btn btn-sm"} aria-controls={`offcanvasNavbar-expand-${false}`}>
-        <ImMenu></ImMenu>
+          <ImMenu></ImMenu>
         </Navbar.Toggle>
-        <img className="logo" src={'../logo.png'}/>
+        <img className="logo" src={'../logo.png'} />
 
         <Navbar.Offcanvas
           id={`offcanvasNavbar-expand-${false}`}
@@ -48,14 +39,9 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
           placement="start"
         >
           <Offcanvas.Header closeButton>
-          <img className="logo" src="../logo.png"/>
+            <img className="logo" src="../logo.png" />
           </Offcanvas.Header>
           <Offcanvas.Body>
-            {/* {(type === SideNavType.CANVAS) &&
-              <Nav className="justify-content-end flex-grow-1 pe-3">
-                <Nav.Link onClick={() => { navigate('/') }}>Home</Nav.Link>
-              </Nav>
-            } */}
             <Nav className="justify-content-end flex-grow-1 pe-3">
               <Nav.Link onClick={() => { navigate('/') }}>Home</Nav.Link>
             </Nav>
@@ -69,7 +55,7 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
               <Nav.Link onClick={() => { navigate('/messages') }}>Messages</Nav.Link>
             </Nav>
             <Nav className="justify-content-end flex-grow-1 pe-3">
-              <Nav.Link onClick={logout}>Logout</Nav.Link>
+              <Nav.Link onClick={logoutSession}>Logout</Nav.Link>
             </Nav>
 
           </Offcanvas.Body>

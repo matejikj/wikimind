@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Sidenav, { SideNavType } from "../components/Sidenav";
+import Sidenav from "../components/Sidenav";
 import { SessionContext } from "../sessionContext";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -91,7 +91,7 @@ const Visualisation: React.FC = () => {
 
     return (
         <div className="App">
-            <Sidenav type={SideNavType.COMMON} />
+            <Sidenav/>
             <main ref={ref}>
                 <Container>
                     <Row>

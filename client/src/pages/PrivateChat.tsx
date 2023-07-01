@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useState } from "react";
-import Sidenav, { SideNavType } from "../components/Sidenav";
+import Sidenav from "../components/Sidenav";
 import { SessionContext } from "../sessionContext";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -37,7 +37,7 @@ const PrivateChat: React.FC = () => {
 
     return (
         <div className="App">
-            <Sidenav type={SideNavType.COMMON} />
+            <Sidenav/>
             <main ref={ref}>
                 <Card>
                     <Card.Body>

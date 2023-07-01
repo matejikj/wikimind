@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Amatic+SC&family=Nothing+You+Could+Do&family=Playfair:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Neucha&display=swap');
+
 
 body {
     margin: 0;
@@ -145,7 +146,7 @@ svg.drag-over {
 }
 
 text {
-    font-family: 'Nothing You Could Do', cursive;
+    font-family: 'Neucha', cursive;
     font-size: 12px;
 }
 

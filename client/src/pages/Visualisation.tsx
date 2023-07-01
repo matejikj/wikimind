@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Sidenav, { SideNavType } from "../components/Sidenav";
+import Sidenav from "../components/Sidenav";
 import Canvas from "../visualisation/Canvas";
 import { SessionContext } from "../sessionContext";
 import { MindMapDataset } from "../models/types/MindMapDataset";
@@ -21,7 +21,8 @@ import { ResultItem } from "../models/ResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 import { generate_uuidv4 } from "../service/utils";
 import { Connection } from "../models/types/Connection";
-import { MdDriveFileRenameOutline, MdOutlineCancel } from "react-icons/md";
+import { MdColorLens, MdDriveFileRenameOutline, MdKeyboardReturn, MdOutlineCancel } from "react-icons/md";
+import { HistoryItem, HistoryItemType } from "../models/HistoryItem";
 
 const Visualisation: React.FC = () => {
   const d3Container = useRef(null);
@@ -42,6 +43,8 @@ const Visualisation: React.FC = () => {
   const [clickedNode, setClickedNode] = useState<Node>();
   const [searchedKeyword, setSearchedKeyword] = useState('');
   const [recommends, setRecommends] = useState<ResultItem[]>([]);
+  const [recommendPath, setRecommendPath] = useState<HistoryItem[]>([]);
+  const [lastQuery, setLastQuery] = useState<HistoryItem | undefined>( undefined);
 
   const [creatorVisible, setCreatorVisible] = useState(false); // <-- new state variable
   const [modalNodeCreate, setModalNodeCreate] = useState(false); // <-- new state variable
@@ -55,11 +58,11 @@ const Visualisation: React.FC = () => {
 
       if (mounted) {
         if (location.state !== null && location.state.id !== null) {
-          getMindMap(location.state.id).then((res: any) => {
-            const myr = res as MindMapDataset;
-            myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
-            console.log(myr)
-            setDataset(() => (myr))
+          getMindMap(location.state.id).then((res: MindMapDataset | null) => {
+            if (res) {
+              res.links = AddCoords(res.links, getIdsMapping(res.nodes))
+              setDataset(res)
+            }
           })
 
         } else {
@@ -87,6 +90,7 @@ const Visualisation: React.FC = () => {
       title: item.label.value,
       description: '',
       cx: 100,
+      color: "#8FBC8F",
       cy: 100,
       visible: true
     }
@@ -105,6 +109,14 @@ const Visualisation: React.FC = () => {
   async function searchKeyword() {
     const keywords = await getKeywords(searchedKeyword)
     if (keywords !== undefined) {
+      if (lastQuery) {
+        recommendPath.push(lastQuery)
+      }
+      setLastQuery({
+        type: HistoryItemType.KEYWORD,
+        value: searchedKeyword,
+        label: searchedKeyword
+      })
       setRecommends(keywords)
     }
   }
@@ -112,13 +124,43 @@ const Visualisation: React.FC = () => {
   async function getSimilar(item: ResultItem) {
     const a = await getEntityNeighbours(item.entity.value)
     if (a) {
+      if (lastQuery) {
+        recommendPath.push(lastQuery)
+      }
+      setLastQuery({
+        type: HistoryItemType.ITEM,
+        value: item.entity.value,
+        label: item.label.value        
+      })
+      setSearchedKeyword(item.label.value)
       setRecommends(a)
+    }
+  }
+
+  async function getPreviousItem() {
+    if (recommendPath.length > 0) {
+      const lastItem = recommendPath.pop()
+      if (lastItem) {
+        setLastQuery(lastItem)
+        setSearchedKeyword(lastItem.label)
+        if (lastItem.type === HistoryItemType.KEYWORD) {
+          const a = await getKeywords(lastItem.value)
+          if (a) {
+            setRecommends(a)
+          }
+        } else {
+          const a = await getEntityNeighbours(lastItem.value)
+          if (a) {
+            setRecommends(a)
+          }
+        }
+      }
     }
   }
 
   return (
     <div className="App">
-      <Sidenav type={SideNavType.CANVAS} />
+      <Sidenav/>
       <main className="visualisation-tools" ref={ref}>
         <ModalNodeCreate
           dataset={dataset}
@@ -137,18 +179,20 @@ const Visualisation: React.FC = () => {
                   onChange={(e) => setSearchedKeyword(e.target.value)}
                 />
                 <Button onClick={searchKeyword}>Search</Button>
+                <Button size="sm" className="rounded-circle" onClick={() => { getPreviousItem() }}><MdKeyboardReturn></MdKeyboardReturn></Button>
               </Stack>
             </Row>
             <Row>
               {(clickedNode !== undefined) &&
                 <Stack className="visualisation-active-container" direction="horizontal" gap={1}>
-                  <Button size="sm">
-                    {clickedNode.title}
+                  <Button disabled size="sm">
+                    {clickedNode.title.length > 15 ? clickedNode.title.slice(0, 15) + '...' : clickedNode.title}
                   </Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><ImInfo></ImInfo></Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdDriveFileRenameOutline></MdDriveFileRenameOutline></Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><HiMagnifyingGlass></HiMagnifyingGlass></Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><BsNodePlus></BsNodePlus></Button>
+                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdColorLens></MdColorLens></Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdOutlineCancel></MdOutlineCancel></Button>
                 </Stack>
               }

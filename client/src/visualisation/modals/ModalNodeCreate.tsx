@@ -36,7 +36,8 @@ const ModalNodeCreate: React.FC<{
             description: formInputs.description,
             cx: 100,
             cy: 100,
-            visible: true
+            visible: true,
+            color: '#8FBC8F'
         }
         createNode(dataset?.id, sessionContext.sessionInfo, newNode)
     }

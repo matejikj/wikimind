@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Sidenav, { SideNavType } from "../components/Sidenav";
+import Sidenav from "../components/Sidenav";
 import Button from 'react-bootstrap/Button';
 import { SessionContext } from "../sessionContext";
 import { MindMapDataset } from "../models/types/MindMapDataset";
@@ -129,7 +129,7 @@ const ExamPage: React.FC = () => {
 
     return (
         <div className="App">
-            <Sidenav type={SideNavType.CANVAS} />
+            <Sidenav/>
             <main ref={ref}>
                 <TransformWrapper
                     disabled={disabled}
