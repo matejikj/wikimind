@@ -6,6 +6,8 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import '../styles/style.css';
+import { MdOutlineCancel } from "react-icons/md";
+import { ImMenu } from "react-icons/im";
 
 export enum SideNavType {
   COMMON,
@@ -33,9 +35,11 @@ const Sidenav: React.FC<{ type: SideNavType }> = ({ type }) => {
   }
 
   return (
-    <Navbar key={"false"} bg="light" fixed="top" expand={false}>
+    <Navbar className="sidenav" key={"false"} bg="light" fixed="top" expand={false}>
       <Container fluid>
-        <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${false}`} />
+        <Navbar.Toggle bsPrefix={"btn btn-sm"} aria-controls={`offcanvasNavbar-expand-${false}`}>
+        <ImMenu></ImMenu>
+        </Navbar.Toggle>
         <img className="logo" src={'../logo.png'}/>
 
         <Navbar.Offcanvas

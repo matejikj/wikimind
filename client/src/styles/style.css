@@ -14,11 +14,15 @@ body {
 }
 
 .App {
-    padding-top: 56px;
+    padding-top: 40px;
 }
 
 main {
-    height: calc(100dvh - 56px);
+    height: calc(100dvh - 40px);
+}
+
+.sidenav {
+    padding: 0 !important;
 }
 
 /* CREATOR */
@@ -43,7 +47,6 @@ main {
 .canvas-full {
     height: 100%;
     overflow: hidden;
-
 }
 
 #visualisation-btn-toggle {
