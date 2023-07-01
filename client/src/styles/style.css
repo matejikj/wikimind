@@ -18,13 +18,13 @@ body {
 }
 
 main {
-    height: calc(100vh - 56px);
+    height: calc(100dvh - 56px);
 }
 
 /* CREATOR */
 
 .creator-top {
-    height: calc(65% - 80px);
+    height: calc(65% - 81.40px);
     width: 100%;
     overflow: auto;
     border-bottom-style: outset;
@@ -186,7 +186,7 @@ tr:nth-child(even) {
 
 .accordion-class {
     overflow: auto;
-    max-height: 45vh;
+    max-height: 45dvh;
 }
 
 
@@ -299,7 +299,7 @@ tr:nth-child(even) {
 
 #login {
     background-image: url('../../public/learn.jpg');
-    height: 100vh;
+    height: 100dvh;
     background-size: cover;
 }
 
@@ -307,7 +307,7 @@ tr:nth-child(even) {
 
 /* .message-box {
     overflow: auto;
-    height: 74vh;
+    height: 74dvh;
 } */
 
 .message-bubble {
@@ -341,7 +341,7 @@ tr:nth-child(even) {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100dvh;
     background: #f1f1f1;
 }
 
