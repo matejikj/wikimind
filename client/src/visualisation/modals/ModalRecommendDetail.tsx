@@ -14,7 +14,7 @@ const blankFormInput = {
     description: ''
 }
 
-const ModalRecommend: React.FC<{
+const ModalRecommendDetail: React.FC<{
     node: Node | undefined,
     showModal: boolean,
     setModal: Function
@@ -56,4 +56,4 @@ const ModalRecommend: React.FC<{
     );
 };
 
-export default ModalRecommend;
+export default ModalRecommendDetail;

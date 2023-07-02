@@ -27,6 +27,7 @@ import { HistoryItem, HistoryItemType } from "../models/HistoryItem";
 import ModalNodeDelete from "../visualisation/modals/ModalNodeDelete";
 import ModalNodeDetail from "../visualisation/modals/ModalNodeDetail";
 import { CanvasState } from "../visualisation/models/CanvasState";
+import { saveAs } from 'file-saver';
 
 const Visualisation: React.FC = () => {
   const d3Container = useRef(null);
@@ -89,8 +90,14 @@ const Visualisation: React.FC = () => {
     if (res) {
       const xAxes = res.nodes.map((node) => { return node.cx })
       const yAxes = res.nodes.map((node) => { return node.cy })
-      setWidth(Math.max(...xAxes) + 500)
-      setHeight(Math.max(...yAxes) + 500)
+      if (ref && ref.current) {
+        // @ts-ignore
+        const mainWidth = ref.current.offsetWidth
+        // @ts-ignore
+        const mainHeight = ref.current.offsetHeight
+        setWidth(Math.max(Math.max(...xAxes) + 500, mainWidth))
+        setHeight(Math.max(Math.max(...yAxes) + 500, mainHeight))  
+      }
     }
   }
   const setPosition = (x: number, y: number, id: string) => {
@@ -110,6 +117,34 @@ const Visualisation: React.FC = () => {
 
   function createPicture() {
     console.log("createPicture")
+    const svgElement = document.getElementById('svg-canvas');
+
+    if (svgElement) {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      
+      const svgString = new XMLSerializer().serializeToString(svgElement);
+      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      
+      const DOMURL = window.URL || window.webkitURL || window;
+      const svgURL = DOMURL.createObjectURL(svgBlob);
+      
+      const img = new Image();
+      img.onload = function () {
+        if (context) {
+          context.canvas.width = img.width;
+          context.canvas.height = img.height;
+          context.drawImage(img, 0, 0);
+          canvas.toBlob(function (blob) {
+            if (blob) {
+              saveAs(blob, 'svg_image.png');
+            }
+          });
+  
+        }
+        DOMURL.revokeObjectURL(svgURL);
+      };
+      img.src = svgURL;    }
   }
 
   function addNode(item: ResultItem) {

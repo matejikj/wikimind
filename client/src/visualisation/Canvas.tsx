@@ -48,6 +48,12 @@ const Canvas: React.FC<{
     const d3Container = useRef(null);
     const sessionContext = useContext(SessionContext);
 
+    const [active, setActive] = React.useState<Node | undefined>(undefined);
+    const [positionX, setPositionX] = React.useState(0);
+    const [positionY, setPositionY] = React.useState(0);
+    const [difX, setDifX] = React.useState(0);
+    const [difY, setDifY] = React.useState(0);
+
     return (
       <TransformWrapper
         disabled={disabledCanvas}
@@ -65,11 +71,12 @@ const Canvas: React.FC<{
             height={height}
             ref={d3Container}
           >
+            <rect width="100%" height="100%" fill="white" />
             <defs>
               <marker
                 id="triangle"
                 viewBox="0 0 10 10"
-                refX="50"
+                refX="5"
                 refY="5"
                 markerUnits="strokeWidth"
                 markerWidth="4"
@@ -82,14 +89,27 @@ const Canvas: React.FC<{
             {dataset && dataset.links.map((link, index) => {
               return (
                 <Line
-                  key={index}
+                  difX={difX}
+                  difY={difY}
+                  active={active}
                   link={link}
+                  key={index}
                 />
               );
             })}
             {dataset && dataset.nodes.map((node, index) => {
               return (
                 <Circle
+                  active={active}
+                  positionX={positionX}
+                  positionY={positionY}
+                  difX={difX}
+                  difY={difY}
+                  setActive={setActive}
+                  setPositionX={setPositionX}
+                  setPositionY={setPositionY}
+                  setDifX={setDifX}
+                  setDifY={setDifY}
                   key={index}
                   node={node}
                   dataset={dataset}

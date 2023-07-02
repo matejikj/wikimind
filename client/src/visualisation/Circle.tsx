@@ -19,7 +19,17 @@ const Circle: React.FC<{
     canvasState: CanvasState,
     setCanvasState: Function,
     setDisabledCanvas: Function,
-    updateCanvasAxis: Function
+    updateCanvasAxis: Function,
+    active: Node | undefined,
+    positionX: number,
+    positionY: number,
+    difX: number,
+    difY: number,
+    setPositionX: Function,
+    setPositionY: Function,
+    setDifX: Function,
+    setActive: Function,
+    setDifY: Function,
 }> = ({
     node,
     dataset,
@@ -29,13 +39,18 @@ const Circle: React.FC<{
     canvasState,
     setCanvasState,
     setDisabledCanvas,
-    updateCanvasAxis
+    updateCanvasAxis,
+    active,
+    positionX,
+    positionY,
+    difX,
+    difY,
+    setPositionX,
+    setPositionY,
+    setDifX,
+    setActive,
+    setDifY
 }) => {
-        const [active, setActive] = React.useState(false);
-        const [positionX, setPositionX] = React.useState(0);
-        const [positionY, setPositionY] = React.useState(0);
-        const [difX, setDifX] = React.useState(0);
-        const [difY, setDifY] = React.useState(0);
 
         const handlePointerDown = (e: any) => {
             e.stopPropagation()
@@ -49,7 +64,7 @@ const Circle: React.FC<{
                     setPositionX(Math.round(e.clientX))
                     setPositionY(Math.round(e.clientY))
                 }
-                setActive(true);
+                setActive(node);
             }
         };
         const handlePointerMove = (e: any) => {
@@ -71,9 +86,18 @@ const Circle: React.FC<{
         const handlePointerUp = async (e: any) => {
             setDisabledCanvas(false)
             if (!(canvasState === CanvasState.ADD_CONNECTION)) {
-                setActive(false);
+                setActive(undefined);
                 if (difX !== 0 || difY !== 0) {
                     if (dataset) {
+                        dataset.links.forEach((connection) => {
+                            if (connection.from === node.id) {
+                                connection.source = [Math.round(node.cx + difX), Math.round(node.cy + difY)]
+                            }
+                            if (connection.to === node.id) {
+                                connection.target = [Math.round(node.cx + difX), Math.round(node.cy + difY)]
+                            }
+                        })
+
                         node.cx = Math.round(node.cx + difX)
                         node.cy = Math.round(node.cy + difY)
                         updateCanvasAxis(dataset)
@@ -114,8 +138,8 @@ const Circle: React.FC<{
         return (
             <g>
                 <rect
-                    x={(node.cx + difX) - node.title.length * 4}
-                    y={(node.cy + difY) - 10}
+                    x={(node.id === active?.id ? node.cx + difX : node.cx) - node.title.length * 4}
+                    y={(node.id === active?.id ? node.cy + difY : node.cy) - 10}
                     width={node.title.length * 7 + 20}
                     height={20}
                     fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 0.9) : 0.9}
@@ -131,11 +155,11 @@ const Circle: React.FC<{
                     onTouchStart={handlePointerDown}
                     onTouchEnd={handlePointerUp}
                     onTouchMove={handlePointerMove}
-                    fill={active ? "white" : node.color}
+                    fill={active?.id === node.id ? "white" : node.color}
                 />
                 <text
-                    x={(node.cx + difX) - node.title.length * 4 + 8}
-                    y={(node.cy + difY) + 5}
+                    x={(node.id === active?.id ? node.cx + difX : node.cx) - node.title.length * 4 + 8}
+                    y={(node.id === active?.id ? node.cy + difY : node.cy) + 5}
                     id={node.id}
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
@@ -143,7 +167,7 @@ const Circle: React.FC<{
                     onTouchStart={handlePointerDown}
                     onTouchEnd={handlePointerUp}
                     onTouchMove={handlePointerMove}
-                    fill={active ? node.color : "white"}
+                    fill={active?.id === node.id ? node.color : "white"}
                     onClick={nodeOnClick}
                 >{node.title}{node.visible ? '' : '❓'}</text>
             </g>
