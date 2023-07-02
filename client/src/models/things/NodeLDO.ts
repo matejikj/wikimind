@@ -23,7 +23,7 @@ export class NodeLDO extends BaseLDO<Node> implements CRUDLDO<Node> {
             description: getStringNoLocale(thing, this.rdf.properties.description)!,
             textColor: getStringNoLocale(thing, this.rdf.properties.textColor)!,
             color: getStringNoLocale(thing, this.rdf.properties.color)!,
-            visible: getBoolean(thing, this.rdf.properties.visible)!
+            isInTest: getBoolean(thing, this.rdf.properties.isInTest)!
         };
     }
 
@@ -36,7 +36,7 @@ export class NodeLDO extends BaseLDO<Node> implements CRUDLDO<Node> {
         const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
             .addUrl(rdf_type, this.rdf.identity)
             .addInteger(this.rdf.properties.cx, Math.floor(object.cx))
-            .addBoolean(this.rdf.properties.visible, object.visible)
+            .addBoolean(this.rdf.properties.isInTest, object.isInTest)
             .addInteger(this.rdf.properties.cy, Math.floor(object.cy))
             .addStringNoLocale(this.rdf.properties.description, object.description)
             .addStringNoLocale(this.rdf.properties.color, object.color)

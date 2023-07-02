@@ -36,7 +36,7 @@ const ModalNodeCreate: React.FC<{
                 description: formInputs.description,
                 cx: 100,
                 cy: 100,
-                visible: true,
+                isInTest: false,
                 color: '#8FBC8F',
                 textColor: "black"
             })

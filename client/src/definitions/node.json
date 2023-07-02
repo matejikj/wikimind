@@ -25,7 +25,7 @@
         "textColor": 
             "http://schema.org/textColor"
         ,
-        "visible": 
+        "isInTest": 
             "https://schema.org/Product"
         
     }

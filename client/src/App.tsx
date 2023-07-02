@@ -15,6 +15,7 @@ import { UserSession, defaultSessionValue } from "./models/types/UserSession";
 import { SessionContext } from "./sessionContext";
 import PrivateChat from "./pages/PrivateChat";
 import ExamPage from "./pages/ExamPage";
+import HistoryPage from "./pages/HistoryPage";
 
 const App: React.FC = () => {
 
@@ -63,6 +64,7 @@ const App: React.FC = () => {
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/chat" element={<PrivateChat />} />
                 <Route path="/exam" element={<ExamPage />} />
+                <Route path="/history" element={<HistoryPage />} />
               </Routes>
             )
           } else if (!sessionInfo.isLogged && waiting) {

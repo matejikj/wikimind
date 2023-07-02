@@ -21,51 +21,53 @@ const ModalNodeColor: React.FC<{
     setModal: Function
 }> = ({ node, showModal, setModal }) => {
 
-    const [mounted, setMounted] = useState(false); // <-- new state variable
     const [colors] = useState([
-        "#ff9595",
-        "#ffc685",
-        "#fff491",
-        "#a2fca2",
-        "#9ffcff",
-        "#8cc6ff",
-        "#cbbcff",
-        "#ff9cff",
-        "#fffefc",
-        "#a4ffbb",
-        "#96e1ff",
-        "#ff9dc3",
-        "#ffb2b8",
-        "#ffd4e3",
-        "#fcd3ff",
-        "#f8f4f4",
-        "#ffe5c3",
-        "#fddca2",
-        "#c6a6a6",
-        "#d2b2c4",
-        "#b3c6e8",
-        "#8fa5db",
-        "#9fdce3",
-        "#db9fdb"
-    ]); // <-- new state variable
+        "#ff5733",
+        "#a8329e",
+        "#4f9a3d",
+        "#176ac2",
+        "#f0c724",
+        "#8257f1",
+        "#e82a6d",
+        "#39bca7",
+        "#c43e13",
+        "#6f98d0",
+        "#db6f1a",
+        "#3bc939",
+        "#c41b80",
+        "#578f2d",
+        "#f033a6",
+        "#2c7f8c",
+        "#eb5d15",
+        "#3e4694",
+        "#a1c514",
+        "#8d2596",
+        "#1eb8d7",
+        "#d35523",
+        "#5e2e8a",
+        "#b6a816"
+          ]); // <-- new state variable
     const [textColors] = useState([
         "black",
         "white",
     ]); // <-- new state variable
 
-    useEffect(() => {
-        setMounted(true); // set the mounted state variable to true after the component mounts
-    }, []);
+    const [color, setColor] = useState(node?.color);
+    const [textColor, setTextColor] = useState(node?.textColor);
 
-    useEffect(
-        () => {
+    function changeColor(color: string) {
+        if (node){
+            node.color = color
+            setColor(color)
+        }
+    }
 
-            if (mounted) {
-                if (node) {
-                    console.log('AHOOOOOOOOOJ')
-                }
-            }
-        }, [mounted])
+    function changeTextColor(color: string) {
+        if (node){
+            node.textColor = color
+            setTextColor(color)
+        }
+    }
 
     return (
         <Modal
@@ -107,7 +109,7 @@ const ModalNodeColor: React.FC<{
                         <Col>
                             {colors.map((item, index) => {
                                 return (
-                                    <button className="colors-div btn" style={{ backgroundColor: item }}>
+                                    <button key={index} onClick={() => changeColor(item)} className="colors-div btn" style={{ backgroundColor: item }}>
                                         <svg height="1em" width="1em">
                                         </svg>
                                     </button>
@@ -124,7 +126,7 @@ const ModalNodeColor: React.FC<{
                         <Col>
                             {textColors.map((item, index) => {
                                 return (
-                                    <button className="text-colors-div btn" style={{ backgroundColor: item }}>
+                                    <button key={index} onClick={() => changeTextColor(item)} className="text-colors-div btn" style={{ backgroundColor: item }}>
                                         <svg height="1em" width="1em">
                                         </svg>
                                     </button>

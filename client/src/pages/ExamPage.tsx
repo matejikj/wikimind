@@ -86,7 +86,7 @@ const ExamPage: React.FC = () => {
                         setDataset(() => (myr))
                         const dict = new Map<string, string>();
                         const a = myr.nodes.forEach((item) => {
-                            if (item.visible === false) {
+                            if (item.isInTest) {
                                 dict.set(item.id, '')
                             }
                         })
@@ -104,7 +104,7 @@ const ExamPage: React.FC = () => {
         let good = 0;
 
         dataset.nodes.forEach((item) => {
-            if (item.visible === false) {
+            if (item.isInTest) {
                 count++;
                 const distance = levenshteinDistance(item.title.toLowerCase(), fillDataset.get(item.id)!.toLowerCase())
                 if (distance < 3) {
@@ -180,7 +180,7 @@ const ExamPage: React.FC = () => {
                             })}
                             {dataset.nodes.map((node, index) => {
                                 return (
-                                    !node.visible ?
+                                    node.isInTest ?
 
                                         <foreignObject
                                             x={(node.cx) - node.title.length * 4}

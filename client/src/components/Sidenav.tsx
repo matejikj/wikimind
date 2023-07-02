@@ -55,6 +55,9 @@ const Sidenav: React.FC = () => {
               <Nav.Link onClick={() => { navigate('/messages') }}>Messages</Nav.Link>
             </Nav>
             <Nav className="justify-content-end flex-grow-1 pe-3">
+              <Nav.Link onClick={() => { navigate('/history') }}>History</Nav.Link>
+            </Nav>
+            <Nav className="justify-content-end flex-grow-1 pe-3">
               <Nav.Link onClick={logoutSession}>Logout</Nav.Link>
             </Nav>
 

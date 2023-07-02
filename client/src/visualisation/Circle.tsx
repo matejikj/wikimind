@@ -6,6 +6,7 @@ import { Connection } from "../models/types/Connection";
 import { generate_uuidv4 } from "../service/utils";
 import { updateNode } from "../service/mindMapService";
 import { MindMapDataset } from "../models/types/MindMapDataset";
+import { ImInfo } from "react-icons/im";
 
 const TOUCH_MOVE = 'touchmove'
 const TOUCH_START = 'touchstart'
@@ -148,9 +149,8 @@ const Circle: React.FC<{
                     height={20}
                     fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 0.9) : 0.9}
                     id={node.id}
-                    stroke="black"
-                    strokeWidth="0.5"
-                    strokeOpacity={1}
+                    strokeWidth={node.id === clickedNode?.id ? 2 : 0.5}
+                    stroke={node.id === clickedNode?.id ? "black" : node.color}
                     rx="4" ry="4"
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
@@ -173,7 +173,7 @@ const Circle: React.FC<{
                     onTouchMove={handlePointerMove}
                     fill={active?.id === node.id ? node.color : node.textColor}
                     onClick={nodeOnClick}
-                >{node.title}{node.visible ? '' : '❓'}</text>
+                >{node.title}</text>
             </g>
         );
     };

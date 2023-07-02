@@ -35,7 +35,7 @@ export type Node = {
     /**
      * Indicates whether the node is visible or hidden.
      */
-    visible: boolean;
+    isInTest: boolean;
 
     /**
      * Indicates whether the node is visible or hidden.

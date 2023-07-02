@@ -40,14 +40,14 @@ main {
 }
 
 .creator-top-recommends {
-    height: calc(65% - 81.40px);
+    height: calc(65% - 68px);
     width: 100%;
     overflow: auto;
     border-bottom-style: outset;
 }
 
 .creator-bottom {
-    height: calc(100% - 81.40px - 35px);
+    height: calc(100% - 68px - 35px);
     overflow: hidden;
 }
 
@@ -85,16 +85,18 @@ main {
     bottom: 74px;
     right: 10px;
     z-index: 1000;
-
 }
 
 .visualisation-active-container {
-    margin-left: 1px;
-    padding: 2px;
+    padding-top: 4px;
+    padding-bottom: 2px;
+
 }
 
-.visualisation-searchbar-container {
-    padding: 4px;
+.recommend-col {
+    margin: 0 !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
 }
 
 code {

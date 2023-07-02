@@ -10,15 +10,16 @@ import {
   WebsocketNotification,
 } from "@inrupt/solid-client-notifications";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
-import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
+import { Button, Col, Container, Form, Row, Spinner, Stack } from "react-bootstrap";
 import { FaBackspace, FaInfo, FaMinus, FaMinusCircle, FaPlus, FaRemoveFormat } from "react-icons/fa";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { ImInfo } from "react-icons/im";
 import { AiOutlineClear } from "react-icons/ai";
 import { FiSave } from "react-icons/fi";
+import { BiTrash } from "react-icons/bi";
 import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
 import { Node } from "../models/types/Node";
-import { getEntityNeighbours, getKeywords } from "../service/dbpediaService";
+import { getEntityNeighbours, getKeywords, getSingleReccomends } from "../service/dbpediaService";
 import { ResultItem } from "../models/ResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 import { generate_uuidv4 } from "../service/utils";
@@ -64,6 +65,7 @@ const Visualisation: React.FC = () => {
   const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
   const [clickedLink, setClickedLink] = useState<Connection>();
   const [disabledCanvas, setDisabledCanvas] = useState(false);
+  const [findingSimilar, setFindingSimilar] = useState(false);
 
   useEffect(() => {
     setMounted(true); // set the mounted state variable to true after the component mounts
@@ -165,7 +167,7 @@ const Visualisation: React.FC = () => {
         cx: newX,
         color: "#8FBC8F",
         cy: newY,
-        visible: true,
+        isInTest: false,
         textColor: "black"
       })
       updateCanvasAxis(dataset)
@@ -181,7 +183,7 @@ const Visualisation: React.FC = () => {
       setDataset({
         ...dataset,
         created: timestamp
-      });  
+      });
     }
     // TODOOOOOO
     // 
@@ -205,7 +207,7 @@ const Visualisation: React.FC = () => {
     }
   }
 
-  async function getSimilar(item: ResultItem) {
+  async function findWikiLinks(item: ResultItem) {
     const a = await getEntityNeighbours(item.entity.value)
     if (a) {
       if (lastQuery) {
@@ -218,6 +220,29 @@ const Visualisation: React.FC = () => {
       })
       setSearchedKeyword(item.label.value)
       setRecommends(a)
+    }
+  }
+
+  async function getSimilarEntities(item: Node) {
+    if (item.uri !== "") {
+      setFindingSimilar(true)
+      getSingleReccomends(item.uri).then((a) => {
+        if (a) {
+          setFindingSimilar(false)
+
+          if (lastQuery) {
+            recommendPath.push(lastQuery)
+          }
+          setLastQuery({
+            type: HistoryItemType.ITEM,
+            value: item.uri,
+            label: item.title
+          })
+          setSearchedKeyword(item.title)
+          setRecommends(a)
+        }  
+      })
+  
     }
   }
 
@@ -246,6 +271,18 @@ const Visualisation: React.FC = () => {
           }
         }
       }
+    } else {
+      setSearchedKeyword('')
+    }
+  }
+
+  function examSwitch() {
+    if (clickedNode) {
+      const newIsInTest = !clickedNode.isInTest
+      setClickedNode({
+        ...clickedNode,
+        isInTest: newIsInTest
+      });
     }
   }
 
@@ -276,37 +313,45 @@ const Visualisation: React.FC = () => {
           node={clickedNode}
         />
         {creatorVisible &&
-          <Container className="visualisation-searchbar-container">
+          <Container>
             <Row>
               <Stack direction="horizontal" gap={2}>
                 <Form.Control
                   type="text"
                   placeholder="Keyword"
                   name="keyword"
+                  size="sm"
                   value={searchedKeyword}
                   onChange={(e) => setSearchedKeyword(e.target.value)}
                 />
-                <Button onClick={searchKeyword}>Search</Button>
-                <Button size="sm" className="rounded-circle" onClick={() => { getPreviousItem() }}><MdKeyboardReturn></MdKeyboardReturn></Button>
-                <Button size="sm" className="rounded-circle" onClick={() => { clearSearching() }}><AiOutlineClear></AiOutlineClear></Button>
+                <Button size="sm" variant="success" onClick={searchKeyword}>Search</Button>
+                <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { getPreviousItem() }}><MdKeyboardReturn></MdKeyboardReturn></Button>
+                <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { clearSearching() }}><AiOutlineClear></AiOutlineClear></Button>
               </Stack>
             </Row>
             <Row>
               {(clickedNode !== undefined) &&
                 <Stack className="visualisation-active-container" direction="horizontal" gap={1}>
-                  <Button disabled size="sm">
-                    {clickedNode.title.length > 15 ? clickedNode.title.slice(0, 15) + '...' : clickedNode.title}
+                <Button variant="success" disabled size="sm">
+                    {clickedNode.title.length > 10 ? clickedNode.title.slice(0, 10) + '..' : clickedNode.title}
                   </Button>
-                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><ImInfo></ImInfo></Button>
-                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><BsQuestionSquare></BsQuestionSquare></Button>
-                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><HiMagnifyingGlass></HiMagnifyingGlass></Button>
-                  <Button size="sm" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.ADD_CONNECTION) }}><BsNodePlus></BsNodePlus></Button>
-                  <Button size="sm" className="rounded-circle" onClick={() => { setModalNodeColor(true) }}><MdColorLens></MdColorLens></Button>
-                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdOutlineCancel></MdOutlineCancel></Button>
+                  <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><ImInfo></ImInfo></Button>
+                  <Button size="sm" variant={clickedNode.isInTest ? "info" : "secondary"} className="rounded-circle" onClick={() => examSwitch()}><BsQuestionSquare></BsQuestionSquare></Button>
+                  {findingSimilar ? (
+                    <Spinner animation="border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  ) : (
+                    <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { getSimilarEntities(clickedNode) }}><HiMagnifyingGlass></HiMagnifyingGlass></Button>
+                  )}
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.ADD_CONNECTION) }}><BsNodePlus></BsNodePlus></Button>
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setModalNodeColor(true) }}><MdColorLens></MdColorLens></Button>
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdOutlineCancel></MdOutlineCancel></Button>
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><BiTrash></BiTrash></Button>
                 </Stack>
               }
               {(clickedNode === undefined) &&
-                <Stack className="visualisation-active-container" direction="horizontal" gap={1}>
+                <Stack className="visualisation-active-container"  direction="horizontal" gap={1}>
                   <Button disabled variant="light" size="sm">
                     {"No active node"}
                   </Button>
@@ -349,7 +394,7 @@ const Visualisation: React.FC = () => {
         <div className={creatorVisible ? recommends.length !== 0 ? "creator-top-recommends" : "creator-top" : "creator-hidden"}>
           <Container fluid>
             <Row>
-              <Col sm="12">
+              <Col className="recommend-col" sm="12">
                 <div className="recommends-div">
                   <Button onClick={() => setModalNodeCreate(true)} className="recommend-btn" size="sm">
                     {"Add custom entity"}
@@ -362,7 +407,7 @@ const Visualisation: React.FC = () => {
                       <div className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'recommends-inline-div' : 'recommends-inline-div-category'}>
 
                         <Stack direction="horizontal" gap={0}>
-                          <Button onClick={() => { getSimilar(item); }} className="recommend-btn" size="sm">
+                          <Button onClick={() => { findWikiLinks(item); }} className="recommend-btn" size="sm">
                             {item.label.value}
                           </Button>
                           <Button size="sm" className="recommend-btn" onClick={() => { alert('item') }}><FaInfo></FaInfo></Button>
