@@ -41,5 +41,10 @@ export type Node = {
      * Indicates whether the node is visible or hidden.
      */
     color: string;
+
+    /**
+     * Indicates whether the node is visible or hidden.
+     */
+    textColor: string;
   }
   

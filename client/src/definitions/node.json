@@ -22,6 +22,9 @@
         "color": 
             "http://schema.org/color"
         ,
+        "textColor": 
+            "http://schema.org/textColor"
+        ,
         "visible": 
             "https://schema.org/Product"
         

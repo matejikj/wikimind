@@ -14,6 +14,7 @@ import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 import { FaBackspace, FaInfo, FaMinus, FaMinusCircle, FaPlus, FaRemoveFormat } from "react-icons/fa";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { ImInfo } from "react-icons/im";
+import { AiOutlineClear } from "react-icons/ai";
 import { FiSave } from "react-icons/fi";
 import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
 import { Node } from "../models/types/Node";
@@ -28,6 +29,7 @@ import ModalNodeDelete from "../visualisation/modals/ModalNodeDelete";
 import ModalNodeDetail from "../visualisation/modals/ModalNodeDetail";
 import { CanvasState } from "../visualisation/models/CanvasState";
 import { saveAs } from 'file-saver';
+import ModalNodeColor from "../visualisation/modals/ModalNodeColor";
 
 const Visualisation: React.FC = () => {
   const d3Container = useRef(null);
@@ -57,6 +59,7 @@ const Visualisation: React.FC = () => {
   const [modalNodeCreate, setModalNodeCreate] = useState(false); // <-- new state variable
   const [modalNodeDetail, setModalNodeDetail] = useState(false);
   const [modalNodeDelete, setModalNodeDelete] = useState(false);
+  const [modalNodeColor, setModalNodeColor] = useState(false);
 
   const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
   const [clickedLink, setClickedLink] = useState<Connection>();
@@ -95,8 +98,8 @@ const Visualisation: React.FC = () => {
         const mainWidth = ref.current.offsetWidth
         // @ts-ignore
         const mainHeight = ref.current.offsetHeight
-        setWidth(Math.max(Math.max(...xAxes) + 500, mainWidth))
-        setHeight(Math.max(Math.max(...yAxes) + 500, mainHeight))  
+        setWidth(Math.max(Math.max(...xAxes) + 250, mainWidth))
+        setHeight(Math.max(Math.max(...yAxes) + 250, mainHeight))
       }
     }
   }
@@ -122,13 +125,13 @@ const Visualisation: React.FC = () => {
     if (svgElement) {
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
-      
+
       const svgString = new XMLSerializer().serializeToString(svgElement);
       const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-      
+
       const DOMURL = window.URL || window.webkitURL || window;
       const svgURL = DOMURL.createObjectURL(svgBlob);
-      
+
       const img = new Image();
       img.onload = function () {
         if (context) {
@@ -140,42 +143,45 @@ const Visualisation: React.FC = () => {
               saveAs(blob, 'svg_image.png');
             }
           });
-  
+
         }
         DOMURL.revokeObjectURL(svgURL);
       };
-      img.src = svgURL;    }
+      img.src = svgURL;
+    }
   }
 
   function addNode(item: ResultItem) {
-    const newNode: Node = {
-      id: generate_uuidv4(),
-      uri: item.entity.value,
-      title: item.label.value,
-      description: '',
-      cx: 200,
-      color: "#8FBC8F",
-      cy: 600,
-      visible: true
-    }
-    if (clickedNode) {
-      const newConnection: Connection = {
-        id: generate_uuidv4(),
-        from: clickedNode.id,
-        to: newNode.id
-      }
-      if (dataset) {
-        dataset.links.push(newConnection)
-
-      }
-    }
+    const timestamp = Date.now().toString()
+    const newId = generate_uuidv4()
+    const newX = 200
+    const newY = 600
     if (dataset) {
-      dataset.nodes.push(newNode)
+      dataset.nodes.push({
+        id: newId,
+        uri: item.entity.value,
+        title: item.label.value,
+        description: '',
+        cx: newX,
+        color: "#8FBC8F",
+        cy: newY,
+        visible: true,
+        textColor: "black"
+      })
       updateCanvasAxis(dataset)
+      if (clickedNode) {
+        dataset.links.push({
+          id: generate_uuidv4(),
+          from: clickedNode.id,
+          to: newId,
+          source: [clickedNode.cx, clickedNode.cy],
+          target: [newX, newY]
+        })
+      }
       setDataset({
         ...dataset,
-        created: '1.7.2023 21:08:08'
-      });
+        created: timestamp
+      });  
     }
     // TODOOOOOO
     // 
@@ -213,6 +219,13 @@ const Visualisation: React.FC = () => {
       setSearchedKeyword(item.label.value)
       setRecommends(a)
     }
+  }
+
+  function clearSearching() {
+    setSearchedKeyword('')
+    setLastQuery(undefined)
+    setRecommendPath([])
+    setRecommends([])
   }
 
   async function getPreviousItem() {
@@ -257,6 +270,11 @@ const Visualisation: React.FC = () => {
           setModal={setModalNodeDetail}
           node={clickedNode}
         />
+        <ModalNodeColor
+          showModal={modalNodeColor}
+          setModal={setModalNodeColor}
+          node={clickedNode}
+        />
         {creatorVisible &&
           <Container className="visualisation-searchbar-container">
             <Row>
@@ -270,6 +288,7 @@ const Visualisation: React.FC = () => {
                 />
                 <Button onClick={searchKeyword}>Search</Button>
                 <Button size="sm" className="rounded-circle" onClick={() => { getPreviousItem() }}><MdKeyboardReturn></MdKeyboardReturn></Button>
+                <Button size="sm" className="rounded-circle" onClick={() => { clearSearching() }}><AiOutlineClear></AiOutlineClear></Button>
               </Stack>
             </Row>
             <Row>
@@ -281,8 +300,8 @@ const Visualisation: React.FC = () => {
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><ImInfo></ImInfo></Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><BsQuestionSquare></BsQuestionSquare></Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><HiMagnifyingGlass></HiMagnifyingGlass></Button>
-                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><BsNodePlus></BsNodePlus></Button>
-                  <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdColorLens></MdColorLens></Button>
+                  <Button size="sm" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.ADD_CONNECTION) }}><BsNodePlus></BsNodePlus></Button>
+                  <Button size="sm" className="rounded-circle" onClick={() => { setModalNodeColor(true) }}><MdColorLens></MdColorLens></Button>
                   <Button size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdOutlineCancel></MdOutlineCancel></Button>
                 </Stack>
               }
@@ -327,7 +346,7 @@ const Visualisation: React.FC = () => {
             variant="success"><MdScreenShare></MdScreenShare>
           </Button>
         }
-        <div className={creatorVisible ? "creator-top" : "creator-hidden"}>
+        <div className={creatorVisible ? recommends.length !== 0 ? "creator-top-recommends" : "creator-top" : "creator-hidden"}>
           <Container fluid>
             <Row>
               <Col sm="12">
@@ -357,8 +376,9 @@ const Visualisation: React.FC = () => {
             </Row>
           </Container>
         </div>
-        <div className={creatorVisible ? "creator-bottom" : "canvas-full"}>
+        <div className={creatorVisible ? recommends.length !== 0 ? "creator-bottom-recommends" : "creator-bottom" : "canvas-full"}>
           <Canvas
+            setCreatorVisible={setCreatorVisible}
             clickedNode={clickedNode}
             setClickedNode={setClickedNode}
             dataset={dataset}

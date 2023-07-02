@@ -28,7 +28,8 @@ const Canvas: React.FC<{
   setCanvasState: Function,
   disabledCanvas: boolean,
   setDisabledCanvas: Function,
-  updateCanvasAxis: Function
+  updateCanvasAxis: Function,
+  setCreatorVisible: Function
 }> = ({
   clickedNode,
   setClickedNode,
@@ -43,7 +44,8 @@ const Canvas: React.FC<{
   setCanvasState,
   disabledCanvas,
   setDisabledCanvas,
-  updateCanvasAxis
+  updateCanvasAxis,
+  setCreatorVisible
 }) => {
     const d3Container = useRef(null);
     const sessionContext = useContext(SessionContext);
@@ -94,6 +96,8 @@ const Canvas: React.FC<{
                   active={active}
                   link={link}
                   key={index}
+                  dataset={dataset}
+                  setDataset={setDataset}
                 />
               );
             })}
@@ -111,6 +115,7 @@ const Canvas: React.FC<{
                   setDifX={setDifX}
                   setDifY={setDifY}
                   key={index}
+                  setCreatorVisible={setCreatorVisible}
                   node={node}
                   dataset={dataset}
                   setDataset={setDataset}

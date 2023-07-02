@@ -35,7 +35,8 @@ const ModalNodeDelete: React.FC<{
             cx: 100,
             cy: 100,
             visible: true,
-            color: "#8FBC8F"
+            color: "#8FBC8F",
+            textColor: "black"
         }
         // deleteNode(datasetName, theme.sessionInfo, newNode)
     }

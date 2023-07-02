@@ -34,6 +34,12 @@ main {
 /* CREATOR */
 
 .creator-top {
+    height: 35px;
+    width: 100%;
+    border-bottom-style: outset;
+}
+
+.creator-top-recommends {
     height: calc(65% - 81.40px);
     width: 100%;
     overflow: auto;
@@ -41,6 +47,11 @@ main {
 }
 
 .creator-bottom {
+    height: calc(100% - 81.40px - 35px);
+    overflow: hidden;
+}
+
+.creator-bottom-recommends {
     height: 35%;
     overflow: hidden;
 }
@@ -226,7 +237,22 @@ tr:nth-child(even) {
     background-color: #17a66d;
 }
 
-.recommends-inline-div {}
+.colors-div {
+    float: left;
+    border-radius: 5px;
+    margin: 2px;
+}
+
+.text-colors-div {
+    border: 1px solid black !important;
+    float: left;
+    border-radius: 5px;
+    margin: 2px;
+}
+
+
+/* TODO */
+/* .recommends-inline-div {} */
 
 .recommends-div-category {
     float: left;
