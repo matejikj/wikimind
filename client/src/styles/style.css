@@ -68,21 +68,36 @@ main {
 
 #visualisation-btn-toggle {
     position: fixed;
+    bottom: 42px;
+    right: 10px;
+    z-index: 1000;
+}
+
+#visualisation-btn-time {
+    position: fixed;
     bottom: 10px;
     right: 10px;
     z-index: 1000;
 }
 
+#visualisation-btn-time-close {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000;
+
+}
+
 #visualisation-btn-save {
     position: fixed;
-    bottom: 42px;
+    bottom: 74px;
     right: 10px;
     z-index: 1000;
 }
 
 #visualisation-btn-picture {
     position: fixed;
-    bottom: 74px;
+    bottom: 106px;
     right: 10px;
     z-index: 1000;
 }

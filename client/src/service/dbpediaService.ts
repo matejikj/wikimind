@@ -1,5 +1,7 @@
 import axios from "axios";
 import { ResultItem } from "../models/ResultItem";
+import { Node } from "../models/types/Node";
+import { HistoryResultItem } from "../models/HistoryResultItem";
 
 /**
  * Retrieves recommended entities based on a given entity.
@@ -65,6 +67,47 @@ export async function getLabels(list: ResultItem[]): Promise<ResultItem[] | unde
     const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
     try {
         const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
+        return response;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+/**
+ * Retrieves labels for a list of ResultItem entities.
+ *
+ * @param list - The list of entities for which to retrieve labels.
+ * @returns A Promise that resolves to an array of ResultItem objects representing the labeled entities.
+ */
+export async function getDates(list: Node[]): Promise<HistoryResultItem[] | undefined> {
+    let query = '';
+    list.forEach((item) => {
+        if (item.uri !== "") {
+            query = query + '<' + item.uri + '> ';
+        }
+    });
+
+    const sparqlQuery = `
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  
+      SELECT DISTINCT ?entity ?label ?propertyLabel ?value ?abstract
+      WHERE {
+          VALUES ?entity { ${query}}
+          ?entity ?property ?value .
+          FILTER( contains( str(?property), "Date" ) || contains( str(?property), "date" ) || datatype(?value) = xsd:date)
+          OPTIONAL { ?property rdfs:label ?propertyLabel. }
+          FILTER (lang(?propertyLabel) = 'en')
+          ?entity rdfs:label ?label .
+          FILTER(LANG(?label) = "en")
+          ?entity dbo:abstract ?abstract
+          FILTER(LANG(?abstract) = "en")
+      }
+    `;
+
+    const endpointUrl = 'https://dbpedia.org/sparql';
+    const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
+    try {
+        const response: HistoryResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
         return response;
     } catch (error) {
         console.log(error);

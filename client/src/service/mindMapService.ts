@@ -11,7 +11,7 @@ import { RDF } from "@inrupt/vocab-common-rdf";
 import { Node } from "../models/types/Node";
 import { MindMapLDO } from "../models/things/MindMapLDO";
 import nodeDefinition from "../definitions/node.json";
-import linkDefinition from "../definitions/connection.json";
+import connectionDefinition from "../definitions/connection.json";
 import mindMapDefinition from "../definitions/mindMap.json";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
@@ -40,7 +40,7 @@ export async function getMindMap(url: string): Promise<MindMapDataset | null> {
   const nodes: Node[] = [];
   const nodeBuilder = new NodeLDO(nodeDefinition);
   const links: Connection[] = [];
-  const linkBuilder = new ConnectionLDO(linkDefinition);
+  const linkBuilder = new ConnectionLDO(connectionDefinition);
 
   things.forEach((thing) => {
     const types = getUrlAll(thing, RDF.type);
@@ -50,7 +50,7 @@ export async function getMindMap(url: string): Promise<MindMapDataset | null> {
     if (types.some((type) => type === nodeDefinition.identity)) {
       nodes.push(nodeBuilder.read(thing));
     }
-    if (types.some((type) => type === linkDefinition.identity)) {
+    if (types.some((type) => type === connectionDefinition.identity)) {
       links.push(linkBuilder.read(thing));
     }
   });
@@ -89,6 +89,40 @@ export async function createNewMindMap(name: string, userSession: UserSession): 
   if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
     initializeAcl(newName);
   }
+
+  return newName;
+}
+
+/**
+ * Creates a new mind map with the given name and user session.
+ * @param name The name of the new mind map.
+ * @param userSession The user session.
+ * @returns The URL of the newly created mind map.
+ */
+export async function saveMindMap(mindMap: MindMapDataset, userSession: UserSession): Promise<string> {
+  let mindMapDataset = createSolidDataset();
+
+  const blankMindMap: MindMap = {
+    id: mindMap.id,
+    created: mindMap.created,
+  };
+  const mindMapLDO = new MindMapLDO(mindMapDefinition).create(blankMindMap);
+  mindMapDataset = setThing(mindMapDataset, mindMapLDO);
+
+  const nodeBuilder = new NodeLDO(nodeDefinition as LDO<Node>);
+
+  mindMap.nodes.forEach(node => {
+    mindMapDataset = setThing(mindMapDataset, nodeBuilder.create(node));
+  });
+
+  const connectionBuilder = new ConnectionLDO(connectionDefinition as LDO<Connection>);
+
+  mindMap.links.forEach(connection => {
+    mindMapDataset = setThing(mindMapDataset, connectionBuilder.create(connection));
+  });
+
+  const newName = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + mindMap.id + TTLFILETYPE;
+  const savedSolidDataset = await saveSolidDatasetAt(newName, mindMapDataset, { fetch: fetch });
 
   return newName;
 }
@@ -141,7 +175,7 @@ export async function createConnection(name: string | undefined, userSession: Us
     const mindMapPath = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + name + TTLFILETYPE;
     let mindMapDataset = await getSolidDataset(mindMapPath, { fetch: fetch });
 
-    const linkBuilder = new ConnectionLDO(linkDefinition as LDO<Connection>);
+    const linkBuilder = new ConnectionLDO(connectionDefinition as LDO<Connection>);
     mindMapDataset = setThing(mindMapDataset, linkBuilder.create(link));
 
     const savedSolidDataset = await saveSolidDatasetAt(mindMapPath, mindMapDataset, { fetch: fetch });

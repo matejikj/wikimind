@@ -4,7 +4,7 @@ import Canvas from "../visualisation/Canvas";
 import { SessionContext } from "../sessionContext";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { useLocation, useNavigate } from "react-router-dom";
-import { createConnection, createNode, getMindMap } from "../service/mindMapService";
+import { createConnection, createNode, getMindMap, saveMindMap } from "../service/mindMapService";
 import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
   WebsocketNotification,
@@ -16,21 +16,25 @@ import { HiMagnifyingGlass } from "react-icons/hi2";
 import { ImInfo } from "react-icons/im";
 import { AiOutlineClear } from "react-icons/ai";
 import { FiSave } from "react-icons/fi";
-import { BiTrash } from "react-icons/bi";
+import { GrGraphQl } from "react-icons/gr";
+import { BiTimeFive, BiTrash } from "react-icons/bi";
 import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
 import { Node } from "../models/types/Node";
-import { getEntityNeighbours, getKeywords, getSingleReccomends } from "../service/dbpediaService";
+import { getDates, getEntityNeighbours, getKeywords, getSingleReccomends } from "../service/dbpediaService";
 import { ResultItem } from "../models/ResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 import { generate_uuidv4 } from "../service/utils";
 import { Connection } from "../models/types/Connection";
 import { MdColorLens, MdDriveFileRenameOutline, MdKeyboardReturn, MdOutlineCancel, MdScreenShare } from "react-icons/md";
-import { HistoryItem, HistoryItemType } from "../models/HistoryItem";
 import ModalNodeDelete from "../visualisation/modals/ModalNodeDelete";
 import ModalNodeDetail from "../visualisation/modals/ModalNodeDetail";
 import { CanvasState } from "../visualisation/models/CanvasState";
 import { saveAs } from 'file-saver';
 import ModalNodeColor from "../visualisation/modals/ModalNodeColor";
+import { HistoryItem, HistoryItemType } from "../models/HistoryItem";
+import HistoryVisualisation from "../visualisation/HistoryVisualisation";
+import { groupDates } from "../visualisation/utiils";
+import { HistoryResultItem } from "../models/HistoryResultItem";
 
 const Visualisation: React.FC = () => {
   const d3Container = useRef(null);
@@ -66,6 +70,9 @@ const Visualisation: React.FC = () => {
   const [clickedLink, setClickedLink] = useState<Connection>();
   const [disabledCanvas, setDisabledCanvas] = useState(false);
   const [findingSimilar, setFindingSimilar] = useState(false);
+  const [historyDataset, setHistoryDataset] = useState<HistoryResultItem[]>([]);
+
+  const [datesView, setDatesView] = useState(false); // <-- new state variable
 
   useEffect(() => {
     setMounted(true); // set the mounted state variable to true after the component mounts
@@ -117,7 +124,14 @@ const Visualisation: React.FC = () => {
   }
 
   function saveDataset() {
-    console.log("saveDataset")
+    if (dataset) {
+      saveMindMap(dataset, sessionContext.sessionInfo).then((res) => {
+        console.log("saveDataset")
+  
+      })
+  
+    }
+
   }
 
   function createPicture() {
@@ -240,9 +254,9 @@ const Visualisation: React.FC = () => {
           })
           setSearchedKeyword(item.title)
           setRecommends(a)
-        }  
+        }
       })
-  
+
     }
   }
 
@@ -251,6 +265,19 @@ const Visualisation: React.FC = () => {
     setLastQuery(undefined)
     setRecommendPath([])
     setRecommends([])
+  }
+
+
+  async function createDateView() {
+    if (dataset) {
+      getDates(dataset.nodes).then((res) => {
+        if (res){
+          setHistoryDataset(res)
+          setCreatorVisible(false);
+          setDatesView(true)
+        }
+      })
+    }
   }
 
   async function getPreviousItem() {
@@ -332,7 +359,7 @@ const Visualisation: React.FC = () => {
             <Row>
               {(clickedNode !== undefined) &&
                 <Stack className="visualisation-active-container" direction="horizontal" gap={1}>
-                <Button variant="success" disabled size="sm">
+                  <Button variant="success" disabled size="sm">
                     {clickedNode.title.length > 10 ? clickedNode.title.slice(0, 10) + '..' : clickedNode.title}
                   </Button>
                   <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><ImInfo></ImInfo></Button>
@@ -351,7 +378,7 @@ const Visualisation: React.FC = () => {
                 </Stack>
               }
               {(clickedNode === undefined) &&
-                <Stack className="visualisation-active-container"  direction="horizontal" gap={1}>
+                <Stack className="visualisation-active-container" direction="horizontal" gap={1}>
                   <Button disabled variant="light" size="sm">
                     {"No active node"}
                   </Button>
@@ -360,19 +387,46 @@ const Visualisation: React.FC = () => {
             </Row>
           </Container>
         }
-        {creatorVisible ? (
+
+        {datesView ? (
           <Button
             size="sm"
             className="rounded-circle"
-            id="visualisation-btn-toggle"
-            onClick={() => setCreatorVisible(false)}
-            variant="success"><FaMinus></FaMinus>
+            id="visualisation-btn-time-close"
+            onClick={() => {
+              setCreatorVisible(false);
+              setDatesView(false)
+            }}
+            variant="success"><GrGraphQl></GrGraphQl>
           </Button>
         ) : (
-          <Button size="sm" className="rounded-circle" id="visualisation-btn-toggle" onClick={() => setCreatorVisible(true)} variant="success">
-            <FaPlus></FaPlus>
+          <Button
+            size="sm"
+            className="rounded-circle"
+            id="visualisation-btn-time"
+            onClick={() => createDateView()}
+            variant="success"><BiTimeFive></BiTimeFive>
           </Button>
         )}
+
+        {!datesView && (
+          creatorVisible ? (
+            <Button
+              size="sm"
+              className="rounded-circle"
+              id="visualisation-btn-toggle"
+              onClick={() => setCreatorVisible(false)}
+              variant="success"><FaMinus></FaMinus>
+            </Button>
+          ) : (
+            <Button size="sm" className="rounded-circle" id="visualisation-btn-toggle" onClick={() => setCreatorVisible(true)} variant="success">
+              <FaPlus></FaPlus>
+            </Button>
+          )
+        )}
+
+
+
         {creatorVisible &&
           <Button
             size="sm"
@@ -422,23 +476,27 @@ const Visualisation: React.FC = () => {
           </Container>
         </div>
         <div className={creatorVisible ? recommends.length !== 0 ? "creator-bottom-recommends" : "creator-bottom" : "canvas-full"}>
-          <Canvas
-            setCreatorVisible={setCreatorVisible}
-            clickedNode={clickedNode}
-            setClickedNode={setClickedNode}
-            dataset={dataset}
-            setDataset={setDataset}
-            height={height}
-            width={width}
-            updateCanvasAxis={updateCanvasAxis}
-            setPosition={setPosition}
-            canvasState={canvasState}
-            setCanvasState={setCanvasState}
-            clickedLink={clickedLink}
-            setClickedLink={setClickedLink}
-            disabledCanvas={disabledCanvas}
-            setDisabledCanvas={setDisabledCanvas}
-          ></Canvas>
+          {datesView ? (
+            <HistoryVisualisation dataset={historyDataset} />
+          ) : (
+            <Canvas
+              setCreatorVisible={setCreatorVisible}
+              clickedNode={clickedNode}
+              setClickedNode={setClickedNode}
+              dataset={dataset}
+              setDataset={setDataset}
+              height={height}
+              width={width}
+              updateCanvasAxis={updateCanvasAxis}
+              setPosition={setPosition}
+              canvasState={canvasState}
+              setCanvasState={setCanvasState}
+              clickedLink={clickedLink}
+              setClickedLink={setClickedLink}
+              disabledCanvas={disabledCanvas}
+              setDisabledCanvas={setDisabledCanvas}
+            ></Canvas>
+          )}
         </div>
       </main>
     </div>
