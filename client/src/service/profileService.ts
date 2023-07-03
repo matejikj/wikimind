@@ -12,30 +12,6 @@ import { ProfileLDO } from "../models/things/ProfileLDO";
 import { UserSession } from "../models/types/UserSession";
 import { MRIZKA, PROFILE, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";
 
-// export async function createProfile(userSession: UserSession, profile: Profile) {
-//   const profiles = await getProfileAll(userSession.webId, { fetch });
-//   const webIDProfileSolidDataset = profiles.webIdProfile;
-//   const webIdThing = getThing(webIDProfileSolidDataset, userSession.webId);
-//   if (webIdThing) {
-//     const extendedProfilesSolidDatasets = profiles.altProfileAll;
-
-//     let profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-//     // myExtendedProfile = setThing(myExtendedProfile, profileBuilder.create(profile));
-
-//   }
-//   // let myExtendedProfile = profiles.altProfileAll[0];
-//   // let userDataThing = getThing(myExtendedProfile, userSession.webId);
-
-
-//   // console.log(myExtendedProfile)
-//   // console.log(userDataThing)
-//   // await saveSolidDatasetAt(
-//   //   getSourceUrl(myExtendedProfile),
-//   //   myExtendedProfile,
-//   //   { fetch: fetch }             // fetch from authenticated Session
-//   // );
-// }
-
 export async function getProfile(userSession: UserSession): Promise<Profile | undefined> {
 
   const myDataset = await getSolidDataset(
@@ -51,7 +27,6 @@ export async function getProfile(userSession: UserSession): Promise<Profile | un
 }
 
 export async function updateProfile(userSession: UserSession, profile: Profile): Promise<Profile | undefined> {
-
   const myDataset = await getSolidDataset(
     userSession.podUrl + WIKIMIND + SLASH + PROFILE + SLASH + PROFILE + TTLFILETYPE,
     { fetch: fetch }

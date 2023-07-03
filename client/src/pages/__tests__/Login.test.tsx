@@ -1,6 +1,6 @@
 import React from 'react';
 import { RenderResult, render } from '@testing-library/react';
-import Sidenav from '../Sidenav';
+import Sidenav from '../../components/Sidenav';
 import { logout } from "@inrupt/solid-client-authn-browser";
 
 jest.mock("@inrupt/solid-client-authn-browser", () => {
@@ -43,8 +43,8 @@ jest.mock('react-router-dom', () => ({
 describe("<Sidenav />", () => {
 
   test("Renders without issue", async () => {
-    const providers = Render();
-    expect(providers).not.toBeUndefined();
+    const sidenav = Render();
+    expect(sidenav).not.toBeUndefined();
   });
 
 
