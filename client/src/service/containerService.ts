@@ -70,11 +70,11 @@ async function checkMainContainer(podUrl: string): Promise<void> {
 
 async function checkMindMapsContainer(podUrl: string): Promise<void> {
   if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + MINDMAPS))) {
-    createContainerAt(podUrl + WIKIMIND + SLASH + MINDMAPS, { fetch: fetch });
-    const classesDataset = createSolidDataset();
+    await createContainerAt(podUrl + WIKIMIND + SLASH + MINDMAPS, { fetch: fetch });
+    const mindmapsDataset = createSolidDataset();
     saveSolidDatasetAt(
       podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + MINDMAPS + TTLFILETYPE,
-      classesDataset,
+      mindmapsDataset,
       { fetch: fetch }
     );
 

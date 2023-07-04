@@ -34,30 +34,30 @@ export async function getMindMApsList(userSession: UserSession) {
   const classesListUrl = `${userSession.podUrl}${WIKIMIND}/${MINDMAPS}/${MINDMAPS}${TTLFILETYPE}`;
 
   const myDataset = await getSolidDataset(
-      classesListUrl,
-      { fetch: fetch }
+    classesListUrl,
+    { fetch: fetch }
   );
   const things = await getThingAll(myDataset);
   const datasetLinkBuilder = new LinkLDO(linkDefinition)
   await Promise.all(things.map(async (thing) => {
-      const types = getUrlAll(thing, RDF.type);
-      if (types.some(type => type === linkDefinition.identity)) {
-          const link = datasetLinkBuilder.read(thing)
-          if (link.linkType === LinkType.GRAPH_LINK) {
-              const myDataset = await getSolidDataset(
-                  link.url,
-                  { fetch: fetch }
-              );
-              const things = await getThingAll(myDataset);
-              const mindMapBuilder = new MindMapLDO(mindMapDefinition)
-              things.forEach(thing => {
-                  const types = getUrlAll(thing, RDF.type);
-                  if (types.some(type => type === mindMapDefinition.identity)) {
-                      mindMaps.push(mindMapBuilder.read(thing))
-                  }
-              });
+    const types = getUrlAll(thing, RDF.type);
+    if (types.some(type => type === linkDefinition.identity)) {
+      const link = datasetLinkBuilder.read(thing)
+      if (link.linkType === LinkType.GRAPH_LINK) {
+        const myDataset = await getSolidDataset(
+          link.url,
+          { fetch: fetch }
+        );
+        const things = await getThingAll(myDataset);
+        const mindMapBuilder = new MindMapLDO(mindMapDefinition)
+        things.forEach(thing => {
+          const types = getUrlAll(thing, RDF.type);
+          if (types.some(type => type === mindMapDefinition.identity)) {
+            mindMaps.push(mindMapBuilder.read(thing))
           }
+        });
       }
+    }
   }));
   return mindMaps;
 }
@@ -85,7 +85,7 @@ export async function getMindMap(url: string): Promise<MindMapDataset | null> {
     const nodeLDO = new NodeLDO(nodeDefinition);
     const links: Connection[] = [];
     const connectionLDO = new ConnectionLDO(connectionDefinition);
-  
+
     mindMapStorageThings.forEach((thing) => {
       const types = getUrlAll(thing, RDF.type);
       if (types.includes(nodeDefinition.identity)) {
@@ -130,7 +130,7 @@ export async function createNewMindMap(name: string, userSession: UserSession): 
     url: mindMapUrl,
     linkType: LinkType.GRAPH_LINK
   };
-  
+
   const linkLDO = new LinkLDO(linkDefinition).create(datasetLink);
   mindMapListDataset = setThing(mindMapListDataset, linkLDO);
   await saveSolidDatasetAt(mindMapsListUrl, mindMapListDataset, { fetch });
@@ -158,87 +158,87 @@ export async function createNewMindMap(name: string, userSession: UserSession): 
  * @param userSession The user session.
  * @returns The URL of the newly created mind map.
  */
-export async function saveMindMap(mindMap: MindMapDataset, userSession: UserSession): Promise<string> {
-  let mindMapDataset = createSolidDataset();
+export async function saveMindMap(mindMap: MindMapDataset, userSession: UserSession): Promise<void> {
+  // let mindMapDataset = createSolidDataset();
 
   // const blankMindMap: MindMap = {
   //   id: mindMap.id,
-  //   id: mindMap.id,
+  //   name: mindMap.name,
+  //   storage: mindMap.storage,
   //   created: mindMap.created,
   // };
   // const mindMapLDO = new MindMapLDO(mindMapDefinition).create(blankMindMap);
   // mindMapDataset = setThing(mindMapDataset, mindMapLDO);
 
-  // const nodeBuilder = new NodeLDO(nodeDefinition as LDO<Node>);
+  // const metaDatasetUrl = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + mindMap.id + TTLFILETYPE;
+  // await saveSolidDatasetAt(metaDatasetUrl, mindMapDataset, { fetch: fetch });
 
-  // mindMap.nodes.forEach(node => {
-  //   mindMapDataset = setThing(mindMapDataset, nodeBuilder.create(node));
-  // });
+  let mindMapStorageDataset = createSolidDataset();
 
-  // const connectionBuilder = new ConnectionLDO(connectionDefinition as LDO<Connection>);
+  const nodeBuilder = new NodeLDO(nodeDefinition as LDO<Node>);
+  mindMap.nodes.forEach(node => {
+    mindMapStorageDataset = setThing(mindMapStorageDataset, nodeBuilder.create(node));
+  });
+  const connectionBuilder = new ConnectionLDO(connectionDefinition as LDO<Connection>);
+  mindMap.links.forEach(connection => {
+    mindMapStorageDataset = setThing(mindMapStorageDataset, connectionBuilder.create(connection));
+  });
 
-  // mindMap.links.forEach(connection => {
-  //   mindMapDataset = setThing(mindMapDataset, connectionBuilder.create(connection));
-  // });
+  await saveSolidDatasetAt(mindMap.storage, mindMapStorageDataset, { fetch: fetch });
 
-  // const newName = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + mindMap.id + TTLFILETYPE;
-  // const savedSolidDataset = await saveSolidDatasetAt(newName, mindMapDataset, { fetch: fetch });
-
-  // return newName;
-  return "newName";
 }
 
-/**
- * Updates the given node in the mind map with the specified name and user session.
- * @param name The name of the mind map.
- * @param userSession The user session.
- * @param node The updated node.
- */
-export async function updateNode(name: string | undefined, userSession: UserSession, node: Node): Promise<void> {
-  if (name) {
-    const podUrl = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + name + TTLFILETYPE;
-    let courseSolidDataset = await getSolidDataset(podUrl, { fetch: fetch });
+// /**
+//  * Updates the given node in the mind map with the specified name and user session.
+//  * @param name The name of the mind map.
+//  * @param userSession The user session.
+//  * @param node The updated node.
+//  */
+// export async function updateNode(name: string | undefined, userSession: UserSession, node: Node): Promise<void> {
+//   if (name) {
+//     const podUrl = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + name + TTLFILETYPE;
+//     let courseSolidDataset = await getSolidDataset(podUrl, { fetch: fetch });
 
-    const nodeBuilder = new NodeLDO(nodeDefinition as LDO<Node>);
-    const thingUrl = podUrl + "#" + node.id;
-    courseSolidDataset = setThing(courseSolidDataset, nodeBuilder.create(node));
+//     const nodeBuilder = new NodeLDO(nodeDefinition as LDO<Node>);
+//     const thingUrl = podUrl + "#" + node.id;
+//     courseSolidDataset = setThing(courseSolidDataset, nodeBuilder.create(node));
 
-    const savedSolidDataset = await saveSolidDatasetAt(podUrl, courseSolidDataset, { fetch: fetch });
-  }
-}
+//     const savedSolidDataset = await saveSolidDatasetAt(podUrl, courseSolidDataset, { fetch: fetch });
+//   }
+// }
 
-/**
- * Creates a new node in the mind map with the specified name and user session.
- * @param name The name of the mind map.
- * @param userSession The user session.
- * @param node The new node to be created.
- */
-export async function createNode(name: string | undefined, userSession: UserSession, node: Node): Promise<void> {
-  if (name) {
-    const mindMapPath = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + name + TTLFILETYPE;
-    let mindMapDataset = await getSolidDataset(mindMapPath, { fetch: fetch });
+// /**
+//  * Creates a new node in the mind map with the specified name and user session.
+//  * @param name The name of the mind map.
+//  * @param userSession The user session.
+//  * @param node The new node to be created.
+//  */
+// export async function createNode(name: string | undefined, userSession: UserSession, node: Node): Promise<void> {
+//   if (name) {
+//     const mindMapPath = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + name + TTLFILETYPE;
+//     let mindMapDataset = await getSolidDataset(mindMapPath, { fetch: fetch });
 
-    const nodeBuilder = new NodeLDO(nodeDefinition as LDO<Node>);
-    mindMapDataset = setThing(mindMapDataset, nodeBuilder.create(node));
+//     const nodeBuilder = new NodeLDO(nodeDefinition as LDO<Node>);
+//     mindMapDataset = setThing(mindMapDataset, nodeBuilder.create(node));
 
-    const savedSolidDataset = await saveSolidDatasetAt(mindMapPath, mindMapDataset, { fetch: fetch });
-  }
-}
+//     const savedSolidDataset = await saveSolidDatasetAt(mindMapPath, mindMapDataset, { fetch: fetch });
+//   }
+// }
 
-/**
- * Adds a new link to the mind map with the specified name and user session.
- * @param name The name of the mind map.
- * @param userSession The user session.
- * @param link The new connection link to be added.
- */
-export async function createConnection(name: string | undefined, userSession: UserSession, link: Connection): Promise<void> {
-  if (name) {
-    const mindMapPath = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + name + TTLFILETYPE;
-    let mindMapDataset = await getSolidDataset(mindMapPath, { fetch: fetch });
+// /**
+//  * Adds a new link to the mind map with the specified name and user session.
+//  * @param name The name of the mind map.
+//  * @param userSession The user session.
+//  * @param link The new connection link to be added.
+//  */
+// export async function createConnection(name: string | undefined, userSession: UserSession, link: Connection): Promise<void> {
+//   if (name) {
+//     const mindMapPath = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + name + TTLFILETYPE;
+//     let mindMapDataset = await getSolidDataset(mindMapPath, { fetch: fetch });
 
-    const linkBuilder = new ConnectionLDO(connectionDefinition as LDO<Connection>);
-    mindMapDataset = setThing(mindMapDataset, linkBuilder.create(link));
+//     const linkBuilder = new ConnectionLDO(connectionDefinition as LDO<Connection>);
+//     mindMapDataset = setThing(mindMapDataset, linkBuilder.create(link));
 
-    const savedSolidDataset = await saveSolidDatasetAt(mindMapPath, mindMapDataset, { fetch: fetch });
-  }
-}
+//     const savedSolidDataset = await saveSolidDatasetAt(mindMapPath, mindMapDataset, { fetch: fetch });
+//   }
+// }

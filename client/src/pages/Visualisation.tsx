@@ -4,7 +4,7 @@ import Canvas from "../visualisation/Canvas";
 import { SessionContext } from "../sessionContext";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { useLocation, useNavigate } from "react-router-dom";
-import { createConnection, createNode, getMindMap, saveMindMap } from "../service/mindMapService";
+import { getMindMap, saveMindMap } from "../service/mindMapService";
 import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
   WebsocketNotification,

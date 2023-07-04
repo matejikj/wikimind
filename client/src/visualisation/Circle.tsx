@@ -4,7 +4,6 @@ import { Node } from '../models/types/Node'
 import { CanvasState } from './models/CanvasState'
 import { Connection } from "../models/types/Connection";
 import { generate_uuidv4 } from "../service/utils";
-import { updateNode } from "../service/mindMapService";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { ImInfo } from "react-icons/im";
 

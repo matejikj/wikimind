@@ -4,7 +4,6 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Node } from '../../models/types/Node'
 import { SessionContext } from "../../sessionContext";
-import { createNode } from "../../service/mindMapService";
 import { generate_uuidv4 } from "../../service/utils";
 import { MindMapDataset } from "../../models/types/MindMapDataset";
 import { color } from "d3";

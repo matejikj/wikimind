@@ -9,7 +9,7 @@ import {
   WebsocketNotification,
 } from "@inrupt/solid-client-notifications";
 import { generate_uuidv4 } from "../service/utils";
-import { getClassDataset } from "../service/classService";
+import { getClass } from "../service/classService";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import '../styles/style.css';
 import { FcComments } from "react-icons/fc";
@@ -62,7 +62,7 @@ const Class: React.FC = () => {
           // });
           // websocket4.connect();
           if (sessionContext.sessionInfo.isLogged) {
-            getClassDataset(location.state.url).then((res: any) => {
+            getClass(location.state.url).then((res: any) => {
               setDataset(res)
               console.log(dataset?.mindMaps.length)
             })

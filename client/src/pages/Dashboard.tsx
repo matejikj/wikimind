@@ -12,6 +12,7 @@ import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-ic
 import { ListItem } from '../models/ListItem';
 import '../styles/style.css';
 import { MindMap } from '../models/types/MindMap';
+import { MINDMAPS, TTLFILETYPE, WIKIMIND } from '../service/containerService';
 
 const Dashboard: React.FC = () => {
   const [list, setList] = useState<MindMap[]>([]);
@@ -33,9 +34,10 @@ const Dashboard: React.FC = () => {
 
 
   const showMindMap = (e: MindMap) => {
+    const url = `${sessionContext.sessionInfo.podUrl}${WIKIMIND}/${MINDMAPS}/${e.id}${TTLFILETYPE}`
     navigate('/visualisation/', {
       state: {
-        id: e.storage
+        id: url
       }
     })
   }

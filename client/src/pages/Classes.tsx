@@ -89,12 +89,14 @@ const Classes: React.FC = () => {
   }, []);
 
   const showClass = (e: Class) => {
-    const name = e.storage + 'Wikie/classes/' + e.id + '.ttl'
-    navigate('/class/', {
-      state: {
-        url: name
-      }
-    })
+    if (e.podUrl) {
+      navigate('/class/', {
+        state: {
+          url: e.podUrl
+        }
+      })
+  
+    }
   }
 
   const deleteClass = (e: any) => {
