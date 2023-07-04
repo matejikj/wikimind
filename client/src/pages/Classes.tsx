@@ -135,7 +135,11 @@ const Classes: React.FC = () => {
   const createNew = (e: any) => {
     if (sessionContext.sessionInfo.isLogged) {
       createNewClass(name, sessionContext.sessionInfo).then((res) => {
-        console.log(res)
+        navigate('/class/', {
+          state: {
+            url: res
+          }
+        })
       })
     }
   }

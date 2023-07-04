@@ -50,19 +50,19 @@ const Class: React.FC = () => {
       if (mounted) {
         if (location.state !== null && location.state.url !== null) {
           setUrl(location.state.url)
-          const websocket4 = new WebsocketNotification(
-            location.state.url,
-            { fetch: fetch }
-          );
-          websocket4.on("message", (e: any) => {
-            getClassDataset(sessionContext.sessionInfo, location.state.url).then((res: any) => {
-              setDataset(res)
-              console.log(dataset?.mindMaps.length)
-            })
-          });
-          websocket4.connect();
+          // const websocket4 = new WebsocketNotification(
+          //   location.state.url,
+          //   { fetch: fetch }
+          // );
+          // websocket4.on("message", (e: any) => {
+          //   getClassDataset(location.state.url).then((res: any) => {
+          //     setDataset(res)
+          //     console.log(dataset?.mindMaps.length)
+          //   })
+          // });
+          // websocket4.connect();
           if (sessionContext.sessionInfo.isLogged) {
-            getClassDataset(sessionContext.sessionInfo, location.state.url).then((res: any) => {
+            getClassDataset(location.state.url).then((res: any) => {
               setDataset(res)
               console.log(dataset?.mindMaps.length)
             })

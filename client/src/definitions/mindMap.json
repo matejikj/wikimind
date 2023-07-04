@@ -4,6 +4,12 @@
         "created": 
             "https://schema.org/dateCreated"
         ,
+        "name": 
+            "https://schema.org/name"
+        ,
+        "storage": 
+            "https://schema.org/storage"
+        ,
         "id": 
             "http://schema.org/identifier"
         

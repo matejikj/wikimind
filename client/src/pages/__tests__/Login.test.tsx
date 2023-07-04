@@ -1,51 +1,53 @@
 import React from 'react';
-import { RenderResult, render } from '@testing-library/react';
-import Sidenav from '../../components/Sidenav';
-import { logout } from "@inrupt/solid-client-authn-browser";
+import { RenderResult, render, fireEvent } from '@testing-library/react';
+import Login from '../Login';
+import { login } from "@inrupt/solid-client-authn-browser";
 
 jest.mock("@inrupt/solid-client-authn-browser", () => {
   return {
     __esModule: true,
-    getDefaultSession: jest.fn(),
-    handleIncomingRedirect: () => undefined,
-    onLogin: () => undefined,
-    onSessionRestore: () => undefined,
-    logout: () => undefined
+    login: jest.fn(),
   };
 });
 
-window.matchMedia = window.matchMedia || function() {
-  return {
-      matches: false,
-      addListener: function() {},
-      removeListener: function() {}
-  };
-};
+describe("<Login />", () => {
+  let loginComponent: RenderResult;
 
-
-
-// jest.mock("../dynamic-handle-redirect-component", () => {
-//   return {
-//     DynamicHandleRedirectComponent: () => null,
-//   };
-// });
-
-function Render(): RenderResult {
-  return render(<Sidenav />);
-}
-
-const mockedUsedNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockedUsedNavigate,
-}));
-
-describe("<Sidenav />", () => {
-
-  test("Renders without issue", async () => {
-    const sidenav = Render();
-    expect(sidenav).not.toBeUndefined();
+  beforeEach(() => {
+    loginComponent = render(<Login />);
   });
 
+  test("Renders without issue", async () => {
+    expect(loginComponent).not.toBeUndefined();
+  });
 
-})
+  test("Displays login form", () => {
+    const { getByLabelText, getByText } = loginComponent;
+
+    // Assert the presence of form elements
+    expect(getByLabelText("Default select example")).toBeInTheDocument();
+    expect(getByText("LOGIN")).toBeInTheDocument();
+  });
+
+  test("Updates currentProvider state on form select change", () => {
+    const { getByLabelText } = loginComponent;
+    const selectElement = getByLabelText("Default select example") as HTMLSelectElement;
+
+    // Simulate select value change
+    fireEvent.change(selectElement, { target: { value: "https://inrupt.net" } });
+
+    // Assert the updated state value
+    expect(selectElement.value).toBe("https://inrupt.net");
+  });
+
+  test("Calls login function on button click", () => {
+    const { getByText } = loginComponent;
+    const loginButton = getByText("LOGIN");
+
+    // Simulate button click
+    fireEvent.click(loginButton);
+
+    // Assert that the login function was called
+    expect(login).toHaveBeenCalledWith({ oidcIssuer: "" });
+  });
+});

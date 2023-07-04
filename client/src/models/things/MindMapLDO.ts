@@ -16,6 +16,8 @@ export class MindMapLDO extends BaseLDO<MindMap> implements CRUDLDO<MindMap> {
     read(thing: any): MindMap {
         return {
             id: getStringNoLocale(thing, this.rdf.properties.id)!,
+            name: getStringNoLocale(thing, this.rdf.properties.name)!,
+            storage: getStringNoLocale(thing, this.rdf.properties.storage)!,
             created: getStringNoLocale(thing, this.rdf.properties.created)!,
         };
     }
@@ -29,6 +31,8 @@ export class MindMapLDO extends BaseLDO<MindMap> implements CRUDLDO<MindMap> {
         const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
             .addUrl(rdf_type, this.rdf.identity)
             .addStringNoLocale(this.rdf.properties.id, object.id)
+            .addStringNoLocale(this.rdf.properties.name, object.name)
+            .addStringNoLocale(this.rdf.properties.storage, object.storage)
             .addStringNoLocale(this.rdf.properties.created, object.created)
             .build();
         return newThing;

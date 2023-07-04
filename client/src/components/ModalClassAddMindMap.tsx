@@ -2,11 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { SessionContext } from "../sessionContext";
-import { getMindMapList } from "../service/containerService";
 import { ListItem } from "../models/ListItem";
 import { MdAdd } from "react-icons/md";
 import { Row } from "react-bootstrap";
 import { addGraphToClass } from "../service/classService";
+import { getMindMApsList } from "../service/mindMapService";
+import { MindMap } from "../models/types/MindMap";
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalClassAddMindMap: React.FC<{
@@ -15,18 +16,18 @@ const ModalClassAddMindMap: React.FC<{
     classUrl: string
 }> = ({ showModal, setModal, classUrl }) => {
     const sessionContext = useContext(SessionContext)
-    const [list, setList] = useState<ListItem[]>([]);
+    const [list, setList] = useState<MindMap[]>([]);
 
     useEffect(() => {
-        const result = getMindMapList(sessionContext.sessionInfo).then((res) => {
+        const result = getMindMApsList(sessionContext.sessionInfo).then((res) => {
             setList(res)
         });
     }, []);
 
     const handleClose = () => setModal(false);
 
-    const addMindMap = (item: ListItem) => {
-        addGraphToClass(sessionContext.sessionInfo, item.url, classUrl)
+    const addMindMap = (item: MindMap) => {
+        addGraphToClass(sessionContext.sessionInfo, item.storage, classUrl)
         console.log(item)
     }
 
@@ -40,7 +41,7 @@ const ModalClassAddMindMap: React.FC<{
                         <Row key={index}>
                             <div className='aaa'>
                                 <div className='my-stack'>
-                                    {item.title}
+                                    {item.name}
                                 </div>
                                 <div className='my-stack-reverse'>
                                     <Button

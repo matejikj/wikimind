@@ -7,6 +7,9 @@
         "id": 
             "http://schema.org/identifier"
         ,
+        "name": 
+            "http://schema.org/name"
+        ,
         "linkType": 
             "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#LinkType"
         

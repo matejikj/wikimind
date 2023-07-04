@@ -16,6 +16,8 @@ import { addExamResult } from "../service/examService";
 
 const defaultBlankDataset: MindMapDataset = {
     id: "",
+    name: "",
+    storage: "",
     created: "",
     links: [],
     nodes: []

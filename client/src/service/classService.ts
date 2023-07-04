@@ -24,7 +24,7 @@ import classDefinition from "../definitions/class.json"
 import datasetLinkDefinition from "../definitions/link.json"
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
-import { getPodUrl } from "./containerService";
+import { CLASSES, PROFILE, TTLFILETYPE, WIKIMIND, getPodUrl } from "./containerService";
 import { generate_uuidv4 } from "./utils";
 import { Class, Class as TeachClass } from "../models/types/Class";
 import { ClassLDO } from "../models/things/ClassLDO";
@@ -47,57 +47,51 @@ import { Grant } from "../models/types/Grant";
 import { GrantLDO } from "../models/things/GrantLDO";
 import { ChatLDO } from "../models/things/ChatLDO";
 
-// https://id.inrupt.com/matejikj?classId=d91f706d-ca0c-41aa-844b-cf47d1ef4c40
+/**
+ * Creates a new class with the given name and user session.
+ *
+ * @param {string} name - The name of the class.
+ * @param {UserSession} userSession - The user session.
+ * @returns {Promise<string>} - A Promise that resolves with the URL of the created class.
+ */
+export async function createNewClass(name: string, userSession: UserSession): Promise<string> {
+    const classesListUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${CLASSES}${TTLFILETYPE}`;
 
-
-export async function createNewClass(name: string, userSession: UserSession) {
-    const podUrl = userSession.podUrl + 'Wikie/classes/classes.ttl'
-    const teacherProfile = await getProfile(userSession)
     const blankClass: TeachClass = {
         name: name,
         id: generate_uuidv4(),
         teacher: userSession.webId,
         storage: userSession.podUrl
-    }
+    };
+    const classUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${blankClass.id}${TTLFILETYPE}`;
 
     const datasetLink: Link = {
         id: generate_uuidv4(),
-        url: userSession.podUrl + "Wikie/classes/" + blankClass.id + ".ttl",
+        url: classUrl,
         linkType: LinkType.CLASS_LINK
-    }
-    const classLDO = new LinkLDO(datasetLinkDefinition).create(datasetLink)
-    let myDataset = await getSolidDataset(
-        podUrl,
-        { fetch: fetch }
-    );
-    myDataset = setThing(myDataset, classLDO)
-    const newName = podUrl + "Wikie/classes/" + "classes" + ".ttl"
+    };
 
-    let courseSolidDataset = createSolidDataset();
-    const classDataset = new ClassLDO(classDefinition).create(blankClass)
-    courseSolidDataset = setThing(courseSolidDataset, classDataset)
-    const newClassDataset = userSession.podUrl + "Wikie/classes/" + blankClass.id + ".ttl"
+    const linkLDO = new LinkLDO(datasetLinkDefinition).create(datasetLink);
 
-    const savedSolidDatasetContainer = await saveSolidDatasetAt(
-        podUrl,
-        myDataset,
-        { fetch: fetch }
-    );
-    const savedSolidDataset = await saveSolidDatasetAt(
-        newClassDataset,
-        courseSolidDataset,
-        { fetch: fetch }
-    );
+    let userClassesList = await getSolidDataset(classesListUrl, { fetch: fetch });
+    userClassesList = setThing(userClassesList, linkLDO);
+
+    let classDataset = createSolidDataset();
+    const classLDO = new ClassLDO(classDefinition).create(blankClass);
+    classDataset = setThing(classDataset, classLDO);
+
+    await saveSolidDatasetAt(classesListUrl, userClassesList, { fetch: fetch });
+    await saveSolidDatasetAt(classUrl, classDataset, { fetch: fetch });
 
     if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
-        initializeAcl(newClassDataset)
+        initializeAcl(classUrl);
     }
 
-
-    return newName
+    return classUrl;
 }
 
-export async function getClassDataset(userSession: UserSession, classPodUrl: string) {
+
+export async function getClassDataset(classPodUrl: string) {
     const myDataset = await getSolidDataset(
         classPodUrl,
         { fetch: fetch }
@@ -105,13 +99,13 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
     const things = await getThingAll(myDataset);
     console.log(things)
 
-    let newClass: TeachClass | null = null;
+    let newClass: TeachClass | undefined
+    let classDataset: ClassDataset | undefined
     const classBuilder = new ClassLDO(classDefinition)
     const mindMaps: MindMapDataset[] = []
     const exams: Exam[] = []
     const examBuilder = new ExamLDO(examDefinition)
     const profiles: Profile[] = []
-    const profileBuilder = new ProfileLDO(profileDefinition);
     const datasetLinkBuilder = new LinkLDO(datasetLinkDefinition)
 
     await Promise.all(things.map(async (thing) => {
@@ -120,20 +114,16 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
             const newLink = datasetLinkBuilder.read(thing)
             if (newLink.linkType === LinkType.PROFILE_LINK) {
 
-                const podUrls = await getPodUrl(newLink.url)
-                if (podUrls !== null) {
-                    const podUrl = podUrls[0]
-                    const userProfileDataset = await getSolidDataset(
-                        podUrl + 'Wikie/profile/profile.ttl',
-                        { fetch: fetch }
-                    );
-                
-                    const bb = getThing(userProfileDataset, podUrl + 'Wikie/profile/profile.ttl#Wikie');
-                    const profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-                    const userProfile = profileBuilder.read(bb)
-                    console.log(userProfile)
-                    profiles.push(userProfile)
-                }
+                getPodUrl(newLink.url).then(async (res) => {
+                    if (res) {
+                        const profileUrl = `${res[0]}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
+                        getProfile(profileUrl).then((userProfile) => {
+                            if (userProfile) {
+                                profiles.push(userProfile)
+                            }
+                        })
+                    }
+                })
             }
             if (newLink.linkType === LinkType.GRAPH_LINK) {
                 const mindMap = await getMindMap(newLink.url)
@@ -143,16 +133,14 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
             }
         }
         if (types.some(type => type === examDefinition.identity)) {
-            // const newLink = datasetLinkBuilder.read(thing)
+            const exam = examBuilder.read(thing)
         }
         if (types.some(type => type === classDefinition.identity)) {
             newClass = classBuilder.read(thing)
-            console.log(newClass)
         }
     }))
 
-    if (newClass !== null) {
-        newClass = newClass as TeachClass
+    if (newClass) {
         const classDataset: ClassDataset = {
             id: newClass.id,
             name: newClass.name,
@@ -162,10 +150,8 @@ export async function getClassDataset(userSession: UserSession, classPodUrl: str
             students: profiles,
             testResults: exams
         }
-        return classDataset
-    } else {
-        return null
     }
+    return classDataset
 }
 
 export async function allowAccess(userSession: UserSession, classRequest: Request) {
@@ -401,33 +387,25 @@ export async function requestClass(userSession: UserSession, classUri: string) {
 
 export async function getClassesList(userSession: UserSession) {
     const classes: Class[] = []
-    const podUrl = userSession.podUrl + 'Wikie/classes/classes.ttl'
+    const classesListUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${CLASSES}${TTLFILETYPE}`;
 
     const myDataset = await getSolidDataset(
-        podUrl,
+        classesListUrl,
         { fetch: fetch }
     );
     const things = await getThingAll(myDataset);
     const datasetLinkBuilder = new LinkLDO(datasetLinkDefinition)
     await Promise.all(things.map(async (thing) => {
-
-        // things.forEach(async thing => {
         const types = getUrlAll(thing, RDF.type);
         if (types.some(type => type === datasetLinkDefinition.identity)) {
             const link = datasetLinkBuilder.read(thing)
             if (link.linkType === LinkType.CLASS_LINK) {
-
-                // classes.push(link)
-
                 const myDataset = await getSolidDataset(
                     link.url,
                     { fetch: fetch }
                 );
                 const things = await getThingAll(myDataset);
-
                 const classBuilder = new ClassLDO(classDefinition)
-                const mindMap: Class | null = null;
-
                 things.forEach(thing => {
                     const types = getUrlAll(thing, RDF.type);
                     if (types.some(type => type === classDefinition.identity)) {

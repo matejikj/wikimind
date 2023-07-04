@@ -4,22 +4,47 @@ import { Profile } from "../../types/Profile";
 import { ProfileLDO } from "../ProfileLDO";
 import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
 
+/**
+ * Mocks the container service by returning a fixed value for the WIKIMIND constant.
+ */
+jest.mock("../../../service/containerService", () => {
+  return {
+    WIKIMIND: 'WikiMind',
+  };
+});
+
+/**
+ * Tests for the ProfileLDO class.
+ */
 describe("ProfileLDO", () => {
   let profileLDO: ProfileLDO;
 
   beforeEach(() => {
-    profileLDO = new ProfileLDO({});
+    // Create a new instance of ProfileLDO with specified identity and properties.
+    profileLDO = new ProfileLDO({
+      "identity": "https://inrupt.com/.well-known/sdk-local-node/WikiMind",
+      "properties": {
+        "surname": "http://xmlns.com/foaf/0.1/#term_surname",
+        "name": "http://xmlns.com/foaf/0.1/#term_name",
+        "webId": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#webId",
+        "profileImage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profileImage"
+      }
+    });
   });
 
   test("read should return Profile object", () => {
-    const mockThing = createThing({ name: WIKIMIND });
-    addStringNoLocale(mockThing, "name", "John");
-    addStringNoLocale(mockThing, "surname", "Doe");
-    addStringNoLocale(mockThing, "webId", "https://example.com/johndoe");
-    addStringNoLocale(mockThing, "profileImage", "https://example.com/profile.jpg");
+    // Create a mock Thing with relevant properties.
+    const mockThing = buildThing(createThing({ name: WIKIMIND }))
+      .addUrl(rdf_type, "https://inrupt.com/.well-known/sdk-local-node/WikiMind")
+      .addStringNoLocale("http://xmlns.com/foaf/0.1/#term_name", "John")
+      .addStringNoLocale("http://xmlns.com/foaf/0.1/#term_surname", "Doe")
+      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#webId", "https://example.com/johndoe")
+      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profileImage", "https://example.com/profile.jpg")
+      .build();
 
     const result = profileLDO.read(mockThing);
 
+    // Assert the returned Profile object has expected values.
     expect(result).toEqual({
       name: "John",
       surname: "Doe",
@@ -38,9 +63,10 @@ describe("ProfileLDO", () => {
 
     const result = profileLDO.create(mockProfile);
 
-    expect(getStringNoLocale(result, "name")).toBe("John");
-    expect(getStringNoLocale(result, "surname")).toBe("Doe");
-    expect(getStringNoLocale(result, "webId")).toBe("https://example.com/johndoe");
-    expect(getStringNoLocale(result, "profileImage")).toBe("https://example.com/profile.jpg");
+    // Assert the returned ThingLocal has expected property values.
+    expect(getStringNoLocale(result, "http://xmlns.com/foaf/0.1/#term_name")).toBe("John");
+    expect(getStringNoLocale(result, "http://xmlns.com/foaf/0.1/#term_surname")).toBe("Doe");
+    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#webId")).toBe("https://example.com/johndoe");
+    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profileImage")).toBe("https://example.com/profile.jpg");
   });
 });

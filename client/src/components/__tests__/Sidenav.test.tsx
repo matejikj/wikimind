@@ -1,18 +1,18 @@
 import React from 'react';
-import { RenderResult, render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import Sidenav from '../Sidenav';
+import { useNavigate } from 'react-router-dom';
 import { logout } from "@inrupt/solid-client-authn-browser";
+import { SessionContext } from '../../sessionContext';
 
-jest.mock("@inrupt/solid-client-authn-browser", () => {
-  return {
-    __esModule: true,
-    getDefaultSession: jest.fn(),
-    handleIncomingRedirect: () => undefined,
-    onLogin: () => undefined,
-    onSessionRestore: () => undefined,
-    logout: () => undefined
-  };
-});
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: jest.fn(),
+}));
+
+jest.mock('@inrupt/solid-client-authn-browser', () => ({
+  logout: jest.fn().mockResolvedValue(undefined),
+}));
 
 window.matchMedia = window.matchMedia || function() {
   return {
@@ -22,30 +22,69 @@ window.matchMedia = window.matchMedia || function() {
   };
 };
 
+// jest.mock('../../sessionContext', () => ({
+//   SessionContext: {
+//     sessionInfo: {
+//       webId: 'https://example.com/johndoe',
+//     },
+//   },
+// }));
 
 
-// jest.mock("../dynamic-handle-redirect-component", () => {
-//   return {
-//     DynamicHandleRedirectComponent: () => null,
-//   };
-// });
+describe('<Sidenav />', () => {
+  const sessionContext = {
+    setSessionInfo: jest.fn(),
+  };
 
-function Render(): RenderResult {
-  return render(<Sidenav />);
-}
-
-const mockedUsedNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockedUsedNavigate,
-}));
-
-describe("<Sidenav />", () => {
-
-  test("Renders without issue", async () => {
-    const providers = Render();
-    expect(providers).not.toBeUndefined();
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
+  test('Renders without issue', () => {
+    render(<Sidenav />);
+  });
 
-})
+  // test('Calls navigate function on link click', () => {
+  //   const navigate = jest.fn();
+  //   (useNavigate as jest.Mock).mockReturnValue(navigate);
+
+  //   const { getByText } = render(<Sidenav />);
+
+  //   const homeLink = getByText('Home');
+  //   fireEvent.click(homeLink);
+  //   expect(useNavigate).toHaveBeenCalledWith('/');
+
+  //   const profileLink = getByText('Profile');
+  //   fireEvent.click(profileLink);
+  //   expect(useNavigate).toHaveBeenCalledWith('/profile');
+
+  //   const classesLink = getByText('Classes');
+  //   fireEvent.click(classesLink);
+  //   expect(useNavigate).toHaveBeenCalledWith('/classes');
+
+  //   const messagesLink = getByText('Messages');
+  //   fireEvent.click(messagesLink);
+  //   expect(useNavigate).toHaveBeenCalledWith('/messages');
+  // });
+
+  // test('Calls logout function on logout link click', async () => {
+  //   const { getByText } = render(
+  //     <SessionContext.Provider value={sessionContext}>
+  //       <Sidenav />
+  //     </SessionContext.Provider>
+  //   );
+
+  //   const logoutLink = getByText('Logout');
+  //   fireEvent.click(logoutLink);
+  //   expect(logout).toHaveBeenCalled();
+
+  //   await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for the promise to resolve
+
+  //   expect(sessionContext.setSessionInfo).toHaveBeenCalledWith({
+  //     // webId: '',
+  //     // podUrl: '',
+  //     // isLogged: false,
+  //     // podAccessControlPolicy: null,
+  //   });
+  // });
+});

@@ -23,10 +23,8 @@ const ProfileView: React.FC = () => {
   });
 
   useEffect(() => {
-    const result = getProfile(sessionContext.sessionInfo).then((res: any) => {
+    const result = getProfile(sessionContext.sessionInfo.podUrl).then((res: any) => {
       if (res !== undefined) { setProfile(res) }
-
-      console.log(res)
     });
 
   }, []);

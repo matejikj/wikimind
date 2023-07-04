@@ -71,6 +71,13 @@ async function checkMainContainer(podUrl: string): Promise<void> {
 async function checkMindMapsContainer(podUrl: string): Promise<void> {
   if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + MINDMAPS))) {
     createContainerAt(podUrl + WIKIMIND + SLASH + MINDMAPS, { fetch: fetch });
+    const classesDataset = createSolidDataset();
+    saveSolidDatasetAt(
+      podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + MINDMAPS + TTLFILETYPE,
+      classesDataset,
+      { fetch: fetch }
+    );
+
   }
 }
 
@@ -159,9 +166,12 @@ export async function checkContainer(sessionId: string): Promise<{ podUrl: strin
 
     const contactsPath = WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE
     const requestsPath = WIKIMIND + SLASH + CLASSES + SLASH + REQUESTS + TTLFILETYPE
+    const profilePAth = WIKIMIND + SLASH + PROFILE + SLASH + PROFILE + TTLFILETYPE
+
     if (accessControlPolicy === AccessControlPolicy.WAC) {
       await initializeAcl(podUrl + requestsPath);
       await initializeAcl(podUrl + contactsPath);
+      await initializeAcl(podUrl + profilePAth);
     }
 
     universalAccess.setPublicAccess(
@@ -174,40 +184,45 @@ export async function checkContainer(sessionId: string): Promise<{ podUrl: strin
       { append: true, read: true, write: false },
       { fetch: fetch }
     )
+    universalAccess.setPublicAccess(
+      podUrl + profilePAth,
+      { append: false, read: true, write: false },
+      { fetch: fetch }
+    )
 
     return { podUrl, accessControlPolicy };
   }
   throw new Error("There is a problem with SolidPod.");
 }
 
-/**
- * Retrieves a list of mind maps associated with a user session.
- *
- * @param {UserSession} userSession - The user session.
- * @returns {Promise<{ url: string; title: string | null }[]>} - A Promise resolving to an array of objects containing the URL and title of each mind map.
- */
-export async function getMindMapList(userSession: UserSession): Promise<{ url: string; title: string | null }[]> {
-  const readingListUrl: string = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH;
-  const myDataset = await getSolidDataset(
-    readingListUrl,
-    { fetch: fetch }
-  );
+// /**
+//  * Retrieves a list of mind maps associated with a user session.
+//  *
+//  * @param {UserSession} userSession - The user session.
+//  * @returns {Promise<{ url: string; title: string | null }[]>} - A Promise resolving to an array of objects containing the URL and title of each mind map.
+//  */
+// export async function getMindMapList(userSession: UserSession): Promise<{ url: string; title: string | null }[]> {
+//   const readingListUrl: string = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH;
+//   const myDataset = await getSolidDataset(
+//     readingListUrl,
+//     { fetch: fetch }
+//   );
 
-  const resourceUrls = await getContainedResourceUrlAll(myDataset);
+//   const resourceUrls = await getContainedResourceUrlAll(myDataset);
 
-  const resultResources: { url: string; title: string | null }[] = [];
-  for (const res of resourceUrls) {
-    const dat = await getSolidDataset(res, { fetch: fetch });
-    const things = getThingAll(dat);
-    things.forEach((thing) => {
-      const types = getUrlAll(thing, RDF.type);
-      if (types.some((type) => type === mindMapDefinition.identity)) {
-        resultResources.push({
-          url: res,
-          title: getStringNoLocale(thing, mindMapDefinition.properties.id),
-        });
-      }
-    });
-  }
-  return resultResources;
-}
+//   const resultResources: { url: string; title: string | null }[] = [];
+//   for (const res of resourceUrls) {
+//     const dat = await getSolidDataset(res, { fetch: fetch });
+//     const things = getThingAll(dat);
+//     things.forEach((thing) => {
+//       const types = getUrlAll(thing, RDF.type);
+//       if (types.some((type) => type === mindMapDefinition.identity)) {
+//         resultResources.push({
+//           url: res,
+//           title: getStringNoLocale(thing, mindMapDefinition.properties.id),
+//         });
+//       }
+//     });
+//   }
+//   return resultResources;
+// }

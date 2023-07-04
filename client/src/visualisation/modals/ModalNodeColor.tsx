@@ -46,7 +46,7 @@ const ModalNodeColor: React.FC<{
         "#d35523",
         "#5e2e8a",
         "#b6a816"
-          ]); // <-- new state variable
+    ]); // <-- new state variable
     const [textColors] = useState([
         "black",
         "white",
@@ -56,14 +56,14 @@ const ModalNodeColor: React.FC<{
     const [textColor, setTextColor] = useState(node?.textColor);
 
     function changeColor(color: string) {
-        if (node){
+        if (node) {
             node.color = color
             setColor(color)
         }
     }
 
     function changeTextColor(color: string) {
-        if (node){
+        if (node) {
             node.textColor = color
             setTextColor(color)
         }
@@ -109,7 +109,8 @@ const ModalNodeColor: React.FC<{
                         <Col>
                             {colors.map((item, index) => {
                                 return (
-                                    <button key={index} onClick={() => changeColor(item)} className="colors-div btn" style={{ backgroundColor: item }}>
+                                    <button key={index} data-testid={`colors-div-button-${index}`} // Add this line
+                                        onClick={() => changeColor(item)} className="colors-div btn" style={{ backgroundColor: item }}>
                                         <svg height="1em" width="1em">
                                         </svg>
                                     </button>

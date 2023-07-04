@@ -1,20 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from "react";
 import Sidenav from "../components/Sidenav";
-import { getMindMapList } from "../service/containerService";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-import { createNewMindMap } from '../service/mindMapService';
+import { createNewMindMap, getMindMApsList } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
 import { Container, Row, Stack } from 'react-bootstrap';
 import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
 import { ListItem } from '../models/ListItem';
 import '../styles/style.css';
+import { MindMap } from '../models/types/MindMap';
 
 const Dashboard: React.FC = () => {
-  const [list, setList] = useState<ListItem[]>([]);
+  const [list, setList] = useState<MindMap[]>([]);
   const [createNewModalVisible, setCreateNewModalVisible] = useState(false);
   const [renameModalVisible, setRenameModalVisible] = useState(false);
 
@@ -26,25 +26,25 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const result = getMindMapList(sessionContext.sessionInfo).then((res) => {
+    const result = getMindMApsList(sessionContext.sessionInfo).then((res) => {
       setList(res)
     });
   }, []);
 
 
-  const showMindMap = (e: ListItem) => {
+  const showMindMap = (e: MindMap) => {
     navigate('/visualisation/', {
       state: {
-        id: e.url
+        id: e.storage
       }
     })
   }
 
-  const renameMindMap = (e: ListItem) => {
+  const renameMindMap = (e: MindMap) => {
 
   }
 
-  const removeMindMap = (e: ListItem) => {
+  const removeMindMap = (e: MindMap) => {
     // navigate('/visualisation/', {
     //   state: {
     //     id: e.target.name
@@ -131,7 +131,7 @@ const Dashboard: React.FC = () => {
               <Row key={index}>
                 <div className='aaa'>
                   <div className='my-stack'>
-                    {item.title}
+                    {item.name}
                   </div>
                   <div className='my-stack-reverse'>
                     <Button
