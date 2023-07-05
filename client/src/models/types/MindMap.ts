@@ -13,9 +13,14 @@ export type MindMap = {
   name: string;
 
   /**
-* The unique identifier of the mind map.
-*/
+  * The unique identifier of the mind map.
+  */
   storage: string;
+
+  /**
+  * The unique identifier of the mind map.
+  */
+  ownerPod: string;
 
   /**
    * The creation date of the mind map.

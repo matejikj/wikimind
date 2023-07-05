@@ -75,7 +75,6 @@ export async function getClassesList(userSession: UserSession) {
                     const types = getUrlAll(thing, RDF.type);
                     if (types.some(type => type === classDefinition.identity)) {
                         let newClass = classBuilder.read(thing)
-                        newClass.podUrl = link.url
                         classes.push(newClass)
                     }
                 });
@@ -101,6 +100,7 @@ export async function createNewClass(name: string, userSession: UserSession): Pr
 
     const blankClass: Class = {
         name: name,
+        ownerPod: userSession.podUrl,
         id: generate_uuidv4(),
         teacher: userSession.webId,
         storage: classStorageUrl
@@ -168,24 +168,21 @@ export async function getClass(url: string): Promise<ClassDataset | null> {
             if (types.some(type => type === datasetLinkDefinition.identity)) {
                 const link = linkLDO.read(thing)
                 if (link.linkType === LinkType.PROFILE_LINK) {
-
-                    getPodUrl(link.url).then(async (res) => {
-                        if (res) {
-                            const profileUrl = `${res[0]}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
-                            getProfile(profileUrl).then((userProfile) => {
-                                if (userProfile) {
-                                    students.push(userProfile)
-                                }
-                            })
+                    const podUrls = await getPodUrl(link.url)
+                    if (podUrls !== null) {
+                        const podUrl = podUrls[0]
+                        const userProfile = await getProfile(podUrls[0])
+                        if (userProfile) {
+                            students.push(userProfile)
                         }
-                    })
+                    }
                 }
                 if (link.linkType === LinkType.GRAPH_LINK) {
                     const myDataset = await getSolidDataset(
                         link.url,
                         { fetch: fetch }
                     );
-                    const things = await getThingAll(myDataset);
+                    const things = getThingAll(myDataset);
                     const mindMapBuilder = new MindMapLDO(mindMapDefinition)
                     things.forEach(thing => {
                         const types = getUrlAll(thing, RDF.type);
@@ -202,6 +199,7 @@ export async function getClass(url: string): Promise<ClassDataset | null> {
         }))
         const classDataset: ClassDataset = {
             id: classMeta.id,
+            ownerPod: classMeta.ownerPod,
             name: classMeta.name,
             storage: classMeta.storage,
             teacher: classMeta.teacher,
@@ -302,7 +300,7 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
         });
 
         if (classs) {
-    
+
             // VLOZIT ZAKA DO TRIDY
             const datasetLink: Link = {
                 id: generate_uuidv4(),
@@ -346,46 +344,65 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
                 class: classRequest.class
             })
 
-            const grantDataset = await getSolidDataset(
+            let grantDataset = await getSolidDataset(
                 podUrls[0] + WIKIMIND + SLASH + CLASSES + SLASH + REQUESTS + TTLFILETYPE,
                 { fetch: fetch }
             );
             console.log(grantDataset)
-            const grantProfileThing = setThing(grantDataset, newRequst)
-            const savedGrantProfileDatatset = await saveSolidDatasetAt(
+            grantDataset = setThing(grantDataset, newRequst)
+            await saveSolidDatasetAt(
                 podUrls[0] + WIKIMIND + SLASH + CLASSES + SLASH + REQUESTS + TTLFILETYPE,
-                grantProfileThing,
+                grantDataset,
                 { fetch: fetch }
             );
 
             // VYTVORIT CHAT
 
             const messageDatasetUrl = userSession.podUrl + WIKIMIND + SLASH + MESSAGES + SLASH + generate_uuidv4() + TTLFILETYPE
+            const MessageStorageUrl = userSession.podUrl + WIKIMIND + SLASH + MESSAGES + SLASH + generate_uuidv4() + TTLFILETYPE
 
             const newChat = new ChatLDO(chatDefinition).create({
                 id: generate_uuidv4(),
-                owner: userSession.webId,
+                host: userSession.webId,
+                ownerPod: userSession.podUrl,
                 guest: classRequest.requestor,
                 modified: '19.6.2023',
                 lastMessage: '',
-                storage: userSession.podUrl
+                storage: MessageStorageUrl
             })
 
-            const chatSolidDataset = createSolidDataset();
-            const newProfileDataset = setThing(chatSolidDataset, newChat)
-            const messageDataset = await saveSolidDatasetAt(
+            let chatSolidDataset = createSolidDataset();
+
+            chatSolidDataset = setThing(chatSolidDataset, newChat)
+            await saveSolidDatasetAt(
                 messageDatasetUrl,
-                newProfileDataset,
+                chatSolidDataset,
+                { fetch: fetch }
+            );
+
+            const chatStorageSolidDataset = createSolidDataset();
+            await saveSolidDatasetAt(
+                MessageStorageUrl,
+                chatStorageSolidDataset,
                 { fetch: fetch }
             );
 
             if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
                 await initializeAcl(messageDatasetUrl)
+                await initializeAcl(MessageStorageUrl)
             }
 
             // PRIDELIT ZAKOVI PRISTUP KE SPOLECNEMU CHATU
             universalAccess.setAgentAccess(
                 messageDatasetUrl,
+                classRequest.requestor,
+                { append: true, read: true, write: false },
+                { fetch: fetch }
+            ).then((newAccess) => {
+                console.log(newAccess)
+            });
+            universalAccess.setAgentAccess(
+                MessageStorageUrl,
                 classRequest.requestor,
                 { append: true, read: true, write: false },
                 { fetch: fetch }
@@ -403,32 +420,32 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
             })
 
 
+            // ULOZIT CHAT UCITELI DO KONTAKTU
+
+            let myContactsDataset = await getSolidDataset(
+                userSession.podUrl + WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE,
+                { fetch: fetch }
+            );
+
+            myContactsDataset = setThing(myContactsDataset, newChatLink)
+            await saveSolidDatasetAt(
+                userSession.podUrl + WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE,
+                myContactsDataset,
+                { fetch: fetch }
+            );
+
+
             // ULOZIT CHAT ZAKOVI DO KONTAKTU
 
-            const myContactsDataset = await getSolidDataset(
-                userSession.podUrl + "Wikie/messages/contacts.ttl",
+            let studentsContactsDataset = await getSolidDataset(
+                podUrls[0] + WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE,
                 { fetch: fetch }
             );
 
-            const newTeacherProfileThing = setThing(myContactsDataset, newChatLink)
-            const savedTeacherProfileDatatset = await saveSolidDatasetAt(
-                userSession.podUrl + "Wikie/messages/contacts.ttl",
-                newTeacherProfileThing,
-                { fetch: fetch }
-            );
-
-
-            // ULOZIT CHAT ZAKOVI DO KONTAKTU
-
-            const studentsContactsDataset = await getSolidDataset(
-                podUrls[0] + "Wikie/messages/contacts.ttl",
-                { fetch: fetch }
-            );
-
-            const newProfileThing = setThing(studentsContactsDataset, newChatLink)
-            const savedProfileDatatset = await saveSolidDatasetAt(
-                podUrls[0] + "Wikie/messages/contacts.ttl",
-                newProfileThing,
+            studentsContactsDataset = setThing(studentsContactsDataset, newChatLink)
+            await saveSolidDatasetAt(
+                podUrls[0] + WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE,
+                studentsContactsDataset,
                 { fetch: fetch }
             );
         }
@@ -539,28 +556,43 @@ export async function requestClass(userSession: UserSession, classUri: string) {
 
 
 export async function addGraphToClass(userSession: UserSession, graphUrl: string, classUrl: string) {
-    const datasetLink: Link = {
-        id: generate_uuidv4(),
-        url: graphUrl,
-        linkType: LinkType.GRAPH_LINK
-    }
-    const classLDO = new LinkLDO(datasetLinkDefinition).create(datasetLink)
-    const myDataset = await getSolidDataset(
-        classUrl,
-        { fetch: fetch }
-    );
-    const newDAtaset = setThing(myDataset, classLDO)
-    const savedSolidDatasetContainer = await saveSolidDatasetAt(
-        classUrl,
-        newDAtaset,
-        { fetch: fetch }
-    );
-    universalAccess.setPublicAccess(
-        graphUrl,         // Resource
-        { append: true, read: true, write: false },          // Access object
-        { fetch: fetch }                         // fetch function from authenticated session
-    ).then((newAccess) => {
-        console.log("newAccess       contacts.ttl")
+
+    const clasDataset = await getSolidDataset(classUrl, { fetch });
+    const classThings = await getThingAll(clasDataset);
+
+    const cclassO = new ClassLDO(classDefinition);
+    let classMeta: Class | null = null;
+
+    classThings.forEach((thing) => {
+        const types = getUrlAll(thing, RDF.type);
+        if (types.includes(classDefinition.identity)) {
+            classMeta = cclassO.read(thing);
+        }
     });
 
+    if (classMeta !== null) {
+        classMeta = classMeta as Class;
+        let classStorageDataset = await getSolidDataset(classMeta.storage, { fetch });
+
+        const datasetLink: Link = {
+            id: generate_uuidv4(),
+            url: graphUrl,
+            linkType: LinkType.GRAPH_LINK
+        }
+        const classLDO = new LinkLDO(datasetLinkDefinition).create(datasetLink)
+        classStorageDataset = setThing(classStorageDataset, classLDO)
+        const savedSolidDatasetContainer = await saveSolidDatasetAt(
+            classMeta.storage,
+            classStorageDataset,
+            { fetch: fetch }
+        );
+        universalAccess.setPublicAccess(
+            graphUrl,         // Resource
+            { append: true, read: true, write: false },          // Access object
+            { fetch: fetch }                         // fetch function from authenticated session
+        ).then((newAccess) => {
+            console.log("newAccess       contacts.ttl")
+        });
+    
+    }
 }

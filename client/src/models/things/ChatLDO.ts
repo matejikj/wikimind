@@ -17,7 +17,8 @@ export class ChatLDO extends BaseLDO<Chat> implements CRUDLDO<Chat> {
   read(thing: any): Chat {
     return {
       id: getStringNoLocale(thing, this.rdf.properties.id)!,
-      owner: getStringNoLocale(thing, this.rdf.properties.owner)!,
+      host: getStringNoLocale(thing, this.rdf.properties.host)!,
+      ownerPod: getStringNoLocale(thing, this.rdf.properties.ownerPod)!,
       storage: getStringNoLocale(thing, this.rdf.properties.storage)!,
       modified: getStringNoLocale(thing, this.rdf.properties.modified)!,
       lastMessage: getStringNoLocale(thing, this.rdf.properties.lastMessage)!,
@@ -34,7 +35,8 @@ export class ChatLDO extends BaseLDO<Chat> implements CRUDLDO<Chat> {
     const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))
       .addUrl(rdf_type, this.rdf.identity)
       .addStringNoLocale(this.rdf.properties.id, object.id)
-      .addStringNoLocale(this.rdf.properties.owner, object.owner)
+      .addStringNoLocale(this.rdf.properties.host, object.host)
+      .addStringNoLocale(this.rdf.properties.ownerPod, object.ownerPod)
       .addStringNoLocale(this.rdf.properties.guest, object.guest)
       .addStringNoLocale(this.rdf.properties.storage, object.storage)
       .addStringNoLocale(this.rdf.properties.modified, object.modified)

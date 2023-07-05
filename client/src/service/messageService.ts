@@ -11,11 +11,12 @@ import {
 
 import { RDF } from "@inrupt/vocab-common-rdf";
 import profileDefinition from "../definitions/profile.json"
+import chatDefinition from "../definitions/chat.json"
 import messageDefinition from "../definitions/message.json"
 import mindMapDefinition from "../definitions/mindMap.json"
-import datasetLinkDefinition from "../definitions/link.json"
+import linkDefinition from "../definitions/link.json"
 import { LDO } from "../models/LDO";
-import { getPodUrl } from "./containerService";
+import { CONTACTS, MESSAGES, TTLFILETYPE, WIKIMIND, getPodUrl } from "./containerService";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { LinkType } from "../models/types/LinkType";
 import { UserSession } from "../models/types/UserSession";
@@ -24,133 +25,98 @@ import { ProfileLDO } from "../models/things/ProfileLDO";
 import { MessageLDO } from "../models/things/MessageLDO";
 import { Message } from "../models/types/Message";
 import { ChatLDO } from "../models/things/ChatLDO";
-import chatDefinition from "../definitions/chat.json"
+import { Chat } from "../models/types/Chat";
+import { ChatDataset } from "../models/types/ChatDataset";
 
-export async function getProfiles(userSession: UserSession) {
 
-    const datasetLinkBuilder = new LinkLDO(datasetLinkDefinition)
-    const profiles: Profile[] = []
-
-    const msgDataset = await getSolidDataset(
-        userSession.podUrl + "Wikie/messages/contacts.ttl",
-        { fetch: fetch }
+export async function getMessages(userSession: UserSession) {
+    const chats: Chat[] = []
+    const classesListUrl = `${userSession.podUrl}${WIKIMIND}/${MESSAGES}/${CONTACTS}${TTLFILETYPE}`;
+  
+    const myDataset = await getSolidDataset(
+      classesListUrl,
+      { fetch: fetch }
     );
 
-    const things = await getThingAll(msgDataset);
-
+    const things = await getThingAll(myDataset);
+    const datasetLinkBuilder = new LinkLDO(linkDefinition)
     await Promise.all(things.map(async (thing) => {
-        const types = getUrlAll(thing, RDF.type);
-        if (types.some(type => type === datasetLinkDefinition.identity)) {
-            const newLink = datasetLinkBuilder.read(thing)
-
-            if (newLink.linkType === LinkType.CHAT_LINK) {
-                const chatDataset = await getSolidDataset(
-                    newLink.url,
-                    { fetch: fetch }
-                )
-
-                const chatThing = getThing(chatDataset, newLink.url + '#Wikie')
-
-                const newChat = new ChatLDO(chatDefinition).read(chatThing)
-
-                let podUrls = null
-                if (newChat.owner === userSession.webId) {
-                    podUrls = await getPodUrl(newChat.guest)
-                } else {
-                    podUrls = await getPodUrl(newChat.owner)
-                }
-
-                if (podUrls !== null) {
-                    const dataset = await getSolidDataset(
-                        podUrls[0] + 'Wikie/profile/profile.ttl',
-                        { fetch: fetch }
-                    )
-
-                    const bb = getThing(dataset, podUrls[0] + 'Wikie/profile/profile.ttl#Wikie');
-                    const profileBuilder = new ProfileLDO((profileDefinition as LDO<Profile>))
-                    const userProfile = profileBuilder.read(bb)
-                    console.log(userProfile)
-                    profiles.push(userProfile)
-
-
-                }
-
-            }
-        }
-    }))
-
-    console.log(profiles)
-
-
-
-
-
-    // const newProfileLink = new DatasetLinkLDO(datasetLinkDefinition).read()
-
-
-    // let minMapBuilder = new MindMapLDO(mindMapDefinition)
-    // let mindMap: MindMap | null = null;
-    // let nodes: Node[] = []
-    // let nodeBuilder = new NodeLDO(nodeDefinition)
-    // let links: Link[] = []
-    // let linkBuilder = new LinkLDO(linkDefinition)
-
-    return profiles
-}
-
-export async function getFriendMessages(userSession: UserSession, userId: string) {
-    try {
-        const datasetUrl = userSession.podUrl + "Wikie/messages/" + encodeURIComponent(userId) + ".ttl"
-        const dataset = await getSolidDataset(datasetUrl,)
-        const things = await getThingAll(dataset);
-
-        const messageBuilder = new MessageLDO(messageDefinition)
-        const messages: Message[] = [];
-
-        things.forEach(thing => {
+      const types = getUrlAll(thing, RDF.type);
+      if (types.some(type => type === linkDefinition.identity)) {
+        const link = datasetLinkBuilder.read(thing)
+        if (link.linkType === LinkType.CHAT_LINK) {
+          const myDataset = await getSolidDataset(
+            link.url,
+            { fetch: fetch }
+          );
+          const things = await getThingAll(myDataset);
+          const chatLDO = new ChatLDO(chatDefinition)
+          things.forEach(thing => {
             const types = getUrlAll(thing, RDF.type);
-            console.log(types)
-            if (types.some(type => type === mindMapDefinition.identity)) {
-                console.log(thing)
-                const message = messageBuilder.read(thing)
-                messages.push(message)
+            if (types.some(type => type === chatDefinition.identity)) {
+              chats.push(chatLDO.read(thing))
             }
-        })
-
-        return messages;
-
-    } catch (e) {
-        const podUrls = await getPodUrl(userId)
-        if (podUrls !== null) {
-            const dataUrl = podUrls[0] + "Wikie/classes/requests/"
-            try {
-                const datasetUrl = podUrls[0] + "Wikie/messages/" + encodeURIComponent(userSession.webId) + ".ttl"
-                const dataset = await getSolidDataset(
-                    datasetUrl,
-                    { fetch: fetch }
-                )
-                const things = await getThingAll(dataset);
-
-                const messageBuilder = new MessageLDO(messageDefinition)
-                const messages: Message[] = [];
-
-                things.forEach(thing => {
-                    const types = getUrlAll(thing, RDF.type);
-                    console.log(types)
-                    if (types.some(type => type === mindMapDefinition.identity)) {
-                        console.log(thing)
-                        const message = messageBuilder.read(thing)
-                        messages.push(message)
-                    }
-                })
-
-                return messages;
-
-            } catch (e) {
-                const messages: Message[] = [];
-                return messages;
-            }
+          });
         }
-    }
-}
+      }
+    }));
+    return chats;
+  }
+  
 
+//   export async function getMindMap(url: string): Promise<ChatDataset | null> {
+//     const chats: Chat[] = []
+//     const classesListUrl = `${userSession.podUrl}${WIKIMIND}/${MESSAGES}/${CONTACTS}${TTLFILETYPE}`;
+  
+//     const myDataset = await getSolidDataset(
+//       classesListUrl,
+//       { fetch: fetch }
+//     );
+
+
+    
+//     const mindmapDataset = await getSolidDataset(url, { fetch });
+//     const mindMapThings = await getThingAll(mindmapDataset);
+  
+//     const mindMapLDO = new MindMapLDO(mindMapDefinition);
+//     let mindMap: MindMap | null = null;
+  
+//     mindMapThings.forEach((thing) => {
+//       const types = getUrlAll(thing, RDF.type);
+//       if (types.includes(mindMapDefinition.identity)) {
+//         mindMap = mindMapLDO.read(thing);
+//       }
+//     });
+  
+//     if (mindMap !== null) {
+//       mindMap = mindMap as MindMap;
+//       const mindmapStorageDataset = await getSolidDataset(mindMap.storage, { fetch });
+//       const mindMapStorageThings = await getThingAll(mindmapStorageDataset);
+//       const nodes: Node[] = [];
+//       const nodeLDO = new NodeLDO(nodeDefinition);
+//       const links: Connection[] = [];
+//       const connectionLDO = new ConnectionLDO(connectionDefinition);
+  
+//       mindMapStorageThings.forEach((thing) => {
+//         const types = getUrlAll(thing, RDF.type);
+//         if (types.includes(nodeDefinition.identity)) {
+//           nodes.push(nodeLDO.read(thing));
+//         }
+//         if (types.includes(connectionDefinition.identity)) {
+//           links.push(connectionLDO.read(thing));
+//         }
+//       });
+//       const mindMapDataset: MindMapDataset = {
+//         id: mindMap.id,
+//         name: mindMap.name,
+//         storage: mindMap.storage,
+//         created: mindMap.created,
+//         links: links,
+//         nodes: nodes,
+//       };
+//       return mindMapDataset;
+//     } else {
+//       return null
+//     }
+//   }
+  

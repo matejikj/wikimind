@@ -2,8 +2,9 @@
     "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Chat",
     "properties": {
         "id": "http://schema.org/identifier",
-        "owner": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#owner",
+        "host": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#host",
         "guest": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#guest",
+        "ownerPod": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#ownerPod",
         "storage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage",
         "modified": "http://schema.org/modified",
         "lastMessage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#lastMessage"

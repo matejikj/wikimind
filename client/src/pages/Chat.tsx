@@ -8,7 +8,7 @@ import { Card, Form, Stack } from "react-bootstrap";
 import { MdSend } from "react-icons/md";
 import { Message } from "../models/types/Message";
 
-const PrivateChat: React.FC = () => {
+const Chat: React.FC = () => {
     const d3Container = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
@@ -22,9 +22,9 @@ const PrivateChat: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
 
     React.useEffect(() => {
-        // if (location.state !== null && location.state.webID !== null) {
+        if (location.state !== null && location.state.webID !== null) {
 
-        // }
+        }
         // flushSync(() => {
         //     setMessages([])
         // });
@@ -70,4 +70,4 @@ const PrivateChat: React.FC = () => {
 
 };
 
-export default PrivateChat;
+export default Chat;

@@ -10,7 +10,7 @@ export type Chat = {
     /**
      * The owner of the chat.
      */
-    owner: string;
+    host: string;
     
     /**
      * The guest user participating in the chat.
@@ -21,6 +21,11 @@ export type Chat = {
      * The storage location of the chat data.
      */
     storage: string;
+
+    /**
+     * The storage location of the chat data.
+     */
+    ownerPod: string;
     
     /**
      * The content of the last message sent in the chat.

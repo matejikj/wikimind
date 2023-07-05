@@ -19,6 +19,7 @@ export class ClassLDO extends BaseLDO<Class> implements CRUDLDO<Class> {
       name: getStringNoLocale(thing, this.rdf.properties.name)!,
       id: getStringNoLocale(thing, this.rdf.properties.id)!,
       teacher: getStringNoLocale(thing, this.rdf.properties.teacher)!,
+      ownerPod: getStringNoLocale(thing, this.rdf.properties.ownerPod)!,
       storage: getStringNoLocale(thing, this.rdf.properties.storage)!,
     };
   }
@@ -34,6 +35,7 @@ export class ClassLDO extends BaseLDO<Class> implements CRUDLDO<Class> {
       .addStringNoLocale(this.rdf.properties.id, object.id)
       .addStringNoLocale(this.rdf.properties.name, object.name)
       .addStringNoLocale(this.rdf.properties.teacher, object.teacher)
+      .addStringNoLocale(this.rdf.properties.ownerPod, object.ownerPod)
       .addStringNoLocale(this.rdf.properties.storage, object.storage)
       .build();
     return newThing;

@@ -15,7 +15,7 @@ describe("ChatLDO", () => {
       "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Chat",
       "properties": {
         "id": "http://schema.org/identifier",
-        "owner": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#owner",
+        "host": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#owner",
         "guest": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#guest",
         "storage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage",
         "modified": "http://schema.org/modified",
@@ -52,7 +52,7 @@ describe("ChatLDO", () => {
   test("create should return ThingLocal representing Chat object", () => {
     const mockChat: Chat = {
       id: "chat123",
-      owner: "https://example.com/owner",
+      host: "https://example.com/owner",
       guest: "https://example.com/guest",
       storage: "https://example.com/storage",
       modified: "2023-07-04T12:00:00Z",

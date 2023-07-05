@@ -10,6 +10,9 @@
         "storage": 
             "https://schema.org/storage"
         ,
+        "ownerPod": 
+            "https://schema.org/ownerPod"
+        ,
         "id": 
             "http://schema.org/identifier"
         

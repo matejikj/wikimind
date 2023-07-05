@@ -19,6 +19,7 @@ const defaultBlankDataset: MindMapDataset = {
     name: "",
     storage: "",
     created: "",
+    ownerPod: "",
     links: [],
     nodes: []
 }

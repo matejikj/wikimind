@@ -99,6 +99,7 @@ export async function getMindMap(url: string): Promise<MindMapDataset | null> {
       id: mindMap.id,
       name: mindMap.name,
       storage: mindMap.storage,
+      ownerPod: mindMap.ownerPod,
       created: mindMap.created,
       links: links,
       nodes: nodes,
@@ -119,6 +120,7 @@ export async function createNewMindMap(name: string, userSession: UserSession): 
   const blankMindMap: MindMap = {
     id: generate_uuidv4(),
     name: name,
+    ownerPod: userSession.podUrl,
     storage: mindMapStorageUrl,
     created: Date.now().toString(),
   };

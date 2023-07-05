@@ -17,6 +17,7 @@ import { Exam } from "../models/types/Exam";
 import { MindMap } from "../models/types/MindMap";
 import ModalClassAddMindMap from "../components/ModalClassAddMindMap";
 import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from "react-icons/md";
+import { CLASSES, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl } from "../service/containerService";
 
 const exampleExams: Exam[] = [{
   id: generate_uuidv4(),
@@ -73,13 +74,18 @@ const Class: React.FC = () => {
       }
     }, [mounted])
 
-  const showMindMap = (mindMap: MindMap) => {
-    const name = dataset?.storage + 'Wikie/mindMaps/' + mindMap.id + '.ttl';
-    navigate('/visualisation/', {
-      state: {
-        id: name
-      }
-    })
+  async function showMindMap(item: MindMap) {
+    const podUrls = await getPodUrl(dataset?.teacher!)
+    console.log(podUrls)
+    if (podUrls !== null) {
+      const name = podUrls[0] + 'WikiMind/mindMaps/' + item.id + '.ttl';
+      navigate('/visualisation/', {
+        state: {
+          id: name
+        }
+      })
+  
+    }
   }
 
   const removeMindMap = (mindMap: MindMap) => {
@@ -121,7 +127,7 @@ const Class: React.FC = () => {
       <Sidenav/>
       <main ref={ref}>
         <Container>
-          <ModalClassAddMindMap showModal={modelClassAddShow} classUrl={dataset?.storage + 'Wikie/classes/' + dataset?.id + '.ttl'} setModal={setModelClassAddShow}></ModalClassAddMindMap>
+          <ModalClassAddMindMap showModal={modelClassAddShow} classUrl={sessionContext.sessionInfo.podUrl + WIKIMIND + SLASH + CLASSES + SLASH + dataset?.id + TTLFILETYPE} setModal={setModelClassAddShow}></ModalClassAddMindMap>
           <Row>
             <Col sm="6">
               <h1>Class {dataset?.name}</h1>

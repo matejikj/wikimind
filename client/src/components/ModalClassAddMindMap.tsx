@@ -8,6 +8,7 @@ import { Row } from "react-bootstrap";
 import { addGraphToClass } from "../service/classService";
 import { getMindMApsList } from "../service/mindMapService";
 import { MindMap } from "../models/types/MindMap";
+import { MINDMAPS, SLASH, TTLFILETYPE, WIKIMIND } from "../service/containerService";
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalClassAddMindMap: React.FC<{
@@ -27,7 +28,7 @@ const ModalClassAddMindMap: React.FC<{
     const handleClose = () => setModal(false);
 
     const addMindMap = (item: MindMap) => {
-        addGraphToClass(sessionContext.sessionInfo, item.storage, classUrl)
+        addGraphToClass(sessionContext.sessionInfo, sessionContext.sessionInfo.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH + item.id + TTLFILETYPE, classUrl)
         console.log(item)
     }
 

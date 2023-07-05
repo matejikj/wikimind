@@ -14,6 +14,7 @@ import { MdDeleteForever, MdSlideshow } from 'react-icons/md';
 import { RxCheck, RxCross2 } from 'react-icons/rx';
 
 import '../styles/style.css';
+import { CLASSES, SLASH, TTLFILETYPE, WIKIMIND } from '../service/containerService';
 
 const authOptions = {
   clientName: "Learnee",
@@ -89,15 +90,12 @@ const Classes: React.FC = () => {
   }, []);
 
   const showClass = (e: Class) => {
-    if (e.podUrl) {
       navigate('/class/', {
         state: {
-          url: e.podUrl
+          url: e.ownerPod + WIKIMIND + SLASH + CLASSES + SLASH + e.id + TTLFILETYPE
         }
       })
-  
     }
-  }
 
   const deleteClass = (e: any) => {
     console.log(e.target.name)
@@ -108,11 +106,9 @@ const Classes: React.FC = () => {
     // })
   }
 
-  const allowRequest = (e: any) => {
-    console.log(e.target.name)
-    const aa = requests.find((item) => { return item.requestor === e.target.name })
-    if (aa !== undefined) {
-      allowAccess(sessionContext.sessionInfo, aa)
+  const allowRequest = (request: Request) => {
+    if (request !== undefined) {
+      allowAccess(sessionContext.sessionInfo, request)
     }
 
     // navigate('/class/', {
@@ -297,7 +293,7 @@ const Classes: React.FC = () => {
                               <Button
                                 className='class-btn'
                                 name={item.requestor}
-                                onClick={allowRequest}
+                                onClick={() => allowRequest(item)}
                                 variant="success"
                               >
                                 <RxCheck></RxCheck>
