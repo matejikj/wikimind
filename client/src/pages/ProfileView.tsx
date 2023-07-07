@@ -7,41 +7,46 @@ import Container from 'react-bootstrap/Container';
 
 import '../styles/style.css';
 import { SessionContext } from '../sessionContext';
-import { getProfile, updateProfile } from '../service/profileService';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Profile } from '../models/types/Profile';
+import { ProfileService } from "../service/profileService";
 
 const ProfileView: React.FC = () => {
   const sessionContext = useContext(SessionContext)
 
-  const [profile, setProfile] = useState<Profile>({
-    name: "",
-    surname: "",
-    webId: sessionContext.sessionInfo.webId,
-    profileImage: ''
-  });
+  const [profile, setProfile] = useState<Profile>();
 
-  useEffect(() => {
-    const result = getProfile(sessionContext.sessionInfo.podUrl).then((res: any) => {
-      if (res !== undefined) { setProfile(res) }
-    });
+  const profileService = new ProfileService();
 
-  }, []);
-
-  const profileSaved = () => {
-    updateProfile(sessionContext.sessionInfo, profile)
+  async function fetchProfile(): Promise<void> {
+    try {
+      const profile = await profileService.getProfile(sessionContext.sessionInfo);
+      setProfile(profile)
+    } catch (error) {
+      // Handle the error, e.g., display an error message to the user or perform fallback actions
+    }
   }
 
-  function handleChange(event: any) {
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  async function profileSaved(): Promise<void> {
+    if (profile) {
+      profileService.updateProfile(sessionContext.sessionInfo, profile)
+    }
+  }
+
+  function handleChange(event: any): void {
     const key = event.target.name;
     const value = event.target.value;
-    setProfile({ ...profile, [key]: value })
+    key && value && profile && setProfile({ ...profile, [key]: value })
   }
 
   return (
     <div className="App">
-      <Sidenav/>
+      <Sidenav />
       <main>
         <Container className='center-container'>
           <Row>
@@ -49,8 +54,8 @@ const ProfileView: React.FC = () => {
               <Card border="success" style={{ width: '18rem' }}>
                 <Card.Body>
                   <Card.Title>Profile info:</Card.Title>
-                  <Card.Subtitle>{profile.webId}</Card.Subtitle>
-                  <br/>
+                  <Card.Subtitle>{profile?.webId || ""}</Card.Subtitle>
+                  <br />
                   <Form.Label htmlFor="name">Name</Form.Label>
                   <Form.Control
                     type="text"
@@ -58,7 +63,7 @@ const ProfileView: React.FC = () => {
                     name="name"
                     style={{ maxWidth: '500px' }}
                     id="name"
-                    value={profile.name}
+                    value={profile?.name || ""}
                     onChange={handleChange}
                   />
                   <br />
@@ -69,7 +74,7 @@ const ProfileView: React.FC = () => {
                     name="surname"
                     id="surname"
                     style={{ maxWidth: '500px' }}
-                    value={profile.surname}
+                    value={profile?.surname || ""}
                     onChange={handleChange}
                   />
                 </Card.Body>

@@ -29,7 +29,7 @@ import { CLASSES, CONTACTS, MESSAGES, PROFILE, REQUESTS, SLASH, TTLFILETYPE, WIK
 import { generate_uuidv4 } from "./utils";
 import { Class } from "../models/types/Class";
 import { ClassLDO } from "../models/things/ClassLDO";
-import { getProfile } from "./profileService";
+// import { getProfile } from "./profileService";
 import { Link } from "../models/types/Link";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { LinkType } from "../models/types/LinkType";
@@ -171,10 +171,10 @@ export async function getClass(url: string): Promise<ClassDataset | null> {
                     const podUrls = await getPodUrl(link.url)
                     if (podUrls !== null) {
                         const podUrl = podUrls[0]
-                        const userProfile = await getProfile(podUrls[0])
-                        if (userProfile) {
-                            students.push(userProfile)
-                        }
+                        // const userProfile = await getProfile(podUrls[0])
+                        // if (userProfile) {
+                        //     students.push(userProfile)
+                        // }
                     }
                 }
                 if (link.linkType === LinkType.GRAPH_LINK) {

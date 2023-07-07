@@ -10,26 +10,32 @@ import { Profile } from "../models/types/Profile";
 import { ProfileLDO } from "../models/things/ProfileLDO";
 import { UserSession } from "../models/types/UserSession";
 import { MRIZKA, PROFILE, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";
+import { ProfileRepository } from "../repository/profileRepository";
 
-export async function getProfile(userPodUrl: string): Promise<Profile | undefined> {
-  const profileUrl = `${ userPodUrl }${ WIKIMIND }/${PROFILE}/${ PROFILE }${ TTLFILETYPE }`;
-  const myDataset = await getSolidDataset(profileUrl, { fetch });
-  const profileThingUrl = `${ profileUrl }${ MRIZKA }${ WIKIMIND }`;
-  const profileThing = getThing(myDataset, profileThingUrl);
+export class ProfileService {
+  private profileRepository: ProfileRepository;
 
-  const profileLDO = new ProfileLDO(profileDefinition);
-  const profile = profileLDO.read(profileThing);
-  return profile;
-}
+  constructor() {
+    this.profileRepository = new ProfileRepository();
+  }
 
-export async function updateProfile(userSession: UserSession, profile: Profile): Promise<Profile | undefined> {
-  const profileUrl = `${ userSession.podUrl }${ WIKIMIND }/${PROFILE}/${ PROFILE }${ TTLFILETYPE }`;
-  const myDataset = await getSolidDataset(profileUrl, { fetch });
+  async getProfile(userSession: UserSession): Promise<Profile | undefined> {
+    try {
+      const profileUrl = `${userSession.podUrl}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
+      return await this.profileRepository.getProfile(profileUrl);
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  }
 
-  const profileLDO = new ProfileLDO(profileDefinition).create(profile);
-  const savedProfileSolidDataset = setThing(myDataset, profileLDO);
-  const newName = profileUrl;
-  await saveSolidDatasetAt(newName, savedProfileSolidDataset, { fetch });
-
-  return profile;
+  async updateProfile(userSession: UserSession, profile: Profile): Promise<Profile | undefined> {
+    try {
+      const profileUrl = `${userSession.podUrl}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
+      return await this.profileRepository.updateProfile(profileUrl, profile);
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  }
 }
