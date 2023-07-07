@@ -4,6 +4,8 @@ import {
     getSolidDataset,
     getThing,
     getThingAll,
+    setThing,
+    saveSolidDatasetAt,
     getUrlAll,
 } from "@inrupt/solid-client";
 
@@ -61,7 +63,69 @@ export async function getMessages(userSession: UserSession) {
       }
     }));
     return chats;
-  }
+}
+
+export async function getChat(path: string) {
+    let chat: Chat | undefined
+    const chatDataset = await getSolidDataset(
+      path,
+      { fetch: fetch }
+    );
+
+    const chatThings = await getThingAll(chatDataset);
+    const msgLDO = new MessageLDO(messageDefinition)
+    const chatLDO = new ChatLDO(chatDefinition)
+
+    chatThings.map(async (thing) => {
+      const types = getUrlAll(thing, RDF.type);
+      if (types.some(type => type === chatDefinition.identity)) {
+        chat = (chatLDO.read(thing))
+          }});
+
+          if (chat) {
+            const a = Date.now()
+            const messages: Message[] = []
+            const myDataset = await getSolidDataset(
+              chat.storage,
+              { fetch: fetch }
+            );
+        
+            const things = await getThingAll(myDataset);
+            things.map((thing) => {
+              const types = getUrlAll(thing, RDF.type);
+              if (types.some(type => type === messageDefinition.identity)) {
+                messages.push(msgLDO.read(thing))
+                }
+            });
+            
+    
+              const dataset: ChatDataset = {
+                chat: chat,
+                messages: messages.sort((a, b) => a.date - b.date)
+              }
+              return dataset
+            
+          }
+    
+}
+
+
+export async function sendMessage(chat: Chat, message: Message) {
+  const url = `${chat.ownerPod}${WIKIMIND}/${MESSAGES}/${chat.storage}${TTLFILETYPE}`
+  let chatDataset = await getSolidDataset(
+    chat.storage,
+    { fetch: fetch }
+  );
+
+  const newMessage = new MessageLDO(messageDefinition).create(message)
+  chatDataset = setThing(chatDataset, newMessage)
+  await saveSolidDatasetAt(
+    chat.storage,
+    chatDataset,
+    { fetch: fetch }
+);
+
+}
   
 
 //   export async function getMindMap(url: string): Promise<ChatDataset | null> {

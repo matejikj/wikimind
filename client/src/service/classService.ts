@@ -358,11 +358,12 @@ export async function allowAccess(userSession: UserSession, classRequest: Reques
 
             // VYTVORIT CHAT
 
-            const messageDatasetUrl = userSession.podUrl + WIKIMIND + SLASH + MESSAGES + SLASH + generate_uuidv4() + TTLFILETYPE
+            const messageDatasetId = generate_uuidv4()
+            const messageDatasetUrl = userSession.podUrl + WIKIMIND + SLASH + MESSAGES + SLASH + messageDatasetId + TTLFILETYPE
             const MessageStorageUrl = userSession.podUrl + WIKIMIND + SLASH + MESSAGES + SLASH + generate_uuidv4() + TTLFILETYPE
 
             const newChat = new ChatLDO(chatDefinition).create({
-                id: generate_uuidv4(),
+                id: messageDatasetId,
                 host: userSession.webId,
                 ownerPod: userSession.podUrl,
                 guest: classRequest.requestor,

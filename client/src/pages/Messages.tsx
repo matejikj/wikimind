@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 
 import { createNewMindMap, getMindMApsList } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
-import { Container, Row, Stack } from 'react-bootstrap';
+import { Container, Navbar, Row, Stack } from 'react-bootstrap';
 import { BsFillSendFill } from 'react-icons/bs';
 import { ListItem } from '../models/ListItem';
 import '../styles/style.css';
@@ -31,8 +31,8 @@ const Messages: React.FC = () => {
 
 
   const showMindMap = (e: Chat) => {
-    const url = `${sessionContext.sessionInfo.podUrl}${WIKIMIND}/${MESSAGES}/${e.id}${TTLFILETYPE}`
-    navigate('/visualisation/', {
+    const url = `${e.ownerPod}${WIKIMIND}/${MESSAGES}/${e.id}${TTLFILETYPE}`
+    navigate('/chat/', {
       state: {
         id: url
       }
@@ -47,7 +47,6 @@ const Messages: React.FC = () => {
           <Row>
             <h1>Your messages!</h1>
           </Row>
-
           {list.map((item, index) => {
             return (
               <Row key={index}>

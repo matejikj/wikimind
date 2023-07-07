@@ -17,7 +17,7 @@ import { Exam } from "../models/types/Exam";
 import { MindMap } from "../models/types/MindMap";
 import ModalClassAddMindMap from "../components/ModalClassAddMindMap";
 import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from "react-icons/md";
-import { CLASSES, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl } from "../service/containerService";
+import { CLASSES, MINDMAPS, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl } from "../service/containerService";
 
 const exampleExams: Exam[] = [{
   id: generate_uuidv4(),
@@ -77,15 +77,14 @@ const Class: React.FC = () => {
   async function showMindMap(item: MindMap) {
     const podUrls = await getPodUrl(dataset?.teacher!)
     console.log(podUrls)
-    if (podUrls !== null) {
-      const name = podUrls[0] + 'WikiMind/mindMaps/' + item.id + '.ttl';
-      navigate('/visualisation/', {
-        state: {
-          id: name
-        }
-      })
+    // if (podUrls !== null) {
+    //   navigate('/visualisation/', {
+    //     state: {
+    //       id: name
+    //     }
+    //   })
   
-    }
+    // }
   }
 
   const removeMindMap = (mindMap: MindMap) => {

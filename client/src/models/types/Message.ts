@@ -11,12 +11,7 @@ export type Message = {
      * The identifier of the entity that sent the message.
      */
     from: string;
-    
-    /**
-     * The identifier of the entity that received the message.
-     */
-    to: string;
-    
+        
     /**
      * The text content of the message.
      */
@@ -25,6 +20,6 @@ export type Message = {
     /**
      * The date when the message was sent.
      */
-    date: string;
+    date: number;
   }
   

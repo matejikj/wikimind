@@ -2,7 +2,7 @@ import { rdf_type } from "../LDO";
 import { Message } from "../types/Message";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
-import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
+import { ThingLocal, buildThing, getInteger, createThing, getStringNoLocale } from "@inrupt/solid-client";
 
 /**
  * Represents a Linked Data Object (LDO) for a message.
@@ -17,9 +17,9 @@ export class MessageLDO extends BaseLDO<Message> implements CRUDLDO<Message> {
         return {
             id: getStringNoLocale(thing, (this.rdf.properties.id))!,
             from: getStringNoLocale(thing, (this.rdf.properties.from))!,
-            to: getStringNoLocale(thing, (this.rdf.properties.to))!,
+            // to: getStringNoLocale(thing, (this.rdf.properties.to))!,
             text: getStringNoLocale(thing, (this.rdf.properties.text))!,
-            date: getStringNoLocale(thing, (this.rdf.properties.date))!,
+            date: getInteger(thing, (this.rdf.properties.date))!,
         };
     }
 
@@ -29,13 +29,13 @@ export class MessageLDO extends BaseLDO<Message> implements CRUDLDO<Message> {
      * @returns The newly created ThingLocal instance representing the Message object.
      */
     create(object: Message) {
-        const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))
+        const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
             .addUrl(rdf_type, this.rdf.identity)
             .addStringNoLocale((this.rdf.properties.id), object.id)
-            .addStringNoLocale((this.rdf.properties.date), object.date)
+            .addInteger((this.rdf.properties.date), object.date)
             .addStringNoLocale((this.rdf.properties.text), object.text)
             .addStringNoLocale((this.rdf.properties.from), object.from)
-            .addStringNoLocale((this.rdf.properties.to), object.to)
+            // .addStringNoLocale((this.rdf.properties.to), object.to)
             .build();
         return newThing;
     }
