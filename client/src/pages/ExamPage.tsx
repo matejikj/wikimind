@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import { SessionContext } from "../sessionContext";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getMindMap } from "../service/mindMapService";
+import { MindMapService } from "../service/mindMapService";
 
 
 import { generate_uuidv4, levenshteinDistance } from "../service/utils";
@@ -13,16 +13,6 @@ import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { Form } from "react-bootstrap";
 import { Exam } from "../models/types/Exam";
 import { addExamResult } from "../service/examService";
-
-const defaultBlankDataset: MindMapDataset = {
-    id: "",
-    name: "",
-    storage: "",
-    created: "",
-    ownerPod: "",
-    links: [],
-    nodes: []
-}
 
 const ExamPage: React.FC = () => {
     const d3Container = useRef(null);
@@ -35,78 +25,47 @@ const ExamPage: React.FC = () => {
     const [disabled, setDisabled] = useState(false);
     const [url, setUrl] = useState('');
     const [width, setWidth] = useState(4000);
-    const [dataset, setDataset] = useState<MindMapDataset>(defaultBlankDataset);
+    const [dataset, setDataset] = useState<MindMapDataset>();
     const [fillDataset, setFillDataset] = useState<Map<string, string>>(new Map<string, string>());
     const sessionContext = useContext(SessionContext)
     const [mounted, setMounted] = useState(false); // <-- new state variable
     const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
     wssUrl.protocol = 'wss';
     const [currentProvider, setCurrentProvider] = useState('');
+    
+    const mindMapService = new MindMapService();
 
+    async function fetchMindMap(url: string): Promise<void> {
+      try {
+        const mindMapDataset = await mindMapService.getMindMap(url);
+        if (mindMapDataset) {
+          mindMapDataset.links = AddCoords(mindMapDataset.links, getIdsMapping(mindMapDataset.nodes))
+          setDataset(mindMapDataset)
+        }
+      } catch (error) {
+        // Handle the error, e.g., display an error message to the user or perform fallback actions
+      }
+    }
+  
     useEffect(() => {
-        setMounted(true); // set the mounted state variable to true after the component mounts
+      setMounted(true); // set the mounted state variable to true after the component mounts
     }, []);
-
+  
     useEffect(
-        () => {
-            if (mounted) {
-                if (location.state !== null && location.state.id !== null) {
-                    setUrl(location.state.id)
-                    const socket = new WebSocket(wssUrl, ['solid-0.1']);
-                    socket.onopen = function () {
-                        this.send(`sub ${location.state.id}`);
-                    };
-                    socket.onmessage = function (msg) {
-                        if (msg.data && msg.data.slice(0, 3) === 'pub') {
-                            if (msg.data === `pub ${location.state.id}`) {
-                                getMindMap(location.state.id).then((res: any) => {
-                                    const myr = res as MindMapDataset;
-                                    myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
-                                    console.log(myr)
-                                    setDataset(() => (myr))
-
-                                })
-                            }
-                        }
-                    };
-                    // const websocket4 = new WebsocketNotification(
-                    //   location.state.id,
-                    //   { fetch: fetch }
-                    // );
-                    // websocket4.on("message", (e: any) => {
-                    //   getMindMap(location.state.id).then((res: any) => {
-                    //     const myr = res as MindMapDataset;
-                    //     myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
-                    //     console.log(myr)
-                    //     setDataset(() => (myr))
-                    //   })
-                    // });
-                    // websocket4.connect();
-                    getMindMap(location.state.id).then((res: any) => {
-                        const myr = res as MindMapDataset;
-                        myr.links = AddCoords(myr.links, getIdsMapping(myr.nodes))
-                        console.log(myr)
-                        setDataset(() => (myr))
-                        const dict = new Map<string, string>();
-                        const a = myr.nodes.forEach((item) => {
-                            if (item.isInTest) {
-                                dict.set(item.id, '')
-                            }
-                        })
-                        setFillDataset(dict)
-                    })
-                } else {
-                    navigate('/')
-                }
-            }
-        }, [mounted])
+      () => {
+        if (mounted && location.state !== null && location.state.id !== null) {
+          fetchMindMap(location.state.id)
+        } else {
+          navigate('/')
+        }
+      }, [mounted])
 
     const done = async () => {
         console.log(fillDataset)
         let count = 0;
         let good = 0;
 
-        dataset.nodes.forEach((item) => {
+        dataset && dataset.nodes.forEach((item) => {
             if (item.isInTest) {
                 count++;
                 const distance = levenshteinDistance(item.title.toLowerCase(), fillDataset.get(item.id)!.toLowerCase())
@@ -164,7 +123,7 @@ const ExamPage: React.FC = () => {
                                     <path d="M 0 0 L 10 5 L 0 10 z" fill="#876" />
                                 </marker>
                             </defs>
-                            {dataset.links.map((link, index) => {
+                            {dataset && dataset.links.map((link, index) => {
                                 return (
                                     <g>
                                         <line
@@ -181,7 +140,7 @@ const ExamPage: React.FC = () => {
                                     </g>
                                 );
                             })}
-                            {dataset.nodes.map((node, index) => {
+                            {dataset && dataset.nodes.map((node, index) => {
                                 return (
                                     node.isInTest ?
 

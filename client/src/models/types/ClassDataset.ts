@@ -6,7 +6,10 @@ import { Profile } from "./Profile";
 /**
  * Represents a class dataset that includes information about a class and its associated data.
  */
-export type ClassDataset = Class & {
+export type ClassDataset = {
+
+  class: Class
+  
   /**
    * An array of student profiles belonging to the class.
    */

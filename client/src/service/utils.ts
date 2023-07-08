@@ -57,3 +57,10 @@ export function levenshteinDistance(s: string, t: string) {
   }
   return arr[t.length][s.length];
 }
+
+export function getClassId(classUri: string): string | undefined {
+  const paramString = classUri.split('?')[1];
+  const urlParams = new URLSearchParams(paramString);
+  const classId = urlParams.get('classId');
+  return classId || undefined;
+}

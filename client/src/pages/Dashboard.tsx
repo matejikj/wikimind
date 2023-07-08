@@ -62,22 +62,22 @@ const Dashboard: React.FC = () => {
     // })
   }
 
-  const createNew = (e: any) => {
+  async function createNew(e: any) {
     if (sessionContext.sessionInfo.isLogged) {
-      createNewMindMap(createName, sessionContext.sessionInfo).then((res) => {
-        console.log(res)
+      const mindMapUrl = await mindMapService.createNewMindMap(createName, sessionContext.sessionInfo)
+      if (mindMapUrl) {
         navigate('/visualisation/', {
           state: {
-            id: res
+            id: mindMapUrl
           }
         })
-      })
+      }
     }
   }
 
   return (
     <div className="App">
-      <Sidenav/>
+      <Sidenav />
       <main className='dashboard-main'>
         <Modal show={createNewModalVisible} onHide={() => setCreateNewModalVisible(false)}>
           <Modal.Header>

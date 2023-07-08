@@ -83,7 +83,7 @@ export class MindMapService {
       storage: mindMapStorageUrl,
       created: Date.now().toString(),
     };
-    const mindMapUrl = `${userSession.podUrl}${WIKIMIND}/${MINDMAPS}/${blankMindMap.id}${TTLFILETYPE} `;
+    const mindMapUrl = `${userSession.podUrl}${WIKIMIND}/${MINDMAPS}/${blankMindMap.id}${TTLFILETYPE}`;
     const datasetLink: Link = {
       id: generate_uuidv4(),
       url: mindMapUrl,

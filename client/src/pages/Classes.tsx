@@ -6,7 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
 import { SessionContext } from '../sessionContext';
-import { allowAccess, createNewClass, denyRequest, getClassesList, getRequests, requestClass } from '../service/classService';
+import { ClassService, denyRequest } from '../service/classService';
 import { Class } from '../models/types/Class';
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { Request } from '../models/types/Request';
@@ -21,7 +21,7 @@ const authOptions = {
 };
 
 const Classes: React.FC = () => {
-  const [list, setList] = useState<Class[]>([]);
+  const [classList, setClassList] = useState<Class[]>([]);
   const [requestsCount, setRequestsCount] = useState(0);
   const [show, setShow] = useState(false);
   const [request, setRequest] = useState(false);
@@ -37,85 +37,48 @@ const Classes: React.FC = () => {
   const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
   wssUrl.protocol = 'wss';
 
-  // const [mounted, setMounted] = useState(false); // <-- new state variable
+  const classesService = new ClassService();
 
-  // useEffect(() => {
-  //   setMounted(true); // set the mounted state variable to true after the component mounts
-  // }, []);
+  async function fetchClassesList(): Promise<void> {
+    try {
+      const classes = await classesService.getClassList(sessionContext.sessionInfo.podUrl);
+      classes && setClassList(classes)
+    } catch (error) {
+      // Handle the error, e.g., display an error message to the user or perform fallback actions
+    }
+  }
 
-
-  useEffect(() => {
-    const result = getClassesList(sessionContext.sessionInfo).then((res) => {
-      setList(res)
-    });
-    getRequests(sessionContext.sessionInfo).then((aaa) => {
-      setRequests(aaa)
-    });
-    const podUrl = sessionContext.sessionInfo.podUrl + 'Wikie/classes/classes.ttl'
-
-    // const socket = new WebSocket(wssUrl, ['solid-0.1']);
-    // socket.onopen = function () {
-    //   this.send(`sub ${podUrl}`);
-    // };
-    // socket.onmessage = function (msg) {
-    //   if (msg.data && msg.data.slice(0, 3) === 'pub') {
-    //     if (msg.data === `pub ${podUrl}`) {
-    //       const result = getClassesList(sessionContext.sessionInfo).then((res) => {
-    //         setList(res)
-    //       });
-    //       getRequests(sessionContext.sessionInfo).then((aaa) => {
-    //         setRequests(aaa)
-    //       });
-    //     }
-    //   }
-    // };
-    // const websocket4 = new WebsocketNotification(
-    //   podUrl,
-    //   { fetch: fetch }
-    // );
-    // websocket4.on("message", (e: any) => {
-    //   const result = getClassesList(sessionContext.sessionInfo).then((res) => {
-    //     setList(res)
-    //   });
-    //   getRequests(sessionContext.sessionInfo).then((aaa) => {
-    //     setRequests(aaa)
-    //   });
-    // });
-    // websocket4.connect();
-
-  }, []);
+  async function fetchRequests(): Promise<void> {
+    try {
+      const requests = await classesService.getRequests(sessionContext.sessionInfo);
+      requests && setRequests(requests)
+    } catch (error) {
+      // Handle the error, e.g., display an error message to the user or perform fallback actions
+    }
+  }
 
   useEffect(() => {
-
+    fetchClassesList();
+    fetchRequests();
   }, []);
 
   const showClass = (e: Class) => {
-      navigate('/class/', {
-        state: {
-          url: e.ownerPod + WIKIMIND + SLASH + CLASSES + SLASH + e.id + TTLFILETYPE
-        }
-      })
-    }
+    const classUrl = e.ownerPod + WIKIMIND + SLASH + CLASSES + SLASH + e.id + TTLFILETYPE
+    navigate('/class/', {
+      state: {
+        url: classUrl
+      }
+    })
+  }
 
   const deleteClass = (e: any) => {
     console.log(e.target.name)
-    // navigate('/class/', {
-    //   state: {
-    //     url: e.target.name
-    //   }
-    // })
   }
 
   const allowRequest = (request: Request) => {
     if (request !== undefined) {
-      allowAccess(sessionContext.sessionInfo, request)
+      classesService.allowClassAccess(request, sessionContext.sessionInfo)
     }
-
-    // navigate('/class/', {
-    //   state: {
-    //     url: e.target.name
-    //   }
-    // })
   }
 
   const denyAccess = (e: any) => {
@@ -127,24 +90,23 @@ const Classes: React.FC = () => {
   }
 
   const sendRequest = (e: any) => {
-    requestClass(sessionContext.sessionInfo, requestUrl)
+    classesService.requestClass(sessionContext.sessionInfo, requestUrl)
   }
 
-  const createNew = (e: any) => {
-    if (sessionContext.sessionInfo.isLogged) {
-      createNewClass(name, sessionContext.sessionInfo).then((res) => {
-        navigate('/class/', {
-          state: {
-            url: res
-          }
-        })
+  async function createNew(e: any) {
+    const classUrl = await classesService.createNewClass(name, sessionContext.sessionInfo);
+    if (classUrl) {
+      navigate('/class/', {
+        state: {
+          url: classUrl
+        }
       })
     }
   }
 
   return (
     <div className="App">
-      <Sidenav/>
+      <Sidenav />
       <main>
         <Modal show={show} onHide={handleClose}>
           <Modal.Header>
@@ -175,7 +137,7 @@ const Classes: React.FC = () => {
             <h1>Your classes!</h1>
           </Row>
 
-          {list.map((item, index) => {
+          {classList && classList.map((item, index) => {
             return (
               <Row key={index}>
                 <div className='aaa'>
@@ -205,46 +167,11 @@ const Classes: React.FC = () => {
               </Row>
             )
           })}
-
-
-          {/* {list.map((item, index) => {
-            return (
-              <Row key={index}>
-                <Col sm={9}>{item.name}</Col>
-                <Col sm={3}>
-
-                  <Stack direction="horizontal" gap={2}>
-                    <div>
-                      <Button
-                        className='class-btn'
-                        onClick={() => showClass(item)}
-                        variant="primary"
-                      >
-                        Show
-                      </Button>
-                      <br />
-                    </div>
-                    <div>
-                      <Button
-                        className='class-btn'
-                        onClick={() => deleteClass(item)}
-                        variant="primary"
-                      >
-                        Remove</Button>
-                      <br />
-                    </div>
-
-                  </Stack>
-                </Col>
-              </Row>
-            )
-          })} */}
           <Row>
 
             {request ?
               <Stack direction="horizontal" gap={1}>
                 <Form.Control
-                  // style={{ maxWidth: '500px' }}
                   type="text"
                   id="inputPassword5"
                   value={requestUrl}
@@ -311,7 +238,7 @@ const Classes: React.FC = () => {
                               </Button>
                               <br />
                             </div>
-                            
+
                           </Stack>
                         </Col>
                       </Row>

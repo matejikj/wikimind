@@ -5,9 +5,11 @@ import {
     saveSolidDatasetAt,
     setThing,
     getThingAll,
-    getUrlAll
+    getUrlAll,
+    createSolidDataset
 } from "@inrupt/solid-client";
 import profileDefinition from "../definitions/profile.json";
+import chatDefinition from "../definitions/chat.json";
 import mindMapDefinition from "../definitions/mindMap.json";
 import { Profile } from "../models/types/Profile";
 import { ProfileLDO } from "../models/things/ProfileLDO";
@@ -19,7 +21,6 @@ import { getNumberFromUrl } from "./utils";
 import { Connection } from "../models/types/Connection";
 import { NodeLDO } from "../models/things/NodeLDO";
 import { ConnectionLDO } from "../models/things/ConnectionLDO";
-import chatDefinition from "../definitions/chat.json";
 import connectionDefinition from "../definitions/connection.json";
 import { RDF } from "@inrupt/vocab-common-rdf";
 import { Node } from "../models/types/Node";
@@ -28,17 +29,22 @@ import { ChatLDO } from "../models/things/ChatLDO";
 
 
 export class ChatRepository {
+  private chatLDO: ChatLDO
+  
+  constructor() {
+    this.chatLDO = new ChatLDO(chatDefinition);
+  }
+
     async getChat(chatUrl: string): Promise<Chat | undefined> {
         const chatDataset = await getSolidDataset(chatUrl, { fetch });
-        const chatLDO = new ChatLDO(chatDefinition)
         const thingId = `${chatUrl}#${getNumberFromUrl(chatUrl)}`
-        return chatLDO.read(getThing(chatDataset, thingId))
+        return this.chatLDO.read(getThing(chatDataset, thingId))
     }
 
-    async updateChat(chatUrl: string, mindMap: MindMap): Promise<MindMap | undefined> {
-        const mindMapDataset = await getSolidDataset(chatUrl, { fetch });
-        const mindMapBuilder = new MindMapLDO(mindMapDefinition)
-        const thingId = `${chatUrl}#${getNumberFromUrl(chatUrl)}`
-        return mindMapBuilder.read(getThing(mindMapDataset, thingId))
-    }
+    async createChat(chatUrl: string, chat: Chat): Promise<void> {
+      let mindMapDataset = createSolidDataset();
+      mindMapDataset = setThing(mindMapDataset, this.chatLDO.create(chat));
+      await saveSolidDatasetAt(chatUrl, mindMapDataset, { fetch });
+  }
+
 }

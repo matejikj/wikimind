@@ -19,9 +19,9 @@ export class ProfileService {
     this.profileRepository = new ProfileRepository();
   }
 
-  async getProfile(userSession: UserSession): Promise<Profile | undefined> {
+  async getProfile(podUrl: string): Promise<Profile | undefined> {
     try {
-      const profileUrl = `${userSession.podUrl}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
+      const profileUrl = `${podUrl}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
       return await this.profileRepository.getProfile(profileUrl);
     } catch (error) {
       console.error(error);
@@ -29,9 +29,9 @@ export class ProfileService {
     }
   }
 
-  async updateProfile(userSession: UserSession, profile: Profile): Promise<Profile | undefined> {
+  async updateProfile(podUrl: string, profile: Profile): Promise<Profile | undefined> {
     try {
-      const profileUrl = `${userSession.podUrl}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
+      const profileUrl = `${podUrl}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
       return await this.profileRepository.updateProfile(profileUrl, profile);
     } catch (error) {
       console.error(error);

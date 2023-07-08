@@ -9,7 +9,7 @@ import {
   WebsocketNotification,
 } from "@inrupt/solid-client-notifications";
 import { generate_uuidv4 } from "../service/utils";
-import { getClass } from "../service/classService";
+import { ClassService } from "../service/classService";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 import '../styles/style.css';
 import { FcComments } from "react-icons/fc";
@@ -42,49 +42,35 @@ const Class: React.FC = () => {
 
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const classService = new ClassService();
+
+  async function fetchClass(url: string): Promise<void> {
+    try {
+      const classDataset = await classService.getClass(url);
+      if (classDataset) {
+        setDataset(classDataset)
+      }
+    } catch (error) {
+    }
+  }
+
+  // useEffect(() => {
+  //   setMounted(true);
+  // }, []);
 
   useEffect(
     () => {
-      if (mounted) {
-        if (location.state !== null && location.state.url !== null) {
-          setUrl(location.state.url)
-          // const websocket4 = new WebsocketNotification(
-          //   location.state.url,
-          //   { fetch: fetch }
-          // );
-          // websocket4.on("message", (e: any) => {
-          //   getClassDataset(location.state.url).then((res: any) => {
-          //     setDataset(res)
-          //     console.log(dataset?.mindMaps.length)
-          //   })
-          // });
-          // websocket4.connect();
-          if (sessionContext.sessionInfo.isLogged) {
-            getClass(location.state.url).then((res: any) => {
-              setDataset(res)
-              console.log(dataset?.mindMaps.length)
-            })
-          }
-        } else {
-          navigate('/')
-        }
+      if (location.state !== null && location.state.url !== null) {
+        fetchClass(location.state.url)
+      } else {
+        navigate('/')
       }
     }, [mounted])
 
   async function showMindMap(item: MindMap) {
-    const podUrls = await getPodUrl(dataset?.teacher!)
-    console.log(podUrls)
-    // if (podUrls !== null) {
-    //   navigate('/visualisation/', {
-    //     state: {
-    //       id: name
-    //     }
-    //   })
-  
-    // }
+    if (dataset) {
+      const podUrls = await getPodUrl(dataset.class.teacher)
+    }
   }
 
   const removeMindMap = (mindMap: MindMap) => {
@@ -108,7 +94,7 @@ const Class: React.FC = () => {
   }
 
   const showExam = (mindMap: MindMap) => {
-    const name = dataset?.storage + 'Wikie/mindMaps/' + mindMap.id + '.ttl';
+    const name = dataset?.class.storage + 'Wikie/mindMaps/' + mindMap.id + '.ttl';
     navigate('/exam/', {
       state: {
         id: name,
@@ -118,29 +104,33 @@ const Class: React.FC = () => {
   }
 
   const copyToClipboard = (e: any) => {
-    navigator.clipboard.writeText(sessionContext.sessionInfo.webId + "?classId=" + dataset?.id!)
+    navigator.clipboard.writeText(sessionContext.sessionInfo.webId + "?classId=" + dataset?.class.id)
   }
 
   return (
     <div className="App">
-      <Sidenav/>
+      <Sidenav />
       <main ref={ref}>
         <Container>
-          <ModalClassAddMindMap showModal={modelClassAddShow} classUrl={sessionContext.sessionInfo.podUrl + WIKIMIND + SLASH + CLASSES + SLASH + dataset?.id + TTLFILETYPE} setModal={setModelClassAddShow}></ModalClassAddMindMap>
+          <ModalClassAddMindMap
+            showModal={modelClassAddShow}
+            classUrl={sessionContext.sessionInfo.podUrl + WIKIMIND + SLASH + CLASSES + SLASH + dataset?.class.id + TTLFILETYPE}
+            setModal={setModelClassAddShow}
+          ></ModalClassAddMindMap>
           <Row>
             <Col sm="6">
-              <h1>Class {dataset?.name}</h1>
+              <h1>Class {dataset?.class.name}</h1>
             </Col>
             <Col sm="6">
             </Col>
           </Row>
           <Row>
             <Col sm="6">
-              <h6>Teacher: {dataset?.teacher}</h6>
+              <h6>Teacher: {dataset?.class.teacher}</h6>
             </Col>
             <Col sm="6">
               {
-                (sessionContext.sessionInfo.webId === dataset?.teacher) &&
+                (sessionContext.sessionInfo.webId === dataset?.class.teacher) &&
                 <Stack direction="horizontal" gap={2}>
                   <h6>Link for copy</h6>
                   <Button onClick={copyToClipboard} variant="success">copy</Button>

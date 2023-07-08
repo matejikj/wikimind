@@ -21,7 +21,7 @@ const ProfileView: React.FC = () => {
 
   async function fetchProfile(): Promise<void> {
     try {
-      const profile = await profileService.getProfile(sessionContext.sessionInfo);
+      const profile = await profileService.getProfile(sessionContext.sessionInfo.podUrl);
       setProfile(profile)
     } catch (error) {
       // Handle the error, e.g., display an error message to the user or perform fallback actions
@@ -34,7 +34,7 @@ const ProfileView: React.FC = () => {
 
   async function profileSaved(): Promise<void> {
     if (profile) {
-      profileService.updateProfile(sessionContext.sessionInfo, profile)
+      profileService.updateProfile(sessionContext.sessionInfo.podUrl, profile)
     }
   }
 

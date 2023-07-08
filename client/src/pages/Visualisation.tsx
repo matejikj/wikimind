@@ -4,7 +4,7 @@ import Canvas from "../visualisation/Canvas";
 import { SessionContext } from "../sessionContext";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getMindMap, saveMindMap } from "../service/mindMapService";
+import { MindMapService } from "../service/mindMapService";
 import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
   WebsocketNotification,
@@ -74,27 +74,27 @@ const Visualisation: React.FC = () => {
 
   const [datesView, setDatesView] = useState(false); // <-- new state variable
 
-  useEffect(() => {
-    setMounted(true); // set the mounted state variable to true after the component mounts
-  }, []);
+  const mindMapService = new MindMapService();
+
+  async function fetchMindMap(url: string): Promise<void> {
+    try {
+      const mindMapDataset = await mindMapService.getMindMap(url);
+      if (mindMapDataset) {
+        mindMapDataset.links = AddCoords(mindMapDataset.links, getIdsMapping(mindMapDataset.nodes))
+        setDataset(mindMapDataset)
+        updateCanvasAxis(mindMapDataset)
+      }
+    } catch (error) {
+      // Handle the error, e.g., display an error message to the user or perform fallback actions
+    }
+  }
 
   useEffect(
     () => {
-
-      if (mounted) {
-        if (location.state !== null && location.state.id !== null) {
-          getMindMap(location.state.id).then((res: MindMapDataset | null) => {
-            if (res) {
-              res.links = AddCoords(res.links, getIdsMapping(res.nodes))
-              setDataset(res)
-              updateCanvasAxis(res)
-            }
-          })
-
-        } else {
-          navigate('/')
-        }
-
+      if (location.state !== null && location.state.id !== null) {
+        fetchMindMap(location.state.id)
+      } else {
+        navigate('/')
       }
     }, [mounted])
 
@@ -123,15 +123,10 @@ const Visualisation: React.FC = () => {
     }
   }
 
-  function saveDataset() {
+  async function saveDataset() {
     if (dataset) {
-      saveMindMap(dataset, sessionContext.sessionInfo).then((res) => {
-        console.log("saveDataset")
-  
-      })
-  
+      const mindMapDataset = await mindMapService.saveMindMap(dataset, sessionContext.sessionInfo);
     }
-
   }
 
   function createPicture() {
@@ -196,7 +191,10 @@ const Visualisation: React.FC = () => {
       }
       setDataset({
         ...dataset,
-        mindMap: timestamp
+        mindMap: {
+          ...dataset.mindMap,
+          created: Date.now().toString()
+        }
       });
     }
     // TODOOOOOO
@@ -271,7 +269,7 @@ const Visualisation: React.FC = () => {
   async function createDateView() {
     if (dataset) {
       getDates(dataset.nodes).then((res) => {
-        if (res){
+        if (res) {
           setHistoryDataset(res)
           setCreatorVisible(false);
           setDatesView(true)
