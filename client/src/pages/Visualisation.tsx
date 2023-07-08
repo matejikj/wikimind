@@ -196,7 +196,7 @@ const Visualisation: React.FC = () => {
       }
       setDataset({
         ...dataset,
-        created: timestamp
+        mindMap: timestamp
       });
     }
     // TODOOOOOO

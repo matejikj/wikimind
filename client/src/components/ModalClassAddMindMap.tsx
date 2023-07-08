@@ -6,7 +6,6 @@ import { ListItem } from "../models/ListItem";
 import { MdAdd } from "react-icons/md";
 import { Row } from "react-bootstrap";
 import { addGraphToClass } from "../service/classService";
-import { getMindMApsList } from "../service/mindMapService";
 import { MindMap } from "../models/types/MindMap";
 import { MINDMAPS, SLASH, TTLFILETYPE, WIKIMIND } from "../service/containerService";
 
@@ -19,11 +18,11 @@ const ModalClassAddMindMap: React.FC<{
     const sessionContext = useContext(SessionContext)
     const [list, setList] = useState<MindMap[]>([]);
 
-    useEffect(() => {
-        const result = getMindMApsList(sessionContext.sessionInfo).then((res) => {
-            setList(res)
-        });
-    }, []);
+    // useEffect(() => {
+    //     const result = getMindMApsList(sessionContext.sessionInfo).then((res) => {
+    //         setList(res)
+    //     });
+    // }, []);
 
     const handleClose = () => setModal(false);
 

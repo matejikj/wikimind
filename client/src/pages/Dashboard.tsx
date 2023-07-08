@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-import { createNewMindMap, getMindMApsList } from '../service/mindMapService';
+import { MindMapService } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
 import { Container, Row, Stack } from 'react-bootstrap';
 import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
@@ -15,7 +15,7 @@ import { MindMap } from '../models/types/MindMap';
 import { MINDMAPS, TTLFILETYPE, WIKIMIND } from '../service/containerService';
 
 const Dashboard: React.FC = () => {
-  const [list, setList] = useState<MindMap[]>([]);
+  const [mindMapList, setMindMapList] = useState<MindMap[]>([]);
   const [createNewModalVisible, setCreateNewModalVisible] = useState(false);
   const [renameModalVisible, setRenameModalVisible] = useState(false);
 
@@ -26,15 +26,23 @@ const Dashboard: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const mindMapService = new MindMapService();
+
+  async function fetchMindMapList(): Promise<void> {
+    try {
+      const mindMaps = await mindMapService.getMindMapList(sessionContext.sessionInfo.podUrl);
+      mindMaps && setMindMapList(mindMaps)
+    } catch (error) {
+      // Handle the error, e.g., display an error message to the user or perform fallback actions
+    }
+  }
+
   useEffect(() => {
-    const result = getMindMApsList(sessionContext.sessionInfo).then((res) => {
-      setList(res)
-    });
+    fetchMindMapList();
   }, []);
 
-
-  const showMindMap = (e: MindMap) => {
-    const url = `${sessionContext.sessionInfo.podUrl}${WIKIMIND}/${MINDMAPS}/${e.id}${TTLFILETYPE}`
+  function showMindMap(mindMap: MindMap): void {
+    const url = `${sessionContext.sessionInfo.podUrl}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`
     navigate('/visualisation/', {
       state: {
         id: url
@@ -128,7 +136,7 @@ const Dashboard: React.FC = () => {
             <h1>Your mind maps!</h1>
           </Row>
 
-          {list.map((item, index) => {
+          {mindMapList.map((item, index) => {
             return (
               <Row key={index}>
                 <div className='aaa'>

@@ -96,7 +96,13 @@ export async function createNewClass(name: string, userSession: UserSession): Pr
     const classesListUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${CLASSES}${TTLFILETYPE}`;
 
 
-    const classStorageUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${generate_uuidv4()}${TTLFILETYPE}`;
+    try {
+        const profileUrl = `${userSession.podUrl}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
+        return await this.profileRepository.getProfile(profileUrl);
+      } catch (error) {
+        console.error(error);
+        return undefined;
+      }onst classStorageUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${generate_uuidv4()}${TTLFILETYPE}`;
 
     const blankClass: Class = {
         name: name,

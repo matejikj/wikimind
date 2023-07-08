@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-import { createNewMindMap, getMindMApsList } from '../service/mindMapService';
+import { createNewMindMap } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
 import { Container, Navbar, Row, Stack } from 'react-bootstrap';
 import { BsFillSendFill } from 'react-icons/bs';

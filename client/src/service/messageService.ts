@@ -29,7 +29,56 @@ import { Message } from "../models/types/Message";
 import { ChatLDO } from "../models/things/ChatLDO";
 import { Chat } from "../models/types/Chat";
 import { ChatDataset } from "../models/types/ChatDataset";
+import { ChatRepository } from "../repository/chatRepository";
+import { MessageRepository } from "../repository/messageRepository";
+import { LinkRepository } from "../repository/linksRepository";
 
+export class MessageService {
+  private chatRepository: ChatRepository;
+  private messageRepository: MessageRepository;
+  private linkRepository: LinkRepository;
+
+  constructor() {
+    this.chatRepository = new ChatRepository();
+    this.messageRepository = new MessageRepository();
+    this.linkRepository = new LinkRepository();
+  }
+
+  async getChatList(podUrl: string): Promise<Chat[] | undefined> {
+    try {
+      const chats: Chat[] = []
+      const chatLinksUrl = `${podUrl}${WIKIMIND}/${MESSAGES}/${CONTACTS}${TTLFILETYPE}`;
+      const chatLinks = await this.linkRepository.getLinksList(chatLinksUrl);
+      await Promise.all(chatLinks.map(async (link) => {
+        const chat = await this.chatRepository.getChat(link.url)
+        chat && chats.push(chat)
+      }));
+      return chats
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  }
+
+  async getChat(chatUrl: string): Promise<ChatDataset | undefined> {
+    try {
+      const chat = await this.chatRepository.getChat(chatUrl)
+      if (chat) {
+        const res: any = await this.messageRepository.getMessages(chat.storage)
+        const chatDataset: ChatDataset = {
+          chat: chat,
+          messages: res.links
+        };
+        return chatDataset;
+      }
+    }
+
+    catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  }
+}
 
 export async function getMessages(userSession: UserSession) {
     const chats: Chat[] = []
