@@ -194,35 +194,3 @@ export async function checkContainer(sessionId: string): Promise<{ podUrl: strin
   }
   throw new Error("There is a problem with SolidPod.");
 }
-
-// /**
-//  * Retrieves a list of mind maps associated with a user session.
-//  *
-//  * @param {UserSession} userSession - The user session.
-//  * @returns {Promise<{ url: string; title: string | null }[]>} - A Promise resolving to an array of objects containing the URL and title of each mind map.
-//  */
-// export async function getMindMapList(userSession: UserSession): Promise<{ url: string; title: string | null }[]> {
-//   const readingListUrl: string = userSession.podUrl + WIKIMIND + SLASH + MINDMAPS + SLASH;
-//   const myDataset = await getSolidDataset(
-//     readingListUrl,
-//     { fetch: fetch }
-//   );
-
-//   const resourceUrls = await getContainedResourceUrlAll(myDataset);
-
-//   const resultResources: { url: string; title: string | null }[] = [];
-//   for (const res of resourceUrls) {
-//     const dat = await getSolidDataset(res, { fetch: fetch });
-//     const things = getThingAll(dat);
-//     things.forEach((thing) => {
-//       const types = getUrlAll(thing, RDF.type);
-//       if (types.some((type) => type === mindMapDefinition.identity)) {
-//         resultResources.push({
-//           url: res,
-//           title: getStringNoLocale(thing, mindMapDefinition.properties.id),
-//         });
-//       }
-//     });
-//   }
-//   return resultResources;
-// }
