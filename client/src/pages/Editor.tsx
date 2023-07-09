@@ -36,7 +36,7 @@ import HistoryVisualisation from "../visualisation/HistoryVisualisation";
 import { groupDates } from "../visualisation/utiils";
 import { HistoryResultItem } from "../models/HistoryResultItem";
 
-const Visualisation: React.FC = () => {
+const Editor: React.FC = () => {
   const d3Container = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -125,7 +125,7 @@ const Visualisation: React.FC = () => {
 
   async function saveDataset() {
     if (dataset) {
-      const mindMapDataset = await mindMapService.saveMindMap(dataset, sessionContext.sessionInfo);
+      const mindMapDataset = await mindMapService.saveMindMap(dataset);
     }
   }
 
@@ -501,4 +501,4 @@ const Visualisation: React.FC = () => {
   )
 };
 
-export default Visualisation;
+export default Editor;

@@ -5,6 +5,7 @@ import {
     saveSolidDatasetAt,
     setThing,
     getThingAll,
+    deleteSolidDataset,
     getUrlAll,
     createSolidDataset
 } from "@inrupt/solid-client";
@@ -13,7 +14,7 @@ import mindMapDefinition from "../definitions/mindMap.json";
 import { Profile } from "../models/types/Profile";
 import { ProfileLDO } from "../models/things/ProfileLDO";
 import { UserSession } from "../models/types/UserSession";
-import { MRIZKA, PROFILE, SLASH, TTLFILETYPE, WIKIMIND } from "../service/containerService";
+import { MINDMAPS, MRIZKA, PROFILE, SLASH, TTLFILETYPE, WIKIMIND } from "../service/containerService";
 import { MindMap } from "../models/types/MindMap";
 import { MindMapLDO } from "../models/things/MindMapLDO";
 import { getNumberFromUrl } from "./utils";
@@ -50,11 +51,11 @@ export class MindMapRepository {
         await saveSolidDatasetAt(mindMapUrl, mindMapDataset, { fetch });
     }
 
-    async updateMindMap(mindMapUrl: string, mindMap: MindMap): Promise<MindMap | undefined> {
-        const mindMapDataset = await getSolidDataset(mindMapUrl, { fetch });
-        const mindMapBuilder = new MindMapLDO(mindMapDefinition)
-        const thingId = `${mindMapUrl}#${getNumberFromUrl(mindMapUrl)}`
-        return mindMapBuilder.read(getThing(mindMapDataset, thingId))
+    async updateMindMap(mindMap: MindMap): Promise<void> {
+        const url = `${mindMap.ownerPod}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
+        let mindMapDataset = await getSolidDataset(url, { fetch });
+        mindMapDataset = setThing(mindMapDataset, this.mindMapLDO.create(mindMap));
+        await saveSolidDatasetAt(url, mindMapDataset, { fetch });
     }
 
     async getNodesAndConnections(storageUrl: string) {
@@ -88,5 +89,9 @@ export class MindMapRepository {
         });
 
         await saveSolidDatasetAt(storageUrl, mindMapStorageDataset, { fetch: fetch });
+    }
+
+    async removeMindMap(url: string): Promise<void> {
+        await deleteSolidDataset(url, { fetch: fetch })
     }
 }

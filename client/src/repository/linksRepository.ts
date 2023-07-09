@@ -4,7 +4,8 @@ import {
     getThing,
     saveSolidDatasetAt,
     setThing,
-    getThingAll
+    getThingAll,
+    removeThing
 } from "@inrupt/solid-client";
 import profileDefinition from "../definitions/profile.json";
 import mindMapDefinition from "../definitions/mindMap.json";
@@ -40,6 +41,15 @@ export class LinkRepository {
         let mindMapListDataset = await getSolidDataset(listUrl, { fetch });
         mindMapListDataset = setThing(mindMapListDataset, this.linkLDO.create(link));
         await saveSolidDatasetAt(listUrl, mindMapListDataset, { fetch });
+    }
+    async removeLink(listUrl: string, link: Link): Promise<void> {
+        let mindMapListDataset = await getSolidDataset(listUrl, { fetch });
+        const thingId = `${listUrl}#${link.id}`;
+        const thing = getThing(mindMapListDataset, thingId);
+        if (thing) {
+            mindMapListDataset = removeThing(mindMapListDataset, thing);
+            await saveSolidDatasetAt(listUrl, mindMapListDataset, { fetch });    
+        }
     }
 }
 

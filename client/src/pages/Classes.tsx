@@ -146,17 +146,19 @@ const Classes: React.FC = () => {
                   </div>
                   <div className='my-stack-reverse'>
                     <Button
-                      className='class-btn'
+                    size="sm"
+                    className='rounded-circle'
                       onClick={() => deleteClass(item)}
-                      variant="primary"
+                      variant="outline-danger"
                     >
                       <MdDeleteForever></MdDeleteForever>
                     </Button>
 
                     <Button
-                      className='class-btn'
+                    size="sm"
+                    className='rounded-circle'
                       onClick={() => showClass(item)}
-                      variant="primary"
+                      variant="outline-success"
                     >
                       <MdSlideshow></MdSlideshow>
                     </Button>
@@ -176,18 +178,21 @@ const Classes: React.FC = () => {
                   id="inputPassword5"
                   value={requestUrl}
                   name="id"
+                  size='sm'
                   style={{ maxWidth: '600px' }}
                   onChange={(e) => { setRequestUrl(e.target.value) }}
                 />
                 <Button
                   onClick={sendRequest}
                   variant="success"
-                >
+                  size="sm"
+              >
                   Request
                 </Button>
                 <Button
                   onClick={() => { setRequest(false) }}
                   variant="danger"
+                  size="sm"
                 >
                   Cancel
                 </Button>
@@ -218,7 +223,8 @@ const Classes: React.FC = () => {
                           <Stack direction="horizontal" gap={2}>
                             <div>
                               <Button
-                                className='class-btn'
+                                size="sm"
+                                className='rounded-circle'
                                 name={item.requestor}
                                 onClick={() => allowRequest(item)}
                                 variant="success"
@@ -229,7 +235,8 @@ const Classes: React.FC = () => {
                             </div>
                             <div>
                               <Button
-                                className='class-btn'
+                                size="sm"
+                                className='rounded-circle'
                                 name={item.requestor}
                                 onClick={denyAccess}
                                 variant="outline-danger"

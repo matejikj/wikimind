@@ -16,14 +16,9 @@ import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 import { assignWebSocketACP } from "../service/notificationService";
 
 const Chat: React.FC = () => {
-    const d3Container = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const countRef = useRef(0);
 
-    const ref = useRef(null);
-    const [height, setHeight] = useState(1000);
-    const [width, setWidth] = useState(500);
     const [text, setText] = useState('');
     const sessionContext = useContext(SessionContext)
     const [messageDataset, setMessageDataset] = useState<ChatDataset | undefined>();

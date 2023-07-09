@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import './styles/style.css';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from "./pages/Dashboard";
-import Visualisation from "./pages/Visualisation";
+import Editor from "./pages/Editor";
 import { handleIncomingRedirect } from "@inrupt/solid-client-authn-browser";
 import { BrowserRouter } from 'react-router-dom';
 import { checkContainer } from "./service/containerService";
@@ -15,6 +15,7 @@ import { UserSession, defaultSessionValue } from "./models/types/UserSession";
 import { SessionContext } from "./sessionContext";
 import Chat from "./pages/Chat";
 import ExamPage from "./pages/ExamPage";
+import Browser from "./pages/Browser";
 
 const App: React.FC = () => {
 
@@ -56,9 +57,10 @@ const App: React.FC = () => {
             return (
               <Routes>
                 <Route path="/" element={<Dashboard />} />
-                <Route path="/visualisation" element={<Visualisation />} />
+                <Route path="/visualisation" element={<Editor />} />
                 <Route path="/classes" element={<Classes />} />
                 <Route path="/class" element={<Class />} />
+                <Route path="/browser" element={<Browser />} />
                 <Route path="/profile" element={<ProfileView />} />
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/chat" element={<Chat />} />
@@ -75,6 +77,10 @@ const App: React.FC = () => {
                   <span></span>
                 </div>
               </div>
+            )
+          } else if (window.location.href.includes('/browser')) {
+            return (
+              <Browser></Browser>
             )
           } else {
             return (

@@ -16,7 +16,7 @@ import { FcComments } from "react-icons/fc";
 import { Exam } from "../models/types/Exam";
 import { MindMap } from "../models/types/MindMap";
 import ModalClassAddMindMap from "../components/ModalClassAddMindMap";
-import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from "react-icons/md";
+import { MdDeleteForever, MdDriveFileRenameOutline, MdLink, MdSlideshow } from "react-icons/md";
 import { CLASSES, MINDMAPS, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl } from "../service/containerService";
 
 const exampleExams: Exam[] = [{
@@ -53,10 +53,6 @@ const Class: React.FC = () => {
     } catch (error) {
     }
   }
-
-  // useEffect(() => {
-  //   setMounted(true);
-  // }, []);
 
   useEffect(
     () => {
@@ -103,7 +99,7 @@ const Class: React.FC = () => {
     })
   }
 
-  const copyToClipboard = (e: any) => {
+  const copyToClipboard = () => {
     navigator.clipboard.writeText(sessionContext.sessionInfo.webId + "?classId=" + dataset?.class.id)
   }
 
@@ -133,7 +129,13 @@ const Class: React.FC = () => {
                 (sessionContext.sessionInfo.webId === dataset?.class.teacher) &&
                 <Stack direction="horizontal" gap={2}>
                   <h6>Link for copy</h6>
-                  <Button onClick={copyToClipboard} variant="success">copy</Button>
+                  <Button
+                    onClick={() => copyToClipboard()}
+                    size="sm"
+                    className='rounded-circle'
+                  >
+                    <MdLink></MdLink>
+                  </Button>
                 </Stack>
               }
             </Col>
@@ -157,24 +159,24 @@ const Class: React.FC = () => {
                           </div>
                           <div className='my-stack-reverse'>
                             <Button
-                              size='sm'
-                              className='class-btn'
+                              size="sm"
+                              className='rounded-circle'
                               onClick={() => removeMindMap(item)}
                               variant="success"
                             >
                               <MdDeleteForever></MdDeleteForever>
                             </Button>
                             <Button
-                              size='sm'
-                              className='class-btn'
+                              size="sm"
+                              className='rounded-circle'
                               onClick={() => showExam(item)}
                               variant="success"
                             >
                               <MdDriveFileRenameOutline></MdDriveFileRenameOutline>
                             </Button>
                             <Button
-                              size='sm'
-                              className='class-btn'
+                              size="sm"
+                              className='rounded-circle'
                               onClick={() => showMindMap(item)}
                               variant="success"
                             >
@@ -265,12 +267,9 @@ const Class: React.FC = () => {
                       )
                     })}
                   </table>
-
                 </Container>
               </Card>
-
             </Col>
-
           </Row>
         </Container>
       </main>

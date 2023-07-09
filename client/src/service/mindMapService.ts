@@ -75,7 +75,7 @@ export class MindMapService {
   async createNewMindMap(name: string, userSession: UserSession): Promise<string | undefined> {
     const mindMapsListUrl = `${userSession.podUrl}${WIKIMIND}/${MINDMAPS}/${MINDMAPS}${TTLFILETYPE}`;
     const mindMapStorageUrl = `${userSession.podUrl}${WIKIMIND}/${MINDMAPS}/${generate_uuidv4()}${TTLFILETYPE}`;
-    
+
     const blankMindMap: MindMap = {
       id: generate_uuidv4(),
       name: name,
@@ -99,16 +99,46 @@ export class MindMapService {
     }
     return mindMapUrl;
   }
-  
-  
+
+
   /**
    * Creates a new mind map with the given name and user session.
    * @param name The name of the new mind map.
    * @param userSession The user session.
    * @returns The URL of the newly created mind map.
    */
-  async saveMindMap(mindMap: MindMapDataset, userSession: UserSession): Promise<void> {  
-    this.mindMapRepository.saveNodesAndConnections(mindMap.mindMap.storage, mindMap.nodes, mindMap.links)  
+  async saveMindMap(mindMap: MindMapDataset): Promise<void> {
+    this.mindMapRepository.saveNodesAndConnections(mindMap.mindMap.storage, mindMap.nodes, mindMap.links)
   }
 
+  async removeMindMap(mindMap: MindMap): Promise<boolean> {
+    try {
+
+      const mindMapLinksUrl = `${mindMap.ownerPod}${WIKIMIND}/${MINDMAPS}/${MINDMAPS}${TTLFILETYPE}`;
+      const mindMapLinks = await this.linkRepository.getLinksList(mindMapLinksUrl);
+
+      await this.mindMapRepository.removeMindMap(mindMap.storage)
+      const url = `${mindMap.ownerPod}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
+      await this.mindMapRepository.removeMindMap(url)
+
+      const link = mindMapLinks.find((item) => item.url === url)
+      if (link) {
+        await this.linkRepository.removeLink(mindMapLinksUrl, link)
+      }
+      return true;
+    }
+    catch (error) {
+      return false;
+    }
+  }
+
+  async updateMindMap(mindMap: MindMap): Promise<boolean> {
+    try {
+      await this.mindMapRepository.updateMindMap(mindMap)
+      return true;
+    }
+    catch (error) {
+      return false;
+    }
+  }
 }

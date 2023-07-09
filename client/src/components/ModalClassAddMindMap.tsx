@@ -8,6 +8,7 @@ import { Row } from "react-bootstrap";
 import { addGraphToClass } from "../service/classService";
 import { MindMap } from "../models/types/MindMap";
 import { MINDMAPS, SLASH, TTLFILETYPE, WIKIMIND } from "../service/containerService";
+import { MindMapService } from "../service/mindMapService";
 
 // const ModalVis: React.FC<{ modalShow: boolean, setModalShow: React.Dispatch<React.SetStateAction<boolean>> }> = ({ modalShow, setModalShow }) => {
 const ModalClassAddMindMap: React.FC<{
@@ -16,13 +17,22 @@ const ModalClassAddMindMap: React.FC<{
     classUrl: string
 }> = ({ showModal, setModal, classUrl }) => {
     const sessionContext = useContext(SessionContext)
-    const [list, setList] = useState<MindMap[]>([]);
+    const [mindMapList, setMindMapList] = useState<MindMap[]>([]);
 
-    // useEffect(() => {
-    //     const result = getMindMApsList(sessionContext.sessionInfo).then((res) => {
-    //         setList(res)
-    //     });
-    // }, []);
+    const mindMapService = new MindMapService();
+
+    async function fetchMindMapList(): Promise<void> {
+      try {
+        const mindMaps = await mindMapService.getMindMapList(sessionContext.sessionInfo.podUrl);
+        mindMaps && setMindMapList(mindMaps)
+      } catch (error) {
+        // Handle the error, e.g., display an error message to the user or perform fallback actions
+      }
+    }
+  
+    useEffect(() => {
+        fetchMindMapList()
+    }, []);
 
     const handleClose = () => setModal(false);
 
@@ -36,7 +46,7 @@ const ModalClassAddMindMap: React.FC<{
             show={showModal}
         >
             <Modal.Body>
-                {list.map((item, index) => {
+                {mindMapList.map((item, index) => {
                     return (
                         <Row key={index}>
                             <div className='aaa'>
@@ -46,7 +56,7 @@ const ModalClassAddMindMap: React.FC<{
                                 <div className='my-stack-reverse'>
                                     <Button
                                         size='sm'
-                                        className='class-btn'
+                                        className='rounded-circle'
                                         onClick={() => addMindMap(item)}
                                         variant="success"
                                     >

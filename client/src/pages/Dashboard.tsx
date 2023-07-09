@@ -19,8 +19,10 @@ const Dashboard: React.FC = () => {
   const [createNewModalVisible, setCreateNewModalVisible] = useState(false);
   const [renameModalVisible, setRenameModalVisible] = useState(false);
 
-  const [createName, setCreateName] = useState("");
-  const [rename, setRename] = useState("");
+  const [name, setName] = useState("");
+  const [showMindMapRenameModal, setShowMindMapRenameModal] = useState(false);
+  const [showMindMapDeleteModal, setShowMindMapDeleteModal] = useState(false);
+  const [mindMapToChange, setMindMapToChange] = useState<MindMap | undefined>();
 
   const sessionContext = useContext(SessionContext)
 
@@ -50,28 +52,43 @@ const Dashboard: React.FC = () => {
     })
   }
 
-  const renameMindMap = (e: MindMap) => {
-
-  }
-
-  const removeMindMap = (e: MindMap) => {
-    // navigate('/visualisation/', {
-    //   state: {
-    //     id: e.target.name
-    //   }
-    // })
-  }
-
-  async function createNew(e: any) {
-    if (sessionContext.sessionInfo.isLogged) {
-      const mindMapUrl = await mindMapService.createNewMindMap(createName, sessionContext.sessionInfo)
-      if (mindMapUrl) {
-        navigate('/visualisation/', {
-          state: {
-            id: mindMapUrl
-          }
-        })
+  async function renameMindMap(name: string) {
+    if (mindMapToChange) {
+      mindMapToChange.name = name
+      const renamePromise = await mindMapService.updateMindMap(mindMapToChange)
+      if (renamePromise) {
+        const newArray = [...mindMapList];
+        const objectToUpdate = newArray.find(obj => obj.id === mindMapToChange.id);
+        if (objectToUpdate) {
+          objectToUpdate.name = name;
+        }
+        setMindMapList(newArray)
+        setShowMindMapRenameModal(false)
       }
+    }
+
+  }
+
+  async function removeMindMap() {
+    if (mindMapToChange) {
+      const removePromise = await mindMapService.removeMindMap(mindMapToChange)
+      if (removePromise) {
+        setMindMapList((mindMapList) =>
+          mindMapList.filter((item) => item.id !== mindMapToChange.id)
+        )
+        setShowMindMapDeleteModal(false)
+      }
+    }
+  }
+
+  async function createNew() {
+    const mindMapUrl = await mindMapService.createNewMindMap(name, sessionContext.sessionInfo)
+    if (mindMapUrl) {
+      navigate('/visualisation/', {
+        state: {
+          id: mindMapUrl
+        }
+      })
     }
   }
 
@@ -89,8 +106,8 @@ const Dashboard: React.FC = () => {
                 type="text"
                 placeholder="insert name"
                 aria-label="insert name"
-                value={createName}
-                onChange={(e) => { setCreateName(e.target.value) }}
+                value={name}
+                onChange={(e) => { setName(e.target.value) }}
               />
             </Form>
           </Modal.Body>
@@ -105,7 +122,26 @@ const Dashboard: React.FC = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-        <Modal show={renameModalVisible} onHide={() => setRenameModalVisible(false)}>
+        <Modal show={showMindMapDeleteModal}>
+          <Modal.Header>
+            <Modal.Title>Really want to delete mindMap?</Modal.Title>
+          </Modal.Header>
+          <Modal.Footer>
+            <Button
+              className='my-btn'
+              variant="secondary" onClick={() => setShowMindMapDeleteModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              className='my-btn'
+              variant="secondary" onClick={() => removeMindMap()}>
+              Confirm
+            </Button>
+
+
+          </Modal.Footer>
+        </Modal>
+        <Modal show={showMindMapRenameModal}>
           <Modal.Header>
             <Modal.Title>Choose name</Modal.Title>
           </Modal.Header>
@@ -115,22 +151,24 @@ const Dashboard: React.FC = () => {
                 type="text"
                 placeholder="insert name"
                 aria-label="insert name"
-                value={createName}
-                onChange={(e) => { setCreateName(e.target.value) }}
+                value={name}
+                onChange={(e) => { setName(e.target.value) }}
               />
             </Form>
           </Modal.Body>
           <Modal.Footer>
             <Button
               className='my-btn'
-              variant="secondary" onClick={() => setCreateNewModalVisible(false)}>
-              Close
+              variant="secondary" onClick={() => setShowMindMapRenameModal(false)}>
+              Cancel
             </Button>
-            <Button variant="primary" onClick={createNew}>
-              Save Changes
+            <Button variant="primary" onClick={() => renameMindMap(name)}>
+              Confirm
             </Button>
+
           </Modal.Footer>
         </Modal>
+
         <Container>
           <Row>
             <h1>Your mind maps!</h1>
@@ -147,7 +185,10 @@ const Dashboard: React.FC = () => {
                     <Button
                       size='sm'
                       className='class-btn rounded-circle'
-                      onClick={() => removeMindMap(item)}
+                      onClick={() => {
+                        setMindMapToChange(item);
+                        setShowMindMapDeleteModal(true)
+                      }}
                       variant="success"
                     >
                       <MdDeleteForever></MdDeleteForever>
@@ -156,7 +197,10 @@ const Dashboard: React.FC = () => {
                     <Button
                       size='sm'
                       className='class-btn rounded-circle'
-                      onClick={() => renameMindMap(item)}
+                      onClick={() => {
+                        setMindMapToChange(item);
+                        setShowMindMapRenameModal(true)
+                      }}
                       variant="success"
                     >
                       <MdDriveFileRenameOutline></MdDriveFileRenameOutline>
