@@ -519,3 +519,45 @@ tr:nth-child(even) {
     flex-grow: 1;
     margin-right: 10px;
 }
+
+.class-container {
+    padding: 0 !important;
+    padding-top: 10px !important;
+    margin-top: 10px !important;
+    border-top: 1px solid black;
+}
+
+/* TIMELINe */
+
+.timeline-carousel {
+    height: calc(100dvh - 74px);
+}
+
+.timeline-card {
+    border-radius: 5px;
+    border: 1px solid #fafafa;
+    padding: 5px;
+    background-color:#c8c8c844;
+    height: calc(100dvh - 74px) !important;
+}
+
+.timeline-img-container {
+    max-height: 50%;
+    text-align: center;
+}
+
+.timeline-img {
+    height: auto;
+}
+
+.timeline-info-container {
+    height: 50%;
+    margin-top: 10px;
+    padding-top: 10px;
+
+}
+
+.timeline-info-abstract {
+    max-height: 80%;
+    overflow: auto;
+}

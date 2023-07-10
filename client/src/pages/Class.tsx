@@ -128,10 +128,14 @@ const Class: React.FC = () => {
               {
                 (sessionContext.sessionInfo.webId === dataset?.class.teacher) &&
                 <Stack direction="horizontal" gap={2}>
-                  <h6>Link for copy</h6>
+                  <span
+                  >
+                    Copy inviting link
+                  </span>
                   <Button
                     onClick={() => copyToClipboard()}
                     size="sm"
+                    variant="outline-dark"
                     className='rounded-circle'
                   >
                     <MdLink></MdLink>
@@ -141,134 +145,128 @@ const Class: React.FC = () => {
             </Col>
           </Row>
           <Row>
-            <Col sm="6">
-              <Card className="class-card">
-                <Container>
-                  <Row>
-                    <h4>Classes mindMaps</h4>
-                    {dataset?.mindMaps.length === 0 &&
-                      <p>No mindMaps already</p>
-                    }
-                  </Row>
-                  {dataset?.mindMaps.map((item, index) => {
-                    return (
-                      <Row key={index}>
-                        <div className='aaa'>
-                          <div className='my-stack'>
-                            {item.id}
-                          </div>
-                          <div className='my-stack-reverse'>
-                            <Button
-                              size="sm"
-                              className='rounded-circle'
-                              onClick={() => removeMindMap(item)}
-                              variant="success"
-                            >
-                              <MdDeleteForever></MdDeleteForever>
-                            </Button>
-                            <Button
-                              size="sm"
-                              className='rounded-circle'
-                              onClick={() => showExam(item)}
-                              variant="success"
-                            >
-                              <MdDriveFileRenameOutline></MdDriveFileRenameOutline>
-                            </Button>
-                            <Button
-                              size="sm"
-                              className='rounded-circle'
-                              onClick={() => showMindMap(item)}
-                              variant="success"
-                            >
-                              <MdSlideshow></MdSlideshow>
-                            </Button>
-                          </div>
+            <Col sm="12">
+              <Container className="class-container">
+                <Row>
+                  <h4>Classes mindMaps</h4>
+                  {dataset?.mindMaps.length === 0 &&
+                    <p>No mindMaps already</p>
+                  }
+                </Row>
+                {dataset?.mindMaps.map((item, index) => {
+                  return (
+                    <Row key={index}>
+                      <div className='aaa'>
+                        <div className='my-stack'>
+                          {item.id}
                         </div>
-                      </Row>
-                    )
-                  })}
-                  <Button onClick={handleCreate} variant="outline-success">Create new</Button>
-                  <Button onClick={handleAddExisting} variant="outline-success">Add existing</Button>
-                </Container>
-              </Card>
+                        <div className='my-stack-reverse'>
+                          <Button
+                            size="sm"
+                            className='rounded-circle'
+                            onClick={() => removeMindMap(item)}
+                            variant="success"
+                          >
+                            <MdDeleteForever></MdDeleteForever>
+                          </Button>
+                          <Button
+                            size="sm"
+                            className='rounded-circle'
+                            onClick={() => showExam(item)}
+                            variant="success"
+                          >
+                            <MdDriveFileRenameOutline></MdDriveFileRenameOutline>
+                          </Button>
+                          <Button
+                            size="sm"
+                            className='rounded-circle'
+                            onClick={() => showMindMap(item)}
+                            variant="success"
+                          >
+                            <MdSlideshow></MdSlideshow>
+                          </Button>
+                        </div>
+                      </div>
+                    </Row>
+                  )
+                })}
+                <Button onClick={handleCreate} variant="outline-success">Create new</Button>
+                <Button onClick={handleAddExisting} variant="outline-success">Add existing</Button>
+              </Container>
 
             </Col>
-            <Col sm="6">
-              <Card className="class-card">
-                <Container>
-                  <Row>
-                    <h4>Pupils</h4>
-                    {dataset?.students.length === 0 &&
-                      <p>No pupils already</p>
-                    }
-                  </Row>
-                  {dataset?.students.map((item, index) => {
-                    return (
-                      <Row key={index}>
-                        <div className='aaa'>
-                          <div className='my-stack'>
-                            {item.name} {item.surname}
-                          </div>
-                          <div className='my-stack-reverse'>
-                            <Button
-                              size='sm'
-                              className="class-message"
-                              variant="outline"
-                              onClick={() => { sendMessage(item.webId) }}>
-                              <FcComments>
-                              </FcComments>
-                            </Button>
-
-                          </div>
+            <Col sm="12">
+              <Container className="class-container">
+                <Row>
+                  <h4>Pupils</h4>
+                  {dataset?.students.length === 0 &&
+                    <p>No pupils already</p>
+                  }
+                </Row>
+                {dataset?.students.map((item, index) => {
+                  return (
+                    <Row key={index}>
+                      <div className='aaa'>
+                        <div className='my-stack'>
+                          {item.name} {item.surname}
                         </div>
-                      </Row>
-                    )
-                  })}
-                </Container>
-              </Card>
+                        <div className='my-stack-reverse'>
+                          <Button
+                            size='sm'
+                            className="class-message"
+                            variant="outline"
+                            onClick={() => { sendMessage(item.webId) }}>
+                            <FcComments>
+                            </FcComments>
+                          </Button>
+
+                        </div>
+                      </div>
+                    </Row>
+                  )
+                })}
+              </Container>
             </Col>
 
-            <Col sm="6">
-              <Card className="class-card">
-                <Container>
-                  <Row>
-                    <h4>Exams</h4>
-                    {exampleExams.length === 0 &&
-                      <p>No exams already</p>
-                    }
+            <Col sm="12">
+              <Container className="class-container">
+                <Row>
+                  <h4>Exams</h4>
+                  {exampleExams.length === 0 &&
+                    <p>No exams already</p>
+                  }
 
-                  </Row>
-                  <table>
-                    <tr>
-                      <th>Pupil</th>
-                      <th>MindMap</th>
-                      <th>Max</th>
-                      <th>Result</th>
-                    </tr>
-                    {exampleExams.map((item, index) => {
-                      return (
-                        <tr>
-                          <td>{item.profile}</td>
-                          <td>{item.mindMap}</td>
-                          <td>{item.max}</td>
-                          <td>{item.result}</td>
-                        </tr>
+                </Row>
+                <table>
+                  <tr>
+                    <th>Pupil</th>
+                    <th>MindMap</th>
+                    <th>Max</th>
+                    <th>Result</th>
+                  </tr>
+                  {exampleExams.map((item, index) => {
+                    return (
+                      <tr>
+                        <td>{item.profile}</td>
+                        <td>{item.mindMap}</td>
+                        <td>{item.max}</td>
+                        <td>{item.result}</td>
+                      </tr>
 
-                        // <Row key={index}>
-                        //   <Col sm={9}>{item.name} {item.surname}</Col>
-                        //   <Col sm={3}>
+                      // <Row key={index}>
+                      //   <Col sm={9}>{item.name} {item.surname}</Col>
+                      //   <Col sm={3}>
 
-                        //     <Stack direction="horizontal" gap={2}>
-                        //       <Button className="class-message" variant="outline" onClick={() => { sendMessage(item.webId) }}><FcComments> </FcComments></Button>
+                      //     <Stack direction="horizontal" gap={2}>
+                      //       <Button className="class-message" variant="outline" onClick={() => { sendMessage(item.webId) }}><FcComments> </FcComments></Button>
 
-                        //     </Stack>
-                        //   </Col>
-                        // </Row>
-                      )
-                    })}
-                  </table>
-                </Container>
-              </Card>
+                      //     </Stack>
+                      //   </Col>
+                      // </Row>
+                    )
+                  })}
+                </table>
+              </Container>
             </Col>
           </Row>
         </Container>

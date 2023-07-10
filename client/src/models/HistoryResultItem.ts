@@ -6,6 +6,10 @@ export type HistoryResultItem = {
         type: string; // Type of the entity
         value: string; // Value of the entity
     };
+    thumbnail: {
+        type: string; // Type of the entity
+        value: string; // Value of the entity
+    };
     label: {
         type: string; // Type of the label
         "xml:lang": string; // Language of the label

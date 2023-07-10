@@ -10,7 +10,7 @@ import { ClassService, denyRequest } from '../service/classService';
 import { Class } from '../models/types/Class';
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { Request } from '../models/types/Request';
-import { MdDeleteForever, MdSlideshow } from 'react-icons/md';
+import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
 import { RxCheck, RxCross2 } from 'react-icons/rx';
 
 import '../styles/style.css';
@@ -146,8 +146,8 @@ const Classes: React.FC = () => {
                   </div>
                   <div className='my-stack-reverse'>
                     <Button
-                    size="sm"
-                    className='rounded-circle'
+                      size="sm"
+                      className='rounded-circle'
                       onClick={() => deleteClass(item)}
                       variant="outline-danger"
                     >
@@ -155,8 +155,8 @@ const Classes: React.FC = () => {
                     </Button>
 
                     <Button
-                    size="sm"
-                    className='rounded-circle'
+                      size="sm"
+                      className='rounded-circle'
                       onClick={() => showClass(item)}
                       variant="outline-success"
                     >
@@ -186,7 +186,7 @@ const Classes: React.FC = () => {
                   onClick={sendRequest}
                   variant="success"
                   size="sm"
-              >
+                >
                   Request
                 </Button>
                 <Button
@@ -198,61 +198,54 @@ const Classes: React.FC = () => {
                 </Button>
               </Stack> :
               <Stack direction="horizontal" gap={1}>
-                <Button onClick={handleShow} variant="primary">Create new class</Button>
-                <Button onClick={() => { setRequest(true) }} variant="success">Add class</Button>
+                <Button size='sm' onClick={handleShow} variant="primary">Create new class</Button>
+                <Button size='sm' onClick={() => { setRequest(true) }} variant="success">Add class</Button>
               </Stack>
             }
           </Row>
           <Row>
             <Col sm="12">
-              <Card className="class-card">
-                <Container>
-                  <Row>
-                    <h4>Requests</h4>
-                    {requests.length === 0 &&
-                      <p>No requests already</p>
-                    }
+              <Container className='class-container'>
+                <Row>
+                  <h4>Requests</h4>
+                  {requests.length === 0 &&
+                    <p>No requests already</p>
+                  }
 
-                  </Row>
-                  {requests.map((item, index) => {
-                    return (
-                      <Row key={index}>
-                        <Col sm={9}>{item.requestor}</Col>
-                        <Col sm={3}>
+                </Row>
 
-                          <Stack direction="horizontal" gap={2}>
-                            <div>
-                              <Button
-                                size="sm"
-                                className='rounded-circle'
-                                name={item.requestor}
-                                onClick={() => allowRequest(item)}
-                                variant="success"
-                              >
-                                <RxCheck></RxCheck>
-                              </Button>
-                              <br />
-                            </div>
-                            <div>
-                              <Button
-                                size="sm"
-                                className='rounded-circle'
-                                name={item.requestor}
-                                onClick={denyAccess}
-                                variant="outline-danger"
-                              >
-                                <RxCross2></RxCross2>
-                              </Button>
-                              <br />
-                            </div>
-
-                          </Stack>
-                        </Col>
-                      </Row>
-                    )
-                  })}
-                </Container>
-              </Card>
+                {requests.map((item, index) => {
+                  return (
+                    <Row key={index}>
+                      <div className='aaa'>
+                        <div className='my-stack'>
+                          {item.requestor}
+                        </div>
+                        <div className='my-stack-reverse'>
+                          <Button
+                            size="sm"
+                            className='rounded-circle'
+                            name={item.requestor}
+                            onClick={() => allowRequest(item)}
+                            variant="success"
+                          >
+                            <RxCheck></RxCheck>
+                          </Button>
+                          <Button
+                            size="sm"
+                            className='rounded-circle'
+                            name={item.requestor}
+                            onClick={denyAccess}
+                            variant="outline-danger"
+                          >
+                            <RxCross2></RxCross2>
+                          </Button>
+                        </div>
+                      </div>
+                    </Row>
+                  )
+                })}
+              </Container>
             </Col>
           </Row>
         </Container>

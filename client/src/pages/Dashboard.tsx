@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
 
   function showMindMap(mindMap: MindMap): void {
     const url = `${sessionContext.sessionInfo.podUrl}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`
-    navigate('/visualisation/', {
+    navigate('/editor/', {
       state: {
         id: url
       }
@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
   async function createNew() {
     const mindMapUrl = await mindMapService.createNewMindMap(name, sessionContext.sessionInfo)
     if (mindMapUrl) {
-      navigate('/visualisation/', {
+      navigate('/editor/', {
         state: {
           id: mindMapUrl
         }

@@ -57,7 +57,7 @@ const App: React.FC = () => {
             return (
               <Routes>
                 <Route path="/" element={<Dashboard />} />
-                <Route path="/visualisation" element={<Editor />} />
+                <Route path="/editor" element={<Editor />} />
                 <Route path="/classes" element={<Classes />} />
                 <Route path="/class" element={<Class />} />
                 <Route path="/browser" element={<Browser />} />

@@ -90,10 +90,11 @@ export async function getDates(list: Node[]): Promise<HistoryResultItem[] | unde
     const sparqlQuery = `
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
   
-      SELECT DISTINCT ?entity ?label ?propertyLabel ?value ?abstract
+      SELECT DISTINCT ?entity ?label ?propertyLabel ?value ?abstract ?thumbnail
       WHERE {
           VALUES ?entity { ${query}}
           ?entity ?property ?value .
+          ?entity dbo:thumbnail ?thumbnail .
           FILTER( contains( str(?property), "Date" ) || contains( str(?property), "date" ) || datatype(?value) = xsd:date)
           OPTIONAL { ?property rdfs:label ?propertyLabel. }
           FILTER (lang(?propertyLabel) = 'en')
