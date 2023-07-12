@@ -569,6 +569,6 @@ tr:nth-child(even) {
 }
 
 .timeline-card-text {
-    height: 100%;
+    max-height: calc(65dvh - 150px);
     overflow: auto;
 }

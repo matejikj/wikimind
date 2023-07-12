@@ -206,14 +206,7 @@ const HistoryVisualisation: React.FC<{
                         <Card.Img className="carousel-img" variant="top" src={item.thumbnail.value} />
                         <Card.Body>
                           <Card.Title>{item.label.value}</Card.Title>
-                          <div 
-                          ref={elementRef} 
-                          style={{
-                          height:
-                            // @ts-ignore
-                            elementRef.current?.offsetHeight,
-                          overflow: 'auto'
-                        }}>
+                          <div className="timeline-card-text" >
                             {item.abstract.value}
                           </div>
                         </Card.Body>
