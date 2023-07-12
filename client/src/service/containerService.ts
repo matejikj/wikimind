@@ -107,7 +107,6 @@ async function checkProfileContainer(podUrl: string, sessionId: string, accessCo
     const blankProfile: Profile = {
       name: '',
       surname: '',
-      profileImage: '',
       webId: sessionId,
     };
     const profileLDO = new ProfileLDO(profileDefinition).create(blankProfile);

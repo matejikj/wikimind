@@ -36,6 +36,8 @@ import HistoryVisualisation from "../visualisation/HistoryVisualisation";
 import { groupDates } from "../visualisation/utiils";
 import { HistoryResultItem } from "../models/HistoryResultItem";
 
+const WIKILINK = "http://dbpedia.org/ontology/wikiPageWikiLink"
+
 const Editor: React.FC = () => {
   const d3Container = useRef(null);
   const navigate = useNavigate();
@@ -270,7 +272,13 @@ const Editor: React.FC = () => {
     if (dataset) {
       getDates(dataset.nodes).then((res) => {
         if (res) {
+          res = res
+            .filter((resultItem) => !isNaN(Date.parse(resultItem.value.value)))
+            .sort((a, b) => Date.parse(a.value.value) - Date.parse(b.value.value))
           setHistoryDataset(res)
+          dataset.nodes.map((item) => {
+            return item.title + ' ' + item.isInTest
+          })
           setCreatorVisible(false);
           setDatesView(true)
         }
@@ -304,10 +312,27 @@ const Editor: React.FC = () => {
   function examSwitch() {
     if (clickedNode) {
       const newIsInTest = !clickedNode.isInTest
-      setClickedNode({
-        ...clickedNode,
-        isInTest: newIsInTest
-      });
+      const testNode = dataset?.nodes.find((item) => item.id === clickedNode.id)
+      if (testNode) {
+        testNode.isInTest = newIsInTest
+        setClickedNode({
+          ...clickedNode,
+          isInTest: newIsInTest
+        });
+      }
+    }
+  }
+
+  function removeNode() {
+    if (clickedNode) {
+      
+      const filteredNodes = dataset?.nodes.filter((item) => item.id !== clickedNode.id)
+      const filteredConnections = dataset?.links.filter((item) => item.from !== clickedNode.id && item.to !== clickedNode.id)
+      if (filteredNodes && filteredConnections && dataset) {
+        const updatedDataset: MindMapDataset = { ...dataset, nodes: filteredNodes, links: filteredConnections };
+        setDataset(updatedDataset);
+      }
+      setClickedNode(undefined)
     }
   }
 
@@ -372,7 +397,7 @@ const Editor: React.FC = () => {
                   <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.ADD_CONNECTION) }}><BsNodePlus></BsNodePlus></Button>
                   <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setModalNodeColor(true) }}><MdColorLens></MdColorLens></Button>
                   <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdOutlineCancel></MdOutlineCancel></Button>
-                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><BiTrash></BiTrash></Button>
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { removeNode() }}><BiTrash></BiTrash></Button>
                 </Stack>
               }
               {(clickedNode === undefined) &&
@@ -455,8 +480,8 @@ const Editor: React.FC = () => {
 
                 {recommends.map((item, index) => {
                   return (
-                    <div key={index} className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'recommends-div' : 'recommends-div-category'}>
-                      <div className={item.type.value === 'http://dbpedia.org/ontology/wikiPageWikiLink' ? 'recommends-inline-div' : 'recommends-inline-div-category'}>
+                    <div key={index} className={item.type.value === WIKILINK ? 'recommends-div' : 'recommends-div-category'}>
+                      <div className={item.type.value === WIKILINK ? 'recommends-inline-div' : 'recommends-inline-div-category'}>
 
                         <Stack direction="horizontal" gap={0}>
                           <Button onClick={() => { findWikiLinks(item); }} className="recommend-btn" size="sm">

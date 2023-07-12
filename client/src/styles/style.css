@@ -533,7 +533,7 @@ tr:nth-child(even) {
     height: calc(100dvh - 74px);
 }
 
-.timeline-card {
+/* .timeline-card {
     border-radius: 5px;
     border: 1px solid #fafafa;
     padding: 5px;
@@ -542,22 +542,33 @@ tr:nth-child(even) {
 }
 
 .timeline-img-container {
-    max-height: 50%;
+    max-height: 30%;
     text-align: center;
-}
+} */
 
-.timeline-img {
+/* .timeline-img {
     height: auto;
 }
 
 .timeline-info-container {
-    height: 50%;
     margin-top: 10px;
     padding-top: 10px;
 
 }
 
 .timeline-info-abstract {
-    max-height: 80%;
+    height: 80%;
+    overflow: auto;
+} */
+
+.carousel-img {
+    height: 35dvh;
+    width: fit-content !important;
+    margin: auto;
+    padding: 5px;
+}
+
+.timeline-card-text {
+    height: 100%;
     overflow: auto;
 }

@@ -1,10 +1,9 @@
 import { HistoryResultItem } from "../models/HistoryResultItem";
 
 export enum ChoiceSelection {
-    centuries,
-    decades,
-    years,
-    yearsmonths
+    Century,
+    Decade,
+    Year
 }
 
 function fillMissedCenturies(groupedDates: { [key: string]: HistoryResultItem[] }): { [key: string]: HistoryResultItem[] } {
@@ -42,38 +41,10 @@ function fillMissingYears(groupedDates: { [key: string]: HistoryResultItem[] }):
     return filledGroupedDates;
 }
 
-function fillMissedYearsMonths(groupedDates: { [key: string]: HistoryResultItem[] }): { [key: string]: HistoryResultItem[] } {
-    // Helper function to convert a Date object to a year-month string
-    function formatYearMonth(date: Date): string {
-        const year = date.getUTCFullYear();
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-        return `${year}-${month}`;
-    }
-
-    const yearMonths = Object.keys(groupedDates).filter((value) => !isNaN(Date.parse(value)));
-
-    // Find the minimum and maximum year-months
-    const minYearMonth = Math.min(...yearMonths.map(yearMonth => new Date(yearMonth).getTime()));
-    const maxYearMonth = Math.max(...yearMonths.map(yearMonth => new Date(yearMonth).getTime()));
-
-    // Create a new object to store the filled-in year-months
-    const filledGroupedDates: { [key: string]: HistoryResultItem[] } = {};
-
-    // Iterate over the year-months range and fill in any missing year-months
-    const currentYearMonth = new Date(minYearMonth);
-    while (currentYearMonth.getTime() <= maxYearMonth) {
-        const yearMonth = formatYearMonth(currentYearMonth);
-        filledGroupedDates[yearMonth] = groupedDates[yearMonth] || [];
-        currentYearMonth.setMonth(currentYearMonth.getMonth() + 1);
-    }
-
-    return filledGroupedDates;
-}
-
 function fillMissingDecades(groupedDates: { [key: string]: HistoryResultItem[] }): { [key: string]: HistoryResultItem[] } {
     const filledGroupedDates: { [key: string]: HistoryResultItem[] } = {};
 
-    
+
     const decades = Object.keys(groupedDates).filter((value) => !isNaN(Number(value))).map((decade) => parseInt(decade));
 
     const minDecade = Math.min(...decades);
@@ -102,13 +73,6 @@ export function groupDates(data: HistoryResultItem[], choice: ChoiceSelection): 
         return Math.floor(date.getFullYear() / 10) * 10;
     }
 
-    // Helper function to get the year and month of a date
-    function getYearMonth(date: Date): string {
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1; // Month is zero-based
-        return `${year}-${month < 10 ? '0' + month : month}`;
-    }
-
     // Group the dates based on the chosen option
     data.forEach((item) => {
         const date = new Date(item.value.value);
@@ -116,17 +80,14 @@ export function groupDates(data: HistoryResultItem[], choice: ChoiceSelection): 
 
         let key: string;
         switch (choice) {
-            case ChoiceSelection.centuries:
+            case ChoiceSelection.Century:
                 key = `${getCentury(date)}`;
                 break;
-            case ChoiceSelection.decades:
+            case ChoiceSelection.Decade:
                 key = `${getDecade(date)}`;
                 break;
-            case ChoiceSelection.years:
+            case ChoiceSelection.Year:
                 key = date.getFullYear().toString();
-                break;
-            case ChoiceSelection.yearsmonths:
-                key = getYearMonth(date);
                 break;
             default:
                 key = 'Invalid grouping option';
@@ -138,17 +99,14 @@ export function groupDates(data: HistoryResultItem[], choice: ChoiceSelection): 
     }, {});
 
     switch (choice) {
-        case ChoiceSelection.centuries:
+        case ChoiceSelection.Century:
             groupedData = fillMissedCenturies(groupedData)
             break;
-        case ChoiceSelection.decades:
+        case ChoiceSelection.Decade:
             groupedData = fillMissingDecades(groupedData)
             break;
-        case ChoiceSelection.years:
+        case ChoiceSelection.Year:
             groupedData = fillMissingYears(groupedData)
-            break;
-        case ChoiceSelection.yearsmonths:
-            groupedData = fillMissedYearsMonths(groupedData)
             break;
     }
 

@@ -16,10 +16,5 @@ export type Profile = {
      * The surname or last name of the profile.
      */
     surname: string;
-    
-    /**
-     * The URL of the profile image.
-     */
-    profileImage: string;
   }
   
