@@ -18,14 +18,13 @@ import { RDF } from "@inrupt/vocab-common-rdf";
 import examDefinition from "../definitions/exam.json"
 import chatDefinition from "../definitions/chat.json"
 import classRequestDefinition from "../definitions/request.json"
-import classRequestGrantDefinition from "../definitions/grant.json"
 import profileDefinition from "../definitions/profile.json"
 import classDefinition from "../definitions/class.json"
 import mindMapDefinition from "../definitions/mindMap.json"
 import datasetLinkDefinition from "../definitions/link.json"
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { LDO } from "../models/LDO";
-import { CLASSES, CONTACTS, MESSAGES, PROFILE, REQUESTS, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl } from "./containerService";
+import { CLASSES, CHATS, PROFILE, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl, REQUESTS, MINDMAPS } from "./containerService";
 import { generate_uuidv4 } from "./utils";
 import { Class } from "../models/types/Class";
 import { ClassLDO } from "../models/things/ClassLDO";
@@ -43,8 +42,6 @@ import { Request } from "../models/types/Request";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 import { initializeAcl } from "./accessService";
 import { RequestLDO } from "../models/things/RequestLDO";
-import { Grant } from "../models/types/Grant";
-import { GrantLDO } from "../models/things/GrantLDO";
 import { ChatLDO } from "../models/things/ChatLDO";
 import { MindMap } from "../models/types/MindMap";
 import { MindMapLDO } from "../models/things/MindMapLDO";
@@ -53,9 +50,9 @@ import { ClassRepository } from "../repository/classRepository";
 import { LinkRepository } from "../repository/linksRepository";
 import { MindMapRepository } from "../repository/mindMapRepository";
 import { RequestRepository } from "../repository/requestRepository";
-import { GrantRepository } from "../repository/grantRepository";
 import { Chat } from "../models/types/Chat";
 import { ChatRepository } from "../repository/chatRepository";
+import { RequestType } from "../models/types/RequestType";
 
 
 
@@ -65,7 +62,6 @@ export class ClassService {
     private linkRepository: LinkRepository;
     private mindMapRepository: MindMapRepository;
     private requestRepository: RequestRepository;
-    private grantRepository: GrantRepository;
     private chatRepository: ChatRepository;
 
     constructor() {
@@ -74,7 +70,6 @@ export class ClassService {
         this.linkRepository = new LinkRepository();
         this.mindMapRepository = new MindMapRepository();
         this.requestRepository = new RequestRepository();
-        this.grantRepository = new GrantRepository();
         this.chatRepository = new ChatRepository();
     }
 
@@ -162,63 +157,137 @@ export class ClassService {
     }
 
     async getRequests(userSession: UserSession) {
-        const res = await this.grantRepository.getGrantsAndRequests(
-            userSession.podUrl + WIKIMIND + SLASH + CLASSES + SLASH + REQUESTS + TTLFILETYPE)
 
-        await Promise.all(res.grants.map(async (item) => {
-            const datasetLink: Link = {
-                id: generate_uuidv4(),
-                url: item.class,
-                linkType: LinkType.CLASS_LINK
+        try {
+            const requestUrl = userSession.podUrl + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
+
+            const res = await this.requestRepository.getRequests(requestUrl)
+
+            if (res) {
+                await Promise.all(res.map(async (item) => {
+                    if (item.requestType === RequestType.ADD_CLASS) {
+                        const classDatasetUrl = userSession.podUrl + WIKIMIND + SLASH + CLASSES + SLASH + CLASSES + TTLFILETYPE
+
+                        const datasetLink: Link = {
+                            id: generate_uuidv4(),
+                            url: item.subject,
+                            linkType: LinkType.CLASS_LINK
+                        }
+                        await this.linkRepository.createLink(classDatasetUrl, datasetLink)
+                    }
+                    if (item.requestType === RequestType.ADD_CONTACT) {
+                        const requestDatasetUrl = userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + CHATS + TTLFILETYPE
+
+                        const datasetLink: Link = {
+                            id: generate_uuidv4(),
+                            url: item.subject,
+                            linkType: LinkType.CHAT_LINK
+                        }
+                        await this.linkRepository.createLink(requestDatasetUrl, datasetLink)
+                    }
+                    if (item.requestType === RequestType.REMOVE_CLASS) {
+                        const classLinksUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${CLASSES}${TTLFILETYPE}`;
+
+                        const classLinks = await this.linkRepository.getLinksList(classLinksUrl);
+                        const removedClass = classLinks?.find((item) => item.url === item.url)
+                        if (removedClass) {
+                            await this.linkRepository.removeLink(classLinksUrl, removedClass)
+
+                        }
+
+                    }
+                    if (item.requestType !== RequestType.CLASS_REQUEST) {
+                        await this.requestRepository.removeRequest(requestUrl, item)
+                    }
+                }))
+                return res.filter((item) => item.requestType === RequestType.CLASS_REQUEST)
             }
-            this.linkRepository.createLink(
-                userSession.podUrl + WIKIMIND + SLASH + CLASSES + SLASH + CLASSES + TTLFILETYPE, datasetLink)
-            const classLDO = new LinkLDO(datasetLinkDefinition).create(datasetLink)
-        }))
-
-        return res.requests
+        } catch {
+            return undefined
+        }
     }
+
+    async removeClass(userSession: UserSession, classThing: Class) {
+        const classUrl = userSession.podUrl + WIKIMIND + SLASH + CLASSES + SLASH + classThing.id + TTLFILETYPE
+        const classLinksUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${CLASSES}${TTLFILETYPE}`;
+        const classLinks = await this.linkRepository.getLinksList(classLinksUrl);
+        const removedClass = classLinks?.find((item) => item.url === classUrl)
+
+        try {
+            if (removedClass) {
+                const classLinks = await this.classRepository.getClassLinks(classThing.storage)
+                const exams = await this.classRepository.getExams(classThing.storage)
+                const profileLinks = classLinks.filter((link) => link.linkType === LinkType.PROFILE_LINK)
+                const mindMapLinks = classLinks.filter((link) => link.linkType === LinkType.GRAPH_LINK)
+                const profiles: Profile[] = []
+                await Promise.all(mindMapLinks.map(async (item) => {
+                    const mindMap = await this.mindMapRepository.getMindMap(item.url)
+                    if (mindMap) {
+                        await this.mindMapRepository.removeMindMap(mindMap.storage)
+                        const url = `${userSession.podUrl}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
+                        await this.mindMapRepository.removeMindMap(url)
+                    }
+                }));
+                await this.linkRepository.removeLink(classLinksUrl, removedClass)
+                profileLinks.map(async (item) => {
+                    const profileUrl = `${item.url}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
+                    const profile = await this.profileRepository.getProfile(profileUrl);
+                    if (profile) {
+                        const grant: Request = {
+                            id: generate_uuidv4(),
+                            subject: classUrl,
+                            requestor: userSession.webId,
+                            requestType: RequestType.REMOVE_CLASS
+                        }
+                        const grantUrl = profile.ownerPod + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
+                        this.requestRepository.createRequest(grantUrl, grant)
+                    }
+                });
+                await this.mindMapRepository.removeMindMap(classThing.storage)
+                const url = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${classThing.id}${TTLFILETYPE}`;
+                await this.mindMapRepository.removeMindMap(url)
+
+                return true;
+            }
+            return false;
+        }
+        catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+
 
     async requestClass(userSession: UserSession, classUri: string) {
         const paramString = classUri.split('?')[1];
         const webId = classUri.split('?')[0];
         const urlParams = new URLSearchParams(paramString);
         const classId = (urlParams.get("classId"))
-
         const podUrls = await getPodUrl(webId)
-
         if (podUrls) {
-
-            const agentAccess = universalAccess.setAgentAccess(
-                userSession.podUrl + WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE,
-                webId,
-                { append: true, read: true, write: false },
-                { fetch: fetch }
-            )
-
-            const newRequst = {
+            const newRequst: Request = {
                 id: generate_uuidv4(),
-                class: podUrls[0] + WIKIMIND + SLASH + CLASSES + SLASH + classId + TTLFILETYPE,
+                subject: podUrls[0] + WIKIMIND + SLASH + CLASSES + SLASH + classId + TTLFILETYPE,
+                requestType: RequestType.CLASS_REQUEST,
                 requestor: userSession.webId
             }
-            const requestUrl = podUrls[0] + WIKIMIND + SLASH + CLASSES + SLASH + REQUESTS + TTLFILETYPE
-
+            const requestUrl = podUrls[0] + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
             const createRequestRes = this.requestRepository.createRequest(requestUrl, newRequst)
-            await Promise.all([agentAccess, createRequestRes]);
-
+            await Promise.all([createRequestRes]);
         }
     }
 
     async allowClassAccess(classRequest: Request, userSession: UserSession): Promise<void> {
         const messageDatasetId = generate_uuidv4();
-        const messageDatasetUrl = userSession.podUrl + WIKIMIND + SLASH + MESSAGES + SLASH + messageDatasetId + TTLFILETYPE;
-        const messageStorageUrl = userSession.podUrl + WIKIMIND + SLASH + MESSAGES + SLASH + generate_uuidv4() + TTLFILETYPE;
+        const messageDatasetUrl = userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + messageDatasetId + TTLFILETYPE;
+        const messageStorageUrl = userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + generate_uuidv4() + TTLFILETYPE;
 
         try {
             const podUrls = await getPodUrl(classRequest.requestor);
 
             if (podUrls !== null) {
-                const classThing = await this.classRepository.getClass(classRequest.class)
+
+                const classThing = await this.classRepository.getClass(classRequest.subject)
                 if (classThing) {
                     const datasetLink: Link = {
                         id: generate_uuidv4(),
@@ -228,7 +297,7 @@ export class ClassService {
                     const saveLinkForStudent = this.linkRepository.createLink(classThing.storage, datasetLink)
 
                     const setAgentAccessPromises = [
-                        universalAccess.setAgentAccess(classRequest.class, classRequest.requestor, {
+                        universalAccess.setAgentAccess(classRequest.subject, classRequest.requestor, {
                             append: true,
                             read: true,
                             write: false,
@@ -245,12 +314,14 @@ export class ClassService {
                     ];
 
                     const grantRequestPromise = (async () => {
-                        const grant: Grant = {
+                        const grant: Request = {
                             id: generate_uuidv4(),
-                            class: classRequest.class,
+                            subject: classRequest.subject,
+                            requestor: userSession.webId,
+                            requestType: RequestType.ADD_CLASS
                         }
-                        const grantUrl = podUrls[0] + WIKIMIND + SLASH + CLASSES + SLASH + REQUESTS + TTLFILETYPE
-                        this.grantRepository.createGrant(grantUrl, grant)
+                        const grantUrl = podUrls[0] + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
+                        this.requestRepository.createRequest(grantUrl, grant)
                     })();
 
                     const createChatPromise = (async () => {
@@ -259,7 +330,7 @@ export class ClassService {
                             host: userSession.webId,
                             ownerPod: userSession.podUrl,
                             guest: classRequest.requestor,
-                            modified: '19.6.2023',
+                            modified: Date.now().toString(),
                             lastMessage: '',
                             storage: messageStorageUrl,
                         }
@@ -299,15 +370,27 @@ export class ClassService {
                         }
 
                         await this.linkRepository.createLink(
-                            userSession.podUrl + WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE, newChatLink)
+                            userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + CHATS + TTLFILETYPE, newChatLink)
 
-                        await this.linkRepository.createLink(
-                            podUrls[0] + WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE, newChatLink)
+                        const contactRequest: Request = {
+                            id: generate_uuidv4(),
+                            subject: messageDatasetUrl,
+                            requestor: userSession.webId,
+                            requestType: RequestType.ADD_CONTACT
+                        }
+                        const grantUrl = podUrls[0] + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
+                        await this.requestRepository.createRequest(grantUrl, contactRequest)
+
+                        // fdsfad
+                        // await this.linkRepository.createLink(
+                        //     podUrls[0] + WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE, newChatLink)
 
                     })();
                     await Promise.all([...setAgentAccessPromises, saveLinkForStudent, grantRequestPromise, createChatPromise, createChatLinkPromise]);
                 }
             }
+            await this.requestRepository.removeRequest(
+                userSession.podUrl + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE, classRequest)
         }
         catch (error) {
             console.error(error);

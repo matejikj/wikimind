@@ -10,7 +10,7 @@
         "webId": 
             "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#webId"
         ,
-        "profileImage": 
+        "ownerPod": 
             "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profileImage"
         
     }

@@ -19,6 +19,7 @@ export class ProfileLDO extends BaseLDO<Profile> implements CRUDLDO<Profile> {
             name: getStringNoLocale(thing, this.rdf.properties.name)!,
             surname: getStringNoLocale(thing, this.rdf.properties.surname)!,
             webId: getStringNoLocale(thing, this.rdf.properties.webId)!,
+            ownerPod: getStringNoLocale(thing, this.rdf.properties.ownerPod)!,
         };
     }
 
@@ -33,6 +34,7 @@ export class ProfileLDO extends BaseLDO<Profile> implements CRUDLDO<Profile> {
             .addStringNoLocale(this.rdf.properties.name, object.name)
             .addStringNoLocale(this.rdf.properties.webId, object.webId)
             .addStringNoLocale(this.rdf.properties.surname, object.surname)
+            .addStringNoLocale(this.rdf.properties.ownerPod, object.ownerPod)
             .build();
         return newThing;
     }

@@ -191,9 +191,7 @@ const Class: React.FC = () => {
                   )
                 })}
                 <Button onClick={handleCreate} variant="outline-success">Create new</Button>
-                <Button onClick={handleAddExisting} variant="outline-success">Add existing</Button>
               </Container>
-
             </Col>
             <Col sm="12">
               <Container className="class-container">

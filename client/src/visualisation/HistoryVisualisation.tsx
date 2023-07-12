@@ -206,6 +206,9 @@ const HistoryVisualisation: React.FC<{
                         <Card.Img className="carousel-img" variant="top" src={item.thumbnail.value} />
                         <Card.Body>
                           <Card.Title>{item.label.value}</Card.Title>
+                          <Card.Subtitle>
+                            {item.propertyLabel.value}: {item.value.value}
+                          </Card.Subtitle>
                           <div className="timeline-card-text" >
                             {item.abstract.value}
                           </div>

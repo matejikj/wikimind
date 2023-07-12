@@ -6,7 +6,8 @@ import {
     setThing,
     getThingAll,
     getUrlAll,
-    createSolidDataset
+    createSolidDataset,
+    deleteSolidDataset
 } from "@inrupt/solid-client";
 import profileDefinition from "../definitions/profile.json";
 import mindMapDefinition from "../definitions/mindMap.json";
@@ -62,6 +63,10 @@ export class ClassRepository {
         let classDataset = createSolidDataset();
         classDataset = setThing(classDataset, this.classLDO.create(classObject));
         await saveSolidDatasetAt(classUrl, classDataset, { fetch });
+    }
+
+    async removeClass(classUrl: string): Promise<void> {
+        await deleteSolidDataset(classUrl, { fetch: fetch })
     }
 
     async updateMindMap(classUrl: string, mindMap: MindMap): Promise<Class | undefined> {

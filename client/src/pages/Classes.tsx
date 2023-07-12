@@ -27,6 +27,7 @@ const Classes: React.FC = () => {
   const [request, setRequest] = useState(false);
   const [requestUrl, setRequestUrl] = useState("");
   const [name, setName] = useState("");
+  const [waiting, setWaiting] = useState(false);
   const sessionContext = useContext(SessionContext)
   const [requests, setRequests] = useState<Request[]>([]);
 
@@ -39,27 +40,21 @@ const Classes: React.FC = () => {
 
   const classesService = new ClassService();
 
-  async function fetchClassesList(): Promise<void> {
-    try {
-      const classes = await classesService.getClassList(sessionContext.sessionInfo.podUrl);
-      classes && setClassList(classes)
-    } catch (error) {
-      // Handle the error, e.g., display an error message to the user or perform fallback actions
-    }
-  }
-
-  async function fetchRequests(): Promise<void> {
+  async function fetchData(): Promise<void> {
     try {
       const requests = await classesService.getRequests(sessionContext.sessionInfo);
       requests && setRequests(requests)
+      const classes = await classesService.getClassList(sessionContext.sessionInfo.podUrl);
+      classes && setClassList(classes)
+
     } catch (error) {
       // Handle the error, e.g., display an error message to the user or perform fallback actions
     }
   }
 
   useEffect(() => {
-    fetchClassesList();
-    fetchRequests();
+    fetchData();
+    console.log(sessionContext.sessionInfo.webId)
   }, []);
 
   const showClass = (e: Class) => {
@@ -71,14 +66,30 @@ const Classes: React.FC = () => {
     })
   }
 
-  const deleteClass = (e: any) => {
-    console.log(e.target.name)
+  async function deleteClass(classThing: Class) {
+    if (classThing) {
+      const removePromise = await classesService.removeClass(sessionContext.sessionInfo, classThing)
+      if (removePromise) {
+        setClassList((classList) =>
+          classList.filter((item) => item.id !== classThing.id)
+        )
+        // setShowMindMapDeleteModal(false)
+      }
+    }
+    await classesService.removeClass(sessionContext.sessionInfo, classThing)
+
   }
 
-  const allowRequest = (request: Request) => {
+  async function allowRequest(request: Request) {
     if (request !== undefined) {
-      classesService.allowClassAccess(request, sessionContext.sessionInfo)
+      setWaiting(true)
+      await classesService.allowClassAccess(request, sessionContext.sessionInfo)
+      setWaiting(false)
+      setRequests((requests) =>
+        requests.filter((item) => item.id !== request.id)
+      )
     }
+
   }
 
   const denyAccess = (e: any) => {
@@ -89,8 +100,11 @@ const Classes: React.FC = () => {
     }
   }
 
-  const sendRequest = (e: any) => {
-    classesService.requestClass(sessionContext.sessionInfo, requestUrl)
+  async function sendRequest() {
+    await classesService.requestClass(sessionContext.sessionInfo, requestUrl)
+    setRequestUrl('')
+    setRequest(false)
+
   }
 
   async function createNew(e: any) {
@@ -145,14 +159,17 @@ const Classes: React.FC = () => {
                     {item.name}
                   </div>
                   <div className='my-stack-reverse'>
-                    <Button
-                      size="sm"
-                      className='rounded-circle'
-                      onClick={() => deleteClass(item)}
-                      variant="outline-danger"
-                    >
-                      <MdDeleteForever></MdDeleteForever>
-                    </Button>
+                    {item.teacher === sessionContext.sessionInfo.webId &&
+                      <Button
+                        size="sm"
+                        className='rounded-circle'
+                        onClick={() => deleteClass(item)}
+                        variant="outline-danger"
+                      >
+                        <MdDeleteForever></MdDeleteForever>
+                      </Button>
+
+                    }
 
                     <Button
                       size="sm"
@@ -222,6 +239,7 @@ const Classes: React.FC = () => {
                           {item.requestor}
                         </div>
                         <div className='my-stack-reverse'>
+                          
                           <Button
                             size="sm"
                             className='rounded-circle'

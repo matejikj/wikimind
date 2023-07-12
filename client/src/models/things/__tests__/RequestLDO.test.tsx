@@ -16,7 +16,7 @@ describe("RequestLDO", () => {
       "properties": {
         "requestor": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#requestor",
         "id": "http://schema.org/identifier",
-        "class": "http://schema.org/url"
+        "subject": "http://schema.org/url"
       }
     });
   });
@@ -43,7 +43,7 @@ describe("RequestLDO", () => {
   test("create should return ThingLocal representing Request object", () => {
     const mockRequest: Request = {
       id: "request123",
-      class: "https://example.com",
+      subject: "https://example.com",
       requestor: "user123"
     };
 

@@ -4,10 +4,13 @@
         "requestor": 
             "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#requestor"
         ,
+        "requestType": 
+            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#requestType"
+        ,
         "id": 
             "http://schema.org/identifier"
         ,
-        "class": 
+        "subject": 
             "http://schema.org/url"
         
     }

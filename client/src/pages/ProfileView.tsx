@@ -11,6 +11,17 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Profile } from '../models/types/Profile';
 import { ProfileService } from "../service/profileService";
+import {
+  getSolidDataset,
+  getThing,
+  saveSolidDatasetAt,
+  setThing,
+  getThingAll,
+  deleteSolidDataset,
+  getUrlAll,
+  createSolidDataset
+} from "@inrupt/solid-client";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 
 const ProfileView: React.FC = () => {
   const sessionContext = useContext(SessionContext)
@@ -44,11 +55,19 @@ const ProfileView: React.FC = () => {
     key && value && profile && setProfile({ ...profile, [key]: value })
   }
 
+  async function aaa() {
+    const myDataset = await getSolidDataset("https://matejikj.datapod.igrant.io/WikiMind/profile/profdsfdfile.ttl", { fetch });
+    console.log(myDataset)
+  }
+
   return (
     <div className="App">
       <Sidenav />
       <main>
         <Container className='center-container'>
+          <Row>
+            <Button onClick={() => aaa()}>fdsfsd</Button>
+          </Row>
           <Row>
             <Col sm={12}>
               <Card border="success" style={{ width: '18rem' }}>

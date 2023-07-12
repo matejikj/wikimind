@@ -18,7 +18,7 @@ import messageDefinition from "../definitions/message.json"
 import mindMapDefinition from "../definitions/mindMap.json"
 import linkDefinition from "../definitions/link.json"
 import { LDO } from "../models/LDO";
-import { CONTACTS, MESSAGES, TTLFILETYPE, WIKIMIND, getPodUrl } from "./containerService";
+import { CHATS, TTLFILETYPE, WIKIMIND, getPodUrl } from "./containerService";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { LinkType } from "../models/types/LinkType";
 import { UserSession } from "../models/types/UserSession";
@@ -47,7 +47,7 @@ export class MessageService {
   async getChatList(podUrl: string): Promise<Chat[] | undefined> {
     try {
       const chats: Chat[] = []
-      const chatLinksUrl = `${podUrl}${WIKIMIND}/${MESSAGES}/${CONTACTS}${TTLFILETYPE}`;
+      const chatLinksUrl = `${podUrl}${WIKIMIND}/${CHATS}/${CHATS}${TTLFILETYPE}`;
       const chatLinks = await this.linkRepository.getLinksList(chatLinksUrl);
       await Promise.all(chatLinks.map(async (link) => {
         const chat = await this.chatRepository.getChat(link.url)
@@ -82,7 +82,7 @@ export class MessageService {
 
 export async function getMessages(userSession: UserSession) {
     const chats: Chat[] = []
-    const classesListUrl = `${userSession.podUrl}${WIKIMIND}/${MESSAGES}/${CONTACTS}${TTLFILETYPE}`;
+    const classesListUrl = `${userSession.podUrl}${WIKIMIND}/${CHATS}/${CHATS}${TTLFILETYPE}`;
   
     const myDataset = await getSolidDataset(
       classesListUrl,
@@ -160,7 +160,7 @@ export async function getChat(path: string) {
 
 
 export async function sendMessage(chat: Chat, message: Message) {
-  const url = `${chat.ownerPod}${WIKIMIND}/${MESSAGES}/${chat.storage}${TTLFILETYPE}`
+  const url = `${chat.ownerPod}${WIKIMIND}/${CHATS}/${chat.storage}${TTLFILETYPE}`
   let chatDataset = await getSolidDataset(
     chat.storage,
     { fetch: fetch }

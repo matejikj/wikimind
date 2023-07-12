@@ -12,7 +12,7 @@ import { BsFillSendFill } from 'react-icons/bs';
 import { ListItem } from '../models/ListItem';
 import '../styles/style.css';
 import { MindMap } from '../models/types/MindMap';
-import { MESSAGES, MINDMAPS, TTLFILETYPE, WIKIMIND } from '../service/containerService';
+import { CHATS, MINDMAPS, TTLFILETYPE, WIKIMIND } from '../service/containerService';
 import { Chat } from '../models/types/Chat';
 import { getMessages } from '../service/messageService';
 
@@ -31,7 +31,7 @@ const Messages: React.FC = () => {
 
 
   const showMindMap = (e: Chat) => {
-    const url = `${e.ownerPod}${WIKIMIND}/${MESSAGES}/${e.id}${TTLFILETYPE}`
+    const url = `${e.ownerPod}${WIKIMIND}/${CHATS}/${e.id}${TTLFILETYPE}`
     navigate('/chat/', {
       state: {
         id: url

@@ -29,8 +29,7 @@ export const CLASSES = 'classes'
 export const TTLFILETYPE = '.ttl'
 export const REQUESTS = 'requests'
 export const PROFILE = 'profile'
-export const MESSAGES = 'messages'
-export const CONTACTS = 'contacts'
+export const CHATS = 'chats'
 export const MRIZKA = "#"
 
 /**
@@ -90,9 +89,15 @@ async function checkClassesContainer(podUrl: string): Promise<void> {
       classesDataset,
       { fetch: fetch }
     );
+  }
+}
+
+async function checkRequestsContainer(podUrl: string): Promise<void> {
+  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + REQUESTS))) {
+    await createContainerAt(podUrl + WIKIMIND + SLASH + REQUESTS, { fetch: fetch });
     const reqeustsDataset = createSolidDataset();
     saveSolidDatasetAt(
-      podUrl + WIKIMIND + SLASH + CLASSES + SLASH + REQUESTS + TTLFILETYPE,
+      podUrl + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE,
       reqeustsDataset,
       { fetch: fetch }
     );
@@ -108,6 +113,7 @@ async function checkProfileContainer(podUrl: string, sessionId: string, accessCo
       name: '',
       surname: '',
       webId: sessionId,
+      ownerPod: podUrl,
     };
     const profileLDO = new ProfileLDO(profileDefinition).create(blankProfile);
     const savedProfileSolidDataset = setThing(profileSolidDataset, profileLDO);
@@ -132,13 +138,13 @@ async function checkProfileContainer(podUrl: string, sessionId: string, accessCo
   }
 }
 
-async function checkMessagesContainer(podUrl: string): Promise<void> {
-  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + MESSAGES))) {
-    await createContainerAt(podUrl + WIKIMIND + SLASH + MESSAGES, { fetch: fetch });
+async function checkChatsContainer(podUrl: string): Promise<void> {
+  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + CHATS))) {
+    await createContainerAt(podUrl + WIKIMIND + SLASH + CHATS, { fetch: fetch });
 
     const messagesDataset = await createSolidDataset();
     await saveSolidDatasetAt(
-      podUrl + WIKIMIND + SLASH + MESSAGES + SLASH+ CONTACTS + TTLFILETYPE,
+      podUrl + WIKIMIND + SLASH + CHATS + SLASH+ CHATS + TTLFILETYPE,
       messagesDataset,
       { fetch: fetch }
     );
@@ -161,23 +167,22 @@ export async function checkContainer(sessionId: string): Promise<{ podUrl: strin
 
     const accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl + WIKIMIND + SLASH);
 
-    await Promise.all([checkMindMapsContainer(podUrl), checkProfileContainer(podUrl, sessionId, accessControlPolicy), checkMessagesContainer(podUrl), checkClassesContainer(podUrl)]);
+    await Promise.all([
+      checkMindMapsContainer(podUrl),
+      checkProfileContainer(podUrl, sessionId, accessControlPolicy),
+      checkChatsContainer(podUrl),
+      checkClassesContainer(podUrl),
+      checkRequestsContainer(podUrl)
+    ]);
 
-    const contactsPath = WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE
-    const requestsPath = WIKIMIND + SLASH + CLASSES + SLASH + REQUESTS + TTLFILETYPE
+    const requestsPath = WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
     const profilePAth = WIKIMIND + SLASH + PROFILE + SLASH + PROFILE + TTLFILETYPE
 
     if (accessControlPolicy === AccessControlPolicy.WAC) {
       await initializeAcl(podUrl + requestsPath);
-      await initializeAcl(podUrl + contactsPath);
       await initializeAcl(podUrl + profilePAth);
     }
 
-    universalAccess.setPublicAccess(
-      podUrl + contactsPath,
-      { append: true, read: true, write: false },
-      { fetch: fetch }
-    )
     universalAccess.setPublicAccess(
       podUrl + requestsPath,
       { append: true, read: true, write: false },

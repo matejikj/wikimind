@@ -16,5 +16,10 @@ export type Profile = {
      * The surname or last name of the profile.
      */
     surname: string;
+
+    /**
+     * The surname or last name of the profile.
+     */
+    ownerPod: string;
   }
   
