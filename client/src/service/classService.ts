@@ -207,6 +207,63 @@ export class ClassService {
         }
     }
 
+    async addMindMap(userSession: UserSession, classThing: Class, name: string) {
+        const mindMapStorageUrl = `${userSession.podUrl}${WIKIMIND}/${MINDMAPS}/${generate_uuidv4()}${TTLFILETYPE}`;
+
+        const blankMindMap: MindMap = {
+            id: generate_uuidv4(),
+            name: name,
+            ownerPod: userSession.podUrl,
+            storage: mindMapStorageUrl,
+            created: Date.now().toString(),
+        };
+        const mindMapUrl = `${userSession.podUrl}${WIKIMIND}/${MINDMAPS}/${blankMindMap.id}${TTLFILETYPE}`;
+        const datasetLink: Link = {
+            id: generate_uuidv4(),
+            url: mindMapUrl,
+            linkType: LinkType.GRAPH_LINK
+        };
+        await this.mindMapRepository.createMindMap(mindMapUrl, blankMindMap)
+        this.linkRepository.createLink(classThing.storage, datasetLink)
+
+        let mindMapStorage = createSolidDataset();
+        await saveSolidDatasetAt(mindMapStorageUrl, mindMapStorage, { fetch });
+        if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
+            await initializeAcl(mindMapUrl);
+            await initializeAcl(mindMapStorageUrl);
+        }
+        const classLinks = await this.classRepository.getClassLinks(classThing.storage)
+        const profileLinks = classLinks.filter((link) => link.linkType === LinkType.PROFILE_LINK)
+
+        profileLinks.map(async (item) => {
+            const profileUrl = `${item.url}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
+            const profile = await this.profileRepository.getProfile(profileUrl);
+            if (profile) {
+
+                universalAccess.setAgentAccess(mindMapStorageUrl, profile.webId, {
+                    append: true,
+                    read: true,
+                    write: false,
+                },
+                    { fetch: fetch }
+                )
+                universalAccess.setAgentAccess(mindMapUrl, profile.webId, {
+                    append: true,
+                    read: true,
+                    write: false,
+                },
+                    { fetch: fetch }
+                )
+
+            }
+        });
+        return mindMapUrl;
+    }
+
+    async addMessage(userSession: UserSession, classThing: Class) {
+        
+    }
+
     async removeClass(userSession: UserSession, classThing: Class) {
         const classUrl = userSession.podUrl + WIKIMIND + SLASH + CLASSES + SLASH + classThing.id + TTLFILETYPE
         const classLinksUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${CLASSES}${TTLFILETYPE}`;

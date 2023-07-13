@@ -10,12 +10,11 @@ import {
 } from "@inrupt/solid-client-notifications";
 import { generate_uuidv4 } from "../service/utils";
 import { ClassService } from "../service/classService";
-import { Card, Col, Container, Row, Stack } from "react-bootstrap";
+import { Card, Col, Container, Form, Modal, Row, Stack } from "react-bootstrap";
 import '../styles/style.css';
 import { FcComments } from "react-icons/fc";
 import { Exam } from "../models/types/Exam";
 import { MindMap } from "../models/types/MindMap";
-import ModalClassAddMindMap from "../components/ModalClassAddMindMap";
 import { MdDeleteForever, MdDriveFileRenameOutline, MdLink, MdSlideshow } from "react-icons/md";
 import { CLASSES, MINDMAPS, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl } from "../service/containerService";
 
@@ -39,6 +38,8 @@ const Class: React.FC = () => {
   const [url, setUrl] = useState('');
   const [modelClassAddShow, setModelClassAddShow] = useState(false);
   const [dataset, setDataset] = useState<ClassDataset>();
+  const [name, setName] = useState('');
+  const [createNewModalVisible, setCreateNewModalVisible] = useState(false);
 
   const [mounted, setMounted] = useState(false);
 
@@ -63,9 +64,22 @@ const Class: React.FC = () => {
       }
     }, [mounted])
 
-  async function showMindMap(item: MindMap) {
+  async function showMindMap(mindMap: MindMap) {
     if (dataset) {
-      const podUrls = await getPodUrl(dataset.class.teacher)
+      const url = `${mindMap.ownerPod}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`
+      if (dataset.class.teacher === sessionContext.sessionInfo.webId) {
+        navigate('/editor/', {
+          state: {
+            id: url
+          }
+        })
+      } else {
+        navigate('/browser/', {
+          state: {
+            id: url
+          }
+        })
+      }
     }
   }
 
@@ -73,12 +87,18 @@ const Class: React.FC = () => {
     console.log(mindMap.id)
   }
 
-  const handleCreate = (e: any) => {
-    // #TODO - create in class new mindmap
-  }
+  async function addMindMap() {
+    if (dataset) {
+      const mindMapUrl = await classService.addMindMap(sessionContext.sessionInfo, dataset?.class, name)
+      if (mindMapUrl) {
+        navigate('/editor/', {
+          state: {
+            id: mindMapUrl
+          }
+        })
+      }
 
-  const handleAddExisting = (e: any) => {
-    setModelClassAddShow(true)
+    }
   }
 
   const sendMessage = (e: string) => {
@@ -89,14 +109,19 @@ const Class: React.FC = () => {
     })
   }
 
-  const showExam = (mindMap: MindMap) => {
-    const name = dataset?.class.storage + 'Wikie/mindMaps/' + mindMap.id + '.ttl';
-    navigate('/exam/', {
-      state: {
-        id: name,
-        class: location.state.url
-      }
-    })
+  async function showExam(mindMap: MindMap) {
+    if (dataset) {
+      const url = `${mindMap.ownerPod}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`
+      const classUrl = `${dataset.class.ownerPod}${WIKIMIND}/${CLASSES}/${dataset.class.id}${TTLFILETYPE}`
+
+      navigate('/exam/', {
+        state: {
+          id: url,
+          class: classUrl
+        }
+      })
+  
+    }
   }
 
   const copyToClipboard = () => {
@@ -108,11 +133,32 @@ const Class: React.FC = () => {
       <Sidenav />
       <main ref={ref}>
         <Container>
-          <ModalClassAddMindMap
-            showModal={modelClassAddShow}
-            classUrl={sessionContext.sessionInfo.podUrl + WIKIMIND + SLASH + CLASSES + SLASH + dataset?.class.id + TTLFILETYPE}
-            setModal={setModelClassAddShow}
-          ></ModalClassAddMindMap>
+          <Modal show={createNewModalVisible} onHide={() => setCreateNewModalVisible(false)}>
+            <Modal.Header>
+              <Modal.Title>Choose name</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Control
+                  type="text"
+                  placeholder="insert name"
+                  aria-label="insert name"
+                  value={name}
+                  onChange={(e) => { setName(e.target.value) }}
+                />
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                className='my-btn'
+                variant="secondary" onClick={() => setCreateNewModalVisible(false)}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={addMindMap}>
+                Save Changes
+              </Button>
+            </Modal.Footer>
+          </Modal>
           <Row>
             <Col sm="6">
               <h1>Class {dataset?.class.name}</h1>
@@ -158,7 +204,7 @@ const Class: React.FC = () => {
                     <Row key={index}>
                       <div className='aaa'>
                         <div className='my-stack'>
-                          {item.id}
+                          {item.name}
                         </div>
                         <div className='my-stack-reverse'>
                           <Button
@@ -190,7 +236,7 @@ const Class: React.FC = () => {
                     </Row>
                   )
                 })}
-                <Button onClick={handleCreate} variant="outline-success">Create new</Button>
+                <Button onClick={() => setCreateNewModalVisible(true)} variant="outline-success">Create new</Button>
               </Container>
             </Col>
             <Col sm="12">

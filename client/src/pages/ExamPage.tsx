@@ -32,33 +32,46 @@ const ExamPage: React.FC = () => {
     const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
     wssUrl.protocol = 'wss';
     const [currentProvider, setCurrentProvider] = useState('');
-    
+
     const mindMapService = new MindMapService();
 
     async function fetchMindMap(url: string): Promise<void> {
-      try {
-        const mindMapDataset = await mindMapService.getMindMap(url);
-        if (mindMapDataset) {
-          mindMapDataset.links = AddCoords(mindMapDataset.links, getIdsMapping(mindMapDataset.nodes))
-          setDataset(mindMapDataset)
+        try {
+            const mindMapDataset = await mindMapService.getMindMap(url);
+            if (mindMapDataset) {
+                mindMapDataset.links = AddCoords(mindMapDataset.links, getIdsMapping(mindMapDataset.nodes))
+                setDataset(mindMapDataset)
+                updateCanvasAxis(mindMapDataset)
+            }
+        } catch (error) {
+            // Handle the error, e.g., display an error message to the user or perform fallback actions
         }
-      } catch (error) {
-        // Handle the error, e.g., display an error message to the user or perform fallback actions
-      }
     }
-  
-    useEffect(() => {
-      setMounted(true); // set the mounted state variable to true after the component mounts
-    }, []);
-  
+
     useEffect(
-      () => {
-        if (mounted && location.state !== null && location.state.id !== null) {
-          fetchMindMap(location.state.id)
-        } else {
-          navigate('/')
+        () => {
+            if (location.state !== null && location.state.id !== null) {
+                fetchMindMap(location.state.id)
+            } else {
+                navigate('/')
+            }
+        }, [mounted])
+
+    const updateCanvasAxis = (res: MindMapDataset) => {
+        if (res) {
+            const xAxes = res.nodes.map((node) => { return node.cx })
+            const yAxes = res.nodes.map((node) => { return node.cy })
+            if (ref && ref.current) {
+                // @ts-ignore
+                const mainWidth = ref.current.offsetWidth
+                // @ts-ignore
+                const mainHeight = ref.current.offsetHeight
+                setWidth(Math.max(Math.max(...xAxes) + 250, mainWidth))
+                setHeight(Math.max(Math.max(...yAxes) + 250, mainHeight))
+            }
         }
-      }, [mounted])
+    }
+
 
     const done = async () => {
         console.log(fillDataset)
@@ -91,7 +104,7 @@ const ExamPage: React.FC = () => {
 
     return (
         <div className="App">
-            <Sidenav/>
+            <Sidenav />
             <main ref={ref}>
                 <TransformWrapper
                     disabled={disabled}

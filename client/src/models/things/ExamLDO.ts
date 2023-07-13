@@ -29,7 +29,7 @@ export class ExamLDO extends BaseLDO<Exam> implements CRUDLDO<Exam> {
      * @returns The newly created ThingLocal instance representing the Exam object.
      */
     create(object: Exam) {
-        const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))
+        const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
             .addUrl(rdf_type, this.rdf.identity)
             .addInteger((this.rdf.properties.max), object.max)
             .addInteger((this.rdf.properties.result), object.result)

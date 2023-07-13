@@ -42,6 +42,7 @@ export class LinkRepository {
         mindMapListDataset = setThing(mindMapListDataset, this.linkLDO.create(link));
         await saveSolidDatasetAt(listUrl, mindMapListDataset, { fetch });
     }
+
     async removeLink(listUrl: string, link: Link): Promise<void> {
         let mindMapListDataset = await getSolidDataset(listUrl, { fetch });
         const thingId = `${listUrl}#${link.id}`;

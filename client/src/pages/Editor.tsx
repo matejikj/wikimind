@@ -114,6 +114,7 @@ const Editor: React.FC = () => {
       }
     }
   }
+  
   const setPosition = (x: number, y: number, id: string) => {
     if (dataset) {
       dataset.nodes = dataset.nodes.map((todo) => {

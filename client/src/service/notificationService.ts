@@ -10,9 +10,10 @@ import { UserSession } from "../models/types/UserSession";
 import { Exam } from "../models/types/Exam";
 import { ExamLDO } from "../models/things/ExamLDO";
 import { WebsocketNotification } from "@inrupt/solid-client-notifications";
-import { getChat } from "./messageService";
 import { ChatDataset } from "../models/types/ChatDataset";
+import { MessageService } from "./messageService";
 
+const messageService = new MessageService()
 
 export async function assignWebSocketACP(url: string, setMessageDataset: any) {
     const websocket4 = new WebsocketNotification(
@@ -20,7 +21,7 @@ export async function assignWebSocketACP(url: string, setMessageDataset: any) {
         { fetch: fetch }
     );
     websocket4.on("message", (e: any) => {
-        getChat(url).then((res: ChatDataset | undefined) => {
+        messageService.getChat(url).then((res: ChatDataset | undefined) => {
             if (res) {
                 setMessageDataset(res)
             }

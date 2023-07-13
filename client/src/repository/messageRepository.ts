@@ -31,11 +31,22 @@ import { MessageLDO } from "../models/things/MessageLDO";
 
 
 export class MessageRepository {
+    private messageLDO: MessageLDO
+  
+    constructor() {
+      this.messageLDO = new MessageLDO(messageDefinition);
+    }
 
-    async createMessage(chatStorageUrl: string, message: Message): Promise<void> {
+    async aa(chatStorageUrl: string, message: Message): Promise<void> {
         const mindMapDataset = await getSolidDataset(chatStorageUrl, { fetch });
         const mindMapBuilder = new MindMapLDO(mindMapDefinition)
         const thingId = `${chatStorageUrl}#${getNumberFromUrl(chatStorageUrl)}`
+    }
+
+    async createMessage(listUrl: string, message: Message): Promise<void> {
+        let mindMapListDataset = await getSolidDataset(listUrl, { fetch });
+        mindMapListDataset = setThing(mindMapListDataset, this.messageLDO.create(message));
+        await saveSolidDatasetAt(listUrl, mindMapListDataset, { fetch });
     }
 
     async getMessages(storageUrl: string): Promise<Message[]> {

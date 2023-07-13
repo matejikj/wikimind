@@ -9,11 +9,11 @@ import { MdSend } from "react-icons/md";
 import { Message } from "../models/types/Message";
 import { flushSync } from "react-dom";
 import { ChatDataset } from "../models/types/ChatDataset";
-import { getChat, sendMessage } from "../service/messageService";
 import { generate_uuidv4 } from "../service/utils";
 import { WebsocketNotification } from "@inrupt/solid-client-notifications";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 import { assignWebSocketACP } from "../service/notificationService";
+import { MessageService } from "../service/messageService";
 
 const Chat: React.FC = () => {
     const navigate = useNavigate();
@@ -24,52 +24,72 @@ const Chat: React.FC = () => {
     const [messageDataset, setMessageDataset] = useState<ChatDataset | undefined>();
     const [mounted, setMounted] = useState(false); // <-- new state variable
 
-    useEffect(() => {
-        setMounted(true); // set the mounted state variable to true after the component mounts
-    }, []);
+    const messageService = new MessageService()
 
+    async function fetchChatList(url: string): Promise<void> {
+      try {
+        const chats = await messageService.getChat(url);
+        chats && setMessageDataset(chats)
+      } catch (error) {
+        // Handle the error, e.g., display an error message to the user or perform fallback actions
+      }
+    }
+  
     useEffect(
-        () => {
+      () => {
+        if (location.state !== null && location.state.id !== null) {
+            fetchChatList(location.state.id)
+        } else {
+          navigate('/')
+        }
+      }, [mounted])
 
-            if (mounted) {
-                if (location.state !== null && location.state.id !== null) {
-                    getChat(location.state.id).then((res: ChatDataset | undefined) => {
-                        if (res) {
-                            setMessageDataset(res)
-                            // if (sessionContext.sessionInfo.podAccessControlPolicy === AccessControlPolicy.ACP) {
-                            //     assignWebSocketACP(location.state.id, setMessageDataset)
-                            // } else {
-                            const wssUrl = new URL(res.chat.ownerPod);
-                            wssUrl.protocol = 'wss';
+    // useEffect(() => {
+    //     setMounted(true); // set the mounted state variable to true after the component mounts
+    // }, []);
 
+    // useEffect(
+    //     () => {
 
-                            const socket = new WebSocket(wssUrl, ['solid-0.1']);
-                            socket.onopen = function () {
-                                this.send(`sub ${res.chat.storage}`)
-                            };
-                            socket.onmessage = function (msg) {
-                                if (msg.data && msg.data.slice(0, 3) === 'pub') {
-                                    if (msg.data === `pub ${res.chat.storage}`) {
-                                        getChat(location.state.id).then((result: ChatDataset | undefined) => {
-                                            if (result) {
-                                                setMessageDataset(result)
-                                            }
-                                        })
-                                    }
-                                }
-                            };
-                            // }
-
-                        }
-                    })
+    //         if (mounted) {
+    //             if (location.state !== null && location.state.id !== null) {
+    //                 messageService.getChat(location.state.id).then((res: ChatDataset | undefined) => {
+    //                     if (res) {
+    //                         setMessageDataset(res)
+    //                         // if (sessionContext.sessionInfo.podAccessControlPolicy === AccessControlPolicy.ACP) {
+    //                         //     assignWebSocketACP(location.state.id, setMessageDataset)
+    //                         // } else {
+    //                         const wssUrl = new URL(res.chat.ownerPod);
+    //                         wssUrl.protocol = 'wss';
 
 
-                } else {
-                    navigate('/')
-                }
+    //                         const socket = new WebSocket(wssUrl, ['solid-0.1']);
+    //                         socket.onopen = function () {
+    //                             this.send(`sub ${res.chat.storage}`)
+    //                         };
+    //                         socket.onmessage = function (msg) {
+    //                             if (msg.data && msg.data.slice(0, 3) === 'pub') {
+    //                                 if (msg.data === `pub ${res.chat.storage}`) {
+    //                                     messageService.getChat(location.state.id).then((result: ChatDataset | undefined) => {
+    //                                         if (result) {
+    //                                             setMessageDataset(result)
+    //                                         }
+    //                                     })
+    //                                 }
+    //                             }
+    //                         };
+    //                         // }
 
-            }
-        }, [mounted])
+    //                     }
+    //                 })
+
+
+    //             } else {
+    //                 navigate('/')
+    //             }
+
+    //         }
+    //     }, [mounted])
 
     // useEffect(() => {
     //     if (location.state !== null && location.state.id !== null) {
@@ -95,7 +115,7 @@ const Chat: React.FC = () => {
             date: Date.now()
         }
         if (messageDataset) {
-            sendMessage(messageDataset.chat, message).then(() => {
+            messageService.sendMessage(messageDataset.chat, message).then(() => {
                 setText('')
             })
         }
@@ -115,7 +135,7 @@ const Chat: React.FC = () => {
                     <Col xs={12} className="p-0">
                         <div className="chat-container">
                             <div className="chat-messages">
-                                {messageDataset?.messages.map((message, index) => (
+                                {messageDataset && messageDataset.messages.map((message, index) => (
                                     <div
                                         key={index}
                                         className={`chat-message ${message.from === sessionContext.sessionInfo.webId ? 'mine' : 'other'}`}

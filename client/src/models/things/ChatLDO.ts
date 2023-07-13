@@ -32,7 +32,7 @@ export class ChatLDO extends BaseLDO<Chat> implements CRUDLDO<Chat> {
    * @returns The newly created ThingLocal instance representing the Chat object.
    */
   create(object: Chat): ThingLocal {
-    const newThing: ThingLocal = buildThing(createThing({ name: "Wikie" }))
+    const newThing: ThingLocal = buildThing(createThing({ name: object.id }))
       .addUrl(rdf_type, this.rdf.identity)
       .addStringNoLocale(this.rdf.properties.id, object.id)
       .addStringNoLocale(this.rdf.properties.host, object.host)

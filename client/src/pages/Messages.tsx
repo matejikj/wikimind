@@ -14,7 +14,7 @@ import '../styles/style.css';
 import { MindMap } from '../models/types/MindMap';
 import { CHATS, MINDMAPS, TTLFILETYPE, WIKIMIND } from '../service/containerService';
 import { Chat } from '../models/types/Chat';
-import { getMessages } from '../service/messageService';
+import { MessageService } from '../service/messageService';
 
 const Messages: React.FC = () => {
   const [list, setList] = useState<Chat[]>([]);
@@ -23,15 +23,23 @@ const Messages: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const messageService = new MessageService()
+
+  async function fetchChatList(): Promise<void> {
+    try {
+      const chats = await messageService.getChatList(sessionContext.sessionInfo.podUrl);
+      chats && setList(chats)
+    } catch (error) {
+      // Handle the error, e.g., display an error message to the user or perform fallback actions
+    }
+  }
+
   useEffect(() => {
-    const result = getMessages(sessionContext.sessionInfo).then((res) => {
-      setList(res)
-    });
+    fetchChatList();
   }, []);
 
-
-  const showMindMap = (e: Chat) => {
-    const url = `${e.ownerPod}${WIKIMIND}/${CHATS}/${e.id}${TTLFILETYPE}`
+  const showMindMap = (chat: Chat) => {
+    const url = `${chat.ownerPod}${WIKIMIND}/${CHATS}/${chat.id}${TTLFILETYPE}`
     navigate('/chat/', {
       state: {
         id: url
@@ -52,7 +60,7 @@ const Messages: React.FC = () => {
               <Row key={index}>
                 <div className='aaa'>
                   <div className='my-stack'>
-                    {item.guest}
+                    {item.guest === sessionContext.sessionInfo.webId ? item.host : item.guest}
                   </div>
                   <div className='my-stack-reverse'>
                     <Button
