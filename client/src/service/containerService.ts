@@ -166,7 +166,7 @@ export async function checkContainer(sessionId: string): Promise<{ podUrl: strin
     await checkMainContainer(podUrl)
 
     const accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl + WIKIMIND + SLASH);
-
+    console.log(podUrl + WIKIMIND + SLASH)
     await Promise.all([
       checkMindMapsContainer(podUrl),
       checkProfileContainer(podUrl, sessionId, accessControlPolicy),

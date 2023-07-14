@@ -1,4 +1,4 @@
 export enum AccessControlPolicy {
-    WAC,
-    ACP
+    WAC = 'WAC',
+    ACP = 'ACP'
 }

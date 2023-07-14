@@ -261,7 +261,7 @@ export class ClassService {
     }
 
     async addMessage(userSession: UserSession, classThing: Class) {
-        
+
     }
 
     async removeClass(userSession: UserSession, classThing: Class) {
@@ -386,6 +386,7 @@ export class ClassService {
                             id: messageDatasetId,
                             host: userSession.webId,
                             ownerPod: userSession.podUrl,
+                            ownerAccessType: userSession.podAccessControlPolicy!,
                             guest: classRequest.requestor,
                             modified: Date.now().toString(),
                             lastMessage: '',

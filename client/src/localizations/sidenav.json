@@ -1,0 +1,22 @@
+{
+    "dashboard": {
+        "cs": "Seznam mind map",
+        "en": "Mind maps"        
+    },
+    "profile": {
+        "cs": "Profil",
+        "en": "Profile"        
+    },
+    "classes": {
+        "cs": "Třídy",
+        "en": "Classes"        
+    },
+    "messages": {
+        "cs": "Zprávy",
+        "en": "Chats"        
+    },
+    "logout": {
+        "cs": "Odhlásit se",
+        "en": "Logout"        
+    }    
+}

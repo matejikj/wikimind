@@ -2,43 +2,134 @@ import axios from "axios";
 import { ResultItem } from "../models/ResultItem";
 import { Node } from "../models/types/Node";
 import { HistoryResultItem } from "../models/HistoryResultItem";
+import { DBPediaEntityRecommendationQuery } from "./DBPediaEntityRecommendationQuery";
+import { DBPediaTimelineQuery } from "./DBPediaTimelineQuery";
 
-/**
- * Retrieves recommended entities based on a given entity.
- *
- * @param entity - The entity for which to retrieve recommendations.
- * @returns A Promise that resolves to an array of ResultItem objects representing the recommended entities.
- */
-export async function getSingleReccomends(entity: string): Promise<ResultItem[] | undefined> {
-    const sparqlQuery = `
+export class DBPediaService {
+
+    async getKeywordRecommendation(name: string): Promise<ResultItem[] | undefined> {
+        const sparqlQuery = new DBPediaEntityRecommendationQuery(name).buildQuery()
+
+        const endpointUrl = 'https://dbpedia.org/sparql';
+        const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
+        try {
+            const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
+            const dict = new Map<string, boolean>();
+            response.forEach((item) => {
+                if (item.label['xml:lang'] === 'cs') {
+                    dict.set(item.entity.value, true);
+                }
+            });
+            for (let i = response.length - 1; i >= 0; i--) {
+                if (response[i].label['xml:lang'] === 'en' && dict.has(response[i].entity.value)) {
+                    response.splice(i, 1);
+                }
+            }
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    /**
+     * Retrieves the description of a given entity.
+     *
+     * @param entity - The entity for which to retrieve the description.
+     * @returns A Promise that resolves to an array of ResultItem objects representing the entity description.
+     */
+    async getEntityDescription(entity: string): Promise<ResultItem[] | undefined> {
+        const sparqlQuery = `
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX dbo: <http://dbpedia.org/ontology/>
+      PREFIX dcterms: <http://purl.org/dc/terms/>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
   
-      SELECT ?entity (COUNT(?entity) AS ?type) ?label
+      SELECT <${entity}> as ?entity ?type ?label
       WHERE {
           {
-              <${entity}> dbo:wikiPageWikiLink ?a.
-              <${entity}> dcterms:subject ?c.
-              ?a dbo:wikiPageWikiLink ?entity.
-              ?entity dcterms:subject ?c.
-              ?entity rdfs:label ?label .
-              FILTER(LANG(?label) = "en")
+              <${entity}> ?type ?label.
+              FILTER (lang(?label) = "cs" || lang(?label) = "en")
+              FILTER (?type = rdfs:comment)
           }
       }
-      GROUP BY ?entity ?label
-      ORDER BY DESC(COUNT(?entity))
-      LIMIT 50
     `;
 
-    const endpointUrl = 'https://dbpedia.org/sparql';
-    const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
-    try {
-        const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
-        return response;
-    } catch (error) {
-        console.log(error);
+        const endpointUrl = 'https://dbpedia.org/sparql';
+        const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
+        try {
+            const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
+            const dict = new Map<string, boolean>();
+            response.forEach((item) => {
+                if (item.label['xml:lang'] === 'cs') {
+                    dict.set(item.entity.value, true);
+                }
+            });
+            for (let i = response.length - 1; i >= 0; i--) {
+                if (response[i].label['xml:lang'] === 'en' && dict.has(response[i].entity.value)) {
+                    response.splice(i, 1);
+                }
+            }
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
     }
+
+    async getLabels(list: ResultItem[]): Promise<ResultItem[] | undefined> {
+        let query = '';
+        list.forEach((item) => {
+            query = query + '<' + item.entity.value + '> ';
+        });
+
+        const sparqlQuery = `
+          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      
+          SELECT ?entity rdfs:label as ?type ?label
+          WHERE {
+              VALUES ?entity { ${query}}
+              ?entity rdfs:label ?label .
+              FILTER(LANG(?label) = "cs")
+          }
+        `;
+
+        const endpointUrl = 'https://dbpedia.org/sparql';
+        const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
+        try {
+            const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    /**
+ * Retrieves labels for a list of ResultItem entities.
+ *
+ * @param list - The list of entities for which to retrieve labels.
+ * @returns A Promise that resolves to an array of ResultItem objects representing the labeled entities.
+ */
+    async getDates(list: Node[]): Promise<HistoryResultItem[] | undefined> {
+        let query = '';
+        list.forEach((item) => {
+            if (item.uri !== "") {
+                query = query + '<' + item.uri + '> ';
+            }
+        });
+        const sparqlQuery = new DBPediaTimelineQuery(query).buildQuery()
+
+        const endpointUrl = 'https://dbpedia.org/sparql';
+        const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
+        try {
+            const response: HistoryResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
 }
+
 
 /**
  * Retrieves labels for a list of ResultItem entities.
@@ -73,92 +164,54 @@ export async function getLabels(list: ResultItem[]): Promise<ResultItem[] | unde
     }
 }
 
-/**
- * Retrieves labels for a list of ResultItem entities.
- *
- * @param list - The list of entities for which to retrieve labels.
- * @returns A Promise that resolves to an array of ResultItem objects representing the labeled entities.
- */
-export async function getDates(list: Node[]): Promise<HistoryResultItem[] | undefined> {
-    let query = '';
-    list.forEach((item) => {
-        if (item.uri !== "") {
-            query = query + '<' + item.uri + '> ';
-        }
-    });
 
-    const sparqlQuery = `
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-  
-      SELECT DISTINCT ?entity ?label ?propertyLabel ?value ?abstract ?thumbnail
-      WHERE {
-          VALUES ?entity { ${query}}
-          ?entity ?property ?value .
-          ?entity dbo:thumbnail ?thumbnail .
-          FILTER( contains( str(?property), "Date" ) || contains( str(?property), "date" ) || datatype(?value) = xsd:date)
-          OPTIONAL { ?property rdfs:label ?propertyLabel. }
-          FILTER (lang(?propertyLabel) = 'en')
-          ?entity rdfs:label ?label .
-          FILTER(LANG(?label) = "en")
-          ?entity dbo:abstract ?abstract
-          FILTER(LANG(?abstract) = "en")
-      }
-    `;
 
-    const endpointUrl = 'https://dbpedia.org/sparql';
-    const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
-    try {
-        const response: HistoryResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
-        return response;
-    } catch (error) {
-        console.log(error);
-    }
-}
+// /**
+//  * Retrieves the neighbors of a given entity.
+//  *
+//  * @param entity - The entity for which to retrieve neighbors.
+//  * @returns A Promise that resolves to an array of ResultItem objects representing the neighboring entities.
+//  */
+// export async function getEntityNeighbours(entity: string): Promise<ResultItem[] | undefined> {
+//     const sparqlQuery = new DBPediaEntityRecommendationQuery(entity).buildQuery()
 
-/**
- * Retrieves the neighbors of a given entity.
- *
- * @param entity - The entity for which to retrieve neighbors.
- * @returns A Promise that resolves to an array of ResultItem objects representing the neighboring entities.
- */
-export async function getEntityNeighbours(entity: string): Promise<ResultItem[] | undefined> {
-    const sparqlQuery = `
-      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-      PREFIX dbo: <http://dbpedia.org/ontology/>
-      PREFIX dcterms: <http://purl.org/dc/terms/>
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-  
-      SELECT ?entity ?type ?label
-      WHERE {
-          {
-              <${entity}> ?type ?entity.
-              ?entity rdfs:label ?label.
-              FILTER (lang(?label) = "cs" || lang(?label) = "en")
-              FILTER (?type = dbo:wikiPageWikiLink || ?type = dcterms:subject)
-          }
-      }
-    `;
+//     // `
+//     //   PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+//     //   PREFIX dbo: <http://dbpedia.org/ontology/>
+//     //   PREFIX dcterms: <http://purl.org/dc/terms/>
+//     //   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-    const endpointUrl = 'https://dbpedia.org/sparql';
-    const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
-    try {
-        const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
-        const dict = new Map<string, boolean>();
-        response.forEach((item) => {
-            if (item.label['xml:lang'] === 'cs') {
-                dict.set(item.entity.value, true);
-            }
-        });
-        for (let i = response.length - 1; i >= 0; i--) {
-            if (response[i].label['xml:lang'] === 'en' && dict.has(response[i].entity.value)) {
-                response.splice(i, 1);
-            }
-        }
-        return response;
-    } catch (error) {
-        console.log(error);
-    }
-}
+//     //   SELECT ?entity ?type ?label
+//     //   WHERE {
+//     //       {
+//     //           <${entity}> ?type ?entity.
+//     //           ?entity rdfs:label ?label.
+//     //           FILTER (lang(?label) = "cs" || lang(?label) = "en")
+//     //           FILTER (?type = dbo:wikiPageWikiLink || ?type = dcterms:subject)
+//     //       }
+//     //   }
+//     // `;
+
+//     const endpointUrl = 'https://dbpedia.org/sparql';
+//     const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
+//     try {
+//         const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
+//         const dict = new Map<string, boolean>();
+//         response.forEach((item) => {
+//             if (item.label['xml:lang'] === 'cs') {
+//                 dict.set(item.entity.value, true);
+//             }
+//         });
+//         for (let i = response.length - 1; i >= 0; i--) {
+//             if (response[i].label['xml:lang'] === 'en' && dict.has(response[i].entity.value)) {
+//                 response.splice(i, 1);
+//             }
+//         }
+//         return response;
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
 
 /**
  * Retrieves entities connected to two given entities.
@@ -235,7 +288,7 @@ export async function getEntityDescription(entity: string): Promise<ResultItem[]
               FILTER (lang(?label) = "cs" || lang(?label) = "en")
               FILTER (?type = rdfs:comment)
           }
-      }
+      }0
     `;
 
     const endpointUrl = 'https://dbpedia.org/sparql';

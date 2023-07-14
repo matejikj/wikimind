@@ -1,5 +1,10 @@
 import { AccessControlPolicy } from "./AccessControlPolicy";
 
+export enum LanguageLocalization {
+  CS = "cs",
+  EN = "en"
+}
+
 /**
  * Represents a user session with information about the user's web ID, POD URL, login status, and access control policy.
  */
@@ -18,7 +23,12 @@ export type UserSession = {
    * Indicates whether the user is logged in or not.
    */
   isLogged: boolean;
-  
+
+    /**
+   * Indicates whether the user is logged in or not.
+   */
+    localization: LanguageLocalization;
+
   /**
    * The access control policy associated with the user's POD, or `null` if not available.
    */
@@ -32,5 +42,6 @@ export const defaultSessionValue: UserSession = {
   webId: "",
   podUrl: "",
   isLogged: false,
+  localization: LanguageLocalization.CS,
   podAccessControlPolicy: null,
 }

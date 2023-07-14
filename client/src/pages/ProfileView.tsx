@@ -65,9 +65,9 @@ const ProfileView: React.FC = () => {
       <Sidenav />
       <main>
         <Container className='center-container'>
-          <Row>
+          {/* <Row>
             <Button onClick={() => aaa()}>fdsfsd</Button>
-          </Row>
+          </Row> */}
           <Row>
             <Col sm={12}>
               <Card border="success" style={{ width: '18rem' }}>

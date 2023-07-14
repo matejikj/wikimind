@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import Sidenav from "../components/Sidenav";
 import { SessionContext } from "../sessionContext";
 import { useLocation, useNavigate } from "react-router-dom";
-import { DateGroup, aaa, bbbb, randomDates } from "../pages/utils";
 import { Button, Card, Carousel, Col, Container, Form, Row, Stack } from "react-bootstrap";
 import { ChoiceSelection, groupDates } from "./utiils";
 import { ResultItem } from "../models/ResultItem";

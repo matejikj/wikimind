@@ -41,7 +41,7 @@ const ModalNodeDetail: React.FC<{
             show={showModal}
         >
             <Modal.Header closeButton>
-                <Modal.Title>Create custom node</Modal.Title>
+                <Modal.Title>Recommendation detail</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Container fluid>

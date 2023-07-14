@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -7,7 +7,6 @@ import Container from 'react-bootstrap/Container';
 import { Col, Row } from "react-bootstrap";
 import '../../styles/style.css';
 import { MindMapDataset } from "../../models/types/MindMapDataset";
-import { Node } from "../../models/types/Node";
 
 const blankFormInput = {
     title: '',
@@ -15,26 +14,40 @@ const blankFormInput = {
 }
 
 const ModalRecommendDetail: React.FC<{
-    node: Node | undefined,
+    dataset: MindMapDataset | undefined,
+    setDataset: Function,
     showModal: boolean,
     setModal: Function
-}> = ({ node, showModal, setModal }) => {
+}> = ({ dataset, setDataset, showModal, setModal }) => {
+    const [formInputs, setFormInputs] = useState(blankFormInput);
 
-    const [mounted, setMounted] = useState(false); // <-- new state variable
+    function handleChange(event: any) {
+        const key = event.target.name;
+        const value = event.target.value;
+        setFormInputs({ ...formInputs, [key]: value })
+    }
 
-    useEffect(() => {
-        setMounted(true); // set the mounted state variable to true after the component mounts
-    }, []);
-
-    useEffect(
-        () => {
-
-            if (mounted) {
-                if (node) {
-                    console.log('AHOOOOOOOOOJ')
-                }
-            }
-        }, [mounted])
+    async function handleSave(event: any) {
+        if (dataset) {
+            dataset.nodes.push({
+                id: generate_uuidv4(),
+                uri: '',
+                title: formInputs.title,
+                description: formInputs.description,
+                cx: 100,
+                cy: 100,
+                isInTest: false,
+                color: '#8FBC8F',
+                textColor: "black"
+            })
+            setDataset({
+                ...dataset,
+                created: '1.7.2023 21:08:08'
+            });
+        }
+        setFormInputs(blankFormInput)
+        setModal(false)
+    }
 
     return (
         <Modal
@@ -45,11 +58,40 @@ const ModalRecommendDetail: React.FC<{
             </Modal.Header>
             <Modal.Body>
                 <Container fluid>
+                    <Row>
+                        <Col xs={6}>
+                            <Form.Control
+                                type="text"
+                                placeholder="title"
+                                name="title"
+                                value={formInputs.title}
+                                onChange={handleChange}
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <br />
+                    </Row>
+                    <Row>
+                        <Col xs={12}>
+                            <Form.Control
+                                as="textarea"
+                                rows={4}
+                                placeholder="description"
+                                name="description"
+                                value={formInputs.description}
+                                onChange={handleChange}
+                            />
+                        </Col>
+                    </Row>
                 </Container>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={() => setModal(false)}>
-                    Close
+                    Cancel
+                </Button>
+                <Button variant="primary" onClick={handleSave}>
+                    Add node
                 </Button>
             </Modal.Footer>
         </Modal>

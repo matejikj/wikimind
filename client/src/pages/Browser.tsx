@@ -20,7 +20,6 @@ import { GrGraphQl } from "react-icons/gr";
 import { BiTimeFive, BiTrash } from "react-icons/bi";
 import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
 import { Node } from "../models/types/Node";
-import { getDates, getEntityNeighbours, getKeywords, getSingleReccomends } from "../service/dbpediaService";
 import { ResultItem } from "../models/ResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 import { generate_uuidv4 } from "../service/utils";
@@ -36,6 +35,7 @@ import HistoryVisualisation from "../visualisation/HistoryVisualisation";
 import { groupDates } from "../visualisation/utiils";
 import { HistoryResultItem } from "../models/HistoryResultItem";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
+import { DBPediaService } from "../dbpedia/dbpediaService";
 
 const Browser: React.FC = () => {
     const d3Container = useRef(null);
@@ -76,6 +76,7 @@ const Browser: React.FC = () => {
     const [datesView, setDatesView] = useState(false); // <-- new state variable
 
     const mindMapService = new MindMapService();
+    const dBPeddiaService = new DBPediaService();
 
     async function fetchMindMap(url: string): Promise<void> {
         try {
@@ -99,7 +100,7 @@ const Browser: React.FC = () => {
             }
         }, [mounted])
 
-    const updateCanvasAxis = (res: MindMapDataset) => {
+    function updateCanvasAxis(res: MindMapDataset) {
         if (res) {
             const xAxes = res.nodes.map((node) => { return node.cx })
             const yAxes = res.nodes.map((node) => { return node.cy })
@@ -116,7 +117,7 @@ const Browser: React.FC = () => {
 
     async function createDateView() {
         if (dataset) {
-            const dates = await getDates(dataset.nodes)
+            const dates = await dBPeddiaService.getDates(dataset.nodes)
             if (dates) {
                 setHistoryDataset(dates)
                 setCreatorVisible(false);

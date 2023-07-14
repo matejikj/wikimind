@@ -20,7 +20,7 @@ import { GrGraphQl } from "react-icons/gr";
 import { BiTimeFive, BiTrash } from "react-icons/bi";
 import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
 import { Node } from "../models/types/Node";
-import { getDates, getEntityNeighbours, getKeywords, getSingleReccomends } from "../service/dbpediaService";
+import { DBPediaService, getKeywords } from "../dbpedia/dbpediaService";
 import { ResultItem } from "../models/ResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 import { generate_uuidv4 } from "../service/utils";
@@ -77,6 +77,7 @@ const Editor: React.FC = () => {
   const [datesView, setDatesView] = useState(false); // <-- new state variable
 
   const mindMapService = new MindMapService();
+  const dbpediaService = new DBPediaService();
 
   async function fetchMindMap(url: string): Promise<void> {
     try {
@@ -114,7 +115,7 @@ const Editor: React.FC = () => {
       }
     }
   }
-  
+
   const setPosition = (x: number, y: number, id: string) => {
     if (dataset) {
       dataset.nodes = dataset.nodes.map((todo) => {
@@ -223,8 +224,8 @@ const Editor: React.FC = () => {
   }
 
   async function findWikiLinks(item: ResultItem) {
-    const a = await getEntityNeighbours(item.entity.value)
-    if (a) {
+    const recommendations = await dbpediaService.getKeywordRecommendation(item.entity.value)
+    if (recommendations) {
       if (lastQuery) {
         recommendPath.push(lastQuery)
       }
@@ -234,30 +235,29 @@ const Editor: React.FC = () => {
         label: item.label.value
       })
       setSearchedKeyword(item.label.value)
-      setRecommends(a)
+      setRecommends(recommendations)
     }
   }
 
   async function getSimilarEntities(item: Node) {
     if (item.uri !== "") {
       setFindingSimilar(true)
-      getSingleReccomends(item.uri).then((a) => {
-        if (a) {
-          setFindingSimilar(false)
 
-          if (lastQuery) {
-            recommendPath.push(lastQuery)
-          }
-          setLastQuery({
-            type: HistoryItemType.ITEM,
-            value: item.uri,
-            label: item.title
-          })
-          setSearchedKeyword(item.title)
-          setRecommends(a)
+      const recommendations = await dbpediaService.getKeywordRecommendation(item.uri)
+      if (recommendations) {
+        setFindingSimilar(false)
+
+        if (lastQuery) {
+          recommendPath.push(lastQuery)
         }
-      })
-
+        setLastQuery({
+          type: HistoryItemType.ITEM,
+          value: item.uri,
+          label: item.title
+        })
+        setSearchedKeyword(item.title)
+        setRecommends(recommendations)
+      }
     }
   }
 
@@ -271,19 +271,19 @@ const Editor: React.FC = () => {
 
   async function createDateView() {
     if (dataset) {
-      getDates(dataset.nodes).then((res) => {
-        if (res) {
-          res = res
-            .filter((resultItem) => !isNaN(Date.parse(resultItem.value.value)))
-            .sort((a, b) => Date.parse(a.value.value) - Date.parse(b.value.value))
-          setHistoryDataset(res)
-          dataset.nodes.map((item) => {
-            return item.title + ' ' + item.isInTest
-          })
-          setCreatorVisible(false);
-          setDatesView(true)
-        }
-      })
+      let dates = await dbpediaService.getDates(dataset.nodes)
+      if (dates) {
+        dates = dates
+          .filter((resultItem) => !isNaN(Date.parse(resultItem.value.value)))
+          .sort((a, b) => Date.parse(a.value.value) - Date.parse(b.value.value))
+        setHistoryDataset(dates)
+        dataset.nodes.map((item) => {
+          return item.title + ' ' + item.isInTest
+        })
+        setCreatorVisible(false);
+        setDatesView(true)
+
+      }
     }
   }
 
@@ -299,7 +299,7 @@ const Editor: React.FC = () => {
             setRecommends(a)
           }
         } else {
-          const a = await getEntityNeighbours(lastItem.value)
+          const a = await dbpediaService.getKeywordRecommendation(lastItem.value)
           if (a) {
             setRecommends(a)
           }
@@ -326,7 +326,7 @@ const Editor: React.FC = () => {
 
   function removeNode() {
     if (clickedNode) {
-      
+
       const filteredNodes = dataset?.nodes.filter((item) => item.id !== clickedNode.id)
       const filteredConnections = dataset?.links.filter((item) => item.from !== clickedNode.id && item.to !== clickedNode.id)
       if (filteredNodes && filteredConnections && dataset) {
@@ -336,6 +336,8 @@ const Editor: React.FC = () => {
       setClickedNode(undefined)
     }
   }
+
+
 
   return (
     <div className="App">

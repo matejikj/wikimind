@@ -9,6 +9,9 @@ import '../styles/style.css';
 import { MdOutlineCancel } from "react-icons/md";
 import { ImMenu } from "react-icons/im";
 import { logout } from "@inrupt/solid-client-authn-browser";
+import { LanguageLocalization } from "../models/types/UserSession";
+import sidenavLocalization from "../localizations/sidenav.json";
+import { Button } from "react-bootstrap";
 
 const Sidenav: React.FC = () => {
   const navigate = useNavigate();
@@ -20,9 +23,16 @@ const Sidenav: React.FC = () => {
         webId: "",
         podUrl: "",
         isLogged: false,
+        localization: LanguageLocalization.EN,
         podAccessControlPolicy: null
       })
     })
+  }
+
+  function switchLanguage() {
+    sessionContext.sessionInfo.localization === LanguageLocalization.CS ?
+      sessionContext.setSessionInfo({ ...sessionContext.sessionInfo, localization: LanguageLocalization.EN }) :
+      sessionContext.setSessionInfo({ ...sessionContext.sessionInfo, localization: LanguageLocalization.CS })
   }
 
   return (
@@ -31,8 +41,22 @@ const Sidenav: React.FC = () => {
         <Navbar.Toggle bsPrefix={"btn btn-sm"} aria-controls={`offcanvasNavbar-expand-${false}`}>
           <ImMenu></ImMenu>
         </Navbar.Toggle>
-        <img className="logo" src={'../logo.png'} />
-
+        {sessionContext.sessionInfo.localization === LanguageLocalization.CS ?
+          <Button
+            variant="outline-light"
+            size="sm"
+            onClick={() => switchLanguage()}
+          >
+            🇨🇿
+          </Button> :
+          <Button
+            variant="outline-light"
+            size="sm"
+            onClick={() => switchLanguage()}
+          >
+            🇬🇧
+          </Button>
+        }
         <Navbar.Offcanvas
           id={`offcanvasNavbar-expand-${false}`}
           aria-labelledby={`offcanvasNavbarLabel-expand-${false}`}
@@ -43,19 +67,19 @@ const Sidenav: React.FC = () => {
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className="justify-content-end flex-grow-1 pe-3">
-              <Nav.Link onClick={() => { navigate('/') }}>Home</Nav.Link>
+              <Nav.Link onClick={() => { navigate('/') }}>{sidenavLocalization.dashboard[sessionContext.sessionInfo.localization]}</Nav.Link>
             </Nav>
             <Nav className="justify-content-end flex-grow-1 pe-3">
-              <Nav.Link onClick={() => { navigate('/profile') }}>Profile</Nav.Link>
+              <Nav.Link onClick={() => { navigate('/profile') }}>{sidenavLocalization.profile[sessionContext.sessionInfo.localization]}</Nav.Link>
             </Nav>
             <Nav className="justify-content-end flex-grow-1 pe-3">
-              <Nav.Link onClick={() => { navigate('/classes') }}>Classes</Nav.Link>
+              <Nav.Link onClick={() => { navigate('/classes') }}>{sidenavLocalization.classes[sessionContext.sessionInfo.localization]}</Nav.Link>
             </Nav>
             <Nav className="justify-content-end flex-grow-1 pe-3">
-              <Nav.Link onClick={() => { navigate('/messages') }}>Messages</Nav.Link>
+              <Nav.Link onClick={() => { navigate('/chats') }}>{sidenavLocalization.messages[sessionContext.sessionInfo.localization]}</Nav.Link>
             </Nav>
             <Nav className="justify-content-end flex-grow-1 pe-3">
-              <Nav.Link onClick={logoutSession}>Logout</Nav.Link>
+              <Nav.Link onClick={logoutSession}>{sidenavLocalization.logout[sessionContext.sessionInfo.localization]}</Nav.Link>
             </Nav>
 
           </Offcanvas.Body>

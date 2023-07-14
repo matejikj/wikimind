@@ -16,7 +16,7 @@ import { CHATS, MINDMAPS, TTLFILETYPE, WIKIMIND } from '../service/containerServ
 import { Chat } from '../models/types/Chat';
 import { MessageService } from '../service/messageService';
 
-const Messages: React.FC = () => {
+const Chats: React.FC = () => {
   const [list, setList] = useState<Chat[]>([]);
 
   const sessionContext = useContext(SessionContext)
@@ -83,4 +83,4 @@ const Messages: React.FC = () => {
   );
 };
 
-export default Messages;
+export default Chats;

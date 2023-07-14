@@ -8,10 +8,10 @@ import { handleIncomingRedirect } from "@inrupt/solid-client-authn-browser";
 import { BrowserRouter } from 'react-router-dom';
 import { checkContainer } from "./service/containerService";
 import Classes from "./pages/Classes";
-import Messages from "./pages/Messages";
+import Chats from "./pages/Chats";
 import ProfileView from "./pages/ProfileView";
 import Class from "./pages/Class";
-import { UserSession, defaultSessionValue } from "./models/types/UserSession";
+import { LanguageLocalization, UserSession, defaultSessionValue } from "./models/types/UserSession";
 import { SessionContext } from "./sessionContext";
 import Chat from "./pages/Chat";
 import ExamPage from "./pages/ExamPage";
@@ -35,6 +35,7 @@ const App: React.FC = () => {
               isLogged: true,
               webId: info?.webId!,
               podUrl: value.podUrl,
+              localization: LanguageLocalization.CS,
               podAccessControlPolicy: value.accessControlPolicy
             })
             setWaiting(false)
@@ -62,7 +63,7 @@ const App: React.FC = () => {
                 <Route path="/class" element={<Class />} />
                 <Route path="/browser" element={<Browser />} />
                 <Route path="/profile" element={<ProfileView />} />
-                <Route path="/messages" element={<Messages />} />
+                <Route path="/chats" element={<Chats />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/exam" element={<ExamPage />} />
               </Routes>
