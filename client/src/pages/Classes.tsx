@@ -6,7 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
 import { SessionContext } from '../sessionContext';
-import { ClassService, denyRequest } from '../service/classService';
+import { ClassService } from '../service/classService';
 import { Class } from '../models/types/Class';
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { Request } from '../models/types/Request';
@@ -93,10 +93,9 @@ const Classes: React.FC = () => {
   }
 
   const denyAccess = (e: any) => {
-    console.log(e.target.name)
-    const aa = requests.find((item) => { return item.requestor === e.target.name })
-    if (aa !== undefined) {
-      denyRequest(sessionContext.sessionInfo, aa)
+    const requestor = requests.find((item) => { return item.requestor === e.target.name })
+    if (requestor !== undefined) {
+      // classesService.denyRequest(sessionContext.sessionInfo, requestor)
     }
   }
 

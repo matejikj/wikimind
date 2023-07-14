@@ -20,7 +20,7 @@ import { GrGraphQl } from "react-icons/gr";
 import { BiTimeFive, BiTrash } from "react-icons/bi";
 import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
 import { Node } from "../models/types/Node";
-import { DBPediaService, getKeywords } from "../dbpedia/dbpediaService";
+import { DBPediaService } from "../dbpedia/dbpediaService";
 import { ResultItem } from "../models/ResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 import { generate_uuidv4 } from "../service/utils";
@@ -31,7 +31,8 @@ import ModalNodeDetail from "../visualisation/modals/ModalNodeDetail";
 import { CanvasState } from "../visualisation/models/CanvasState";
 import { saveAs } from 'file-saver';
 import ModalNodeColor from "../visualisation/modals/ModalNodeColor";
-import { HistoryItem, HistoryItemType } from "../models/HistoryItem";
+import { HistoryItem } from "../visualisation/HistoryItem";
+import { HistoryItemType } from "../visualisation/HistoryItemType";
 import HistoryVisualisation from "../visualisation/HistoryVisualisation";
 import { groupDates } from "../visualisation/utiils";
 import { HistoryResultItem } from "../models/HistoryResultItem";
@@ -77,7 +78,7 @@ const Editor: React.FC = () => {
   const [datesView, setDatesView] = useState(false); // <-- new state variable
 
   const mindMapService = new MindMapService();
-  const dbpediaService = new DBPediaService();
+  const dbpediaService = new DBPediaService(sessionContext.sessionInfo);
 
   async function fetchMindMap(url: string): Promise<void> {
     try {
@@ -209,7 +210,7 @@ const Editor: React.FC = () => {
   }
 
   async function searchKeyword() {
-    const keywords = await getKeywords(searchedKeyword)
+    const keywords = await dbpediaService.getKeywords(searchedKeyword)
     if (keywords !== undefined) {
       if (lastQuery) {
         recommendPath.push(lastQuery)
@@ -224,7 +225,7 @@ const Editor: React.FC = () => {
   }
 
   async function findWikiLinks(item: ResultItem) {
-    const recommendations = await dbpediaService.getKeywordRecommendation(item.entity.value)
+    const recommendations = await dbpediaService.getEntityRecommendation(item.entity.value)
     if (recommendations) {
       if (lastQuery) {
         recommendPath.push(lastQuery)
@@ -243,7 +244,7 @@ const Editor: React.FC = () => {
     if (item.uri !== "") {
       setFindingSimilar(true)
 
-      const recommendations = await dbpediaService.getKeywordRecommendation(item.uri)
+      const recommendations = await dbpediaService.getEntityRecommendation(item.uri)
       if (recommendations) {
         setFindingSimilar(false)
 
@@ -294,12 +295,12 @@ const Editor: React.FC = () => {
         setLastQuery(lastItem)
         setSearchedKeyword(lastItem.label)
         if (lastItem.type === HistoryItemType.KEYWORD) {
-          const a = await getKeywords(lastItem.value)
+          const a = await dbpediaService.getKeywords(lastItem.value)
           if (a) {
             setRecommends(a)
           }
         } else {
-          const a = await dbpediaService.getKeywordRecommendation(lastItem.value)
+          const a = await dbpediaService.getEntityRecommendation(lastItem.value)
           if (a) {
             setRecommends(a)
           }

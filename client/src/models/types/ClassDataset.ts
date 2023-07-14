@@ -1,5 +1,6 @@
 import { Class } from "./Class";
 import { Exam } from "./Exam";
+import { Message } from "./Message";
 import { MindMap } from "./MindMap";
 import { Profile } from "./Profile";
 
@@ -9,17 +10,22 @@ import { Profile } from "./Profile";
 export type ClassDataset = {
 
   class: Class
-  
+
   /**
    * An array of student profiles belonging to the class.
    */
   students: Profile[];
-  
+
   /**
    * An array of mind maps created for the class.
    */
   mindMaps: MindMap[];
-  
+
+  /**
+ * An array of mind maps created for the class.
+ */
+  messages: Message[];
+
   /**
    * An array of exam results for the class.
    */

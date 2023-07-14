@@ -30,7 +30,8 @@ import ModalNodeDetail from "../visualisation/modals/ModalNodeDetail";
 import { CanvasState } from "../visualisation/models/CanvasState";
 import { saveAs } from 'file-saver';
 import ModalNodeColor from "../visualisation/modals/ModalNodeColor";
-import { HistoryItem, HistoryItemType } from "../models/HistoryItem";
+import { HistoryItem } from "../visualisation/HistoryItem";
+import { HistoryItemType } from "../visualisation/HistoryItemType";
 import HistoryVisualisation from "../visualisation/HistoryVisualisation";
 import { groupDates } from "../visualisation/utiils";
 import { HistoryResultItem } from "../models/HistoryResultItem";
@@ -76,7 +77,7 @@ const Browser: React.FC = () => {
     const [datesView, setDatesView] = useState(false); // <-- new state variable
 
     const mindMapService = new MindMapService();
-    const dBPeddiaService = new DBPediaService();
+    const dBPeddiaService = new DBPediaService(sessionContext.sessionInfo);
 
     async function fetchMindMap(url: string): Promise<void> {
         try {

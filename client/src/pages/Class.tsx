@@ -17,6 +17,7 @@ import { Exam } from "../models/types/Exam";
 import { MindMap } from "../models/types/MindMap";
 import { MdDeleteForever, MdDriveFileRenameOutline, MdLink, MdSlideshow } from "react-icons/md";
 import { CLASSES, MINDMAPS, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl } from "../service/containerService";
+import { Message } from "../models/types/Message";
 
 const exampleExams: Exam[] = [{
   id: generate_uuidv4(),
@@ -34,6 +35,8 @@ const Class: React.FC = () => {
 
   const ref = useRef(null);
   const [height, setHeight] = useState(1000);
+  const [announcementVisible, setAnnouncementVisible] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
   const [width, setWidth] = useState(1000);
   const [url, setUrl] = useState('');
   const [modelClassAddShow, setModelClassAddShow] = useState(false);
@@ -120,12 +123,37 @@ const Class: React.FC = () => {
           class: classUrl
         }
       })
-  
+
     }
   }
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(sessionContext.sessionInfo.webId + "?classId=" + dataset?.class.id)
+  }
+
+  async function createNewAnnoucement() {
+    if (dataset) {
+      const message: Message = {
+        id: generate_uuidv4(),
+        text: announcement,
+        from: dataset.class.teacher,
+        date: Date.now()
+      };
+      if (await classService.createNewAnnouncement(dataset.class, message)) {
+        dataset.messages.push(message)
+        setAnnouncement('')
+      }
+    }
+  }
+
+  async function removeAnnouncement(message: Message) {
+    if (dataset) {
+      if (await classService.removeAnnouncement(dataset.class, message)) {
+        const a = dataset.messages.findIndex(item => item.id === message.id)
+        dataset.messages.splice(a, 1)
+        setAnnouncement('')
+      }
+    }
   }
 
   return (
@@ -190,7 +218,88 @@ const Class: React.FC = () => {
               }
             </Col>
           </Row>
+
           <Row>
+            <Col sm="12">
+              <Container className="class-container">
+                <Row>
+                  <h4>Announcements</h4>
+                  {dataset?.messages.length === 0 &&
+                    <p>No announcements</p>
+                  }
+
+                </Row>
+                {dataset?.messages.map((item, index) => {
+                  return (
+                    <Row key={index}>
+                      <div className='aaa'>
+                        <div className='my-stack'>
+                          {item.text}
+                        </div>
+                        <div className='my-stack-reverse'>
+                        <Button
+                          size="sm"
+                          className='rounded-circle'
+                          onClick={() => removeAnnouncement(item)}
+                          variant="success"
+                        >
+                          <MdDeleteForever></MdDeleteForever>
+                        </Button>
+
+                        </div>
+                      </div>
+                    </Row>
+                    // <Row>
+                    //   <Stack direction="horizontal" gap={1}>
+                    //     <Button
+                    //       size="sm"
+                    //       onClick={() => removeAnnouncement(item)}
+                    //       variant="success"
+                    //     >
+                    //       <MdDeleteForever></MdDeleteForever>
+                    //     </Button>
+                    //     <p>{item.text}</p>
+
+                    //   </Stack>
+
+                    // </Row>
+                  )
+                })}
+                <Row>
+                  {announcementVisible ?
+                    <Stack direction="horizontal" gap={1}>
+                      <Form.Control
+                        type="text"
+                        id="inputPassword5"
+                        value={announcement}
+                        name="id"
+                        size='sm'
+                        style={{ maxWidth: '600px' }}
+                        onChange={(e) => { setAnnouncement(e.target.value) }}
+                      />
+                      <Button
+                        onClick={() => createNewAnnoucement()}
+                        variant="success"
+                        size="sm"
+                      >
+                        Add
+                      </Button>
+                      <Button
+                        onClick={() => { setAnnouncementVisible(false) }}
+                        variant="danger"
+                        size="sm"
+                      >
+                        Cancel
+                      </Button>
+                    </Stack> :
+                    <Stack direction="horizontal" gap={1}>
+                      <Button size='sm' onClick={() => setAnnouncementVisible(true)} variant="primary">Create new announcement</Button>
+                    </Stack>
+                  }
+                </Row>
+              </Container>
+            </Col>
+
             <Col sm="12">
               <Container className="class-container">
                 <Row>

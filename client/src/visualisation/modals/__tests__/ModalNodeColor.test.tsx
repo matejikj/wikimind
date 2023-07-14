@@ -42,22 +42,6 @@ describe('<ModalNodeColor />', () => {
     fireEvent.click(closeButton);
 
     expect(setModal).toHaveBeenCalledTimes(1);
-    // expect(setModal).toHaveBeenCalledWith(false);
   });
-
-//   test('Calls changeColor function on colors-div button click', () => {
-
-//     const changeColor = jest.fn()
-
-//     const { getByTestId } = renderResult;
-//     const colorsDivButton = getByTestId('colors-div-button-0');
-//     fireEvent.click(colorsDivButton);
-//     // @ts-ignore
-//     // const a: any = colorsDivButton[Object.keys(colorsDivButton)[1]]
-    
-//     // console.log(Object.keys(a.onClick))
-//     expect(changeColor).toBeCalled()
-//   });
-
   
 });

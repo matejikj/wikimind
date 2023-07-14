@@ -2,10 +2,9 @@
  * Represents an item in a list with a URL and an optional title.
  */
 
-export enum HistoryItemType {
-    KEYWORD,
-    ITEM
-}
+import { HistoryItemType } from "./HistoryItemType";
+
+
 
 export type HistoryItem = {
     /**

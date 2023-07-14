@@ -41,6 +41,8 @@ const Sidenav: React.FC = () => {
         <Navbar.Toggle bsPrefix={"btn btn-sm"} aria-controls={`offcanvasNavbar-expand-${false}`}>
           <ImMenu></ImMenu>
         </Navbar.Toggle>
+        <img className="logo" src={'../logo.png'} />
+
         {sessionContext.sessionInfo.localization === LanguageLocalization.CS ?
           <Button
             variant="outline-light"

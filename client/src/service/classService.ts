@@ -53,11 +53,14 @@ import { RequestRepository } from "../repository/requestRepository";
 import { Chat } from "../models/types/Chat";
 import { ChatRepository } from "../repository/chatRepository";
 import { RequestType } from "../models/types/RequestType";
+import { MessageRepository } from "../repository/messageRepository";
+import { Message } from "../models/types/Message";
 
 
 
 export class ClassService {
     private classRepository: ClassRepository;
+    private messageRepository: MessageRepository;
     private profileRepository: ProfileRepository;
     private linkRepository: LinkRepository;
     private mindMapRepository: MindMapRepository;
@@ -68,6 +71,7 @@ export class ClassService {
         this.classRepository = new ClassRepository();
         this.profileRepository = new ProfileRepository();
         this.linkRepository = new LinkRepository();
+        this.messageRepository = new MessageRepository();
         this.mindMapRepository = new MindMapRepository();
         this.requestRepository = new RequestRepository();
         this.chatRepository = new ChatRepository();
@@ -95,6 +99,9 @@ export class ClassService {
             if (classThing) {
                 const classLinks = await this.classRepository.getClassLinks(classThing.storage)
                 const exams = await this.classRepository.getExams(classThing.storage)
+
+                const messages = await this.messageRepository.getMessages(classThing.storage)
+
                 const profileLinks = classLinks.filter((link) => link.linkType === LinkType.PROFILE_LINK)
                 const mindMapLinks = classLinks.filter((link) => link.linkType === LinkType.GRAPH_LINK)
                 const profiles: Profile[] = []
@@ -114,6 +121,7 @@ export class ClassService {
                 }));
                 return {
                     testResults: exams,
+                    messages: messages,
                     class: classThing,
                     students: profiles,
                     mindMaps: mindMaps
@@ -260,10 +268,6 @@ export class ClassService {
         return mindMapUrl;
     }
 
-    async addMessage(userSession: UserSession, classThing: Class) {
-
-    }
-
     async removeClass(userSession: UserSession, classThing: Class) {
         const classUrl = userSession.podUrl + WIKIMIND + SLASH + CLASSES + SLASH + classThing.id + TTLFILETYPE
         const classLinksUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${CLASSES}${TTLFILETYPE}`;
@@ -331,6 +335,25 @@ export class ClassService {
             const requestUrl = podUrls[0] + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
             const createRequestRes = this.requestRepository.createRequest(requestUrl, newRequst)
             await Promise.all([createRequestRes]);
+        }
+    }
+
+    async createNewAnnouncement(classThing: Class, message: Message): Promise<boolean> {
+        try {
+            const mindMapStorageUrl = `${classThing.ownerPod}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
+            await this.messageRepository.createMessage(classThing.storage, message)
+            return true
+        } catch (error) {
+            return false
+        }
+    }
+    async removeAnnouncement(classThing: Class, message: Message): Promise<boolean> {
+        try {
+            const mindMapStorageUrl = `${classThing.ownerPod}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
+            await this.messageRepository.removeMessage(classThing.storage, message)
+            return true
+        } catch (error) {
+            return false
         }
     }
 
@@ -456,54 +479,6 @@ export class ClassService {
         }
 
     }
+
 }
 
-
-
-export async function denyRequest(userSession: UserSession, classRequest: Request) {
-    console.log("aa")
-}
-
-
-
-export async function addGraphToClass(userSession: UserSession, graphUrl: string, classUrl: string) {
-
-    // const clasDataset = await getSolidDataset(classUrl, { fetch });
-    // const classThings = await getThingAll(clasDataset);
-
-    // const cclassO = new ClassLDO(classDefinition);
-    // let classMeta: Class | null = null;
-
-    // classThings.forEach((thing) => {
-    //     const types = getUrlAll(thing, RDF.type);
-    //     if (types.includes(classDefinition.identity)) {
-    //         classMeta = cclassO.read(thing);
-    //     }
-    // });
-
-    // if (classMeta !== null) {
-    //     classMeta = classMeta as Class;
-    //     let classStorageDataset = await getSolidDataset(classMeta.storage, { fetch });
-
-    //     const datasetLink: Link = {
-    //         id: generate_uuidv4(),
-    //         url: graphUrl,
-    //         linkType: LinkType.GRAPH_LINK
-    //     }
-    //     const classLDO = new LinkLDO(datasetLinkDefinition).create(datasetLink)
-    //     classStorageDataset = setThing(classStorageDataset, classLDO)
-    //     const savedSolidDatasetContainer = await saveSolidDatasetAt(
-    //         classMeta.storage,
-    //         classStorageDataset,
-    //         { fetch: fetch }
-    //     );
-    //     universalAccess.setPublicAccess(
-    //         graphUrl,         // Resource
-    //         { append: true, read: true, write: false },          // Access object
-    //         { fetch: fetch }                         // fetch function from authenticated session
-    //     ).then((newAccess) => {
-    //         console.log("newAccess       contacts.ttl")
-    //     });
-
-    // }
-}

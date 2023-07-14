@@ -5,7 +5,8 @@ import {
     saveSolidDatasetAt,
     setThing,
     getThingAll,
-    getUrlAll
+    getUrlAll,
+    removeThing
 } from "@inrupt/solid-client";
 import profileDefinition from "../definitions/profile.json";
 import mindMapDefinition from "../definitions/mindMap.json";
@@ -49,14 +50,34 @@ export class MessageRepository {
         await saveSolidDatasetAt(listUrl, mindMapListDataset, { fetch });
     }
 
+    async removeMessage(listUrl: string, message: Message): Promise<void> {
+        let requestDataset = await getSolidDataset(listUrl, { fetch });
+        const thingId = `${listUrl}#${message.id}`
+
+        const thing = getThing(requestDataset, thingId);
+        if (thing) {
+            requestDataset = removeThing(requestDataset, thing)
+            await saveSolidDatasetAt(listUrl, requestDataset, { fetch });
+        }    }
+
     async getMessages(storageUrl: string): Promise<Message[]> {
         const mindmapStorageDataset = await getSolidDataset(storageUrl, { fetch });
         const chatStorageThings = await getThingAll(mindmapStorageDataset);
         const messages: Message[] = [];
-        const messageLDO = new MessageLDO(messageDefinition);
         chatStorageThings.forEach((thing) => {
-          messages.push(messageLDO.read(thing));
+            const types = getUrlAll(thing, RDF.type);
+            if (types.includes(messageDefinition.identity)) {
+                messages.push(this.messageLDO.read(thing));
+            }
         });
+
+        // chatStorageThings.forEach((thing) => {
+        //   messages.push(this.messageLDO.read(thing));
+        // });
         return messages
+    }
+
+    async removeRequest(requestUrl: string, request: Request): Promise<void> {
+
     }
 }
