@@ -1,7 +1,7 @@
 /**
  * Represents an item in a search result.
  */
-export type HistoryResultItem = {
+export type TimelineResultItem = {
     entity: {
         type: string; // Type of the entity
         value: string; // Value of the entity

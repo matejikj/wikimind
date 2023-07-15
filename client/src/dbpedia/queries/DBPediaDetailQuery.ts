@@ -1,4 +1,4 @@
-import { DBpediaQueryBuilder } from "./DBPediaQueryBuilder";
+import { DBpediaQueryBuilder } from "../DBPediaQueryBuilder";
 
 export class DBPediaDetailQuery  extends DBpediaQueryBuilder {
     constructor(entity: string) {

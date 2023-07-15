@@ -1,4 +1,4 @@
-import { HistoryResultItem } from "../models/HistoryResultItem";
+import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
 
 export enum ChoiceSelection {
     Century,
@@ -6,7 +6,7 @@ export enum ChoiceSelection {
     Year
 }
 
-function fillMissedCenturies(groupedDates: { [key: string]: HistoryResultItem[] }): { [key: string]: HistoryResultItem[] } {
+function fillMissedCenturies(groupedDates: { [key: string]: TimelineResultItem[] }): { [key: string]: TimelineResultItem[] } {
     const centuries = Object.keys(groupedDates).filter((value) => !isNaN(Number(value))).map(key => parseInt(key, 10));
 
     // Find the minimum and maximum centuries
@@ -14,7 +14,7 @@ function fillMissedCenturies(groupedDates: { [key: string]: HistoryResultItem[] 
     const maxCentury = Math.max(...centuries);
 
     // Create a new object to store the filled-in centuries
-    const filledGroupedDates: { [key: string]: HistoryResultItem[] } = {};
+    const filledGroupedDates: { [key: string]: TimelineResultItem[] } = {};
 
     // Iterate over the centuries range and fill in any missing centuries
     for (let century = minCentury; century <= maxCentury; century++) {
@@ -25,8 +25,8 @@ function fillMissedCenturies(groupedDates: { [key: string]: HistoryResultItem[] 
     return filledGroupedDates;
 }
 
-function fillMissingYears(groupedDates: { [key: string]: HistoryResultItem[] }): { [key: string]: HistoryResultItem[] } {
-    const filledGroupedDates: { [key: string]: HistoryResultItem[] } = {};
+function fillMissingYears(groupedDates: { [key: string]: TimelineResultItem[] }): { [key: string]: TimelineResultItem[] } {
+    const filledGroupedDates: { [key: string]: TimelineResultItem[] } = {};
 
     const years = Object.keys(groupedDates).filter((value) => !isNaN(Number(value))).map((year) => parseInt(year));
 
@@ -41,8 +41,8 @@ function fillMissingYears(groupedDates: { [key: string]: HistoryResultItem[] }):
     return filledGroupedDates;
 }
 
-function fillMissingDecades(groupedDates: { [key: string]: HistoryResultItem[] }): { [key: string]: HistoryResultItem[] } {
-    const filledGroupedDates: { [key: string]: HistoryResultItem[] } = {};
+function fillMissingDecades(groupedDates: { [key: string]: TimelineResultItem[] }): { [key: string]: TimelineResultItem[] } {
+    const filledGroupedDates: { [key: string]: TimelineResultItem[] } = {};
 
 
     const decades = Object.keys(groupedDates).filter((value) => !isNaN(Number(value))).map((decade) => parseInt(decade));
@@ -59,8 +59,8 @@ function fillMissingDecades(groupedDates: { [key: string]: HistoryResultItem[] }
 }
 
 
-export function groupDates(data: HistoryResultItem[], choice: ChoiceSelection): { [key: string]: HistoryResultItem[] } {
-    let groupedData: { [key: string]: HistoryResultItem[] } = {};
+export function groupDates(data: TimelineResultItem[], choice: ChoiceSelection): { [key: string]: TimelineResultItem[] } {
+    let groupedData: { [key: string]: TimelineResultItem[] } = {};
 
 
     // Helper function to get the century of a date

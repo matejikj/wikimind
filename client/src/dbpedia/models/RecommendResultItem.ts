@@ -1,7 +1,7 @@
 /**
  * Represents an item in a search result.
  */
-export type ResultItem = {
+export type RecommendResultItem = {
     /**
      * The entity information of the result item.
      */
@@ -13,21 +13,6 @@ export type ResultItem = {
       
       /**
        * The value of the entity.
-       */
-      value: string;
-    };
-    
-    /**
-     * The type information of the result item.
-     */
-    type: {
-      /**
-       * The type of the type.
-       */
-      type: string;
-      
-      /**
-       * The value of the type.
        */
       value: string;
     };

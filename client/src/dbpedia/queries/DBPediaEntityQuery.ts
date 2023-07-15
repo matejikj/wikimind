@@ -1,5 +1,5 @@
-import { LanguageLocalization } from "../models/types/UserSession";
-import { DBpediaQueryBuilder } from "./DBPediaQueryBuilder";
+import { LanguageLocalization } from "../../models/types/UserSession";
+import { DBpediaQueryBuilder } from "../DBPediaQueryBuilder";
 
 export class DBPediaEntityQuery extends DBpediaQueryBuilder {
     constructor(entity: string, localization: LanguageLocalization) {
@@ -9,11 +9,7 @@ export class DBPediaEntityQuery extends DBpediaQueryBuilder {
       this.addPrefix('dcterms', 'http://purl.org/dc/terms/');
       this.addPrefix('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
       this.addSelectVariable('entity');
-      this.addSelectVariable('type');
       this.addSelectVariable('label');
-
-
-
       let whereClause = `
       <${entity}> ?type ?entity.
       ?entity rdfs:label ?label.

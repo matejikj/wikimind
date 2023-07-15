@@ -20,8 +20,8 @@ import { GrGraphQl } from "react-icons/gr";
 import { BiTimeFive, BiTrash } from "react-icons/bi";
 import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
 import { Node } from "../models/types/Node";
-import { DBPediaService } from "../dbpedia/dbpediaService";
-import { ResultItem } from "../models/ResultItem";
+import { CATEGORY_PART, DBPediaService } from "../dbpedia/dbpediaService";
+import { RecommendResultItem } from "../dbpedia/models/RecommendResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 import { generate_uuidv4 } from "../service/utils";
 import { Connection } from "../models/types/Connection";
@@ -35,7 +35,7 @@ import { HistoryItem } from "../visualisation/HistoryItem";
 import { HistoryItemType } from "../visualisation/HistoryItemType";
 import HistoryVisualisation from "../visualisation/HistoryVisualisation";
 import { groupDates } from "../visualisation/utiils";
-import { HistoryResultItem } from "../models/HistoryResultItem";
+import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
 
 const WIKILINK = "http://dbpedia.org/ontology/wikiPageWikiLink"
 
@@ -59,7 +59,7 @@ const Editor: React.FC = () => {
   const [clickedNode, setClickedNode] = useState<Node>();
 
   const [searchedKeyword, setSearchedKeyword] = useState('');
-  const [recommends, setRecommends] = useState<ResultItem[]>([]);
+  const [recommends, setRecommends] = useState<RecommendResultItem[]>([]);
   const [recommendPath, setRecommendPath] = useState<HistoryItem[]>([]);
   const [lastQuery, setLastQuery] = useState<HistoryItem | undefined>(undefined);
 
@@ -73,7 +73,7 @@ const Editor: React.FC = () => {
   const [clickedLink, setClickedLink] = useState<Connection>();
   const [disabledCanvas, setDisabledCanvas] = useState(false);
   const [findingSimilar, setFindingSimilar] = useState(false);
-  const [historyDataset, setHistoryDataset] = useState<HistoryResultItem[]>([]);
+  const [historyDataset, setHistoryDataset] = useState<TimelineResultItem[]>([]);
 
   const [datesView, setDatesView] = useState(false); // <-- new state variable
 
@@ -167,7 +167,7 @@ const Editor: React.FC = () => {
     }
   }
 
-  function addNode(item: ResultItem) {
+  function addNode(item: RecommendResultItem) {
     const timestamp = Date.now().toString()
     const newId = generate_uuidv4()
     const newX = 200
@@ -224,7 +224,7 @@ const Editor: React.FC = () => {
     }
   }
 
-  async function findWikiLinks(item: ResultItem) {
+  async function findWikiLinks(item: RecommendResultItem) {
     const recommendations = await dbpediaService.getEntityRecommendation(item.entity.value)
     if (recommendations) {
       if (lastQuery) {
@@ -484,8 +484,8 @@ const Editor: React.FC = () => {
 
                 {recommends.map((item, index) => {
                   return (
-                    <div key={index} className={item.type.value === WIKILINK ? 'recommends-div' : 'recommends-div-category'}>
-                      <div className={item.type.value === WIKILINK ? 'recommends-inline-div' : 'recommends-inline-div-category'}>
+                    <div key={index} className={item.entity.value.includes(CATEGORY_PART) ? 'recommends-div-category' : 'recommends-div'}>
+                      <div className={item.entity.value.includes(CATEGORY_PART) ? 'recommends-inline-div-category' : 'recommends-inline-div'}>
 
                         <Stack direction="horizontal" gap={0}>
                           <Button onClick={() => { findWikiLinks(item); }} className="recommend-btn" size="sm">

@@ -20,7 +20,7 @@ import { GrGraphQl } from "react-icons/gr";
 import { BiTimeFive, BiTrash } from "react-icons/bi";
 import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
 import { Node } from "../models/types/Node";
-import { ResultItem } from "../models/ResultItem";
+import { RecommendResultItem } from "../dbpedia/models/RecommendResultItem";
 import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
 import { generate_uuidv4 } from "../service/utils";
 import { Connection } from "../models/types/Connection";
@@ -34,7 +34,7 @@ import { HistoryItem } from "../visualisation/HistoryItem";
 import { HistoryItemType } from "../visualisation/HistoryItemType";
 import HistoryVisualisation from "../visualisation/HistoryVisualisation";
 import { groupDates } from "../visualisation/utiils";
-import { HistoryResultItem } from "../models/HistoryResultItem";
+import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { DBPediaService } from "../dbpedia/dbpediaService";
 
@@ -58,7 +58,7 @@ const Browser: React.FC = () => {
     const [clickedNode, setClickedNode] = useState<Node>();
 
     const [searchedKeyword, setSearchedKeyword] = useState('');
-    const [recommends, setRecommends] = useState<ResultItem[]>([]);
+    const [recommends, setRecommends] = useState<RecommendResultItem[]>([]);
     const [recommendPath, setRecommendPath] = useState<HistoryItem[]>([]);
     const [lastQuery, setLastQuery] = useState<HistoryItem | undefined>(undefined);
 
@@ -72,7 +72,7 @@ const Browser: React.FC = () => {
     const [clickedLink, setClickedLink] = useState<Connection>();
     const [disabledCanvas, setDisabledCanvas] = useState(false);
     const [findingSimilar, setFindingSimilar] = useState(false);
-    const [historyDataset, setHistoryDataset] = useState<HistoryResultItem[]>([]);
+    const [historyDataset, setHistoryDataset] = useState<TimelineResultItem[]>([]);
 
     const [datesView, setDatesView] = useState(false); // <-- new state variable
 

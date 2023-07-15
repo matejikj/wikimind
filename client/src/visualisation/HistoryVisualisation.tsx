@@ -4,15 +4,15 @@ import { SessionContext } from "../sessionContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Card, Carousel, Col, Container, Form, Row, Stack } from "react-bootstrap";
 import { ChoiceSelection, groupDates } from "./utiils";
-import { ResultItem } from "../models/ResultItem";
+import { RecommendResultItem } from "../dbpedia/models/RecommendResultItem";
 import { MindMapDataset } from "../models/types/MindMapDataset";
-import { HistoryResultItem } from "../models/HistoryResultItem";
+import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import Image from 'react-bootstrap/Image';
 import { height } from "rdf-namespaces/dist/as";
 
 const HistoryVisualisation: React.FC<{
-  dataset: HistoryResultItem[],
+  dataset: TimelineResultItem[],
 }> = ({
   dataset
 }) => {
@@ -28,7 +28,7 @@ const HistoryVisualisation: React.FC<{
     const [currentPeriod, setCurrentPeriod] = useState<ChoiceSelection>(ChoiceSelection.Century);
 
     const [dateGroups, setDateGroups] = useState<{
-      [key: string]: HistoryResultItem[];
+      [key: string]: TimelineResultItem[];
     }>({});
 
     const [keys, setKeys] = useState<any[]>([]);

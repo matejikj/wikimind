@@ -1,5 +1,5 @@
-import { LanguageLocalization } from "../models/types/UserSession";
-import { DBpediaQueryBuilder } from "./DBPediaQueryBuilder";
+import { LanguageLocalization } from "../../models/types/UserSession";
+import { DBpediaQueryBuilder } from "../DBPediaQueryBuilder";
 
 export class DBPediaTimelineQuery extends DBpediaQueryBuilder {
     constructor(query: string, localization: LanguageLocalization) {

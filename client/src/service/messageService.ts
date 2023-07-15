@@ -55,7 +55,6 @@ export class MessageService {
       }));
       return chats
     } catch (error) {
-      console.error(error);
       return undefined;
     }
   }

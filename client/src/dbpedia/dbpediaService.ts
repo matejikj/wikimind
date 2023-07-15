@@ -1,11 +1,14 @@
 import axios from "axios";
-import { ResultItem } from "../models/ResultItem";
+import { RecommendResultItem } from "./models/RecommendResultItem";
 import { Node } from "../models/types/Node";
-import { HistoryResultItem } from "../models/HistoryResultItem";
-import { DBPediaEntityQuery } from "./DBPediaEntityQuery";
-import { DBPediaTimelineQuery } from "./DBPediaTimelineQuery";
-import { DBpediaCategoryQuery } from "./DBPediaCategoryQuery";
+import { TimelineResultItem } from "./models/TimelineResultItem";
+import { DBPediaEntityQuery } from "./queries/DBPediaEntityQuery";
+import { DBPediaTimelineQuery } from "./queries/DBPediaTimelineQuery";
+import { DBpediaCategoryQuery } from "./queries/DBPediaCategoryQuery";
 import { LanguageLocalization, UserSession } from "../models/types/UserSession";
+import { DBpediaQueryBuilder } from "./DBPediaQueryBuilder";
+
+export const CATEGORY_PART = "/Category:"
 
 export class DBPediaService {
 
@@ -15,13 +18,18 @@ export class DBPediaService {
         this.userSession = userSession
     }
 
-    async getEntityRecommendation(name: string): Promise<ResultItem[] | undefined> {
-        const sparqlQuery = new DBPediaEntityQuery(name, this.userSession.localization).buildQuery()
+    async getEntityRecommendation(name: string): Promise<RecommendResultItem[] | undefined> {
+
+        let sparqlQuery: string
+        name.includes(CATEGORY_PART) ? 
+        sparqlQuery = new DBpediaCategoryQuery(name, this.userSession.localization).buildQuery() :
+        sparqlQuery = new DBPediaEntityQuery(name, this.userSession.localization).buildQuery()
+
 
         const endpointUrl = 'https://dbpedia.org/sparql';
         const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
         try {
-            const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
+            const response: RecommendResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
             
             if (this.userSession.localization === LanguageLocalization.CS) {
                 this.filterResultItemList(response)
@@ -32,31 +40,7 @@ export class DBPediaService {
         }
     }
 
-    async getCategoryRecommendation(name: string): Promise<ResultItem[] | undefined> {
-        const sparqlQuery = new DBpediaCategoryQuery(name).buildQuery()
-
-        const endpointUrl = 'https://dbpedia.org/sparql';
-        const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
-        try {
-            const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
-            const dict = new Map<string, boolean>();
-            response.forEach((item) => {
-                if (item.label['xml:lang'] === 'cs') {
-                    dict.set(item.entity.value, true);
-                }
-            });
-            for (let i = response.length - 1; i >= 0; i--) {
-                if (response[i].label['xml:lang'] === 'en' && dict.has(response[i].entity.value)) {
-                    response.splice(i, 1);
-                }
-            }
-            return response;
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    private async getLabels(list: ResultItem[]): Promise<ResultItem[] | undefined> {
+    private async getLabels(list: RecommendResultItem[]): Promise<RecommendResultItem[] | undefined> {
         let query = '';
         list.forEach((item) => {
             query = query + '<' + item.entity.value + '> ';
@@ -76,14 +60,14 @@ export class DBPediaService {
         const endpointUrl = 'https://dbpedia.org/sparql';
         const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
         try {
-            const response: ResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
+            const response: RecommendResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
             return response;
         } catch (error) {
             console.log(error);
         }
     }
 
-    private filterHistoryResultItemList(response: HistoryResultItem[]) {
+    private filterHistoryResultItemList(response: TimelineResultItem[]) {
         const dict = new Map<string, boolean>();
         response.forEach((item) => {
             if (item.abstract['xml:lang'] === 'cs') {
@@ -97,7 +81,7 @@ export class DBPediaService {
         }
     }
 
-    private filterResultItemList(response: ResultItem[]) {
+    private filterResultItemList(response: RecommendResultItem[]) {
         const dict = new Map<string, boolean>();
         response.forEach((item) => {
             if (item.label['xml:lang'] === 'cs') {
@@ -120,7 +104,7 @@ export class DBPediaService {
      * @param list - The list of entities for which to retrieve labels.
      * @returns A Promise that resolves to an array of ResultItem objects representing the labeled entities.
      */
-    async getDates(list: Node[]): Promise<HistoryResultItem[] | undefined> {
+    async getDates(list: Node[]): Promise<TimelineResultItem[] | undefined> {
         let query = '';
         list.forEach((item) => {
             if (item.uri !== "") {
@@ -132,7 +116,7 @@ export class DBPediaService {
         const endpointUrl = 'https://dbpedia.org/sparql';
         const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
         try {
-            let response: HistoryResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
+            let response: TimelineResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
             
             if (this.userSession.localization === LanguageLocalization.CS) {
                 this.filterHistoryResultItemList(response)
@@ -150,7 +134,7 @@ export class DBPediaService {
      * @param entity - The entity for which to retrieve keywords.
      * @returns A Promise that resolves to an array of ResultItem objects representing the keywords.
      */
-    async getKeywords(entity: string): Promise<ResultItem[] | undefined> {
+    async getKeywords(entity: string): Promise<RecommendResultItem[] | undefined> {
         const url = 'https://lookup.dbpedia.org/api/search?label=' + entity;
         const response = await axios.get('https://lookup.dbpedia.org/api/search', {
             params: {
@@ -162,7 +146,7 @@ export class DBPediaService {
             },
         });
 
-        const res: ResultItem[] = response.data.docs
+        const res: RecommendResultItem[] = response.data.docs
             .slice(0, 200)
             .map((item: any) => {
                 return {

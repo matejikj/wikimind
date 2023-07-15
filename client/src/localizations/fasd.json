@@ -1,0 +1,136 @@
+{
+    "mindMap": {
+        "id": "31131f9d-4363-403e-8836-7ebd21832dfc",
+        "name": "name",
+        "storage": "https://matejikj.datapod.igrant.io/WikiMind/mindMaps/a0a902bf-1805-4111-afdb-c12e7fb0487c.ttl",
+        "ownerPod": "https://matejikj.datapod.igrant.io/",
+        "created": "1689323743434"
+    },
+    "links": [
+        {
+            "id": "1593a598-4150-4db1-bd6d-4aff720377a0",
+            "to": "bb5ca7ef-4a4f-4abd-ab8d-bb0f9c05caad",
+            "from": "d9db5841-0698-412c-9ca8-25693f143686"
+        },
+        {
+            "id": "ee242004-3cf2-4b6f-ac89-8876884f1eda",
+            "to": "bb5ca7ef-4a4f-4abd-ab8d-bb0f9c05caad",
+            "from": "939fd9fc-1b18-4365-9f8f-b2f9209fd208"
+        },
+        {
+            "id": "71f783f1-443a-4a5e-9c1a-7e197eb43af9",
+            "to": "b99fb5d1-03fc-4d85-b729-c27c6c78a6f9",
+            "from": "bb5ca7ef-4a4f-4abd-ab8d-bb0f9c05caad"
+        },
+        {
+            "id": "a5aeed6e-ea68-4bdd-9cff-5961615cfbbb",
+            "to": "fe308de0-abe7-4684-b13b-4b22ba3b944e",
+            "from": "bb5ca7ef-4a4f-4abd-ab8d-bb0f9c05caad"
+        },
+        {
+            "id": "9aca6897-451d-491a-9e2e-3c8b171d0d5c",
+            "to": "ff274238-1fe4-49b0-a6bf-1abc9bc6b024",
+            "from": "bb5ca7ef-4a4f-4abd-ab8d-bb0f9c05caad"
+        },
+        {
+            "id": "7e0187c3-39c2-4a90-8352-d27c32f8b7fd",
+            "to": "3154b5c7-f5cb-4482-859c-8f7749de7661",
+            "from": "bb5ca7ef-4a4f-4abd-ab8d-bb0f9c05caad"
+        },
+        {
+            "id": "7c37d11c-00ac-4ea0-8afa-57dc13c25ea4",
+            "to": "0649d0d9-8ea1-4085-b428-9d33d6834f6e",
+            "from": "bb5ca7ef-4a4f-4abd-ab8d-bb0f9c05caad"
+        }
+    ],
+    "nodes": [
+        {
+            "id": "939fd9fc-1b18-4365-9f8f-b2f9209fd208",
+            "cx": 330,
+            "cy": 537,
+            "title": "Barum rallye",
+            "uri": "http://dbpedia.org/resource/Barum_Czech_Rally_Zlín",
+            "description": "",
+            "textColor": "black",
+            "color": "#8FBC8F",
+            "isInTest": false
+        },
+        {
+            "id": "bb5ca7ef-4a4f-4abd-ab8d-bb0f9c05caad",
+            "cx": 364,
+            "cy": 311,
+            "title": "Roman Kresta",
+            "uri": "http://dbpedia.org/resource/Roman_Kresta",
+            "description": "",
+            "textColor": "white",
+            "color": "#1eb8d7",
+            "isInTest": false
+        },
+        {
+            "id": "d9db5841-0698-412c-9ca8-25693f143686",
+            "cx": 514,
+            "cy": 465,
+            "title": "Franz Wittmann",
+            "uri": "http://dbpedia.org/resource/Franz_Wittmann_Sr.",
+            "description": "",
+            "textColor": "black",
+            "color": "#8FBC8F",
+            "isInTest": false
+        },
+        {
+            "id": "b99fb5d1-03fc-4d85-b729-c27c6c78a6f9",
+            "cx": 670,
+            "cy": 419,
+            "title": "Petter Solberg",
+            "uri": "http://dbpedia.org/resource/Petter_Solberg",
+            "description": "",
+            "textColor": "black",
+            "color": "#8FBC8F",
+            "isInTest": false
+        },
+        {
+            "id": "fe308de0-abe7-4684-b13b-4b22ba3b944e",
+            "cx": 696,
+            "cy": 323,
+            "title": "Sébastien Loeb",
+            "uri": "http://dbpedia.org/resource/Sébastien_Loeb",
+            "description": "",
+            "textColor": "black",
+            "color": "#8FBC8F",
+            "isInTest": false
+        },
+        {
+            "id": "ff274238-1fe4-49b0-a6bf-1abc9bc6b024",
+            "cx": 707,
+            "cy": 221,
+            "title": "Daniel Elena",
+            "uri": "http://dbpedia.org/resource/Daniel_Elena",
+            "description": "",
+            "textColor": "black",
+            "color": "#eb5d15",
+            "isInTest": false
+        },
+        {
+            "id": "3154b5c7-f5cb-4482-859c-8f7749de7661",
+            "cx": 664,
+            "cy": 101,
+            "title": "Toni Gardemeister",
+            "uri": "http://dbpedia.org/resource/Toni_Gardemeister",
+            "description": "",
+            "textColor": "black",
+            "color": "#b6a816",
+            "isInTest": false
+        },
+        {
+            "id": "0649d0d9-8ea1-4085-b428-9d33d6834f6e",
+            "cx": 387,
+            "cy": 133,
+            "title": "Alister McRae",
+            "uri": "http://dbpedia.org/resource/Alister_McRae",
+            "description": "",
+            "textColor": "white",
+            "color": "#ff5733",
+            "isInTest": false
+        }
+    ]
+}
