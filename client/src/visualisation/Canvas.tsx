@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Circle from "./Circle";
+import Circle from "./MindMapNode";
 import Line from "./Line";
 import '../styles/style.css';
 import Button from 'react-bootstrap/Button';
