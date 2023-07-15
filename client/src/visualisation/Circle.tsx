@@ -164,6 +164,7 @@ const Circle: React.FC<{
                     x={(node.id === active?.id ? node.cx + difX : node.cx) - node.title.length * 4 + 8}
                     y={(node.id === active?.id ? node.cy + difY : node.cy) + 5}
                     id={node.id}
+                    font-family={'Neucha'}
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
                     onPointerMove={handlePointerMove}
