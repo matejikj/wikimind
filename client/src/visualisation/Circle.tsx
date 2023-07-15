@@ -142,9 +142,9 @@ const Circle: React.FC<{
         return (
             <g>
                 <rect
-                    x={(node.id === active?.id ? node.cx + difX : node.cx) - node.title.length * 4}
+                    x={(node.id === active?.id ? node.cx + difX : node.cx)}
                     y={(node.id === active?.id ? node.cy + difY : node.cy) - 10}
-                    width={node.title.length * 7 + 20}
+                    width={node.title.length * 7 + 10}
                     height={20}
                     fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 0.9) : 0.9}
                     id={node.id}
@@ -161,11 +161,13 @@ const Circle: React.FC<{
                     fill={active?.id === node.id ? node.textColor : node.color}
                 />
                 <text
-                    x={(node.id === active?.id ? node.cx + difX : node.cx) - node.title.length * 4 + 8}
-                    y={(node.id === active?.id ? node.cy + difY : node.cy) + 5}
+                    x={(node.id === active?.id ? node.cx + difX : node.cx + 5)}
+                    y={(node.id === active?.id ? node.cy + difY : node.cy)}
                     id={node.id}
-                    font-family={'Neucha'}
                     onPointerDown={handlePointerDown}
+                    fontSize={14}
+                    textLength={(node.title.length * 7)}
+                    alignment-baseline="middle"
                     onPointerUp={handlePointerUp}
                     onPointerMove={handlePointerMove}
                     onTouchStart={handlePointerDown}
