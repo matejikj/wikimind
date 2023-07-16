@@ -22,7 +22,7 @@ import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
 import { Node } from "../models/types/Node";
 import { CATEGORY_PART, DBPediaService } from "../dbpedia/dbpediaService";
 import { RecommendResultItem } from "../dbpedia/models/RecommendResultItem";
-import ModalNodeCreate from "../visualisation/modals/ModalNodeCreate";
+import ModalNodeEditor from "../visualisation/modals/ModalNodeEditor";
 import { generate_uuidv4 } from "../service/utils";
 import { Connection } from "../models/types/Connection";
 import { MdColorLens, MdDriveFileRenameOutline, MdKeyboardReturn, MdOutlineCancel, MdScreenShare } from "react-icons/md";
@@ -31,13 +31,24 @@ import ModalNodeDetail from "../visualisation/modals/ModalNodeDetail";
 import { CanvasState } from "../visualisation/models/CanvasState";
 import { saveAs } from 'file-saver';
 import ModalNodeColor from "../visualisation/modals/ModalNodeColor";
-import { HistoryItem } from "../visualisation/HistoryItem";
-import { HistoryItemType } from "../visualisation/HistoryItemType";
+import { HistoryItem } from "../visualisation/models/HistoryItem";
+import { HistoryItemType } from "../visualisation/models/HistoryItemType";
 import HistoryVisualisation from "../visualisation/HistoryVisualisation";
 import { groupDates } from "../visualisation/utiils";
 import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
 
 const WIKILINK = "http://dbpedia.org/ontology/wikiPageWikiLink"
+const blankNode: Node = {
+  id: '',
+  uri: '',
+  title: '',
+  description: '',
+  cx: 100,
+  cy: 100,
+  isInTest: false,
+  color: '#8FBC8F',
+  textColor: "black"
+}
 
 const Editor: React.FC = () => {
   const d3Container = useRef(null);
@@ -57,7 +68,9 @@ const Editor: React.FC = () => {
   wssUrl.protocol = 'wss';
 
   const [clickedNode, setClickedNode] = useState<Node>();
-
+  const [createdNode, setCreatedNode] = useState<Node>();
+  const [detailNode, setDetailNode] = useState<Node>();
+  
   const [searchedKeyword, setSearchedKeyword] = useState('');
   const [recommends, setRecommends] = useState<RecommendResultItem[]>([]);
   const [recommendPath, setRecommendPath] = useState<HistoryItem[]>([]);
@@ -65,9 +78,9 @@ const Editor: React.FC = () => {
 
   const [creatorVisible, setCreatorVisible] = useState(false); // <-- new state variable
   const [modalNodeCreate, setModalNodeCreate] = useState(false); // <-- new state variable
-  const [modalNodeDetail, setModalNodeDetail] = useState(false);
   const [modalNodeDelete, setModalNodeDelete] = useState(false);
   const [modalNodeColor, setModalNodeColor] = useState(false);
+  const [modalRecommendDetail, setModalRecommendDetail] = useState(false);
 
   const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
   const [clickedLink, setClickedLink] = useState<Connection>();
@@ -165,48 +178,6 @@ const Editor: React.FC = () => {
       };
       img.src = svgURL;
     }
-  }
-
-  function addNode(item: RecommendResultItem) {
-    const timestamp = Date.now().toString()
-    const newId = generate_uuidv4()
-    const newX = 200
-    const newY = 600
-    if (dataset) {
-      dataset.nodes.push({
-        id: newId,
-        uri: item.entity.value,
-        title: item.label.value,
-        description: '',
-        cx: newX,
-        color: "#8FBC8F",
-        cy: newY,
-        isInTest: false,
-        textColor: "black"
-      })
-      updateCanvasAxis(dataset)
-      if (clickedNode) {
-        dataset.links.push({
-          id: generate_uuidv4(),
-          from: clickedNode.id,
-          to: newId,
-          source: [clickedNode.cx, clickedNode.cy],
-          target: [newX, newY]
-        })
-      }
-      setDataset({
-        ...dataset,
-        mindMap: {
-          ...dataset.mindMap,
-          created: Date.now().toString()
-        }
-      });
-    }
-    // TODOOOOOO
-    // 
-    // zazoomovat na novou node po
-    //
-    // Odstranit connection - kliknout na nej
   }
 
   async function searchKeyword() {
@@ -338,28 +309,55 @@ const Editor: React.FC = () => {
     }
   }
 
+  async function createCustomEntity() {
+    const newNode: Node = JSON.parse(JSON.stringify(blankNode))
+    setCreatedNode(newNode)
+    setModalNodeCreate(true)
+  }
+
+  async function openRecommendDetail(item: RecommendResultItem) {
+    const res = await dbpediaService.getRecommendDetail(item)
+      const newNode: Node = JSON.parse(JSON.stringify(blankNode))
+      newNode.title = item.label.value
+      newNode.description = res
+      setDetailNode(newNode)
+      setModalRecommendDetail(true)
+  }
+
+  async function addRecommendation(item: RecommendResultItem) {
+    const res = await dbpediaService.getRecommendDetail(item)
+      const newNode: Node = JSON.parse(JSON.stringify(blankNode))
+      newNode.description = res
+      newNode.title = item.label.value
+      newNode.uri = item.entity.value
+      setCreatedNode(newNode)
+      setModalNodeCreate(true)
+  }
+
 
 
   return (
     <div className="App">
       <Sidenav />
       <main className="visualisation-tools" ref={ref}>
-        <ModalNodeCreate
+      <ModalNodeEditor
+          node={createdNode}
+          setNode={setCreatedNode}
           dataset={dataset}
           setDataset={setDataset}
           setModal={setModalNodeCreate}
           showModal={modalNodeCreate}
+        />
+        <ModalNodeDetail
+          node={detailNode}
+          setModal={setModalRecommendDetail}
+          showModal={modalRecommendDetail}
         />
         <ModalNodeDelete
           datasetName={dataset}
           clickedNode={clickedNode}
           showModal={modalNodeDelete}
           setModal={setModalNodeDelete}
-        />
-        <ModalNodeDetail
-          showModal={modalNodeDetail}
-          setModal={setModalNodeDetail}
-          node={clickedNode}
         />
         <ModalNodeColor
           showModal={modalNodeColor}
@@ -477,7 +475,7 @@ const Editor: React.FC = () => {
             <Row>
               <Col className="recommend-col" sm="12">
                 <div className="recommends-div">
-                  <Button onClick={() => setModalNodeCreate(true)} className="recommend-btn" size="sm">
+                  <Button onClick={() => createCustomEntity()} variant={'outline'} className="recommend-btn" size="sm">
                     {"Add custom entity"}
                   </Button>
                 </div>
@@ -491,8 +489,8 @@ const Editor: React.FC = () => {
                           <Button onClick={() => { findWikiLinks(item); }} className="recommend-btn" size="sm">
                             {item.label.value}
                           </Button>
-                          <Button size="sm" className="recommend-btn" onClick={() => { alert('item') }}><FaInfo></FaInfo></Button>
-                          <Button size="sm" className="recommend-btn" onClick={() => { addNode(item) }}><FaPlus></FaPlus></Button>
+                          <Button size="sm" className="recommend-btn" onClick={() => { openRecommendDetail(item) }}><FaInfo></FaInfo></Button>
+                          <Button size="sm" className="recommend-btn" onClick={() => { addRecommendation(item) }}><FaPlus></FaPlus></Button>
                         </Stack>
                       </div>
                     </div>

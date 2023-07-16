@@ -68,36 +68,4 @@ export class ClassRepository {
     async removeClass(classUrl: string): Promise<void> {
         await deleteSolidDataset(classUrl, { fetch: fetch })
     }
-
-    async updateMindMap(classUrl: string, mindMap: MindMap): Promise<Class | undefined> {
-        const mindMapDataset = await getSolidDataset(classUrl, { fetch });
-        const thingId = `${classUrl}#${getNumberFromUrl(classUrl)}`
-        return this.classLDO.read(getThing(mindMapDataset, thingId))
-    }
-
-    async getClassLinks(storageUrl: string) {
-        const classStorageDataset = await getSolidDataset(storageUrl, { fetch });
-        const classStorageThings = await getThingAll(classStorageDataset);
-        const links: Link[] = [];
-        classStorageThings.forEach((thing) => {
-            const types = getUrlAll(thing, RDF.type);
-            if (types.includes(linkDefinition.identity)) {
-                links.push(this.linkLDO.read(thing));
-            }
-        });
-        return links
-    }
-
-    async getExams(storageUrl: string) {
-        const classStorageDataset = await getSolidDataset(storageUrl, { fetch });
-        const classStorageThings = await getThingAll(classStorageDataset);
-        const exams: Exam[] = [];
-        classStorageThings.forEach((thing) => {
-            const types = getUrlAll(thing, RDF.type);
-            if (types.includes(examDefinition.identity)) {
-                exams.push(this.examLDO.read(thing));
-            }
-        });
-        return exams
-    }
 }

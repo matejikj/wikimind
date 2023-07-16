@@ -7,6 +7,8 @@ import { DBPediaTimelineQuery } from "./queries/DBPediaTimelineQuery";
 import { DBpediaCategoryQuery } from "./queries/DBPediaCategoryQuery";
 import { LanguageLocalization, UserSession } from "../models/types/UserSession";
 import { DBpediaQueryBuilder } from "./DBPediaQueryBuilder";
+import { DBPediaDetailQuery } from "./queries/DBPediaDetailQuery";
+import { AbstractResultItem } from "./models/AbstractResultItem";
 
 export const CATEGORY_PART = "/Category:"
 
@@ -95,7 +97,33 @@ export class DBPediaService {
         }
     }
 
-    
+    async getRecommendDetail(item: RecommendResultItem): Promise<string> {
+        let res: string = ""
+
+        const sparqlQuery = new DBPediaDetailQuery(item.entity.value, this.userSession.localization).buildQuery()
+
+        const endpointUrl = 'https://dbpedia.org/sparql';
+        const queryUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery) + '&format=json';
+        try {
+            let response: AbstractResultItem[] = (await axios.get(queryUrl)).data.results.bindings;
+                if (this.userSession.localization === LanguageLocalization.CS && response.length > 1) {
+                    const czechAbstract = response.find((item) => item.abstract["xml:lang"] === 'cs')?.abstract.value
+                    if (czechAbstract) {
+                        res = czechAbstract
+                    }
+                } else {
+                    if (response.length > 0) {
+                        res  = response[0].abstract.value
+                    }
+                }
+                return res
+            
+        } catch (error) {
+            return res
+        }
+    }
+
+
 
     /**
      * 
@@ -185,3 +213,22 @@ export class DBPediaService {
         return res;
     }
 }
+
+
+// PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+//       PREFIX dbo: <http://dbpedia.org/ontology/>
+  
+//       SELECT ?entity (COUNT(?entity) AS ?type) ?label
+//       WHERE {
+//           {
+//               <${entity}> dbo:wikiPageWikiLink ?a.
+//               <${entity}> dcterms:subject ?c.
+//               ?a dbo:wikiPageWikiLink ?entity.
+//               ?entity dcterms:subject ?c.
+//               ?entity rdfs:label ?label .
+//               FILTER(LANG(?label) = "en")
+//           }
+//       }
+//       GROUP BY ?entity ?label
+//       ORDER BY DESC(COUNT(?entity))
+//       LIMIT 50

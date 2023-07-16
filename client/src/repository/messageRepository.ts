@@ -33,15 +33,9 @@ import { MessageLDO } from "../models/things/MessageLDO";
 
 export class MessageRepository {
     private messageLDO: MessageLDO
-  
-    constructor() {
-      this.messageLDO = new MessageLDO(messageDefinition);
-    }
 
-    async aa(chatStorageUrl: string, message: Message): Promise<void> {
-        const mindMapDataset = await getSolidDataset(chatStorageUrl, { fetch });
-        const mindMapBuilder = new MindMapLDO(mindMapDefinition)
-        const thingId = `${chatStorageUrl}#${getNumberFromUrl(chatStorageUrl)}`
+    constructor() {
+        this.messageLDO = new MessageLDO(messageDefinition);
     }
 
     async createMessage(listUrl: string, message: Message): Promise<void> {
@@ -58,7 +52,8 @@ export class MessageRepository {
         if (thing) {
             requestDataset = removeThing(requestDataset, thing)
             await saveSolidDatasetAt(listUrl, requestDataset, { fetch });
-        }    }
+        }
+    }
 
     async getMessages(storageUrl: string): Promise<Message[]> {
         const mindmapStorageDataset = await getSolidDataset(storageUrl, { fetch });
@@ -70,14 +65,6 @@ export class MessageRepository {
                 messages.push(this.messageLDO.read(thing));
             }
         });
-
-        // chatStorageThings.forEach((thing) => {
-        //   messages.push(this.messageLDO.read(thing));
-        // });
         return messages
-    }
-
-    async removeRequest(requestUrl: string, request: Request): Promise<void> {
-
     }
 }

@@ -1,4 +1,5 @@
 import { rdf_type } from "../../LDO";
+import { AccessControlPolicy } from "../../types/AccessControlPolicy";
 import { Chat } from "../../types/Chat";
 import { ChatLDO } from "../ChatLDO";
 import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
@@ -19,6 +20,8 @@ describe("ChatLDO", () => {
         "guest": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#guest",
         "storage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage",
         "modified": "http://schema.org/modified",
+        "ownerPod": "http://schema.org/ownerPod",
+        "ownerAccessType": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#ownerAccessType",
         "lastMessage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#lastMessage"
       }
     });
@@ -33,6 +36,8 @@ describe("ChatLDO", () => {
       .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#guest", "https://example.com/guest")
       .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage", "https://example.com/storage")
       .addStringNoLocale("http://schema.org/modified", "2023-07-04T12:00:00Z")
+      .addStringNoLocale("http://schema.org/ownerPod", "matejikj")
+      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#ownerAccessType", "WAC")
       .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#lastMessage", "Hello, World!")
       .build();
 
@@ -41,9 +46,11 @@ describe("ChatLDO", () => {
     // Assert the returned Chat object has expected values.
     expect(result).toEqual({
       id: "chat123",
-      owner: "https://example.com/owner",
+      host: "https://example.com/owner",
       guest: "https://example.com/guest",
       storage: "https://example.com/storage",
+      ownerPod: "matejikj",
+      ownerAccessType: "WAC",
       modified: "2023-07-04T12:00:00Z",
       lastMessage: "Hello, World!"
     });
@@ -54,6 +61,8 @@ describe("ChatLDO", () => {
       id: "chat123",
       host: "https://example.com/owner",
       guest: "https://example.com/guest",
+      ownerPod: "matejikj",
+      ownerAccessType: AccessControlPolicy.WAC,
       storage: "https://example.com/storage",
       modified: "2023-07-04T12:00:00Z",
       lastMessage: "Hello, World!"
@@ -66,6 +75,8 @@ describe("ChatLDO", () => {
     expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#owner")).toBe("https://example.com/owner");
     expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#guest")).toBe("https://example.com/guest");
     expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage")).toBe("https://example.com/storage");
+    expect(getStringNoLocale(result, "http://schema.org/ownerPod")).toBe("matejikj");
+    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#ownerAccessType")).toBe("WAC");
     expect(getStringNoLocale(result, "http://schema.org/modified")).toBe("2023-07-04T12:00:00Z");
     expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#lastMessage")).toBe("Hello, World!");
   });

@@ -29,42 +29,24 @@ jest.mock("@inrupt/solid-client", () => {
         // setThing: jest.fn(),
     };
 });
-// const newThing: ThingLocal = 
-// return newThing;
-
-// jest.mock('../../service/containerService', () => ({
-//     create: jest.fn(),
-// }));
 
 let savedDataset = createSolidDataset();
 
 
 describe("ProfileRepository", () => {
     const profileUrl = "https://inrupt.com/.well-known/sdk-local-node/WikiMind";
-    const profileMock: Profile = {
-        webId: "https://matejikj.datapod.igrant.io/profile/card#me",
-        name: "",
-        surname: "",
-        ownerPod: "",
-    };
 
     beforeEach(async () => {
-
-
         (getSolidDataset as jest.Mock).mockImplementation(
             async (url, fetch) => {
                 return savedDataset;
             }
-
-        );        //   (getThing as jest.Mock).mockReturnValue(datasetMock.graphs.default[profileThingUrl]);
+        );
         (saveSolidDatasetAt as jest.Mock).mockImplementation(
             async (url, dataset, fetch) => {
                 savedDataset = dataset;
             }
         );
-
-
-
         jest.clearAllMocks();
     });
 
@@ -76,10 +58,6 @@ describe("ProfileRepository", () => {
                 surname: "Matejik",
                 ownerPod: "",
             };
-
-
-            // 'https://inrupt.com/.well-known/sdk-local-node/WikiMind#WikiMind'
-
 
             const thing = buildThing(createThing({ name: "WikiMind#WikiMind" }))
                 .addUrl("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", profileDefinition.identity)

@@ -25,7 +25,7 @@ import { Link } from "../models/types/Link";
 import { LinkType } from "../models/types/LinkType";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { MindMapRepository } from "../repository/mindMapRepository";
-import { LinkRepository } from "../repository/linksRepository";
+import { LinkRepository } from "../repository/linkRepository";
 
 export class MindMapService {
   private mindMapRepository: MindMapRepository;

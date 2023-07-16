@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -19,32 +19,21 @@ const ModalNodeDetail: React.FC<{
     showModal: boolean,
     setModal: Function
 }> = ({ node, showModal, setModal }) => {
-
-    const [mounted, setMounted] = useState(false); // <-- new state variable
-
-    useEffect(() => {
-        setMounted(true); // set the mounted state variable to true after the component mounts
-    }, []);
-
-    useEffect(
-        () => {
-
-            if (mounted) {
-                if (node) {
-                    console.log('AHOOOOOOOOOJ')
-                }
-            }
-        }, [mounted])
+    const [formInputs, setFormInputs] = useState(blankFormInput);
 
     return (
         <Modal
             show={showModal}
+            onHide={() => setModal(false)}
         >
-            <Modal.Header closeButton>
-                <Modal.Title>Recommendation detail</Modal.Title>
+            <Modal.Header>
+                <Modal.Title>{node?.title}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Container fluid>
+                    <Row>
+                    {node?.description}
+                    </Row>
                 </Container>
             </Modal.Body>
             <Modal.Footer>

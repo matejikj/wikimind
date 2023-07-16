@@ -5,13 +5,10 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-import { MindMapService } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
 import { Container, Navbar, Row, Stack } from 'react-bootstrap';
 import { BsFillSendFill } from 'react-icons/bs';
-import { ListItem } from '../models/ListItem';
 import '../styles/style.css';
-import { MindMap } from '../models/types/MindMap';
 import { CHATS, MINDMAPS, TTLFILETYPE, WIKIMIND } from '../service/containerService';
 import { Chat } from '../models/types/Chat';
 import { MessageService } from '../service/messageService';

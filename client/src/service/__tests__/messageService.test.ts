@@ -85,9 +85,6 @@ describe("ProfileRepository", () => {
                 }
             }
         );
-
-
-
         jest.clearAllMocks();
     });
 

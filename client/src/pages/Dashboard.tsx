@@ -9,7 +9,6 @@ import { MindMapService } from '../service/mindMapService';
 import { SessionContext } from '../sessionContext';
 import { Container, Row, Stack } from 'react-bootstrap';
 import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
-import { ListItem } from '../models/ListItem';
 import '../styles/style.css';
 import { MindMap } from '../models/types/MindMap';
 import { MINDMAPS, TTLFILETYPE, WIKIMIND } from '../service/containerService';

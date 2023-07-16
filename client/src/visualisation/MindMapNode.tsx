@@ -165,7 +165,7 @@ const Circle: React.FC<{
                     onPointerDown={handlePointerDown}
                     fontSize={14}
                     textLength={(node.title.length * 7)}
-                    alignment-baseline="middle"
+                    alignmentBaseline="middle"
                     onPointerUp={handlePointerUp}
                     onPointerMove={handlePointerMove}
                     onTouchStart={handlePointerDown}

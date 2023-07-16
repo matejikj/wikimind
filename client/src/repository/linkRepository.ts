@@ -5,7 +5,8 @@ import {
     saveSolidDatasetAt,
     setThing,
     getThingAll,
-    removeThing
+    removeThing,
+    getUrlAll
 } from "@inrupt/solid-client";
 import profileDefinition from "../definitions/profile.json";
 import mindMapDefinition from "../definitions/mindMap.json";
@@ -20,6 +21,7 @@ import { getNumberFromUrl } from "./utils";
 import { Link } from "../models/types/Link";
 import { LinkLDO } from "../models/things/LinkLDO";
 import { LDO } from "../models/LDO";
+import { RDF } from "@inrupt/vocab-common-rdf";
 
 
 export class LinkRepository {
@@ -32,9 +34,14 @@ export class LinkRepository {
     async getLinksList(listUrl: string): Promise<Link[]> {
         const linksDataset = await getSolidDataset(listUrl, { fetch });
         const things = await getThingAll(linksDataset);
-        return things.map((thing) => {
-            return this.linkLDO.read(thing)
+        const links: Link[] = [];
+        things.forEach((thing) => {
+            const types = getUrlAll(thing, RDF.type);
+            if (types.includes(linkDefinition.identity)) {
+                links.push(this.linkLDO.read(thing));
+            }
         })
+        return links
     }
 
     async createLink(listUrl: string, link: Link): Promise<void> {

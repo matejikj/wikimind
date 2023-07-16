@@ -31,7 +31,7 @@ import { Chat } from "../models/types/Chat";
 import { ChatDataset } from "../models/types/ChatDataset";
 import { ChatRepository } from "../repository/chatRepository";
 import { MessageRepository } from "../repository/messageRepository";
-import { LinkRepository } from "../repository/linksRepository";
+import { LinkRepository } from "../repository/linkRepository";
 
 export class MessageService {
   private chatRepository: ChatRepository;

@@ -47,7 +47,7 @@ import { MindMap } from "../models/types/MindMap";
 import { MindMapLDO } from "../models/things/MindMapLDO";
 import { ProfileRepository } from "../repository/profileRepository";
 import { ClassRepository } from "../repository/classRepository";
-import { LinkRepository } from "../repository/linksRepository";
+import { LinkRepository } from "../repository/linkRepository";
 import { MindMapRepository } from "../repository/mindMapRepository";
 import { RequestRepository } from "../repository/requestRepository";
 import { Chat } from "../models/types/Chat";
@@ -55,6 +55,7 @@ import { ChatRepository } from "../repository/chatRepository";
 import { RequestType } from "../models/types/RequestType";
 import { MessageRepository } from "../repository/messageRepository";
 import { Message } from "../models/types/Message";
+import { ExamRepository } from "../repository/examRepository";
 
 
 
@@ -66,6 +67,7 @@ export class ClassService {
     private mindMapRepository: MindMapRepository;
     private requestRepository: RequestRepository;
     private chatRepository: ChatRepository;
+    private examRepository: ExamRepository;
 
     constructor() {
         this.classRepository = new ClassRepository();
@@ -75,6 +77,7 @@ export class ClassService {
         this.mindMapRepository = new MindMapRepository();
         this.requestRepository = new RequestRepository();
         this.chatRepository = new ChatRepository();
+        this.examRepository = new ExamRepository();
     }
 
     async getClassList(podUrl: string): Promise<Class[] | undefined> {
@@ -97,8 +100,8 @@ export class ClassService {
         try {
             const classThing = await this.classRepository.getClass(classUrl)
             if (classThing) {
-                const classLinks = await this.classRepository.getClassLinks(classThing.storage)
-                const exams = await this.classRepository.getExams(classThing.storage)
+                const classLinks = await this.linkRepository.getLinksList(classThing.storage)
+                const exams = await this.examRepository.getExams(classThing.storage)
 
                 const messages = await this.messageRepository.getMessages(classThing.storage)
 
@@ -240,7 +243,7 @@ export class ClassService {
             await initializeAcl(mindMapUrl);
             await initializeAcl(mindMapStorageUrl);
         }
-        const classLinks = await this.classRepository.getClassLinks(classThing.storage)
+        const classLinks = await this.linkRepository.getLinksList(classThing.storage)
         const profileLinks = classLinks.filter((link) => link.linkType === LinkType.PROFILE_LINK)
 
         profileLinks.map(async (item) => {
@@ -276,8 +279,8 @@ export class ClassService {
 
         try {
             if (removedClass) {
-                const classLinks = await this.classRepository.getClassLinks(classThing.storage)
-                const exams = await this.classRepository.getExams(classThing.storage)
+                const classLinks = await this.linkRepository.getLinksList(classThing.storage)
+                const exams = await this.examRepository.getExams(classThing.storage)
                 const profileLinks = classLinks.filter((link) => link.linkType === LinkType.PROFILE_LINK)
                 const mindMapLinks = classLinks.filter((link) => link.linkType === LinkType.GRAPH_LINK)
                 const profiles: Profile[] = []
@@ -317,7 +320,6 @@ export class ClassService {
             return false;
         }
     }
-
 
     async requestClass(userSession: UserSession, classUri: string) {
         const paramString = classUri.split('?')[1];
@@ -361,7 +363,6 @@ export class ClassService {
         const messageDatasetId = generate_uuidv4();
         const messageDatasetUrl = userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + messageDatasetId + TTLFILETYPE;
         const messageStorageUrl = userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + generate_uuidv4() + TTLFILETYPE;
-
         try {
             const podUrls = await getPodUrl(classRequest.requestor);
 
