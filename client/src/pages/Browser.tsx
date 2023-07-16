@@ -172,7 +172,6 @@ const Browser: React.FC = () => {
                             >
                                 <svg
                                     id="svg-canvas"
-                                    onClick={() => setClickedNode(undefined)}
                                     width={width}
                                     height={height}
                                     ref={d3Container}
@@ -245,21 +244,32 @@ const Browser: React.FC = () => {
                                         return (
                                             <g>
                                                 <rect
-                                                    x={(node.cx) - node.title.length * 4}
+                                                    x={(node.cx) - node.title.length * 3.5}
                                                     y={(node.cy) - 10}
-                                                    width={node.title.length * 7 + 20}
+                                                    width={node.title.length * 7 + 10}
                                                     height={20}
-                                                    fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 0.9) : 0.9}
+                                                    fillOpacity={0.9}
                                                     id={node.id}
-                                                    strokeWidth={node.id === clickedNode?.id ? 2 : 0.5}
-                                                    stroke={node.id === clickedNode?.id ? "black" : node.color}
+                                                    strokeWidth={0.5}
+                                                    stroke={node.color}
                                                     rx="4" ry="4"
+                                                    onClick={() => {
+                                                        setClickedNode(node)
+                                                        setModalNodeDetail(true)
+                                                    }}
                                                     fill={node.color}
                                                 />
                                                 <text
-                                                    x={(node.cx) - node.title.length * 4 + 8}
+                                                    fontSize={14}
+                                                    textLength={(node.title.length * 7)}
+                                                    alignmentBaseline="middle"
+                                                    x={(node.cx) - node.title.length * 3.5 + 5}
                                                     y={(node.cy) + 5}
                                                     id={node.id}
+                                                    onClick={() => {
+                                                        setClickedNode(node)
+                                                        setModalNodeDetail(true)
+                                                    }}
                                                     fill={node.textColor}
                                                 >{node.title}</text>
                                             </g>

@@ -105,9 +105,9 @@ const Class: React.FC = () => {
   }
 
   const sendMessage = (e: string) => {
-    navigate('/messages/', {
+    navigate('/chat/', {
       state: {
-        friendId: e
+        id: e
       }
     })
   }

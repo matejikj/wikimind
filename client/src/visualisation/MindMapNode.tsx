@@ -142,7 +142,8 @@ const Circle: React.FC<{
         return (
             <g>
                 <rect
-                    x={(node.id === active?.id ? node.cx + difX : node.cx) - node.title.length * 3.5}                    y={(node.id === active?.id ? node.cy + difY : node.cy) - 10}
+                    x={(node.id === active?.id ? node.cx + difX : node.cx) - node.title.length * 3.5}
+                    y={(node.id === active?.id ? node.cy + difY : node.cy) - 10}
                     width={node.title.length * 7 + 10}
                     height={20}
                     fillOpacity={(canvasState === CanvasState.ADD_CONNECTION) ? (clickedNode?.id === node.id ? 0.25 : 0.9) : 0.9}
@@ -160,7 +161,8 @@ const Circle: React.FC<{
                     fill={active?.id === node.id ? node.textColor : node.color}
                 />
                 <text
-                    x={(node.id === active?.id ? node.cx + difX : node.cx) - node.title.length * 3.5 + 5}                    y={(node.id === active?.id ? node.cy + difY : node.cy)}
+                    x={(node.id === active?.id ? node.cx + difX : node.cx) - node.title.length * 3.5 + 5}
+                    y={(node.id === active?.id ? node.cy + difY : node.cy)}
                     id={node.id}
                     onPointerDown={handlePointerDown}
                     fontSize={14}

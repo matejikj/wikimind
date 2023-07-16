@@ -18,20 +18,16 @@ const ExamPage: React.FC = () => {
     const d3Container = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const countRef = useRef(0);
 
     const ref = useRef(null);
     const [height, setHeight] = useState(4000);
     const [disabled, setDisabled] = useState(false);
-    const [url, setUrl] = useState('');
     const [width, setWidth] = useState(4000);
     const [dataset, setDataset] = useState<MindMapDataset>();
     const [fillDataset, setFillDataset] = useState<Map<string, string>>(new Map<string, string>());
     const sessionContext = useContext(SessionContext)
-    const [mounted, setMounted] = useState(false); // <-- new state variable
     const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
     wssUrl.protocol = 'wss';
-    const [currentProvider, setCurrentProvider] = useState('');
 
     const mindMapService = new MindMapService();
 
@@ -55,7 +51,7 @@ const ExamPage: React.FC = () => {
             } else {
                 navigate('/')
             }
-        }, [mounted])
+        }, [])
 
     const updateCanvasAxis = (res: MindMapDataset) => {
         if (res) {
@@ -72,9 +68,7 @@ const ExamPage: React.FC = () => {
         }
     }
 
-
     const done = async () => {
-        console.log(fillDataset)
         let count = 0;
         let good = 0;
 
@@ -95,7 +89,7 @@ const ExamPage: React.FC = () => {
             profile: sessionContext.sessionInfo.webId
         }
         addExamResult(sessionContext.sessionInfo, blankProfile, location.state.class)
-
+        
     }
 
     const fillText = (id: string, text: string) => {
@@ -140,15 +134,47 @@ const ExamPage: React.FC = () => {
                                 return (
                                     <g>
                                         <line
-                                            x1={link.source != undefined ? link.source[0] : 0}
-                                            y1={link.source != undefined ? link.source[1] : 0}
-                                            x2={link.target != undefined ? link.target[0] : 0}
-                                            y2={link.target != undefined ? link.target[1] : 0}
+                                            x1={link.source !== undefined ? (link.source[0]) : 0}
+                                            y1={link.source !== undefined ? (link.source[1]) : 0}
+                                            x2={link.target !== undefined && link.source !== undefined ? ((link.target[0]) + (link.source[0])) / 2 : 0}
+                                            y2={link.target !== undefined && link.source !== undefined ? ((link.target[1]) + (link.source[1])) / 2 : 0}
                                             id={link.from + "_" + link.to}
                                             stroke="#999"
                                             strokeOpacity="0.6"
-                                            strokeWidth="3"
+                                            strokeWidth="2"
                                             markerEnd="url(#triangle)"
+                                        ></line>
+                                        <line
+                                            x1={link.target !== undefined && link.source !== undefined ? ((link.target[0]) + (link.source[0])) / 2 : 0}
+                                            y1={link.target !== undefined && link.source !== undefined ? ((link.target[1]) + (link.source[1])) / 2 : 0}
+                                            x2={link.source !== undefined ? (link.target[0]) : 0}
+                                            y2={link.source !== undefined ? (link.target[1]) : 0}
+                                            id={link.from + "_" + link.to}
+                                            stroke="#999"
+                                            strokeOpacity="0.6"
+                                            strokeWidth="2"
+                                        ></line>
+                                        <line
+                                            x1={link.source !== undefined ? link.source[0] : 0}
+                                            y1={link.source !== undefined ? link.source[1] : 0}
+                                            x2={link.target !== undefined && link.source !== undefined ? (link.target[0] + link.source[0]) / 2 : 0}
+                                            y2={link.target !== undefined && link.source !== undefined ? (link.target[1] + link.source[1]) / 2 : 0}
+                                            id={link.from + "_" + link.to}
+                                            stroke="#999"
+                                            strokeOpacity="0"
+                                            strokeWidth="10"
+                                            onClick={() => alert()}
+                                        ></line>
+                                        <line
+                                            x1={link.target !== undefined && link.source !== undefined ? (link.target[0] + link.source[0]) / 2 : 0}
+                                            y1={link.target !== undefined && link.source !== undefined ? (link.target[1] + link.source[1]) / 2 : 0}
+                                            x2={link.target !== undefined ? link.target[0] : 0}
+                                            y2={link.target !== undefined ? link.target[1] : 0}
+                                            id={link.from + "_" + link.to}
+                                            stroke="#999"
+                                            strokeOpacity="0"
+                                            strokeWidth="10"
+                                            onClick={() => alert()}
                                         ></line>
                                     </g>
                                 );
@@ -158,10 +184,11 @@ const ExamPage: React.FC = () => {
                                     node.isInTest ?
 
                                         <foreignObject
-                                            x={(node.cx) - node.title.length * 4}
+                                            x={(node.cx) - node.title.length * 3.5}
                                             y={(node.cy) - 10}
-                                            width={node.title.length * 7 + 20}
+                                            width={node.title.length * 7 + 10}
                                             height={40}
+                                            fontSize={14}
                                         >
                                             <div>
                                                 <Form.Control
@@ -177,25 +204,29 @@ const ExamPage: React.FC = () => {
                                                 />
                                             </div>
                                         </foreignObject>
-
                                         :
                                         <g>
                                             <rect
-                                                x={(node.cx) - node.title.length * 4}
+                                                x={(node.cx) - node.title.length * 3.5}
                                                 y={(node.cy) - 10}
-                                                width={node.title.length * 7 + 20}
+                                                width={node.title.length * 7 + 10}
                                                 height={20}
-                                                stroke="green"
+                                                stroke={node.color}
                                                 strokeWidth="2"
                                                 strokeOpacity={0.5}
+                                                fillOpacity={0.9}
                                                 rx="4" ry="4"
                                                 id={node.id}
-                                                fill={"#8FBC8F"}
+                                                fill={node.color}
                                             />
                                             <text
-                                                x={(node.cx) - node.title.length * 4 + 8}
+                                                fontSize={14}
+                                                textLength={(node.title.length * 7)}
+                                                alignmentBaseline="middle"
+                                                x={(node.cx) - node.title.length * 3.5 + 5}
                                                 y={(node.cy) + 5}
-                                            >{node.title}
+                                                fill={node.textColor}
+                                        >{node.title}
                                             </text>
                                         </g>
                                 );
@@ -206,7 +237,6 @@ const ExamPage: React.FC = () => {
             </main>
         </div>
     )
-
 };
 
 export default ExamPage;
