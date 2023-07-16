@@ -33,23 +33,24 @@ export const MRIZKA = "#"
  * @param {string} url - The URL to check.
  * @returns {Promise<boolean>} - A Promise resolving to a boolean indicating whether the URL represents a container.
  */
-export async function isUrlContainer(url: string): Promise<boolean | undefined> {
+export async function existsSource(url: string): Promise<boolean | undefined> {
   try {
-    return await isContainer(await getSolidDataset(url, { fetch: fetch }));
+    await getSolidDataset(url, { fetch: fetch });
+    return true
   } catch (error) {
-    console.log(error);
+    return false
   }
 }
 
 async function checkMainContainer(podUrl: string): Promise<void> {
-  if (!(await isUrlContainer(podUrl + WIKIMIND))) {
+  if (!(await existsSource(podUrl + WIKIMIND))) {
     await createContainerAt(podUrl + WIKIMIND, { fetch: fetch });
   }
 
 }
 
 async function checkMindMapsContainer(podUrl: string): Promise<void> {
-  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + MINDMAPS))) {
+  if (!(await existsSource(podUrl + WIKIMIND + SLASH + MINDMAPS))) {
     await createContainerAt(podUrl + WIKIMIND + SLASH + MINDMAPS, { fetch: fetch });
     const mindmapsDataset = createSolidDataset();
     saveSolidDatasetAt(
@@ -57,12 +58,11 @@ async function checkMindMapsContainer(podUrl: string): Promise<void> {
       mindmapsDataset,
       { fetch: fetch }
     );
-
   }
 }
 
 async function checkClassesContainer(podUrl: string): Promise<void> {
-  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + CLASSES))) {
+  if (!(await existsSource(podUrl + WIKIMIND + SLASH + CLASSES))) {
     await createContainerAt(podUrl + WIKIMIND + SLASH + CLASSES, { fetch: fetch });
     const classesDataset = createSolidDataset();
     saveSolidDatasetAt(
@@ -74,7 +74,7 @@ async function checkClassesContainer(podUrl: string): Promise<void> {
 }
 
 async function checkRequestsContainer(podUrl: string): Promise<void> {
-  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + REQUESTS))) {
+  if (!(await existsSource(podUrl + WIKIMIND + SLASH + REQUESTS))) {
     await createContainerAt(podUrl + WIKIMIND + SLASH + REQUESTS, { fetch: fetch });
     const reqeustsDataset = createSolidDataset();
     saveSolidDatasetAt(
@@ -86,7 +86,7 @@ async function checkRequestsContainer(podUrl: string): Promise<void> {
 }
 
 async function checkProfileContainer(podUrl: string, sessionId: string, accessControlPolicy: AccessControlPolicy): Promise<void> {
-  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + PROFILE))) {
+  if (!(await existsSource(podUrl + WIKIMIND + SLASH + PROFILE))) {
     await createContainerAt(podUrl + WIKIMIND + SLASH + PROFILE, { fetch: fetch });
 
     const profileSolidDataset = createSolidDataset();
@@ -118,7 +118,7 @@ async function checkProfileContainer(podUrl: string, sessionId: string, accessCo
 }
 
 async function checkChatsContainer(podUrl: string): Promise<void> {
-  if (!(await isUrlContainer(podUrl + WIKIMIND + SLASH + CHATS))) {
+  if (!(await existsSource(podUrl + WIKIMIND + SLASH + CHATS))) {
     await createContainerAt(podUrl + WIKIMIND + SLASH + CHATS, { fetch: fetch });
 
     const messagesDataset = await createSolidDataset();

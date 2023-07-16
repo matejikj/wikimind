@@ -108,12 +108,12 @@ const App: React.FC = () => {
               <div>
                 <ToastContainer
                   className="p-3"
-                  position={'bottom-end'}
+                  position={'top-center'}
                   style={{ zIndex: 1 }}>
                   <Toast
                     show={toastVisible}
                      onClose={() => setToastVisible(false)}
-                     bg='Warning'
+                     bg='danger'
                      >
                     <Toast.Header>
                       <img
@@ -121,10 +121,10 @@ const App: React.FC = () => {
                         className="rounded me-2"
                         alt=""
                       />
-                      <strong className="me-auto">Bootstrap</strong>
-                      <small>11 mins ago</small>
+                      <strong className="me-auto">WikiMind</strong>
+                      <small>Now</small>
                     </Toast.Header>
-                    <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
+                    <Toast.Body>Your Solid provider is not comaptible, because of getting pod url</Toast.Body>
                   </Toast>
 
                 </ToastContainer>
