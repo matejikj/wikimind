@@ -24,18 +24,13 @@ const exampleExams: Exam[] = [{
 }]
 
 const Class: React.FC = () => {
-  const d3Container = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const sessionContext = useContext(SessionContext)
 
   const ref = useRef(null);
-  const [height, setHeight] = useState(1000);
   const [announcementVisible, setAnnouncementVisible] = useState(false);
   const [announcement, setAnnouncement] = useState('');
-  const [width, setWidth] = useState(1000);
-  const [url, setUrl] = useState('');
-  const [modelClassAddShow, setModelClassAddShow] = useState(false);
   const [dataset, setDataset] = useState<ClassDataset>();
   const [name, setName] = useState('');
   const [createNewModalVisible, setCreateNewModalVisible] = useState(false);

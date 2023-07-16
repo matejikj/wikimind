@@ -1,7 +1,7 @@
 import { fetch } from "@inrupt/solid-client-authn-browser";
 
 import { WebsocketNotification } from "@inrupt/solid-client-notifications";
-import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
+import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
 import { Chat } from "../models/types/Chat";
 import { ChatDataset } from "../models/types/ChatDataset";
 import { CHATS, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";

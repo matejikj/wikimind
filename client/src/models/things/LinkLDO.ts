@@ -1,6 +1,6 @@
 import { rdf_type } from "../LDO";
 import { Link } from "../types/Link";
-import { LinkType } from "../types/LinkType";
+import { LinkType } from "../enums/LinkType";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
 import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";

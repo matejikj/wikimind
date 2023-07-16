@@ -2,49 +2,48 @@
  * Represents a node or element in a mind map.
  */
 export type Node = {
-    /**
-     * The unique identifier of the node.
-     */
-    id: string;
-    
-    /**
-     * The title or label of the node.
-     */
-    title: string;
-    
-    /**
-     * The URI associated with the node.
-     */
-    uri: string;
-    
-    /**
-     * The description or additional information about the node.
-     */
-    description: string;
-    
-    /**
-     * The x-coordinate position of the node.
-     */
-    cx: number;
-    
-    /**
-     * The y-coordinate position of the node.
-     */
-    cy: number;
-    
-    /**
-     * Indicates whether the node is visible or hidden.
-     */
-    isInTest: boolean;
+  /**
+   * The unique identifier of the node.
+   */
+  id: string;
 
-    /**
-     * Indicates whether the node is visible or hidden.
-     */
-    color: string;
+  /**
+   * The title or label of the node.
+   */
+  title: string;
 
-    /**
-     * Indicates whether the node is visible or hidden.
-     */
-    textColor: string;
-  }
-  
+  /**
+   * The URI associated with the node.
+   */
+  uri: string;
+
+  /**
+   * The description or additional information about the node.
+   */
+  description: string;
+
+  /**
+   * The x-coordinate position of the node.
+   */
+  cx: number;
+
+  /**
+   * The y-coordinate position of the node.
+   */
+  cy: number;
+
+  /**
+   * Indicates whether the node is visible or hidden.
+   */
+  isInTest: boolean;
+
+  /**
+   * The color associated with the node.
+   */
+  color: string;
+
+  /**
+   * The color of the text associated with the node.
+   */
+  textColor: string;
+}

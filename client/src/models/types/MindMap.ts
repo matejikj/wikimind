@@ -8,18 +8,18 @@ export type MindMap = {
   id: string;
 
   /**
-   * The unique identifier of the mind map.
+   * The name of the mind map.
    */
   name: string;
 
   /**
-  * The unique identifier of the mind map.
-  */
+   * The storage location of the mind map data.
+   */
   storage: string;
 
   /**
-  * The unique identifier of the mind map.
-  */
+   * The source from which the mind map data originates.
+   */
   source: string;
 
   /**

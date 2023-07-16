@@ -1,4 +1,4 @@
-import { RequestType } from "./RequestType";
+import { RequestType } from "../enums/RequestType";
 
 /**
  * Represents a request made by a user for a specific class.
@@ -15,8 +15,8 @@ export type Request = {
   requestor: string;
 
   /**
-* The user who made the request.
-*/
+   * The type of request made by the user.
+   */
   requestType: RequestType;
 
   /**

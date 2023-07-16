@@ -1,5 +1,5 @@
 import { rdf_type } from "../LDO";
-import { AccessControlPolicy } from "../types/AccessControlPolicy";
+import { AccessControlPolicy } from "../enums/AccessControlPolicy";
 import { Chat } from "../types/Chat";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";

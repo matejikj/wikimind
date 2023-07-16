@@ -11,7 +11,7 @@ import {
 import { fetch } from "@inrupt/solid-client-authn-browser";
 import profileDefinition from "../definitions/profile.json";
 import { ProfileLDO } from "../models/things/ProfileLDO";
-import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
+import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
 import { Profile } from "../models/types/Profile";
 import { initializeAcl, isWacOrAcp } from "./accessService";
 

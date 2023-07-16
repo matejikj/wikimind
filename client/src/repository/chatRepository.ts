@@ -11,24 +11,39 @@ import { ChatLDO } from "../models/things/ChatLDO";
 import { Chat } from "../models/types/Chat";
 import { getNumberFromUrl } from "./utils";
 
-
+/**
+ * Represents a repository for managing chat data using Solid data storage.
+ */
 export class ChatRepository {
-  private chatLDO: ChatLDO
+  private chatLDO: ChatLDO;
   
+  /**
+   * Creates a new instance of the ChatRepository class.
+   */
   constructor() {
     this.chatLDO = new ChatLDO(chatDefinition);
   }
 
-    async getChat(chatUrl: string): Promise<Chat | undefined> {
-        const chatDataset = await getSolidDataset(chatUrl, { fetch });
-        const thingId = `${chatUrl}#${getNumberFromUrl(chatUrl)}`
-        return this.chatLDO.read(getThing(chatDataset, thingId))
-    }
-
-    async createChat(chatUrl: string, chat: Chat): Promise<void> {
-      let mindMapDataset = createSolidDataset();
-      mindMapDataset = setThing(mindMapDataset, this.chatLDO.create(chat));
-      await saveSolidDatasetAt(chatUrl, mindMapDataset, { fetch });
+  /**
+   * Retrieves chat data from Solid data storage.
+   * @param chatUrl - The URL of the chat to retrieve.
+   * @returns A Promise that resolves to the Chat object if found, or undefined if not found.
+   */
+  async getChat(chatUrl: string): Promise<Chat | undefined> {
+    const chatDataset = await getSolidDataset(chatUrl, { fetch });
+    const thingId = `${chatUrl}#${getNumberFromUrl(chatUrl)}`;
+    return this.chatLDO.read(getThing(chatDataset, thingId));
   }
 
+  /**
+   * Creates a new chat and saves it to Solid data storage.
+   * @param chatUrl - The URL where the new chat will be saved.
+   * @param chat - The Chat object representing the chat to be created.
+   * @returns A Promise that resolves when the chat is successfully created and saved.
+   */
+  async createChat(chatUrl: string, chat: Chat): Promise<void> {
+    let chatDataset = createSolidDataset();
+    chatDataset = setThing(chatDataset, this.chatLDO.create(chat));
+    await saveSolidDatasetAt(chatUrl, chatDataset, { fetch });
+  }
 }

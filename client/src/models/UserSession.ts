@@ -1,9 +1,4 @@
-import { AccessControlPolicy } from "./AccessControlPolicy";
-
-export enum LanguageLocalization {
-  CS = "cs",
-  EN = "en"
-}
+import { AccessControlPolicy } from "./enums/AccessControlPolicy";
 
 /**
  * Represents a user session with information about the user's web ID, POD URL, login status, and access control policy.
@@ -24,15 +19,30 @@ export type UserSession = {
    */
   isLogged: boolean;
 
-    /**
-   * Indicates whether the user is logged in or not.
+  /**
+   * The user's preferred language localization.
    */
-    localization: LanguageLocalization;
+  localization: LanguageLocalization;
 
   /**
    * The access control policy associated with the user's POD, or `null` if not available.
    */
   podAccessControlPolicy: AccessControlPolicy | null;
+}
+
+/**
+ * Enum representing language localizations.
+ */
+export enum LanguageLocalization {
+  /**
+   * Czech language localization.
+   */
+  CS = "cs",
+
+  /**
+   * English language localization.
+   */
+  EN = "en"
 }
 
 /**

@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { UserSession, defaultSessionValue } from "./models/types/UserSession";
+import { UserSession, defaultSessionValue } from "./models/UserSession";
 
 interface ContextProps {
   sessionInfo: UserSession;

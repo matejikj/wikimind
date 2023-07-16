@@ -3,25 +3,31 @@ import {
   saveSolidDatasetAt
 } from "@inrupt/solid-client";
 import { fetch } from "@inrupt/solid-client-authn-browser";
-import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
+import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
 import { Link } from "../models/types/Link";
-import { LinkType } from "../models/types/LinkType";
+import { LinkType } from "../models/enums/LinkType";
 import { MindMap } from "../models/types/MindMap";
 import { MindMapDataset } from "../models/types/MindMapDataset";
-import { UserSession } from "../models/types/UserSession";
+import { UserSession } from "../models/UserSession";
 import { LinkRepository } from "../repository/linkRepository";
 import { MindMapRepository } from "../repository/mindMapRepository";
 import { initializeAcl } from "./accessService";
 import { MINDMAPS, TTLFILETYPE, WIKIMIND } from "./containerService";
 import { generate_uuidv4 } from "./utils";
+import { ConnectionRepository } from "../repository/connectionRepository";
+import { NodeRepository } from "../repository/nodeRepository";
 
 export class MindMapService {
   private mindMapRepository: MindMapRepository;
   private linkRepository: LinkRepository;
+  private connectionRepository: ConnectionRepository;
+  private nodeRepository: NodeRepository;
 
   constructor() {
     this.mindMapRepository = new MindMapRepository();
     this.linkRepository = new LinkRepository();
+    this.connectionRepository = new ConnectionRepository();
+    this.nodeRepository = new NodeRepository();
   }
 
   async getMindMapList(podUrl: string): Promise<MindMap[] | undefined> {
@@ -44,11 +50,12 @@ export class MindMapService {
     try {
       const mindMap = await this.mindMapRepository.getMindMap(mindMapUrl)
       if (mindMap) {
-        const res: any = await this.mindMapRepository.getNodesAndConnections(mindMap.storage)
+        const nodes: any = await this.nodeRepository.getNodes(mindMap.storage)
+        const connections: any = await this.connectionRepository.getConnections(mindMap.storage)
         const mindMapDataset: MindMapDataset = {
           mindMap: mindMap,
-          links: res.links,
-          nodes: res.nodes,
+          links: connections,
+          nodes: nodes,
         };
         return mindMapDataset;
       }
@@ -96,7 +103,8 @@ export class MindMapService {
    * @returns The URL of the newly created mind map.
    */
   async saveMindMap(mindMap: MindMapDataset): Promise<void> {
-    this.mindMapRepository.saveNodesAndConnections(mindMap.mindMap.storage, mindMap.nodes, mindMap.links)
+    this.connectionRepository.saveConnections(mindMap.mindMap.storage, mindMap.links)
+    this.nodeRepository.saveNodes(mindMap.mindMap.storage, mindMap.nodes)
   }
 
   async removeMindMap(mindMap: MindMap): Promise<boolean> {

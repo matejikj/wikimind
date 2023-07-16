@@ -9,7 +9,10 @@ import { Profile } from "./Profile";
  */
 export type ClassDataset = {
 
-  class: Class
+  /**
+   * The class object containing information about the class itself.
+   */
+  class: Class;
 
   /**
    * An array of student profiles belonging to the class.
@@ -22,8 +25,8 @@ export type ClassDataset = {
   mindMaps: MindMap[];
 
   /**
- * An array of mind maps created for the class.
- */
+   * An array of messages related to the class.
+   */
   messages: Message[];
 
   /**

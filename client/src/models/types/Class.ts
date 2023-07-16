@@ -23,8 +23,7 @@ export type Class = {
   storage: string;
 
   /**
-   * The storage location of the class data.
+   * The source from which the class data originates.
    */
   source: string;
-
 }

@@ -9,7 +9,7 @@ import '../styles/style.css';
 import { MdOutlineCancel } from "react-icons/md";
 import { ImMenu } from "react-icons/im";
 import { logout } from "@inrupt/solid-client-authn-browser";
-import { LanguageLocalization } from "../models/types/UserSession";
+import { LanguageLocalization } from "../models/UserSession";
 import sidenavLocalization from "../localizations/sidenav.json";
 import { Button } from "react-bootstrap";
 

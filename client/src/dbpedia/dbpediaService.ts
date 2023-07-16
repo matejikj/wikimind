@@ -5,7 +5,7 @@ import { TimelineResultItem } from "./models/TimelineResultItem";
 import { DBPediaEntityQuery } from "./queries/DBPediaEntityQuery";
 import { DBPediaTimelineQuery } from "./queries/DBPediaTimelineQuery";
 import { DBpediaCategoryQuery } from "./queries/DBPediaCategoryQuery";
-import { LanguageLocalization, UserSession } from "../models/types/UserSession";
+import { LanguageLocalization, UserSession } from "../models/UserSession";
 import { DBpediaQueryBuilder } from "./DBPediaQueryBuilder";
 import { DBPediaDetailQuery } from "./queries/DBPediaDetailQuery";
 import { AbstractResultItem } from "./models/AbstractResultItem";

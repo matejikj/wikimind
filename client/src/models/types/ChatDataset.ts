@@ -9,7 +9,7 @@ export type ChatDataset = {
    * The chat object containing details about the chat.
    */
   chat: Chat;
-  
+
   /**
    * An array of messages exchanged within the chat.
    */

@@ -1,6 +1,6 @@
 import { rdf_type } from "../LDO";
 import { Request } from "../types/Request";
-import { RequestType } from "../types/RequestType";
+import { RequestType } from "../enums/RequestType";
 import { BaseLDO } from "./BaseLDO";
 import { CRUDLDO } from "./CRUDLDO";
 import { ThingLocal, buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";

@@ -1,6 +1,6 @@
 import { acp_ess_2, createAclFromFallbackAcl, getResourceAcl, getSolidDatasetWithAcl, hasAccessibleAcl, hasFallbackAcl, hasResourceAcl, saveAclFor } from "@inrupt/solid-client";
 import { fetch } from "@inrupt/solid-client-authn-browser";
-import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
+import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
 
 /**
  * Initializes ACL for resources contained in a WAC POD.

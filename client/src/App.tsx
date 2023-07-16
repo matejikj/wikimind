@@ -1,7 +1,7 @@
 import { handleIncomingRedirect } from "@inrupt/solid-client-authn-browser";
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { LanguageLocalization, UserSession, defaultSessionValue } from "./models/types/UserSession";
+import { LanguageLocalization, UserSession, defaultSessionValue } from "./models/UserSession";
 import Browser from "./pages/Browser";
 import Chat from "./pages/Chat";
 import Chats from "./pages/Chats";

@@ -8,7 +8,7 @@ import {
 import examDefinition from "../definitions/exam.json";
 import { ExamLDO } from "../models/things/ExamLDO";
 import { Exam } from "../models/types/Exam";
-import { UserSession } from "../models/types/UserSession";
+import { UserSession } from "../models/UserSession";
 
 
 export async function addExamResult(userSession: UserSession, exam: Exam, classUrl: string) {

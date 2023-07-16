@@ -1,4 +1,4 @@
-import { AccessControlPolicy } from "./AccessControlPolicy";
+import { AccessControlPolicy } from "../enums/AccessControlPolicy";
 
 /**
  * Represents a chat conversation.
@@ -25,13 +25,13 @@ export type Chat = {
   storage: string;
 
   /**
-   * The storage location of the chat data.
+   * The source from which the chat data originates.
    */
   source: string;
 
   /**
-* The storage location of the chat data.
-*/
+   * The access control policy associated with the chat.
+   */
   accessControlPolicy: AccessControlPolicy;
 
   /**
