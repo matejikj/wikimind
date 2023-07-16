@@ -32,7 +32,6 @@ describe("ConnectionLDO", () => {
       .build();
 
     const result = connectionLDO.read(mockThing);
-
     // Assert the returned Connection object has expected values.
     expect(result).toEqual({
       id: "connection123",

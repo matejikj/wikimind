@@ -8,7 +8,7 @@ import { fetch } from "@inrupt/solid-client-authn-browser";
 import linkDefinition from "../../definitions/link.json";
 import { LinkLDO } from "../../models/things/LinkLDO";
 import { Link } from "../../models/types/Link";
-import { LinkType } from "../../models/types/LinkType";
+import { LinkType } from "../../models/enums/LinkType";
 import { generate_uuidv4 } from "../../service/utils";
 import { LinkRepository } from "../linkRepository";
 

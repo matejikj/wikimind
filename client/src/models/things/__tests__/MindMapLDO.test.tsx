@@ -37,7 +37,6 @@ describe("MindMapLDO", () => {
       created: "2023-07-04"
     });
   });
-
   test("create should return ThingLocal representing MindMap object", () => {
     const mockMindMap: MindMap = {
       id: "mindmap123",

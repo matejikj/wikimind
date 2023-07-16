@@ -34,7 +34,6 @@ describe("ExamLDO", () => {
       .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profile", "https://example.com/profile")
       .addStringNoLocale("http://schema.org/email", "exam123")
       .build();
-
     const result = examLDO.read(mockThing);
 
     // Assert the returned Exam object has expected values.

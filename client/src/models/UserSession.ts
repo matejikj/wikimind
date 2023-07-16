@@ -27,7 +27,7 @@ export type UserSession = {
   /**
    * The access control policy associated with the user's POD, or `null` if not available.
    */
-  podAccessControlPolicy: AccessControlPolicy | null;
+  podAccessControlPolicy: AccessControlPolicy;
 }
 
 /**
@@ -53,5 +53,5 @@ export const defaultSessionValue: UserSession = {
   podUrl: "",
   isLogged: false,
   localization: LanguageLocalization.CS,
-  podAccessControlPolicy: null,
+  podAccessControlPolicy: AccessControlPolicy.WAC,
 }

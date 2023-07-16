@@ -42,7 +42,6 @@ describe("ProfileLDO", () => {
       .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#webId", "https://example.com/johndoe")
       .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#source", "https://example.com/profile.jpg")
       .build();
-
     const result = profileLDO.read(mockThing);
 
     // Assert the returned Profile object has expected values.

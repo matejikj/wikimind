@@ -1,9 +1,8 @@
 import { rdf_type } from "../../LDO";
-import { AccessControlPolicy } from "../../types/AccessControlPolicy";
+import { AccessControlPolicy } from "../../enums/AccessControlPolicy";
 import { Chat } from "../../types/Chat";
 import { ChatLDO } from "../ChatLDO";
 import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
-
 
 /**
  * Tests for the ChatLDO class.

@@ -12,38 +12,63 @@ import Editor from "./pages/Editor";
 import ExamPage from "./pages/ExamPage";
 import Login from './pages/Login';
 import ProfileView from "./pages/ProfileView";
-import { checkContainer } from "./service/containerService";
+import { WIKIMIND, checkContainer } from "./service/containerService";
 import { SessionContext } from "./sessionContext";
 import './styles/style.css';
+import {
+  createContainerAt,
+  createSolidDataset,
+  getPodUrlAll,
+  getSolidDataset,
+  isContainer,
+  saveSolidDatasetAt,
+  setThing,
+  universalAccess
+} from "@inrupt/solid-client";
+import { AccessControlPolicy } from "./models/enums/AccessControlPolicy";
+import { isWacOrAcp } from "./service/accessService";
+import { Toast, ToastContainer } from "react-bootstrap";
 
 const App: React.FC = () => {
 
   const [sessionInfo, setSessionInfo]
     = React.useState<UserSession>(defaultSessionValue);
   const [waiting, setWaiting] = React.useState(false);
+  const [toastVisible, setToastVisible] = React.useState(false);
 
-  useEffect(() => {
-    handleIncomingRedirect({
-      restorePreviousSession: true
-    }).then((info) => {
-      if (info?.isLoggedIn && info?.webId !== undefined) {
-        try {
+  async function handleLogin(): Promise<void> {
+    try {
+      const info = await handleIncomingRedirect({
+        restorePreviousSession: true
+      })
+      if (info && info.webId) {
+        let podUrls
+        podUrls = await getPodUrlAll(info.webId);
+        if (podUrls && podUrls.length > 0) {
           setWaiting(true)
-          checkContainer(info?.webId).then((value) => {
-            setSessionInfo({
-              isLogged: true,
-              webId: info?.webId!,
-              podUrl: value.podUrl,
-              localization: LanguageLocalization.CS,
-              podAccessControlPolicy: value.accessControlPolicy
-            })
-            setWaiting(false)
-          })
-        } catch (error) {
-          console.log("There is problem when logging: ", error)
+          const podUrl = podUrls[0];
+          const accessControlPolicy: AccessControlPolicy = await isWacOrAcp(`podUrl${WIKIMIND}/`);
+          const sessionInfo = {
+            isLogged: true,
+            webId: info.webId,
+            podUrl: podUrl,
+            localization: LanguageLocalization.CS,
+            podAccessControlPolicy: accessControlPolicy
+          }
+          await checkContainer(sessionInfo)
+          setWaiting(false)
+          setSessionInfo(sessionInfo)
+        } else {
+          setToastVisible(true)
         }
       }
-    })
+    } catch (error) {
+      setToastVisible(true)
+    }
+  }
+
+  useEffect(() => {
+    handleLogin()
   }, []);
 
   return (
@@ -78,13 +103,33 @@ const App: React.FC = () => {
                 </div>
               </div>
             )
-          } else if (window.location.href.includes('/browser')) {
-            return (
-              <Browser></Browser>
-            )
           } else {
             return (
-              <Login></Login>
+              <div>
+                <ToastContainer
+                  className="p-3"
+                  position={'bottom-end'}
+                  style={{ zIndex: 1 }}>
+                  <Toast
+                    show={toastVisible}
+                     onClose={() => setToastVisible(false)}
+                     bg='Warning'
+                     >
+                    <Toast.Header>
+                      <img
+                        src="holder.js/20x20?text=%20"
+                        className="rounded me-2"
+                        alt=""
+                      />
+                      <strong className="me-auto">Bootstrap</strong>
+                      <small>11 mins ago</small>
+                    </Toast.Header>
+                    <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
+                  </Toast>
+
+                </ToastContainer>
+                <Login></Login>
+              </div>
             )
           }
         })()}

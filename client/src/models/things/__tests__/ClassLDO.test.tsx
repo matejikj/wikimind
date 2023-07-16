@@ -32,7 +32,6 @@ describe("ClassLDO", () => {
       .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#teacher", "https://example.com/teacher")
       .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage", "https://example.com/storage")
       .build();
-
     const result = classLDO.read(mockThing);
 
     // Assert the returned Class object has expected values.

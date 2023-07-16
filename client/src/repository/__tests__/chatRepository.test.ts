@@ -8,7 +8,7 @@ import {
 import { fetch } from "@inrupt/solid-client-authn-browser";
 import chatDefinition from "../../definitions/chat.json";
 import { ChatLDO } from "../../models/things/ChatLDO";
-import { AccessControlPolicy } from "../../models/types/AccessControlPolicy";
+import { AccessControlPolicy } from "../../models/enums/AccessControlPolicy";
 import { Chat } from "../../models/types/Chat";
 import { generate_uuidv4 } from "../../service/utils";
 import { ChatRepository } from "../chatRepository";

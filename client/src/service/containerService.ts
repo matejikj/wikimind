@@ -6,6 +6,7 @@ import {
   isContainer,
   saveSolidDatasetAt,
   setThing,
+  getContentType,
   universalAccess
 } from "@inrupt/solid-client";
 import { fetch } from "@inrupt/solid-client-authn-browser";
@@ -14,6 +15,7 @@ import { ProfileLDO } from "../models/things/ProfileLDO";
 import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
 import { Profile } from "../models/types/Profile";
 import { initializeAcl, isWacOrAcp } from "./accessService";
+import { UserSession } from "../models/UserSession";
 
 export const WIKIMIND = 'WikiMind'
 export const MINDMAPS = 'mindMaps'
@@ -36,20 +38,6 @@ export async function isUrlContainer(url: string): Promise<boolean | undefined> 
     return await isContainer(await getSolidDataset(url, { fetch: fetch }));
   } catch (error) {
     console.log(error);
-  }
-}
-
-/**
- * Retrieves the URL of the Solid POD of a user with a given session ID.
- *
- * @param {string} sessionId - The session ID of the user.
- * @returns {Promise<string[] | null>} - A Promise resolving to an array containing the POD URL(s) of the user, or null if no URL could be retrieved.
- */
-export async function getPodUrl(sessionId: string): Promise<string[] | null> {
-  try {
-    return await getPodUrlAll(sessionId);
-  } catch (error) {
-    return null;
   }
 }
 
@@ -145,46 +133,38 @@ async function checkChatsContainer(podUrl: string): Promise<void> {
 /**
  * Checks and initializes necessary containers and access control policies for a given session ID.
  *
- * @param {string} sessionId - The session ID of the user.
- * @returns {Promise<{ podUrl: string; accessControlPolicy: AccessControlPolicy }>} - A Promise resolving to an object containing the POD URL and the access control policy.
+ * @param {UserSession} userSession - The session ID of the user.
+ * @returns {Promise<void>} - A Promise resolving to an object containing the POD URL and the access control policy.
  * @throws {Error} - Throws an error if there is a problem with the SolidPod.
  */
-export async function checkContainer(sessionId: string): Promise<{ podUrl: string; accessControlPolicy: AccessControlPolicy }> {
-  const podUrls = await getPodUrl(sessionId);
-  if (podUrls !== null) {
-    const podUrl = podUrls[0];
+export async function checkContainer(userSession: UserSession): Promise<void> {
 
-    await checkMainContainer(podUrl)
+    await checkMainContainer(userSession.podUrl)
 
-    const accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl + WIKIMIND + SLASH);
     await Promise.all([
-      checkMindMapsContainer(podUrl),
-      checkProfileContainer(podUrl, sessionId, accessControlPolicy),
-      checkChatsContainer(podUrl),
-      checkClassesContainer(podUrl),
-      checkRequestsContainer(podUrl)
+      checkMindMapsContainer(userSession.podUrl),
+      checkProfileContainer(userSession.podUrl, userSession.webId, userSession.podAccessControlPolicy),
+      checkChatsContainer(userSession.podUrl),
+      checkClassesContainer(userSession.podUrl),
+      checkRequestsContainer(userSession.podUrl)
     ]);
 
     const requestsPath = WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
     const profilePAth = WIKIMIND + SLASH + PROFILE + SLASH + PROFILE + TTLFILETYPE
 
-    if (accessControlPolicy === AccessControlPolicy.WAC) {
-      await initializeAcl(podUrl + requestsPath);
-      await initializeAcl(podUrl + profilePAth);
+    if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
+      await initializeAcl(userSession.podUrl + requestsPath);
+      await initializeAcl(userSession.podUrl + profilePAth);
     }
 
     universalAccess.setPublicAccess(
-      podUrl + requestsPath,
+      userSession.podUrl + requestsPath,
       { append: true, read: true, write: false },
       { fetch: fetch }
     )
     universalAccess.setPublicAccess(
-      podUrl + profilePAth,
+      userSession.podUrl + profilePAth,
       { append: false, read: true, write: false },
       { fetch: fetch }
     )
-
-    return { podUrl, accessControlPolicy };
-  }
-  throw new Error("There is a problem with SolidPod.");
 }

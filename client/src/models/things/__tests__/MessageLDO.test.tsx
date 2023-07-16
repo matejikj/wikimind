@@ -34,7 +34,6 @@ describe("MessageLDO", () => {
       .addStringNoLocale("https://schema.org/text", "Hello, how are you?")
       .addStringNoLocale("https://schema.org/dateCreated", "2023-07-04")
       .build();
-
     const result = messageLDO.read(mockThing);
 
     // Assert the returned Message object has expected values.

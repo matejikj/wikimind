@@ -12,6 +12,7 @@ import { logout } from "@inrupt/solid-client-authn-browser";
 import { LanguageLocalization } from "../models/UserSession";
 import sidenavLocalization from "../localizations/sidenav.json";
 import { Button } from "react-bootstrap";
+import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
 
 const Sidenav: React.FC = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const Sidenav: React.FC = () => {
         podUrl: "",
         isLogged: false,
         localization: LanguageLocalization.EN,
-        podAccessControlPolicy: null
+        podAccessControlPolicy: AccessControlPolicy.WAC
       })
     })
   }

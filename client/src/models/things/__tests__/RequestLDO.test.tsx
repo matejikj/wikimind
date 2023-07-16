@@ -39,7 +39,6 @@ describe("RequestLDO", () => {
       requestor: "user123"
     });
   });
-
   
   test("create should return ThingLocal representing Request object", () => {
     const mockRequest: Request = {

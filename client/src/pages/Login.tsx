@@ -36,7 +36,10 @@ const Login: React.FC = () => {
                   <option value="https://inrupt.net">https://inrupt.net</option>
                   <option value="https://use.id/matejikj">https://use.id/matejikj</option>
                   <option value="https://solidweb.org">https://solidweb.org</option>
+                  <option value="https://solid.redpencil.io/">https://solid.redpencil.io/</option>
                   <option value="https://login.inrupt.com/">https://login.inrupt.com/</option>
+                  <option value="https://solidweb.me/">https://solidweb.me/</option>
+                  
                 </Form.Select>
                 <br />
                 <Form.Control

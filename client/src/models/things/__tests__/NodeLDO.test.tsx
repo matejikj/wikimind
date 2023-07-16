@@ -80,7 +80,6 @@ describe("ProfileLDO", () => {
       color: "#FFFFFF",
       isInTest: true
     };
-
     const result = nodeLDO.create(mockNode);
 
     // Assert the returned ThingLocal has expected property values.

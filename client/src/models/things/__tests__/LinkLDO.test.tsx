@@ -1,7 +1,7 @@
 import { buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
 import { rdf_type } from "../../LDO";
 import { Link } from "../../types/Link";
-import { LinkType } from "../../types/LinkType";
+import { LinkType } from "../../enums/LinkType";
 import { LinkLDO } from "../LinkLDO";
 
 
@@ -31,7 +31,6 @@ describe("LinkLDO", () => {
       .addStringNoLocale("http://schema.org/identifier", "link123")
       .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#LinkType", "CHAT")
       .build();
-
     const result = linkLDO.read(mockThing);
 
     // Assert the returned Link object has expected values.

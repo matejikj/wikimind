@@ -3,13 +3,14 @@ import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
     createSolidDataset,
     saveSolidDatasetAt,
-    universalAccess
+    universalAccess,
+    getPodUrlAll
 } from "@inrupt/solid-client";
 
 
 
 import { Class } from "../models/types/Class";
-import { CHATS, CLASSES, MINDMAPS, PROFILE, REQUESTS, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl } from "./containerService";
+import { CHATS, CLASSES, MINDMAPS, PROFILE, REQUESTS, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";
 import { generate_uuidv4 } from "./utils";
 // import { getProfile } from "./profileService";
 import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
@@ -302,9 +303,9 @@ export class ClassService {
         const webId = classUri.split('?')[0];
         const urlParams = new URLSearchParams(paramString);
         const classId = (urlParams.get("classId"))
-        const podUrls = await getPodUrl(webId)
+        const podUrls = await getPodUrlAll(webId);
         if (podUrls) {
-            const newRequst: Request = {
+        const newRequst: Request = {
                 id: generate_uuidv4(),
                 subject: podUrls[0] + WIKIMIND + SLASH + CLASSES + SLASH + classId + TTLFILETYPE,
                 requestType: RequestType.CLASS_REQUEST,
@@ -340,9 +341,9 @@ export class ClassService {
         const messageDatasetUrl = userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + messageDatasetId + TTLFILETYPE;
         const messageStorageUrl = userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + generate_uuidv4() + TTLFILETYPE;
         try {
-            const podUrls = await getPodUrl(classRequest.requestor);
 
-            if (podUrls !== null) {
+            const podUrls = await getPodUrlAll(classRequest.requestor);
+            if (podUrls) {
 
                 const classThing = await this.classRepository.getClass(classRequest.subject)
                 if (classThing) {
