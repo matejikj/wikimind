@@ -1,7 +1,13 @@
+import {
+  getPodUrlAll,
+  getResourceInfo
+} from "@inrupt/solid-client";
 import { handleIncomingRedirect } from "@inrupt/solid-client-authn-browser";
 import React, { useEffect } from "react";
+import { Toast, ToastContainer } from "react-bootstrap";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { LanguageLocalization, UserSession, defaultSessionValue } from "./models/UserSession";
+import { AccessControlPolicy } from "./models/enums/AccessControlPolicy";
 import Browser from "./pages/Browser";
 import Chat from "./pages/Chat";
 import Chats from "./pages/Chats";
@@ -12,23 +18,13 @@ import Editor from "./pages/Editor";
 import ExamPage from "./pages/ExamPage";
 import Login from './pages/Login';
 import ProfileView from "./pages/ProfileView";
-import { WIKIMIND, checkContainer } from "./service/containerService";
+import { isWacOrAcp } from "./service/accessService";
+import { checkContainer } from "./service/containerService";
 import { SessionContext } from "./sessionContext";
 import './styles/style.css';
-import {
-  createContainerAt,
-  createSolidDataset,
-  getPodUrlAll,
-  getSolidDataset,
-  isContainer,
-  saveSolidDatasetAt,
-  setThing,
-  universalAccess
-} from "@inrupt/solid-client";
-import { AccessControlPolicy } from "./models/enums/AccessControlPolicy";
-import { isWacOrAcp } from "./service/accessService";
-import { Toast, ToastContainer } from "react-bootstrap";
 
+const STORAGE_DESCRIPTION = "http://www.w3.org/ns/solid/terms#storageDescription"
+const WELL_KNOWN = ".well-known"
 const App: React.FC = () => {
 
   const [sessionInfo, setSessionInfo]
@@ -42,12 +38,17 @@ const App: React.FC = () => {
         restorePreviousSession: true
       })
       if (info && info.webId) {
-        let podUrls
-        podUrls = await getPodUrlAll(info.webId);
+        let podUrl
+        const podUrls = (await getPodUrlAll(info.webId))
         if (podUrls && podUrls.length > 0) {
+          podUrl = podUrls[0];
+        } else {
+          const resInfo = await getResourceInfo(info.webId)
+          podUrl = resInfo.internal_resourceInfo.linkedResources[STORAGE_DESCRIPTION][0].split(WELL_KNOWN)[0]
+        }
+        if (podUrl) {
           setWaiting(true)
-          const podUrl = podUrls[0];
-          const accessControlPolicy: AccessControlPolicy = await isWacOrAcp(`podUrl${WIKIMIND}/`);
+          const accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl);
           const sessionInfo = {
             isLogged: true,
             webId: info.webId,
@@ -112,9 +113,9 @@ const App: React.FC = () => {
                   style={{ zIndex: 1 }}>
                   <Toast
                     show={toastVisible}
-                     onClose={() => setToastVisible(false)}
-                     bg='danger'
-                     >
+                    onClose={() => setToastVisible(false)}
+                    bg='danger'
+                  >
                     <Toast.Header>
                       <img
                         src="holder.js/20x20?text=%20"
