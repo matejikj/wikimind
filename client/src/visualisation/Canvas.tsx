@@ -1,15 +1,13 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import Circle from "./MindMapNode";
-import Line from "./Line";
-import '../styles/style.css';
-import Button from 'react-bootstrap/Button';
-import { MindMapDataset } from "../models/types/MindMapDataset";
-import { SessionContext } from "../sessionContext";
-import { CanvasState } from "./models/CanvasState";
+import React, { useContext, useRef } from "react";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { Connection } from "../models/types/Connection";
+import { MindMapDataset } from "../models/types/MindMapDataset";
 import { Node } from "../models/types/Node";
-import { TransformWrapper } from "react-zoom-pan-pinch";
-import { TransformComponent } from "react-zoom-pan-pinch";
+import { SessionContext } from "../sessionContext";
+import '../styles/style.css';
+import Line from "./Line";
+import Circle from "./MindMapNode";
+import { CanvasState } from "./models/CanvasState";
 
 /**
  * Canvas component for rendering the mind map canvas.

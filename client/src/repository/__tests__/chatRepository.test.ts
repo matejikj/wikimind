@@ -1,18 +1,16 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
+    createSolidDataset,
     getSolidDataset,
     getThing,
     saveSolidDatasetAt,
-    setThing,
-    createSolidDataset,
-    ThingLocal, buildThing, createThing, getStringNoLocale,
-
+    setThing
 } from "@inrupt/solid-client";
-import { ChatLDO } from "../../models/things/ChatLDO";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import chatDefinition from "../../definitions/chat.json";
+import { ChatLDO } from "../../models/things/ChatLDO";
 import { AccessControlPolicy } from "../../models/types/AccessControlPolicy";
-import { generate_uuidv4 } from "../../service/utils";
 import { Chat } from "../../models/types/Chat";
+import { generate_uuidv4 } from "../../service/utils";
 import { ChatRepository } from "../chatRepository";
 
 jest.mock("@inrupt/solid-client-authn-browser", () => ({

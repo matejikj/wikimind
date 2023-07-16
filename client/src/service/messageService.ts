@@ -1,37 +1,10 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
-
-import {
-    getSolidDataset,
-    getThing,
-    getThingAll,
-    setThing,
-    saveSolidDatasetAt,
-    getUrlAll,
-} from "@inrupt/solid-client";
-
-
-
-import { RDF } from "@inrupt/vocab-common-rdf";
-import profileDefinition from "../definitions/profile.json"
-import chatDefinition from "../definitions/chat.json"
-import messageDefinition from "../definitions/message.json"
-import mindMapDefinition from "../definitions/mindMap.json"
-import linkDefinition from "../definitions/link.json"
-import { LDO } from "../models/LDO";
-import { CHATS, TTLFILETYPE, WIKIMIND, getPodUrl } from "./containerService";
-import { LinkLDO } from "../models/things/LinkLDO";
-import { LinkType } from "../models/types/LinkType";
-import { UserSession } from "../models/types/UserSession";
-import { Profile } from "../models/types/Profile";
-import { ProfileLDO } from "../models/things/ProfileLDO";
-import { MessageLDO } from "../models/things/MessageLDO";
-import { Message } from "../models/types/Message";
-import { ChatLDO } from "../models/things/ChatLDO";
 import { Chat } from "../models/types/Chat";
 import { ChatDataset } from "../models/types/ChatDataset";
+import { Message } from "../models/types/Message";
 import { ChatRepository } from "../repository/chatRepository";
-import { MessageRepository } from "../repository/messageRepository";
 import { LinkRepository } from "../repository/linkRepository";
+import { MessageRepository } from "../repository/messageRepository";
+import { CHATS, TTLFILETYPE, WIKIMIND } from "./containerService";
 
 export class MessageService {
   private chatRepository: ChatRepository;

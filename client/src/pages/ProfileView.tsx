@@ -1,27 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import Sidenav from "../components/Sidenav";
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import Sidenav from "../components/Sidenav";
 
-import '../styles/style.css';
-import { SessionContext } from '../sessionContext';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import { Profile } from '../models/types/Profile';
 import { ProfileService } from "../service/profileService";
-import {
-  getSolidDataset,
-  getThing,
-  saveSolidDatasetAt,
-  setThing,
-  getThingAll,
-  deleteSolidDataset,
-  getUrlAll,
-  createSolidDataset
-} from "@inrupt/solid-client";
-import { fetch } from "@inrupt/solid-client-authn-browser";
+import { SessionContext } from '../sessionContext';
+import '../styles/style.css';
 
 const ProfileView: React.FC = () => {
   const sessionContext = useContext(SessionContext)
@@ -53,11 +42,6 @@ const ProfileView: React.FC = () => {
     const key = event.target.name;
     const value = event.target.value;
     key && value && profile && setProfile({ ...profile, [key]: value })
-  }
-
-  async function aaa() {
-    const myDataset = await getSolidDataset("https://matejikj.datapod.igrant.io/WikiMind/profile/profdsfdfile.ttl", { fetch });
-    console.log(myDataset)
   }
 
   return (

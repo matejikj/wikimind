@@ -1,26 +1,19 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
   createContainerAt,
   createSolidDataset,
-  getContainedResourceUrlAll,
   getPodUrlAll,
   getSolidDataset,
-  getStringNoLocale,
-  getThingAll,
-  getUrlAll,
   isContainer,
-  saveSolidDatasetAt,createContainerInContainer,
+  saveSolidDatasetAt,
   setThing,
-  universalAccess,
+  universalAccess
 } from "@inrupt/solid-client";
-import { RDF } from "@inrupt/vocab-common-rdf";
-import mindMapDefinition from "../definitions/mindMap.json";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import profileDefinition from "../definitions/profile.json";
-import { UserSession } from "../models/types/UserSession";
-import { initializeAcl, isWacOrAcp } from "./accessService";
+import { ProfileLDO } from "../models/things/ProfileLDO";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 import { Profile } from "../models/types/Profile";
-import { ProfileLDO } from "../models/things/ProfileLDO";
+import { initializeAcl, isWacOrAcp } from "./accessService";
 
 export const WIKIMIND = 'WikiMind'
 export const MINDMAPS = 'mindMaps'
@@ -42,7 +35,7 @@ export async function isUrlContainer(url: string): Promise<boolean | undefined> 
   try {
     return await isContainer(await getSolidDataset(url, { fetch: fetch }));
   } catch (error) {
-    console.log();
+    console.log(error);
   }
 }
 
@@ -130,9 +123,7 @@ async function checkProfileContainer(podUrl: string, sessionId: string, accessCo
           podUrl + profilePath,
           { append: true, read: true, write: false },
           { fetch: fetch }
-        ).then((newAccess) => {
-          console.log(newAccess);
-        });
+        )
       })
     }
   }
@@ -166,7 +157,6 @@ export async function checkContainer(sessionId: string): Promise<{ podUrl: strin
     await checkMainContainer(podUrl)
 
     const accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl + WIKIMIND + SLASH);
-    console.log(podUrl + WIKIMIND + SLASH)
     await Promise.all([
       checkMindMapsContainer(podUrl),
       checkProfileContainer(podUrl, sessionId, accessControlPolicy),

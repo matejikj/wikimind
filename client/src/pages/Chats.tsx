@@ -1,17 +1,15 @@
-import { useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from "react";
-import Sidenav from "../components/Sidenav";
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
+import { useNavigate } from 'react-router-dom';
+import Sidenav from "../components/Sidenav";
 
-import { SessionContext } from '../sessionContext';
-import { Container, Navbar, Row, Stack } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 import { BsFillSendFill } from 'react-icons/bs';
-import '../styles/style.css';
-import { CHATS, MINDMAPS, TTLFILETYPE, WIKIMIND } from '../service/containerService';
 import { Chat } from '../models/types/Chat';
+import { CHATS, TTLFILETYPE, WIKIMIND } from '../service/containerService';
 import { MessageService } from '../service/messageService';
+import { SessionContext } from '../sessionContext';
+import '../styles/style.css';
 
 const Chats: React.FC = () => {
   const [list, setList] = useState<Chat[]>([]);

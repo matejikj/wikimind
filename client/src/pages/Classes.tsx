@@ -1,33 +1,31 @@
-import { useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from "react";
-import Sidenav from "../components/Sidenav";
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from 'react-router-dom';
+import Sidenav from "../components/Sidenav";
 
-import { SessionContext } from '../sessionContext';
-import { ClassService } from '../service/classService';
-import { Class } from '../models/types/Class';
-import { Card, Col, Container, Row, Stack } from 'react-bootstrap';
-import { Request } from '../models/types/Request';
-import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
+import { Col, Container, Row, Stack } from 'react-bootstrap';
+import { MdDeleteForever, MdSlideshow } from 'react-icons/md';
 import { RxCheck, RxCross2 } from 'react-icons/rx';
+import { Class } from '../models/types/Class';
+import { Request } from '../models/types/Request';
+import { ClassService } from '../service/classService';
+import { SessionContext } from '../sessionContext';
 
-import '../styles/style.css';
 import { CLASSES, SLASH, TTLFILETYPE, WIKIMIND } from '../service/containerService';
-
-const authOptions = {
-  clientName: "Learnee",
-};
+import '../styles/style.css';
 
 const Classes: React.FC = () => {
   const [classList, setClassList] = useState<Class[]>([]);
-  const [requestsCount, setRequestsCount] = useState(0);
+
   const [show, setShow] = useState(false);
   const [request, setRequest] = useState(false);
   const [requestUrl, setRequestUrl] = useState("");
   const [name, setName] = useState("");
+
   const [waiting, setWaiting] = useState(false);
+  
   const sessionContext = useContext(SessionContext)
   const [requests, setRequests] = useState<Request[]>([]);
 
@@ -54,7 +52,6 @@ const Classes: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-    console.log(sessionContext.sessionInfo.webId)
   }, []);
 
   const showClass = (e: Class) => {

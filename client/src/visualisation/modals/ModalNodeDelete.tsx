@@ -1,12 +1,11 @@
 import { useContext, useState } from "react";
-import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { Node } from '../../models/types/Node'
-import { SessionContext } from "../../sessionContext";
-import { generate_uuidv4 } from "../../service/utils";
+import Modal from 'react-bootstrap/Modal';
 import { MindMapDataset } from "../../models/types/MindMapDataset";
-import { color } from "d3";
+import { Node } from '../../models/types/Node';
+import { generate_uuidv4 } from "../../service/utils";
+import { SessionContext } from "../../sessionContext";
 
 const ModalNodeDelete: React.FC<{
     datasetName: MindMapDataset | undefined,

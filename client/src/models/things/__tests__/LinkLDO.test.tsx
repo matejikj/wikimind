@@ -1,8 +1,8 @@
+import { buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
 import { rdf_type } from "../../LDO";
 import { Link } from "../../types/Link";
 import { LinkType } from "../../types/LinkType";
 import { LinkLDO } from "../LinkLDO";
-import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
 
 
 /**

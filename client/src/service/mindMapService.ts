@@ -1,31 +1,19 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
   createSolidDataset,
-  getSolidDataset,
-  getThingAll,
-  getUrlAll,
-  saveSolidDatasetAt,
-  setThing,
+  saveSolidDatasetAt
 } from "@inrupt/solid-client";
-import { RDF } from "@inrupt/vocab-common-rdf";
-import { Node } from "../models/types/Node";
-import { MindMapLDO } from "../models/things/MindMapLDO";
-import { MindMapDataset } from "../models/types/MindMapDataset";
-import { LDO } from "../models/LDO";
-import { NodeLDO } from "../models/things/NodeLDO";
-import { Connection } from "../models/types/Connection";
-import { ConnectionLDO } from "../models/things/ConnectionLDO";
-import { MindMap } from "../models/types/MindMap";
-import { MINDMAPS, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl } from "./containerService";
-import { UserSession } from "../models/types/UserSession";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
-import { initializeAcl } from "./accessService";
-import { generate_uuidv4 } from "./utils";
 import { Link } from "../models/types/Link";
 import { LinkType } from "../models/types/LinkType";
-import { LinkLDO } from "../models/things/LinkLDO";
-import { MindMapRepository } from "../repository/mindMapRepository";
+import { MindMap } from "../models/types/MindMap";
+import { MindMapDataset } from "../models/types/MindMapDataset";
+import { UserSession } from "../models/types/UserSession";
 import { LinkRepository } from "../repository/linkRepository";
+import { MindMapRepository } from "../repository/mindMapRepository";
+import { initializeAcl } from "./accessService";
+import { MINDMAPS, TTLFILETYPE, WIKIMIND } from "./containerService";
+import { generate_uuidv4 } from "./utils";
 
 export class MindMapService {
   private mindMapRepository: MindMapRepository;

@@ -1,22 +1,17 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
+    createSolidDataset,
+    deleteSolidDataset,
     getSolidDataset,
     getThing,
     saveSolidDatasetAt,
-    setThing,
-    createSolidDataset,
-    deleteSolidDataset,
-    ThingLocal, buildThing, createThing, getStringNoLocale,
-
+    setThing
 } from "@inrupt/solid-client";
-import { ClassRepository } from "../classRepository";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import classDefinition from "../../definitions/class.json";
-import { getStringNoLocale as originalGetStringNoLocale } from "@inrupt/solid-client";
-import { WIKIMIND } from "../../service/containerService";
 import { ClassLDO } from "../../models/things/ClassLDO";
-import { AccessControlPolicy } from "../../models/types/AccessControlPolicy";
-import { generate_uuidv4 } from "../../service/utils";
 import { Class } from "../../models/types/Class";
+import { generate_uuidv4 } from "../../service/utils";
+import { ClassRepository } from "../classRepository";
 
 jest.mock("@inrupt/solid-client-authn-browser", () => ({
     fetch: jest.fn(),

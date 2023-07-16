@@ -1,20 +1,16 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
-    getSolidDataset,
-    getThing,
-    saveSolidDatasetAt,
-    setThing,
     createSolidDataset,
-    ThingLocal, buildThing, createThing, getStringNoLocale,
-
+    getSolidDataset,
+    saveSolidDatasetAt,
+    setThing
 } from "@inrupt/solid-client";
-import { LinkLDO } from "../../models/things/LinkLDO";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import linkDefinition from "../../definitions/link.json";
-import { AccessControlPolicy } from "../../models/types/AccessControlPolicy";
-import { generate_uuidv4 } from "../../service/utils";
+import { LinkLDO } from "../../models/things/LinkLDO";
 import { Link } from "../../models/types/Link";
-import { LinkRepository } from "../linkRepository";
 import { LinkType } from "../../models/types/LinkType";
+import { generate_uuidv4 } from "../../service/utils";
+import { LinkRepository } from "../linkRepository";
 
 jest.mock("@inrupt/solid-client-authn-browser", () => ({
     fetch: jest.fn(),

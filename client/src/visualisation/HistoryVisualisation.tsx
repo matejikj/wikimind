@@ -1,15 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Sidenav from "../components/Sidenav";
-import { SessionContext } from "../sessionContext";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Button, Card, Carousel, Col, Container, Form, Row, Stack } from "react-bootstrap";
-import { ChoiceSelection, groupDates } from "./utiils";
-import { RecommendResultItem } from "../dbpedia/models/RecommendResultItem";
-import { MindMapDataset } from "../models/types/MindMapDataset";
-import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
+import { Button, Card, Carousel, Col, Container, Form, Row } from "react-bootstrap";
 import { FaMinus, FaPlus } from "react-icons/fa";
-import Image from 'react-bootstrap/Image';
-import { height } from "rdf-namespaces/dist/as";
+import { useLocation, useNavigate } from "react-router-dom";
+import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
+import { SessionContext } from "../sessionContext";
+import { groupDates } from "./utils";
+import { ChoiceSelection } from "./models/ChoiceSelection";
 
 const HistoryVisualisation: React.FC<{
   dataset: TimelineResultItem[],
@@ -50,7 +46,6 @@ const HistoryVisualisation: React.FC<{
       setKeys(keys)
       setKey(keys[0])
       setDateGroups(grouped)
-      console.log(grouped)
     };
 
     useEffect(() => {

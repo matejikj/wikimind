@@ -1,21 +1,17 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Sidenav from "../components/Sidenav";
 import { SessionContext } from "../sessionContext";
-import { useLocation, useNavigate } from "react-router-dom";
 
 
-import { Button, Card, Col, Container, Form, Navbar, Row, Stack } from "react-bootstrap";
-import { MdSend } from "react-icons/md";
-import { Message } from "../models/types/Message";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { flushSync } from "react-dom";
+import { MdSend } from "react-icons/md";
 import { ChatDataset } from "../models/types/ChatDataset";
-import { generate_uuidv4 } from "../service/utils";
-import { WebsocketNotification } from "@inrupt/solid-client-notifications";
-import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
-import { wacChatWebSocket } from "../service/notificationService";
+import { Message } from "../models/types/Message";
 import { MessageService } from "../service/messageService";
-import { isWacOrAcp } from "../service/accessService";
-import { CHATS, SLASH, TTLFILETYPE, WIKIMIND } from "../service/containerService";
+import { wacChatWebSocket } from "../service/notificationService";
+import { generate_uuidv4 } from "../service/utils";
 
 const Chat: React.FC = () => {
     const navigate = useNavigate();

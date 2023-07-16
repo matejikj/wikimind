@@ -1,19 +1,10 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
-  acp_ess_2,
-  createAclFromFallbackAcl,
-  createSolidDataset,
-  getResourceAcl,
-  getSolidDatasetWithAcl,
-  hasAccessibleAcl,
-  hasFallbackAcl,
-  hasResourceAcl,
-  saveAclFor,
   AclDataset,
-  SolidDataset
+  SolidDataset,
+  createAclFromFallbackAcl,
+  createSolidDataset
 } from "@inrupt/solid-client";
-import { AccessControlPolicy } from "../../models/types/AccessControlPolicy";
-import { isWacOrAcp, initializeAcl } from "../accessService";
+import { initializeAcl, isWacOrAcp } from "../accessService";
 
 jest.mock("../accessService", () => {
   return {
@@ -58,8 +49,6 @@ async function RunTest(testFunction: () => void): Promise<SolidDataset> {
     },
   };
 
-  console.log(dataset)
-
   let updatedAcl = createSolidDataset();
   (isWacOrAcp as jest.Mock).mockImplementation(async (d, uA) => {
     updatedAcl = uA;
@@ -78,7 +67,4 @@ describe("solidAccess", () => {
     const updatedAcl = await RunTest(
       async () => {}
     );
-
-    console.log("updatedAcl: ")
-    console.log(updatedAcl)
   })})

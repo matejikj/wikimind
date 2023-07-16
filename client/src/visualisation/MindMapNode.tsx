@@ -1,11 +1,8 @@
-import React, { useContext } from "react";
-import { SessionContext } from "../sessionContext";
-import { Node } from '../models/types/Node'
-import { CanvasState } from './models/CanvasState'
-import { Connection } from "../models/types/Connection";
-import { generate_uuidv4 } from "../service/utils";
+import React from "react";
 import { MindMapDataset } from "../models/types/MindMapDataset";
-import { ImInfo } from "react-icons/im";
+import { Node } from '../models/types/Node';
+import { generate_uuidv4 } from "../service/utils";
+import { CanvasState } from './models/CanvasState';
 
 const TOUCH_MOVE = 'touchmove'
 const TOUCH_START = 'touchstart'

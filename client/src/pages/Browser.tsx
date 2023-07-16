@@ -1,42 +1,23 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Sidenav from "../components/Sidenav";
-import Canvas from "../visualisation/Canvas";
-import { SessionContext } from "../sessionContext";
-import { MindMapDataset } from "../models/types/MindMapDataset";
-import { useLocation, useNavigate } from "react-router-dom";
-import { MindMapService } from "../service/mindMapService";
-import { fetch } from "@inrupt/solid-client-authn-browser";
-import {
-    WebsocketNotification,
-} from "@inrupt/solid-client-notifications";
-import { AddCoords, getIdsMapping } from "../visualisation/utils";
-import { Button, Col, Container, Form, Row, Spinner, Stack } from "react-bootstrap";
-import { FaBackspace, FaInfo, FaMinus, FaMinusCircle, FaPlus, FaRemoveFormat } from "react-icons/fa";
-import { HiMagnifyingGlass } from "react-icons/hi2";
-import { ImInfo } from "react-icons/im";
-import { AiOutlineClear } from "react-icons/ai";
-import { FiSave } from "react-icons/fi";
+import { Button } from "react-bootstrap";
+import { BiTimeFive } from "react-icons/bi";
 import { GrGraphQl } from "react-icons/gr";
-import { BiTimeFive, BiTrash } from "react-icons/bi";
-import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
-import { Node } from "../models/types/Node";
+import { useLocation, useNavigate } from "react-router-dom";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
+import Sidenav from "../components/Sidenav";
+import { DBPediaService } from "../dbpedia/dbpediaService";
 import { RecommendResultItem } from "../dbpedia/models/RecommendResultItem";
-import ModalNodeEditor from "../visualisation/modals/ModalNodeEditor";
-import { generate_uuidv4 } from "../service/utils";
+import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
 import { Connection } from "../models/types/Connection";
-import { MdColorLens, MdDriveFileRenameOutline, MdKeyboardReturn, MdOutlineCancel, MdScreenShare } from "react-icons/md";
-import ModalNodeDelete from "../visualisation/modals/ModalNodeDelete";
+import { MindMapDataset } from "../models/types/MindMapDataset";
+import { Node } from "../models/types/Node";
+import { MindMapService } from "../service/mindMapService";
+import { SessionContext } from "../sessionContext";
+import HistoryVisualisation from "../visualisation/HistoryVisualisation";
 import ModalNodeDetail from "../visualisation/modals/ModalNodeDetail";
 import { CanvasState } from "../visualisation/models/CanvasState";
-import { saveAs } from 'file-saver';
-import ModalNodeColor from "../visualisation/modals/ModalNodeColor";
 import { HistoryItem } from "../visualisation/models/HistoryItem";
-import { HistoryItemType } from "../visualisation/models/HistoryItemType";
-import HistoryVisualisation from "../visualisation/HistoryVisualisation";
-import { groupDates } from "../visualisation/utiils";
-import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
-import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
-import { DBPediaService } from "../dbpedia/dbpediaService";
+import { AddCoords, getIdsMapping } from "../visualisation/utils";
 
 const Browser: React.FC = () => {
     const d3Container = useRef(null);

@@ -9,13 +9,8 @@ const GRAPH_DIR = "graphs";
  * Checks the structure of the application.
  */
 export async function checkStructure() {
-  // Get the default session
-  const aa: Session = getDefaultSession();
-  console.log(aa);
-
-  // Get the URLs of all Pods associated with the user
-  const bb = await getPodUrlAll(aa.info.webId!);
-  console.log(bb);
+  const defaultSession: Session = getDefaultSession();
+  await getPodUrlAll(defaultSession.info.webId!);
 }
 
 /**
@@ -56,11 +51,4 @@ export function levenshteinDistance(s: string, t: string) {
     }
   }
   return arr[t.length][s.length];
-}
-
-export function getClassId(classUri: string): string | undefined {
-  const paramString = classUri.split('?')[1];
-  const urlParams = new URLSearchParams(paramString);
-  const classId = urlParams.get('classId');
-  return classId || undefined;
 }

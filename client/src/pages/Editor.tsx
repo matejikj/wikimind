@@ -1,43 +1,36 @@
+import { saveAs } from 'file-saver';
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Sidenav from "../components/Sidenav";
-import Canvas from "../visualisation/Canvas";
-import { SessionContext } from "../sessionContext";
-import { MindMapDataset } from "../models/types/MindMapDataset";
-import { useLocation, useNavigate } from "react-router-dom";
-import { MindMapService } from "../service/mindMapService";
-import { fetch } from "@inrupt/solid-client-authn-browser";
-import {
-  WebsocketNotification,
-} from "@inrupt/solid-client-notifications";
-import { AddCoords, getIdsMapping } from "../visualisation/utils";
 import { Button, Col, Container, Form, Row, Spinner, Stack } from "react-bootstrap";
-import { FaBackspace, FaInfo, FaMinus, FaMinusCircle, FaPlus, FaRemoveFormat } from "react-icons/fa";
-import { HiMagnifyingGlass } from "react-icons/hi2";
-import { ImInfo } from "react-icons/im";
 import { AiOutlineClear } from "react-icons/ai";
-import { FiSave } from "react-icons/fi";
-import { GrGraphQl } from "react-icons/gr";
 import { BiTimeFive, BiTrash } from "react-icons/bi";
 import { BsNodePlus, BsQuestionSquare } from "react-icons/bs";
-import { Node } from "../models/types/Node";
+import { FaInfo, FaMinus, FaPlus } from "react-icons/fa";
+import { FiSave } from "react-icons/fi";
+import { GrGraphQl } from "react-icons/gr";
+import { HiMagnifyingGlass } from "react-icons/hi2";
+import { ImInfo } from "react-icons/im";
+import { MdColorLens, MdKeyboardReturn, MdOutlineCancel, MdScreenShare } from "react-icons/md";
+import { useLocation, useNavigate } from "react-router-dom";
+import Sidenav from "../components/Sidenav";
 import { CATEGORY_PART, DBPediaService } from "../dbpedia/dbpediaService";
 import { RecommendResultItem } from "../dbpedia/models/RecommendResultItem";
-import ModalNodeEditor from "../visualisation/modals/ModalNodeEditor";
-import { generate_uuidv4 } from "../service/utils";
+import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
 import { Connection } from "../models/types/Connection";
-import { MdColorLens, MdDriveFileRenameOutline, MdKeyboardReturn, MdOutlineCancel, MdScreenShare } from "react-icons/md";
+import { MindMapDataset } from "../models/types/MindMapDataset";
+import { Node } from "../models/types/Node";
+import { MindMapService } from "../service/mindMapService";
+import { SessionContext } from "../sessionContext";
+import Canvas from "../visualisation/Canvas";
+import HistoryVisualisation from "../visualisation/HistoryVisualisation";
+import ModalNodeColor from "../visualisation/modals/ModalNodeColor";
 import ModalNodeDelete from "../visualisation/modals/ModalNodeDelete";
 import ModalNodeDetail from "../visualisation/modals/ModalNodeDetail";
+import ModalNodeEditor from "../visualisation/modals/ModalNodeEditor";
 import { CanvasState } from "../visualisation/models/CanvasState";
-import { saveAs } from 'file-saver';
-import ModalNodeColor from "../visualisation/modals/ModalNodeColor";
 import { HistoryItem } from "../visualisation/models/HistoryItem";
 import { HistoryItemType } from "../visualisation/models/HistoryItemType";
-import HistoryVisualisation from "../visualisation/HistoryVisualisation";
-import { groupDates } from "../visualisation/utiils";
-import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
+import { AddCoords, getIdsMapping } from "../visualisation/utils";
 
-const WIKILINK = "http://dbpedia.org/ontology/wikiPageWikiLink"
 const blankNode: Node = {
   id: '',
   uri: '',
@@ -51,19 +44,15 @@ const blankNode: Node = {
 }
 
 const Editor: React.FC = () => {
-  const d3Container = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const countRef = useRef(0);
 
   const ref = useRef(null);
   const [height, setHeight] = useState(0);
-  const [url, setUrl] = useState('');
   const [width, setWidth] = useState(0);
   const [dataset, setDataset] = useState<MindMapDataset>();
 
   const sessionContext = useContext(SessionContext)
-  const [mounted, setMounted] = useState(false); // <-- new state variable
   const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
   wssUrl.protocol = 'wss';
 
@@ -113,7 +102,7 @@ const Editor: React.FC = () => {
       } else {
         navigate('/')
       }
-    }, [mounted])
+    }, [])
 
   const updateCanvasAxis = (res: MindMapDataset) => {
     if (res) {
@@ -143,12 +132,11 @@ const Editor: React.FC = () => {
 
   async function saveDataset() {
     if (dataset) {
-      const mindMapDataset = await mindMapService.saveMindMap(dataset);
+      await mindMapService.saveMindMap(dataset);
     }
   }
 
   function createPicture() {
-    console.log("createPicture")
     const svgElement = document.getElementById('svg-canvas');
 
     if (svgElement) {

@@ -1,7 +1,7 @@
+import { buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
 import { rdf_type } from "../../LDO";
 import { Request } from "../../types/Request";
 import { RequestLDO } from "../RequestLDO";
-import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
 
 /**
  * Tests for the RequestLDO class.

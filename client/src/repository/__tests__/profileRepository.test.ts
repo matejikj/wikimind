@@ -1,19 +1,17 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
+    buildThing,
+    createSolidDataset,
+    createThing,
     getSolidDataset,
     getThing,
     saveSolidDatasetAt,
-    setThing,
-    createSolidDataset,
-    ThingLocal, buildThing, createThing, getStringNoLocale,
-
+    setThing
 } from "@inrupt/solid-client";
-import { ProfileRepository } from "../profileRepository";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import profileDefinition from "../../definitions/profile.json";
-import { Profile } from "../../models/types/Profile";
 import { ProfileLDO } from "../../models/things/ProfileLDO";
-import { getStringNoLocale as originalGetStringNoLocale } from "@inrupt/solid-client";
-import { WIKIMIND } from "../../service/containerService";
+import { Profile } from "../../models/types/Profile";
+import { ProfileRepository } from "../profileRepository";
 
 jest.mock("@inrupt/solid-client-authn-browser", () => ({
     fetch: jest.fn(),

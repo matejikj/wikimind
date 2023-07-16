@@ -1,15 +1,14 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
   getSolidDataset,
   getThing,
   saveSolidDatasetAt,
   setThing,
 } from "@inrupt/solid-client";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import profileDefinition from "../definitions/profile.json";
-import { Profile } from "../models/types/Profile";
 import { ProfileLDO } from "../models/things/ProfileLDO";
-import { UserSession } from "../models/types/UserSession";
-import { MRIZKA, PROFILE, SLASH, TTLFILETYPE, WIKIMIND } from "../service/containerService";
+import { Profile } from "../models/types/Profile";
+import { WIKIMIND } from "../service/containerService";
 
 
 export class ProfileRepository {

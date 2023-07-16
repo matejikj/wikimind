@@ -18,8 +18,8 @@ const Line: React.FC<{
     setDataset
 }) => {
         function removeLink() {
-            console.log(link)
         }
+        
         return (
             <g>
                 <line

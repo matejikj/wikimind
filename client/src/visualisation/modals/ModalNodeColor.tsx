@@ -1,14 +1,10 @@
-import { useEffect, useState } from "react";
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import { generate_uuidv4 } from "../../service/utils";
-import Container from 'react-bootstrap/Container';
+import { useState } from "react";
 import { Col, Row } from "react-bootstrap";
-import '../../styles/style.css';
-import { MindMapDataset } from "../../models/types/MindMapDataset";
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Modal from 'react-bootstrap/Modal';
 import { Node } from "../../models/types/Node";
-import { TbColorPicker } from "react-icons/tb";
+import '../../styles/style.css';
 
 const blankFormInput = {
     title: '',

@@ -1,18 +1,15 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
+    createSolidDataset,
     getSolidDataset,
     getThing,
     saveSolidDatasetAt,
-    setThing,
-    createSolidDataset,
-    ThingLocal, buildThing, createThing, getStringNoLocale,
-
+    setThing
 } from "@inrupt/solid-client";
-import { ExamLDO } from "../../models/things/ExamLDO";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import examDefinition from "../../definitions/exam.json";
-import { AccessControlPolicy } from "../../models/types/AccessControlPolicy";
-import { generate_uuidv4 } from "../../service/utils";
+import { ExamLDO } from "../../models/things/ExamLDO";
 import { Exam } from "../../models/types/Exam";
+import { generate_uuidv4 } from "../../service/utils";
 import { ExamRepository } from "../examRepository";
 
 jest.mock("@inrupt/solid-client-authn-browser", () => ({

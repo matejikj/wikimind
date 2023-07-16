@@ -1,23 +1,19 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { Col, Container, Form, Modal, Row, Stack } from "react-bootstrap";
+import Button from 'react-bootstrap/Button';
+import { FcComments } from "react-icons/fc";
+import { MdDeleteForever, MdDriveFileRenameOutline, MdLink, MdSlideshow } from "react-icons/md";
+import { useLocation, useNavigate } from "react-router-dom";
 import Sidenav from "../components/Sidenav";
 import { ClassDataset } from "../models/types/ClassDataset";
-import Button from 'react-bootstrap/Button';
-import { SessionContext } from "../sessionContext";
-import { useLocation, useNavigate } from "react-router-dom";
-import { fetch } from "@inrupt/solid-client-authn-browser";
-import {
-  WebsocketNotification,
-} from "@inrupt/solid-client-notifications";
-import { generate_uuidv4 } from "../service/utils";
-import { ClassService } from "../service/classService";
-import { Card, Col, Container, Form, Modal, Row, Stack } from "react-bootstrap";
-import '../styles/style.css';
-import { FcComments } from "react-icons/fc";
 import { Exam } from "../models/types/Exam";
-import { MindMap } from "../models/types/MindMap";
-import { MdDeleteForever, MdDriveFileRenameOutline, MdLink, MdSlideshow } from "react-icons/md";
-import { CLASSES, MINDMAPS, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl } from "../service/containerService";
 import { Message } from "../models/types/Message";
+import { MindMap } from "../models/types/MindMap";
+import { ClassService } from "../service/classService";
+import { CLASSES, MINDMAPS, TTLFILETYPE, WIKIMIND } from "../service/containerService";
+import { generate_uuidv4 } from "../service/utils";
+import { SessionContext } from "../sessionContext";
+import '../styles/style.css';
 
 const exampleExams: Exam[] = [{
   id: generate_uuidv4(),

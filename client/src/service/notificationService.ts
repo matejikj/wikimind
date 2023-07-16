@@ -1,20 +1,11 @@
 import { fetch } from "@inrupt/solid-client-authn-browser";
 
-import {
-    getSolidDataset,
-    saveSolidDatasetAt,
-    setThing,
-} from "@inrupt/solid-client";
-import examDefinition from "../definitions/exam.json"
-import { UserSession } from "../models/types/UserSession";
-import { Exam } from "../models/types/Exam";
-import { ExamLDO } from "../models/things/ExamLDO";
 import { WebsocketNotification } from "@inrupt/solid-client-notifications";
-import { ChatDataset } from "../models/types/ChatDataset";
-import { MessageService } from "./messageService";
-import { Chat } from "../models/types/Chat";
-import { CHATS, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
+import { Chat } from "../models/types/Chat";
+import { ChatDataset } from "../models/types/ChatDataset";
+import { CHATS, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";
+import { MessageService } from "./messageService";
 
 const messageService = new MessageService()
 

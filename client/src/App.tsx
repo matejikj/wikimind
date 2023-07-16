@@ -1,21 +1,20 @@
+import { handleIncomingRedirect } from "@inrupt/solid-client-authn-browser";
 import React, { useEffect } from "react";
-import './styles/style.css';
-import { Route, Routes, useLocation } from 'react-router-dom';
-import Login from './pages/Login';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { LanguageLocalization, UserSession, defaultSessionValue } from "./models/types/UserSession";
+import Browser from "./pages/Browser";
+import Chat from "./pages/Chat";
+import Chats from "./pages/Chats";
+import Class from "./pages/Class";
+import Classes from "./pages/Classes";
 import Dashboard from "./pages/Dashboard";
 import Editor from "./pages/Editor";
-import { handleIncomingRedirect } from "@inrupt/solid-client-authn-browser";
-import { BrowserRouter } from 'react-router-dom';
-import { checkContainer } from "./service/containerService";
-import Classes from "./pages/Classes";
-import Chats from "./pages/Chats";
-import ProfileView from "./pages/ProfileView";
-import Class from "./pages/Class";
-import { LanguageLocalization, UserSession, defaultSessionValue } from "./models/types/UserSession";
-import { SessionContext } from "./sessionContext";
-import Chat from "./pages/Chat";
 import ExamPage from "./pages/ExamPage";
-import Browser from "./pages/Browser";
+import Login from './pages/Login';
+import ProfileView from "./pages/ProfileView";
+import { checkContainer } from "./service/containerService";
+import { SessionContext } from "./sessionContext";
+import './styles/style.css';
 
 const App: React.FC = () => {
 

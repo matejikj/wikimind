@@ -1,19 +1,11 @@
-import { useState } from "react";
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import { generate_uuidv4 } from "../../service/utils";
-import Container from 'react-bootstrap/Container';
 import { Col, Row } from "react-bootstrap";
-import '../../styles/style.css';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
 import { MindMapDataset } from "../../models/types/MindMapDataset";
 import { Node } from "../../models/types/Node";
-import { node } from "prop-types";
-
-const blankFormInput = {
-    title: '',
-    description: ''
-}
+import '../../styles/style.css';
 
 const ModalNodeEditor: React.FC<{
     node: Node | undefined,
@@ -23,7 +15,6 @@ const ModalNodeEditor: React.FC<{
     showModal: boolean,
     setModal: Function
 }> = ({ node, setNode, dataset, setDataset, showModal, setModal }) => {
-    const [formInputs, setFormInputs] = useState(blankFormInput);
 
     async function handleSave(event: any) {
         if (dataset) {
@@ -50,7 +41,6 @@ const ModalNodeEditor: React.FC<{
                 created: '1.7.2023 21:08:08'
             });
         }
-        setFormInputs(blankFormInput)
         setModal(false)
     }
 

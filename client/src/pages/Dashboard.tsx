@@ -1,17 +1,17 @@
-import { useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from "react";
-import Sidenav from "../components/Sidenav";
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from 'react-router-dom';
+import Sidenav from "../components/Sidenav";
 
-import { MindMapService } from '../service/mindMapService';
-import { SessionContext } from '../sessionContext';
 import { Container, Row, Stack } from 'react-bootstrap';
 import { MdDeleteForever, MdDriveFileRenameOutline, MdSlideshow } from 'react-icons/md';
-import '../styles/style.css';
 import { MindMap } from '../models/types/MindMap';
 import { MINDMAPS, TTLFILETYPE, WIKIMIND } from '../service/containerService';
+import { MindMapService } from '../service/mindMapService';
+import { SessionContext } from '../sessionContext';
+import '../styles/style.css';
 
 const Dashboard: React.FC = () => {
   const [mindMapList, setMindMapList] = useState<MindMap[]>([]);

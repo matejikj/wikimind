@@ -5,10 +5,10 @@ import {
     saveSolidDatasetAt,
     setThing,
 } from "@inrupt/solid-client";
-import examDefinition from "../definitions/exam.json"
-import { UserSession } from "../models/types/UserSession";
-import { Exam } from "../models/types/Exam";
+import examDefinition from "../definitions/exam.json";
 import { ExamLDO } from "../models/things/ExamLDO";
+import { Exam } from "../models/types/Exam";
+import { UserSession } from "../models/types/UserSession";
 
 
 export async function addExamResult(userSession: UserSession, exam: Exam, classUrl: string) {

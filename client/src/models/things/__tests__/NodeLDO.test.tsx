@@ -1,8 +1,6 @@
+import { buildThing, createThing, getBoolean, getInteger, getStringNoLocale } from "@inrupt/solid-client";
 import { rdf_type } from "../../LDO";
 import { Node } from "../../types/Node";
-import { BaseLDO } from "../BaseLDO";
-import { CRUDLDO } from "../CRUDLDO";
-import { ThingLocal, buildThing, createThing, getBoolean, getInteger, getStringNoLocale } from "@inrupt/solid-client";
 import { NodeLDO } from "../NodeLDO";
 
 /**
@@ -38,7 +36,7 @@ describe("ProfileLDO", () => {
     });
   });
 
-  
+
   test("read should return Node object", () => {
     // Create a mock Thing with relevant properties.
     const mockThing = buildThing(createThing({ name: "mockNode" }))

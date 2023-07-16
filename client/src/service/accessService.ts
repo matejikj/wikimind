@@ -1,5 +1,5 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import { acp_ess_2, createAclFromFallbackAcl, getResourceAcl, getSolidDatasetWithAcl, hasAccessibleAcl, hasFallbackAcl, hasResourceAcl, saveAclFor } from "@inrupt/solid-client";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 
 /**
@@ -44,7 +44,6 @@ export const isWacOrAcp = async (url: string): Promise<AccessControlPolicy> => {
   let dataSetWithAcr;
   try {
     dataSetWithAcr = await acp_ess_2.getSolidDatasetWithAcr(url, { fetch: fetch });
-    console.log("ACPPPP");
   } catch (error) {
     return AccessControlPolicy.WAC;
   }

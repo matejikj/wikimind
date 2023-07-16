@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Sidenav from "../components/Sidenav";
 import Button from 'react-bootstrap/Button';
-import { SessionContext } from "../sessionContext";
-import { MindMapDataset } from "../models/types/MindMapDataset";
 import { useLocation, useNavigate } from "react-router-dom";
+import Sidenav from "../components/Sidenav";
+import { MindMapDataset } from "../models/types/MindMapDataset";
 import { MindMapService } from "../service/mindMapService";
+import { SessionContext } from "../sessionContext";
 
 
-import { generate_uuidv4, levenshteinDistance } from "../service/utils";
-import { AddCoords, getIdsMapping } from "../visualisation/utils";
-import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { Form } from "react-bootstrap";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { Exam } from "../models/types/Exam";
 import { addExamResult } from "../service/examService";
+import { generate_uuidv4, levenshteinDistance } from "../service/utils";
+import { AddCoords, getIdsMapping } from "../visualisation/utils";
 
 const ExamPage: React.FC = () => {
     const d3Container = useRef(null);

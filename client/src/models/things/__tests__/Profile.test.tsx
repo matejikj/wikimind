@@ -1,8 +1,8 @@
+import { buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
 import { WIKIMIND } from "../../../service/containerService";
 import { rdf_type } from "../../LDO";
 import { Profile } from "../../types/Profile";
 import { ProfileLDO } from "../ProfileLDO";
-import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
 
 /**
  * Mocks the container service by returning a fixed value for the WIKIMIND constant.

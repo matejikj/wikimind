@@ -1,30 +1,26 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
+    createSolidDataset,
+    deleteSolidDataset,
     getSolidDataset,
     getThing,
-    saveSolidDatasetAt,
-    setThing,
     getThingAll,
-    deleteSolidDataset,
     getUrlAll,
-    createSolidDataset
+    saveSolidDatasetAt,
+    setThing
 } from "@inrupt/solid-client";
-import profileDefinition from "../definitions/profile.json";
-import mindMapDefinition from "../definitions/mindMap.json";
-import { Profile } from "../models/types/Profile";
-import { ProfileLDO } from "../models/things/ProfileLDO";
-import { UserSession } from "../models/types/UserSession";
-import { MINDMAPS, MRIZKA, PROFILE, SLASH, TTLFILETYPE, WIKIMIND } from "../service/containerService";
-import { MindMap } from "../models/types/MindMap";
-import { MindMapLDO } from "../models/things/MindMapLDO";
-import { getNumberFromUrl } from "./utils";
-import { Connection } from "../models/types/Connection";
-import { NodeLDO } from "../models/things/NodeLDO";
-import { ConnectionLDO } from "../models/things/ConnectionLDO";
-import nodeDefinition from "../definitions/node.json";
-import connectionDefinition from "../definitions/connection.json";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import { RDF } from "@inrupt/vocab-common-rdf";
+import connectionDefinition from "../definitions/connection.json";
+import mindMapDefinition from "../definitions/mindMap.json";
+import nodeDefinition from "../definitions/node.json";
+import { ConnectionLDO } from "../models/things/ConnectionLDO";
+import { MindMapLDO } from "../models/things/MindMapLDO";
+import { NodeLDO } from "../models/things/NodeLDO";
+import { Connection } from "../models/types/Connection";
+import { MindMap } from "../models/types/MindMap";
 import { Node } from "../models/types/Node";
+import { MINDMAPS, TTLFILETYPE, WIKIMIND } from "../service/containerService";
+import { getNumberFromUrl } from "./utils";
 
 
 export class MindMapRepository {

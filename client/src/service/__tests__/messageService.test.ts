@@ -1,28 +1,21 @@
-import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
-    getSolidDataset,
-    getThing,
-    saveSolidDatasetAt,
-    setThing,
     createSolidDataset,
-    ThingLocal, buildThing, createThing, getStringNoLocale,
-
+    getSolidDataset,
+    saveSolidDatasetAt,
+    setThing
 } from "@inrupt/solid-client";
-import { MessageService } from "../messageService";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import chatDefinition from "../../definitions/chat.json";
 import linkDefinition from "../../definitions/link.json";
-import { Profile } from "../../models/types/Profile";
-import { ProfileLDO } from "../../models/things/ProfileLDO";
-import { getStringNoLocale as originalGetStringNoLocale } from "@inrupt/solid-client";
-import { WIKIMIND } from "../containerService";
-import { Link } from "../../models/types/Link";
-import { generate_uuidv4 } from "../utils";
-import { LinkType } from "../../models/types/LinkType";
-import { ClassLDO } from "../../models/things/ClassLDO";
+import { ChatLDO } from "../../models/things/ChatLDO";
 import { LinkLDO } from "../../models/things/LinkLDO";
 import { AccessControlPolicy } from "../../models/types/AccessControlPolicy";
 import { Chat } from "../../models/types/Chat";
-import { ChatLDO } from "../../models/things/ChatLDO";
+import { Link } from "../../models/types/Link";
+import { LinkType } from "../../models/types/LinkType";
+import { Profile } from "../../models/types/Profile";
+import { MessageService } from "../messageService";
+import { generate_uuidv4 } from "../utils";
 
 jest.mock("@inrupt/solid-client-authn-browser", () => ({
     fetch: jest.fn(),

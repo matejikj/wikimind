@@ -1,13 +1,10 @@
 import { useState } from "react";
-import Modal from 'react-bootstrap/Modal';
+import { Row } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import { generate_uuidv4 } from "../../service/utils";
 import Container from 'react-bootstrap/Container';
-import { Col, Row } from "react-bootstrap";
-import '../../styles/style.css';
-import { MindMapDataset } from "../../models/types/MindMapDataset";
+import Modal from 'react-bootstrap/Modal';
 import { Node } from "../../models/types/Node";
+import '../../styles/style.css';
 
 const blankFormInput = {
     title: '',

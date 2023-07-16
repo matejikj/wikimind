@@ -2,60 +2,36 @@ import { fetch } from "@inrupt/solid-client-authn-browser";
 
 import {
     createSolidDataset,
-    getContainedResourceUrlAll,
-    getSolidDataset,
-    getThing,
-    getThingAll,
-    getUrlAll,
-    removeThing, saveSolidDatasetAt,
-    setThing,
-    universalAccess,
+    saveSolidDatasetAt,
+    universalAccess
 } from "@inrupt/solid-client";
 
 
 
-import { RDF } from "@inrupt/vocab-common-rdf";
-import examDefinition from "../definitions/exam.json"
-import chatDefinition from "../definitions/chat.json"
-import classRequestDefinition from "../definitions/request.json"
-import profileDefinition from "../definitions/profile.json"
-import classDefinition from "../definitions/class.json"
-import mindMapDefinition from "../definitions/mindMap.json"
-import datasetLinkDefinition from "../definitions/link.json"
-import { MindMapDataset } from "../models/types/MindMapDataset";
-import { LDO } from "../models/LDO";
-import { CLASSES, CHATS, PROFILE, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl, REQUESTS, MINDMAPS } from "./containerService";
-import { generate_uuidv4 } from "./utils";
 import { Class } from "../models/types/Class";
-import { ClassLDO } from "../models/things/ClassLDO";
+import { CHATS, CLASSES, MINDMAPS, PROFILE, REQUESTS, SLASH, TTLFILETYPE, WIKIMIND, getPodUrl } from "./containerService";
+import { generate_uuidv4 } from "./utils";
 // import { getProfile } from "./profileService";
-import { Link } from "../models/types/Link";
-import { LinkLDO } from "../models/things/LinkLDO";
-import { LinkType } from "../models/types/LinkType";
-import { UserSession } from "../models/types/UserSession";
-import { ClassDataset } from "../models/types/ClassDataset";
-import { Exam } from "../models/types/Exam";
-import { Profile } from "../models/types/Profile";
-import { ExamLDO } from "../models/things/ExamLDO";
-import { ProfileLDO } from "../models/things/ProfileLDO";
-import { Request } from "../models/types/Request";
 import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
-import { initializeAcl } from "./accessService";
-import { RequestLDO } from "../models/things/RequestLDO";
-import { ChatLDO } from "../models/things/ChatLDO";
-import { MindMap } from "../models/types/MindMap";
-import { MindMapLDO } from "../models/things/MindMapLDO";
-import { ProfileRepository } from "../repository/profileRepository";
-import { ClassRepository } from "../repository/classRepository";
-import { LinkRepository } from "../repository/linkRepository";
-import { MindMapRepository } from "../repository/mindMapRepository";
-import { RequestRepository } from "../repository/requestRepository";
 import { Chat } from "../models/types/Chat";
-import { ChatRepository } from "../repository/chatRepository";
-import { RequestType } from "../models/types/RequestType";
-import { MessageRepository } from "../repository/messageRepository";
+import { ClassDataset } from "../models/types/ClassDataset";
+import { Link } from "../models/types/Link";
+import { LinkType } from "../models/types/LinkType";
 import { Message } from "../models/types/Message";
+import { MindMap } from "../models/types/MindMap";
+import { Profile } from "../models/types/Profile";
+import { Request } from "../models/types/Request";
+import { RequestType } from "../models/types/RequestType";
+import { UserSession } from "../models/types/UserSession";
+import { ChatRepository } from "../repository/chatRepository";
+import { ClassRepository } from "../repository/classRepository";
 import { ExamRepository } from "../repository/examRepository";
+import { LinkRepository } from "../repository/linkRepository";
+import { MessageRepository } from "../repository/messageRepository";
+import { MindMapRepository } from "../repository/mindMapRepository";
+import { ProfileRepository } from "../repository/profileRepository";
+import { RequestRepository } from "../repository/requestRepository";
+import { initializeAcl } from "./accessService";
 
 
 
