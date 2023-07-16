@@ -18,7 +18,6 @@ import { AccessControlPolicy } from "../models/types/AccessControlPolicy";
 
 const messageService = new MessageService()
 
-
 export async function wacChatWebSocket(chat: Chat, setMessageDataset: any) {
     if (chat.ownerAccessType === AccessControlPolicy.WAC) {
         const wssUrl = new URL(chat.ownerPod);

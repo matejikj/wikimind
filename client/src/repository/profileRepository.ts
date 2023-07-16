@@ -16,9 +16,6 @@ export class ProfileRepository {
     async getProfile(profileUrl: string): Promise<Profile | undefined> {
       const myDataset = await getSolidDataset(profileUrl, { fetch });
       const profileThingUrl = `${profileUrl}#${WIKIMIND}`;
-      if (profileThingUrl === "https://inrupt.com/.well-known/sdk-local-node/WikiMind/profile/profile.ttl#WikiMind") {
-        console.log()
-      }
       const profileThing = getThing(myDataset, profileThingUrl);
       const profileLDO = new ProfileLDO(profileDefinition);
       const profile = profileLDO.read(profileThing);

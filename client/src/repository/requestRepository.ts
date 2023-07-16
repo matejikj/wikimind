@@ -34,12 +34,6 @@ export class RequestRepository {
         this.requestLDO = new RequestLDO(requestDefinition);
     }
 
-    async getMindMap(requestUrl: string): Promise<Request | undefined> {
-        const requestDataset = await getSolidDataset(requestUrl, { fetch });
-        const thingId = `${requestUrl}#${getNumberFromUrl(requestUrl)}`
-        return this.requestLDO.read(getThing(requestDataset, thingId))
-    }
-
     async createRequest(requestUrl: string, request: Request): Promise<void> {
         let RequestDataset = await getSolidDataset(requestUrl, { fetch });
         RequestDataset = setThing(RequestDataset, this.requestLDO.create(request));

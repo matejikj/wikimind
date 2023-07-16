@@ -108,10 +108,7 @@ describe("ChatRepository", () => {
                 lastMessage: "Hello!",
                 modified: "2023-07-15T10:30:00Z",
             };
-
             
-
-
             const chatRepository = new ChatRepository();
             const chatResult = await chatRepository.createChat(chatDatasetUrl, chat);
 
