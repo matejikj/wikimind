@@ -11,6 +11,24 @@ import { CanvasState } from "./models/CanvasState";
 
 /**
  * Canvas component for rendering the mind map canvas.
+ *
+ * @param {Object} props - Props for the Canvas component.
+ * @param {Connection} props.clickedLink - The clicked connection (link) object.
+ * @param {Function} props.setClickedLink - Function to set the clicked connection (link) object.
+ * @param {Node} props.clickedNode - The clicked node object.
+ * @param {Function} props.setClickedNode - Function to set the clicked node object.
+ * @param {MindMapDataset} props.dataset - The mind map dataset containing nodes and links.
+ * @param {Function} props.setDataset - Function to set the mind map dataset.
+ * @param {number} props.width - The width of the canvas in pixels.
+ * @param {number} props.height - The height of the canvas in pixels.
+ * @param {Function} props.setPosition - Function to set the canvas position.
+ * @param {CanvasState} props.canvasState - The current state of the canvas.
+ * @param {Function} props.setCanvasState - Function to set the state of the canvas.
+ * @param {boolean} props.disabledCanvas - Flag to determine if the canvas is disabled or not.
+ * @param {Function} props.setDisabledCanvas - Function to set the disabledCanvas flag.
+ * @param {Function} props.updateCanvasAxis - Function to update the canvas axis.
+ * @param {Function} props.setCreatorVisible - Function to set the visibility of the creator.
+ * @returns {JSX.Element} - The Canvas component JSX element.
  */
 const Canvas: React.FC<{
   clickedLink: Connection | undefined,

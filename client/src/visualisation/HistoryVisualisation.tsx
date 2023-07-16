@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
 import { SessionContext } from "../sessionContext";
 import { groupDates } from "./utils";
-import { ChoiceSelection } from "./models/ChoiceSelection";
+import { TimePeriod } from "./models/ChoiceSelection";
 
 const HistoryVisualisation: React.FC<{
   dataset: TimelineResultItem[],
@@ -21,7 +21,7 @@ const HistoryVisualisation: React.FC<{
     const ref = useRef(null);
     const theme = useContext(SessionContext)
 
-    const [currentPeriod, setCurrentPeriod] = useState<ChoiceSelection>(ChoiceSelection.Century);
+    const [currentPeriod, setCurrentPeriod] = useState<TimePeriod>(TimePeriod.Century);
 
     const [dateGroups, setDateGroups] = useState<{
       [key: string]: TimelineResultItem[];
@@ -39,7 +39,7 @@ const HistoryVisualisation: React.FC<{
       setIndex(valueIndex);
     };
 
-    const createTimePeriod = (period: ChoiceSelection) => {
+    const createTimePeriod = (period: TimePeriod) => {
       const grouped = groupDates(dataset, period)
       const keys = Object.keys(grouped)
 
@@ -114,9 +114,9 @@ const HistoryVisualisation: React.FC<{
                   aria-label="Default select example"
                   style={{ maxWidth: '600px' }}
                 >
-                  <option value={ChoiceSelection.Century}>Century</option>
-                  <option value={ChoiceSelection.Decade}>Decade</option>
-                  <option value={ChoiceSelection.Year}>Year</option>
+                  <option value={TimePeriod.Century}>Century</option>
+                  <option value={TimePeriod.Decade}>Decade</option>
+                  <option value={TimePeriod.Year}>Year</option>
                 </Form.Select>
 
               </Col>
@@ -141,13 +141,13 @@ const HistoryVisualisation: React.FC<{
 
             <Row>
               <Col sm="6">
-                {currentPeriod === ChoiceSelection.Century &&
+                {currentPeriod === TimePeriod.Century &&
                   <div>{key}. century</div>
                 }
-                {currentPeriod === ChoiceSelection.Decade &&
+                {currentPeriod === TimePeriod.Decade &&
                   <div>{key}s</div>
                 }
-                {currentPeriod === ChoiceSelection.Year &&
+                {currentPeriod === TimePeriod.Year &&
                   <div>year {key}</div>
                 }
               </Col>

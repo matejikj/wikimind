@@ -38,7 +38,7 @@ const ModalNodeEditor: React.FC<{
             });
             setDataset({
                 ...dataset,
-                created: '1.7.2023 21:08:08'
+                created: Date.now().toString()
             });
         }
         setModal(false)

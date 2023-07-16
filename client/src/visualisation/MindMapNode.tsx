@@ -101,7 +101,7 @@ const Circle: React.FC<{
                         updateCanvasAxis(dataset)
                         setDataset({
                             ...dataset,
-                            created: '1.7.2023 21:08:08'
+                            created: Date.now().toString()
                         });
                     }
                     setDifX(0)
