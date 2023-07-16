@@ -58,7 +58,7 @@ describe("ProfileRepository", () => {
         webId: "https://matejikj.datapod.igrant.io/profile/card#me",
         name: "",
         surname: "",
-        ownerPod: "",
+        source: "",
     };
 
     beforeEach(async () => {
@@ -106,8 +106,8 @@ describe("ProfileRepository", () => {
                 host: "John",
                 guest: "Jane",
                 storage: "https://inrupt.com/.well-known/sdk-local-node/",
-                ownerPod: "chat-pod-1",
-                ownerAccessType: AccessControlPolicy.ACP,
+                source: "chat-pod-1",
+                accessControlPolicy: AccessControlPolicy.ACP,
                 lastMessage: "Hello!",
                 modified: "2023-07-15T10:30:00Z",
             };
@@ -135,7 +135,7 @@ describe("ProfileRepository", () => {
     //             webId: "https://matejikj.datapod.igrant.io/profile/card#me",
     //             name: "Jakub",
     //             surname: "Matejik",
-    //             ownerPod: "",
+    //             source: "",
     //         };
 
     //         const profileService = new ProfileService();

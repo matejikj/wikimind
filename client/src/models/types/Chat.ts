@@ -27,12 +27,12 @@ export type Chat = {
   /**
    * The storage location of the chat data.
    */
-  ownerPod: string;
+  source: string;
 
   /**
 * The storage location of the chat data.
 */
-  ownerAccessType: AccessControlPolicy;
+  accessControlPolicy: AccessControlPolicy;
 
   /**
    * The content of the last message sent in the chat.

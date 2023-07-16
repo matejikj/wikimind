@@ -69,7 +69,7 @@ const Class: React.FC = () => {
 
   async function showMindMap(mindMap: MindMap) {
     if (dataset) {
-      const url = `${mindMap.ownerPod}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`
+      const url = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`
       if (dataset.class.teacher === sessionContext.sessionInfo.webId) {
         navigate('/editor/', {
           state: {
@@ -114,8 +114,8 @@ const Class: React.FC = () => {
 
   async function showExam(mindMap: MindMap) {
     if (dataset) {
-      const url = `${mindMap.ownerPod}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`
-      const classUrl = `${dataset.class.ownerPod}${WIKIMIND}/${CLASSES}/${dataset.class.id}${TTLFILETYPE}`
+      const url = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`
+      const classUrl = `${dataset.class.source}${WIKIMIND}/${CLASSES}/${dataset.class.id}${TTLFILETYPE}`
 
       navigate('/exam/', {
         state: {

@@ -4,6 +4,7 @@ import { LinkType } from "../../types/LinkType";
 import { LinkLDO } from "../LinkLDO";
 import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
 
+
 /**
  * Tests for the LinkLDO class.
  */

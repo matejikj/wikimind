@@ -1,10 +1,10 @@
 {
-    "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Class",
+    "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Class",
     "properties": {
         "name": "http://schema.org/name",
         "id": "http://schema.org/identifier",
-        "teacher": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#teacher",
-        "storage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage",
-        "ownerPod": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#ownerPod"
+        "teacher": "http://purl.org/dc/terms/mediator",
+        "storage": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#storage",
+        "source": "http://purl.org/dc/terms/source"
     }
 }

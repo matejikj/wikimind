@@ -1,11 +1,11 @@
 {
-    "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Request",
+    "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Request",
     "properties": {
         "requestor": 
-            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#requestor"
+            "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#requestor"
         ,
         "requestType": 
-            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#requestType"
+            "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#requestType"
         ,
         "id": 
             "http://schema.org/identifier"

@@ -79,7 +79,7 @@ export class MindMapService {
     const blankMindMap: MindMap = {
       id: generate_uuidv4(),
       name: name,
-      ownerPod: userSession.podUrl,
+      source: userSession.podUrl,
       storage: mindMapStorageUrl,
       created: Date.now().toString(),
     };
@@ -114,11 +114,11 @@ export class MindMapService {
   async removeMindMap(mindMap: MindMap): Promise<boolean> {
     try {
 
-      const mindMapLinksUrl = `${mindMap.ownerPod}${WIKIMIND}/${MINDMAPS}/${MINDMAPS}${TTLFILETYPE}`;
+      const mindMapLinksUrl = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${MINDMAPS}${TTLFILETYPE}`;
       const mindMapLinks = await this.linkRepository.getLinksList(mindMapLinksUrl);
 
       await this.mindMapRepository.removeMindMap(mindMap.storage)
-      const url = `${mindMap.ownerPod}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
+      const url = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
       await this.mindMapRepository.removeMindMap(url)
 
       const link = mindMapLinks.find((item) => item.url === url)

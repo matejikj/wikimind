@@ -67,7 +67,7 @@ type Profile = {
     webId: string;
     name: string;
     surname: string;
-    profileImage: string;
+    source: string;
 }
 
 type Request = {

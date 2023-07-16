@@ -144,7 +144,7 @@ export class ClassService {
         const blankClass: Class = {
             id: generate_uuidv4(),
             name: name,
-            ownerPod: userSession.podUrl,
+            source: userSession.podUrl,
             storage: classStorageUrl,
             teacher: userSession.webId,
         };
@@ -224,7 +224,7 @@ export class ClassService {
         const blankMindMap: MindMap = {
             id: generate_uuidv4(),
             name: name,
-            ownerPod: userSession.podUrl,
+            source: userSession.podUrl,
             storage: mindMapStorageUrl,
             created: Date.now().toString(),
         };
@@ -303,7 +303,7 @@ export class ClassService {
                             requestor: userSession.webId,
                             requestType: RequestType.REMOVE_CLASS
                         }
-                        const grantUrl = profile.ownerPod + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
+                        const grantUrl = profile.source + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
                         this.requestRepository.createRequest(grantUrl, grant)
                     }
                 });
@@ -342,7 +342,7 @@ export class ClassService {
 
     async createNewAnnouncement(classThing: Class, message: Message): Promise<boolean> {
         try {
-            const mindMapStorageUrl = `${classThing.ownerPod}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
+            const mindMapStorageUrl = `${classThing.source}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
             await this.messageRepository.createMessage(classThing.storage, message)
             return true
         } catch (error) {
@@ -351,7 +351,7 @@ export class ClassService {
     }
     async removeAnnouncement(classThing: Class, message: Message): Promise<boolean> {
         try {
-            const mindMapStorageUrl = `${classThing.ownerPod}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
+            const mindMapStorageUrl = `${classThing.source}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
             await this.messageRepository.removeMessage(classThing.storage, message)
             return true
         } catch (error) {
@@ -409,8 +409,8 @@ export class ClassService {
                         const classThing: Chat = {
                             id: messageDatasetId,
                             host: userSession.webId,
-                            ownerPod: userSession.podUrl,
-                            ownerAccessType: userSession.podAccessControlPolicy!,
+                            source: userSession.podUrl,
+                            accessControlPolicy: userSession.podAccessControlPolicy!,
                             guest: classRequest.requestor,
                             modified: Date.now().toString(),
                             lastMessage: '',

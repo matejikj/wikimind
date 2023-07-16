@@ -40,6 +40,7 @@ describe("RequestLDO", () => {
     });
   });
 
+  
   test("create should return ThingLocal representing Request object", () => {
     const mockRequest: Request = {
       id: "request123",

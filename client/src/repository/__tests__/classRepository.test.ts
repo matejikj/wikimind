@@ -85,7 +85,7 @@ describe("ClassRepository", () => {
                 name: "Class",
                 teacher: "John",
                 storage: "https://inrupt.com/.well-known/sdk-local-node/",
-                ownerPod: "class-pod-1",
+                source: "class-pod-1",
             };
 
             
@@ -111,7 +111,7 @@ describe("ClassRepository", () => {
                 name: "Class",
                 teacher: "John",
                 storage: "https://inrupt.com/.well-known/sdk-local-node/",
-                ownerPod: "class-pod-1",
+                source: "class-pod-1",
             };
 
             
@@ -137,7 +137,7 @@ describe("ClassRepository", () => {
                 name: "Class",
                 teacher: "John",
                 storage: "https://inrupt.com/.well-known/sdk-local-node/",
-                ownerPod: "class-pod-1",
+                source: "class-pod-1",
             };
 
             const classRepository = new ClassRepository();

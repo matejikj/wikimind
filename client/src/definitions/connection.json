@@ -1,20 +1,9 @@
 {
-    "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Connection",
+    "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Connection",
     "properties": {
-        "from": 
-            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#from"
-        ,
-        "to": 
-            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#to"
-        ,
-        "title": 
-            "https://schema.org/title"
-        ,
-        "id": 
-            "http://schema.org/identifier"
-        ,
-        "testable": 
-            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#testable"
-        
+        "from": "http://purl.org/tio/ns#from",
+        "to": "http://purl.org/tio/ns#to",
+        "title": "https://schema.org/title",
+        "id": "http://schema.org/identifier"
     }
 }

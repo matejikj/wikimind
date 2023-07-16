@@ -3,6 +3,7 @@ import { Class } from "../../types/Class";
 import { ClassLDO } from "../ClassLDO";
 import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
 
+
 /**
  * Tests for the ClassLDO class.
  */

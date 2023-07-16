@@ -56,7 +56,7 @@ describe("ProfileRepository", () => {
                 webId: "https://matejikj.datapod.igrant.io/profile/card#me",
                 name: "Jakub",
                 surname: "Matejik",
-                ownerPod: "",
+                source: "",
             };
 
             const thing = buildThing(createThing({ name: "WikiMind#WikiMind" }))
@@ -64,7 +64,7 @@ describe("ProfileRepository", () => {
                 .addStringNoLocale(profileDefinition.properties.name, "Jakub")
                 .addStringNoLocale(profileDefinition.properties.webId, "https://matejikj.datapod.igrant.io/profile/card#me")
                 .addStringNoLocale(profileDefinition.properties.surname, "Matejik")
-                .addStringNoLocale(profileDefinition.properties.ownerPod, "")
+                .addStringNoLocale(profileDefinition.properties.source, "")
                 .build();
 
             const myDataset = await getSolidDataset(profileUrl, { fetch });
@@ -88,7 +88,7 @@ describe("ProfileRepository", () => {
                 webId: "https://matejikj.datapod.igrant.io/profile/card#me",
                 name: "Jakub",
                 surname: "Matejik",
-                ownerPod: "",
+                source: "",
             };
 
             const profileRepository = new ProfileRepository();

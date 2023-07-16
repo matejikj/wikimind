@@ -80,7 +80,7 @@ export class MessageService {
 
 
   async sendMessage(chat: Chat, message: Message): Promise<void> {
-    // const url = `${chat.ownerPod}${WIKIMIND}/${CHATS}/${chat.storage}${TTLFILETYPE}`
+    // const url = `${chat.source}${WIKIMIND}/${CHATS}/${chat.storage}${TTLFILETYPE}`
     await this.messageRepository.createMessage(chat.storage, message)
   }  
 }

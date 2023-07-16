@@ -1,5 +1,5 @@
 {
-    "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Link",
+    "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Link",
     "properties": {
         "url": 
             "https://schema.org/url"
@@ -7,11 +7,8 @@
         "id": 
             "http://schema.org/identifier"
         ,
-        "name": 
-            "http://schema.org/name"
-        ,
         "linkType": 
-            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#LinkType"
+            "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#LinkType"
         
     }
 }

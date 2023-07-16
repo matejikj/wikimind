@@ -3,6 +3,7 @@ import { Connection } from "../../types/Connection";
 import { ConnectionLDO } from "../ConnectionLDO";
 import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
 
+
 /**
  * Tests for the ConnectionLDO class.
  */

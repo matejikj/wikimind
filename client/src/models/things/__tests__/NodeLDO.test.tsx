@@ -38,6 +38,7 @@ describe("ProfileLDO", () => {
     });
   });
 
+  
   test("read should return Node object", () => {
     // Create a mock Thing with relevant properties.
     const mockThing = buildThing(createThing({ name: "mockNode" }))

@@ -1,13 +1,13 @@
 {
-    "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Chat",
+    "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Chat",
     "properties": {
-        "id": "http://schema.org/identifier",
-        "host": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#host: ",
-        "guest": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#guest",
-        "ownerPod": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#ownerPod",
-        "ownerAccessType": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#ownerAccessType",
-        "storage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage",
-        "modified": "http://schema.org/modified",
-        "lastMessage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#lastMessage"
+        "id": "https://schema.org/identifier",
+        "host": "https://d-nb.info/standards/elementset/gnd#organizerOrHost: ",
+        "guest": "https://dbpedia.org/ontology/guest",
+        "source": "http://purl.org/dc/terms/source",
+        "accessControlPolicy": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#accessControlPolicy",
+        "storage": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#storage",
+        "modified": "http://purl.org/dc/terms/modified",
+        "lastMessage": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#lastMessage"
     }
 }

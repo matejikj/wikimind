@@ -3,6 +3,7 @@ import { MindMap } from "../../types/MindMap";
 import { MindMapLDO } from "../MindMapLDO";
 import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
 
+
 /**
  * Tests for the MindMapLDO class.
  */

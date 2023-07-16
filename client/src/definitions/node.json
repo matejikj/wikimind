@@ -1,5 +1,5 @@
 {
-    "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Node",
+    "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Node",
     "properties": {
         "id": 
             "http://schema.org/identifier"
@@ -8,22 +8,22 @@
             "http://schema.org/uri"
         ,
         "description": 
-            "https://schema.org/description"
+            "http://purl.org/dc/terms/description"
         ,
         "title": 
-            "http://schema.org/name"
+            "http://purl.org/dc/terms/title"
         ,
         "cx": 
-            "http://schema.org/distance"
+            "http://data.ign.fr/def/geometrie/20190212.htm#coordX"
         ,
         "cy": 
-            "http://schema.org/email"
+            "http://data.ign.fr/def/geometrie/20190212.htm#coordY"
         ,
         "color": 
-            "http://schema.org/color"
+            "http://vocab.gtfs.org/gtfs.ttl#color"
         ,
         "textColor": 
-            "http://schema.org/textColor"
+            "http://vocab.gtfs.org/gtfs.ttl#textColor"
         ,
         "isInTest": 
             "https://schema.org/Product"

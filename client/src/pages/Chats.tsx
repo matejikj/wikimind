@@ -36,7 +36,7 @@ const Chats: React.FC = () => {
   }, []);
 
   const showMindMap = (chat: Chat) => {
-    const url = `${chat.ownerPod}${WIKIMIND}/${CHATS}/${chat.id}${TTLFILETYPE}`
+    const url = `${chat.source}${WIKIMIND}/${CHATS}/${chat.id}${TTLFILETYPE}`
     navigate('/chat/', {
       state: {
         id: url

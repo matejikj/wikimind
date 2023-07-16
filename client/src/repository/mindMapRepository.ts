@@ -52,7 +52,7 @@ export class MindMapRepository {
     }
 
     async updateMindMap(mindMap: MindMap): Promise<void> {
-        const url = `${mindMap.ownerPod}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
+        const url = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
         let mindMapDataset = await getSolidDataset(url, { fetch });
         mindMapDataset = setThing(mindMapDataset, this.mindMapLDO.create(mindMap));
         await saveSolidDatasetAt(url, mindMapDataset, { fetch });

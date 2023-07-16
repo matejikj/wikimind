@@ -3,6 +3,7 @@ import { Exam } from "../../types/Exam";
 import { ExamLDO } from "../ExamLDO";
 import { createThing, getInteger, getStringNoLocale, buildThing, addInteger, addStringNoLocale, addUrl } from "@inrupt/solid-client";
 
+
 /**
  * Tests for the ExamLDO class.
  */

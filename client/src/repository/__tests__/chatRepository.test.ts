@@ -74,8 +74,8 @@ describe("ChatRepository", () => {
                 host: "John",
                 guest: "Jane",
                 storage: "https://inrupt.com/.well-known/sdk-local-node/",
-                ownerPod: "chat-pod-1",
-                ownerAccessType: AccessControlPolicy.ACP,
+                source: "chat-pod-1",
+                accessControlPolicy: AccessControlPolicy.ACP,
                 lastMessage: "Hello!",
                 modified: "2023-07-15T10:30:00Z",
             };
@@ -93,6 +93,7 @@ describe("ChatRepository", () => {
             expect(chatResult).toEqual(chat);
         });
     });
+    
 
     describe("updateChat", () => {
         it("should fetch chat and return parsed chat", async () => {
@@ -103,12 +104,12 @@ describe("ChatRepository", () => {
                 host: "John",
                 guest: "Jane",
                 storage: "https://inrupt.com/.well-known/sdk-local-node/",
-                ownerPod: "chat-pod-1",
-                ownerAccessType: AccessControlPolicy.ACP,
+                source: "chat-pod-1",
+                accessControlPolicy: AccessControlPolicy.ACP,
                 lastMessage: "Hello!",
                 modified: "2023-07-15T10:30:00Z",
             };
-            
+
             const chatRepository = new ChatRepository();
             const chatResult = await chatRepository.createChat(chatDatasetUrl, chat);
 

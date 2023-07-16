@@ -20,7 +20,7 @@ export type MindMap = {
   /**
   * The unique identifier of the mind map.
   */
-  ownerPod: string;
+  source: string;
 
   /**
    * The creation date of the mind map.

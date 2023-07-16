@@ -25,6 +25,6 @@ export type Class = {
   /**
    * The storage location of the class data.
    */
-  ownerPod: string;
+  source: string;
 
 }

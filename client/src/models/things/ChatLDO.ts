@@ -16,13 +16,13 @@ export class ChatLDO extends BaseLDO<Chat> implements CRUDLDO<Chat> {
    * @returns The Chat object.
    */
   read(thing: any): Chat {
-    const str = getStringNoLocale(thing, (this.rdf.properties.ownerAccessType))! as unknown as AccessControlPolicy;
+    const str = getStringNoLocale(thing, (this.rdf.properties.accessControlPolicy))! as unknown as AccessControlPolicy;
 
     return {
       id: getStringNoLocale(thing, this.rdf.properties.id)!,
       host: getStringNoLocale(thing, this.rdf.properties.host)!,
-      ownerPod: getStringNoLocale(thing, this.rdf.properties.ownerPod)!,
-      ownerAccessType: str,
+      source: getStringNoLocale(thing, this.rdf.properties.source)!,
+      accessControlPolicy: str,
       storage: getStringNoLocale(thing, this.rdf.properties.storage)!,
       modified: getStringNoLocale(thing, this.rdf.properties.modified)!,
       lastMessage: getStringNoLocale(thing, this.rdf.properties.lastMessage)!,
@@ -40,8 +40,8 @@ export class ChatLDO extends BaseLDO<Chat> implements CRUDLDO<Chat> {
       .addUrl(rdf_type, this.rdf.identity)
       .addStringNoLocale(this.rdf.properties.id, object.id)
       .addStringNoLocale(this.rdf.properties.host, object.host)
-      .addStringNoLocale(this.rdf.properties.ownerAccessType, object.ownerAccessType.toString())
-      .addStringNoLocale(this.rdf.properties.ownerPod, object.ownerPod)
+      .addStringNoLocale(this.rdf.properties.accessControlPolicy, object.accessControlPolicy.toString())
+      .addStringNoLocale(this.rdf.properties.source, object.source)
       .addStringNoLocale(this.rdf.properties.guest, object.guest)
       .addStringNoLocale(this.rdf.properties.storage, object.storage)
       .addStringNoLocale(this.rdf.properties.modified, object.modified)

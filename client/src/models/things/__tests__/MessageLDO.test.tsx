@@ -3,6 +3,7 @@ import { Message } from "../../types/Message";
 import { MessageLDO } from "../MessageLDO";
 import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
 
+
 /**
  * Tests for the MessageLDO class.
  */

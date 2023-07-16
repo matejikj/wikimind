@@ -113,7 +113,7 @@ async function checkProfileContainer(podUrl: string, sessionId: string, accessCo
       name: '',
       surname: '',
       webId: sessionId,
-      ownerPod: podUrl,
+      source: podUrl,
     };
     const profileLDO = new ProfileLDO(profileDefinition).create(blankProfile);
     const savedProfileSolidDataset = setThing(profileSolidDataset, profileLDO);

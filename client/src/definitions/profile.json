@@ -1,5 +1,5 @@
 {
-    "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Profile",
+    "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Profile",
     "properties": {
         "surname": 
             "http://xmlns.com/foaf/0.1/#term_surname"
@@ -8,10 +8,10 @@
             "http://xmlns.com/foaf/0.1/#term_name"
         ,
         "webId": 
-            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#webId"
+            "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#webId"
         ,
-        "ownerPod": 
-            "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profileImage"
+        "source": 
+            "http://purl.org/dc/terms/source"
         
     }
 }

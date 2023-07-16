@@ -48,7 +48,7 @@ describe("ProfileRepository", () => {
         webId: "https://matejikj.datapod.igrant.io/profile/card#me",
         name: "",
         surname: "",
-        ownerPod: "",
+        source: "",
     };
 
     beforeEach(async () => {
@@ -77,7 +77,7 @@ describe("ProfileRepository", () => {
                 webId: "https://matejikj.datapod.igrant.io/profile/card#me",
                 name: "Jakub",
                 surname: "Matejik",
-                ownerPod: "",
+                source: "",
             };
 
 
@@ -89,7 +89,7 @@ describe("ProfileRepository", () => {
                 .addStringNoLocale(profileDefinition.properties.name, "Jakub")
                 .addStringNoLocale(profileDefinition.properties.webId, "https://matejikj.datapod.igrant.io/profile/card#me")
                 .addStringNoLocale(profileDefinition.properties.surname, "Matejik")
-                .addStringNoLocale(profileDefinition.properties.ownerPod, "")
+                .addStringNoLocale(profileDefinition.properties.source, "")
                 .build();
 
             const myDataset = await getSolidDataset(podUrl, { fetch });
@@ -111,7 +111,7 @@ describe("ProfileRepository", () => {
                 webId: "https://matejikj.datapod.igrant.io/profile/card#me",
                 name: "Jakub",
                 surname: "Matejik",
-                ownerPod: "",
+                source: "",
             };
 
 

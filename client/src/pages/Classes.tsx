@@ -58,7 +58,7 @@ const Classes: React.FC = () => {
   }, []);
 
   const showClass = (e: Class) => {
-    const classUrl = e.ownerPod + WIKIMIND + SLASH + CLASSES + SLASH + e.id + TTLFILETYPE
+    const classUrl = e.source + WIKIMIND + SLASH + CLASSES + SLASH + e.id + TTLFILETYPE
     navigate('/class/', {
       state: {
         url: classUrl
