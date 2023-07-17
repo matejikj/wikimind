@@ -33,6 +33,8 @@ import { MindMapRepository } from "../repository/mindMapRepository";
 import { ProfileRepository } from "../repository/profileRepository";
 import { RequestRepository } from "../repository/requestRepository";
 import { getPodUrl, initializeAcl } from "./accessService";
+import { ExamLDO } from "../models/things/ExamLDO";
+import { Exam } from "../models/types/Exam";
 
 
 
@@ -445,6 +447,22 @@ export class ClassService {
             console.error(error);
             return undefined;
         }
+    }
+
+    async addExamResult(userSession: UserSession, exam: Exam, classUrl: string) {
+        const profileLDO = new ExamLDO(examDefinition).create(exam)
+        const myDataset = await getSolidDataset(
+            classUrl,
+            { fetch: fetch }
+        );
+
+        const savedProfileSolidDataset = setThing(myDataset, profileLDO)
+        const savedSolidDataset = await saveSolidDatasetAt(
+            classUrl,
+            savedProfileSolidDataset,
+            { fetch: fetch }
+        );
+
     }
 }
 

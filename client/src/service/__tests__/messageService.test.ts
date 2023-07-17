@@ -84,6 +84,57 @@ describe("MessageService", () => {
     jest.clearAllMocks();
   });
 
+  describe("getChat", () => {
+    it("should fetch a chat and its messages", async () => {
+      const chatLDO = new ChatLDO(chatDefinition);
+      const linkLDO = new LinkLDO(linkDefinition);
+      const messageLDO = new MessageLDO(messageDefinition);
+
+      // Prepare test chat data
+      const chat: Chat = {
+        id: `WikiMind/chats/${chatId}.ttl#${chatId}`,
+        host: "John",
+        guest: "Jane",
+        storage: storageDatasetUrl,
+        source: "chat-pod-1",
+        accessControlPolicy: AccessControlPolicy.ACP,
+        lastMessage: "Hello!",
+        modified: "2023-07-15T10:30:00Z",
+      };
+      const chatThing = chatLDO.create(chat);
+
+      // Prepare test message data
+      const message: Message = {
+        id: `WikiMind/chats/${generate_uuidv4()}.ttl#${generate_uuidv4()}`,
+        from: profileMock.webId,
+        text: "Hello, Jane!",
+        date: Date.now(),
+      };
+      const messageThing = messageLDO.create(message);
+
+      const chatsDataset = await getSolidDataset(chatDatasetUrl, { fetch });
+      const savedChatSolidDataset = setThing(chatsDataset, chatThing);
+      await saveSolidDatasetAt(chatDatasetUrl, savedChatSolidDataset, { fetch });
+
+      // Save the message in the storage dataset
+      const storageDataset = await getSolidDataset(storageDatasetUrl, { fetch });
+      const savedMessageSolidDataset = setThing(storageDataset, messageThing);
+      await saveSolidDatasetAt(storageDatasetUrl, savedMessageSolidDataset, { fetch });
+
+      // Create the MessageService instance
+      const messageService = new MessageService();
+
+      // Call the getChat method
+      const chatDataset = await messageService.getChat(chat.storage);
+      if (chatDataset) {
+        expect((chatDataset?.messages)).toEqual(([message]));
+
+      }
+
+
+    })
+  });
+
   describe("getChatList", () => {
     it("should fetch chat list and return parsed chats", async () => {
       const chatLDO = new ChatLDO(chatDefinition);
@@ -148,8 +199,8 @@ describe("MessageService", () => {
       // Prepare test message data
       const message: Message = {
         id: `WikiMind/chats/${msgId}.ttl#${msgId}`,
-        text: "Hello, Jane!",
         from: profileMock.webId,
+        text: "Hello, Jane!",
         date: Date.now(),
       };
 
@@ -179,8 +230,8 @@ describe("MessageService", () => {
       const resThing = await getThing(updatedChatDataset, msgThingId);
       const resMessage = messageLDO.read(resThing);
 
-      expect(resMessage).toContainEqual(message);
+      expect((resMessage)).toEqual((message));
     });
   });
 
-});
+})
