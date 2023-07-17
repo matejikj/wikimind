@@ -30,6 +30,7 @@ import { CanvasState } from "../visualisation/models/CanvasState";
 import { HistoryItem } from "../visualisation/models/HistoryItem";
 import { HistoryItemType } from "../visualisation/models/HistoryItemType";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
+import { set } from 'lodash';
 
 const blankNode: Node = {
   id: '',
@@ -299,6 +300,8 @@ const Editor: React.FC = () => {
 
   async function createCustomEntity() {
     const newNode: Node = JSON.parse(JSON.stringify(blankNode))
+    newNode.cx = 300
+    newNode.cy = 300
     setCreatedNode(newNode)
     setModalNodeCreate(true)
   }
@@ -318,17 +321,24 @@ const Editor: React.FC = () => {
       newNode.description = res
       newNode.title = item.label.value
       newNode.uri = item.entity.value
+      newNode.cx = 300
+      newNode.cy = 300
       setCreatedNode(newNode)
       setModalNodeCreate(true)
   }
 
-
+  async function editNode(item: Node) {
+    setCreatedNode(item)
+    setModalNodeCreate(true)
+  }
 
   return (
     <div className="App">
       <Sidenav />
       <main className="visualisation-tools" ref={ref}>
       <ModalNodeEditor
+          clickedNode={clickedNode}
+          updateCanvasAxis={updateCanvasAxis}
           node={createdNode}
           setNode={setCreatedNode}
           dataset={dataset}
@@ -375,7 +385,7 @@ const Editor: React.FC = () => {
                   <Button variant="success" disabled size="sm">
                     {clickedNode.title.length > 10 ? clickedNode.title.slice(0, 10) + '..' : clickedNode.title}
                   </Button>
-                  <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><ImInfo></ImInfo></Button>
+                  <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { editNode(clickedNode) }}><ImInfo></ImInfo></Button>
                   <Button size="sm" variant={clickedNode.isInTest ? "info" : "secondary"} className="rounded-circle" onClick={() => examSwitch()}><BsQuestionSquare></BsQuestionSquare></Button>
                   {findingSimilar ? (
                     <Spinner animation="border" role="status">

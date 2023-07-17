@@ -50,7 +50,7 @@ import {
      * @returns A Promise that resolves when the nodes are successfully saved to the storage.
      */
     async saveNodes(storageUrl: string, nodes: Node[]): Promise<void> {
-      let mindMapStorageDataset = createSolidDataset();
+      let mindMapStorageDataset = await getSolidDataset(storageUrl, { fetch });
   
       nodes.forEach(node => {
         mindMapStorageDataset = setThing(mindMapStorageDataset, this.nodeLDO.create(node));

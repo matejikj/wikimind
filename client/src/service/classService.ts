@@ -32,7 +32,7 @@ import { MessageRepository } from "../repository/messageRepository";
 import { MindMapRepository } from "../repository/mindMapRepository";
 import { ProfileRepository } from "../repository/profileRepository";
 import { RequestRepository } from "../repository/requestRepository";
-import { initializeAcl } from "./accessService";
+import { getPodUrl, initializeAcl } from "./accessService";
 
 
 
@@ -180,9 +180,7 @@ export class ClassService {
                         const removedClass = classLinks?.find((item) => item.url === item.url)
                         if (removedClass) {
                             await this.linkRepository.removeLink(classLinksUrl, removedClass)
-
                         }
-
                     }
                     if (item.requestType !== RequestType.CLASS_REQUEST) {
                         await this.requestRepository.removeRequest(requestUrl, item)
@@ -303,15 +301,15 @@ export class ClassService {
         const webId = classUri.split('?')[0];
         const urlParams = new URLSearchParams(paramString);
         const classId = (urlParams.get("classId"))
-        const podUrls = await getPodUrlAll(webId);
-        if (podUrls) {
-        const newRequst: Request = {
+        const podUrl = await getPodUrl(webId);
+        if (podUrl) {
+            const newRequst: Request = {
                 id: generate_uuidv4(),
-                subject: podUrls[0] + WIKIMIND + SLASH + CLASSES + SLASH + classId + TTLFILETYPE,
+                subject: podUrl + WIKIMIND + SLASH + CLASSES + SLASH + classId + TTLFILETYPE,
                 requestType: RequestType.CLASS_REQUEST,
                 requestor: userSession.webId
             }
-            const requestUrl = podUrls[0] + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
+            const requestUrl = podUrl + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
             const createRequestRes = this.requestRepository.createRequest(requestUrl, newRequst)
             await Promise.all([createRequestRes]);
         }
@@ -342,14 +340,14 @@ export class ClassService {
         const messageStorageUrl = userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + generate_uuidv4() + TTLFILETYPE;
         try {
 
-            const podUrls = await getPodUrlAll(classRequest.requestor);
-            if (podUrls) {
+            const podUrl = await getPodUrl(classRequest.requestor);
+            if (podUrl) {
 
                 const classThing = await this.classRepository.getClass(classRequest.subject)
                 if (classThing) {
                     const datasetLink: Link = {
                         id: generate_uuidv4(),
-                        url: podUrls[0],
+                        url: podUrl,
                         linkType: LinkType.PROFILE_LINK,
                     };
                     const saveLinkForStudent = this.linkRepository.createLink(classThing.storage, datasetLink)
@@ -378,7 +376,7 @@ export class ClassService {
                             requestor: userSession.webId,
                             requestType: RequestType.ADD_CLASS
                         }
-                        const grantUrl = podUrls[0] + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
+                        const grantUrl = podUrl + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
                         this.requestRepository.createRequest(grantUrl, grant)
                     })();
 
@@ -420,30 +418,22 @@ export class ClassService {
                         )
 
                     })();
-
                     const createChatLinkPromise = (async () => {
                         const newChatLink = {
                             id: generate_uuidv4(),
                             linkType: LinkType.CHAT_LINK,
                             url: messageDatasetUrl,
                         }
-
                         await this.linkRepository.createLink(
                             userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + CHATS + TTLFILETYPE, newChatLink)
-
                         const contactRequest: Request = {
                             id: generate_uuidv4(),
                             subject: messageDatasetUrl,
                             requestor: userSession.webId,
                             requestType: RequestType.ADD_CONTACT
                         }
-                        const grantUrl = podUrls[0] + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
+                        const grantUrl = podUrl + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
                         await this.requestRepository.createRequest(grantUrl, contactRequest)
-
-                        // fdsfad
-                        // await this.linkRepository.createLink(
-                        //     podUrls[0] + WIKIMIND + SLASH + MESSAGES + SLASH + CONTACTS + TTLFILETYPE, newChatLink)
-
                     })();
                     await Promise.all([...setAgentAccessPromises, saveLinkForStudent, grantRequestPromise, createChatPromise, createChatLinkPromise]);
                 }
@@ -455,8 +445,6 @@ export class ClassService {
             console.error(error);
             return undefined;
         }
-
     }
-
 }
 

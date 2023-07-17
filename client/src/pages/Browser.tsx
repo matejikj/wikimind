@@ -23,7 +23,6 @@ const Browser: React.FC = () => {
     const d3Container = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const countRef = useRef(0);
 
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
@@ -31,31 +30,20 @@ const Browser: React.FC = () => {
     const [width, setWidth] = useState(0);
     const [dataset, setDataset] = useState<MindMapDataset>();
 
-    const sessionContext = useContext(SessionContext)
-    const [mounted, setMounted] = useState(false); // <-- new state variable
+    const sessionContext = useContext(SessionContext);
+    const [mounted, setMounted] = useState(false);
     const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
     wssUrl.protocol = 'wss';
 
     const [clickedNode, setClickedNode] = useState<Node>();
 
-    const [searchedKeyword, setSearchedKeyword] = useState('');
-    const [recommends, setRecommends] = useState<RecommendResultItem[]>([]);
-    const [recommendPath, setRecommendPath] = useState<HistoryItem[]>([]);
-    const [lastQuery, setLastQuery] = useState<HistoryItem | undefined>(undefined);
-
     const [creatorVisible, setCreatorVisible] = useState(false); // <-- new state variable
-    const [modalNodeCreate, setModalNodeCreate] = useState(false); // <-- new state variable
     const [modalNodeDetail, setModalNodeDetail] = useState(false);
-    const [modalNodeDelete, setModalNodeDelete] = useState(false);
-    const [modalNodeColor, setModalNodeColor] = useState(false);
 
-    const [canvasState, setCanvasState] = useState<CanvasState>(CanvasState.DEFAULT);
-    const [clickedLink, setClickedLink] = useState<Connection>();
     const [disabledCanvas, setDisabledCanvas] = useState(false);
-    const [findingSimilar, setFindingSimilar] = useState(false);
     const [historyDataset, setHistoryDataset] = useState<TimelineResultItem[]>([]);
 
-    const [datesView, setDatesView] = useState(false); // <-- new state variable
+    const [datesView, setDatesView] = useState(false);
 
     const mindMapService = new MindMapService();
     const dBPeddiaService = new DBPediaService(sessionContext.sessionInfo);
@@ -66,7 +54,16 @@ const Browser: React.FC = () => {
             if (mindMapDataset) {
                 mindMapDataset.links = AddCoords(mindMapDataset.links, getIdsMapping(mindMapDataset.nodes))
                 setDataset(mindMapDataset)
-                updateCanvasAxis(mindMapDataset)
+                const xAxes = mindMapDataset.nodes.map((node) => { return node.cx })
+                const yAxes = mindMapDataset.nodes.map((node) => { return node.cy })
+                if (ref && ref.current) {
+                    // @ts-ignore
+                    const mainWidth = ref.current.offsetWidth;
+                    // @ts-ignore
+                    const mainHeight = ref.current.offsetHeight;
+                    setWidth(Math.max(Math.max(...xAxes) + 250, mainWidth));
+                    setHeight(Math.max(Math.max(...yAxes) + 250, mainHeight));
+                }
             }
         } catch (error) {
             // Handle the error, e.g., display an error message to the user or perform fallback actions
@@ -82,32 +79,16 @@ const Browser: React.FC = () => {
             }
         }, [mounted])
 
-    function updateCanvasAxis(res: MindMapDataset) {
-        if (res) {
-            const xAxes = res.nodes.map((node) => { return node.cx })
-            const yAxes = res.nodes.map((node) => { return node.cy })
-            if (ref && ref.current) {
-                // @ts-ignore
-                const mainWidth = ref.current.offsetWidth
-                // @ts-ignore
-                const mainHeight = ref.current.offsetHeight
-                setWidth(Math.max(Math.max(...xAxes) + 250, mainWidth))
-                setHeight(Math.max(Math.max(...yAxes) + 250, mainHeight))
-            }
-        }
-    }
-
     async function createDateView() {
         if (dataset) {
-            const dates = await dBPeddiaService.getDates(dataset.nodes)
+            const dates = await dBPeddiaService.getDates(dataset.nodes);
             if (dates) {
-                setHistoryDataset(dates)
+                setHistoryDataset(dates);
                 setCreatorVisible(false);
-                setDatesView(true)
+                setDatesView(true);
             }
         }
     }
-
 
     return (
         <div className="App">
@@ -126,7 +107,7 @@ const Browser: React.FC = () => {
                             id="visualisation-btn-time-close"
                             onClick={() => {
                                 setCreatorVisible(false);
-                                setDatesView(false)
+                                setDatesView(false);
                             }}
                             variant="success"><GrGraphQl></GrGraphQl>
                         </Button>
@@ -174,7 +155,7 @@ const Browser: React.FC = () => {
                                     </defs>
                                     {dataset && dataset.links.map((link, index) => {
                                         return (
-                                            <g>
+                                            <g key={index}>
                                                 <line
                                                     x1={link.source !== undefined ? (link.source[0]) : 0}
                                                     y1={link.source !== undefined ? (link.source[1]) : 0}
@@ -223,7 +204,7 @@ const Browser: React.FC = () => {
                                     })}
                                     {dataset && dataset.nodes.map((node, index) => {
                                         return (
-                                            <g>
+                                            <g key={index}>
                                                 <rect
                                                     x={(node.cx) - node.title.length * 3.5}
                                                     y={(node.cy) - 10}

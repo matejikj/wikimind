@@ -50,7 +50,7 @@ import {
      * @returns A Promise that resolves when the connections are successfully saved to the storage.
      */
     async saveConnections(storageUrl: string, connections: Connection[]): Promise<void> {
-      let mindMapStorageDataset = createSolidDataset();
+      let mindMapStorageDataset = await getSolidDataset(storageUrl, { fetch });
   
       connections.forEach(connection => {
         mindMapStorageDataset = setThing(mindMapStorageDataset, this.connectionLDO.create(connection));

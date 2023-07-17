@@ -41,7 +41,8 @@ const ProfileView: React.FC = () => {
   function handleChange(event: any): void {
     const key = event.target.name;
     const value = event.target.value;
-    key && value && profile && setProfile({ ...profile, [key]: value })
+    key && value !== undefined && profile && setProfile({ ...profile, [key]: value })
+    console.log()
   }
 
   return (
@@ -66,7 +67,7 @@ const ProfileView: React.FC = () => {
                     name="name"
                     style={{ maxWidth: '500px' }}
                     id="name"
-                    value={profile?.name || ""}
+                    value={profile?.name}
                     onChange={handleChange}
                   />
                   <br />
@@ -77,7 +78,7 @@ const ProfileView: React.FC = () => {
                     name="surname"
                     id="surname"
                     style={{ maxWidth: '500px' }}
-                    value={profile?.surname || ""}
+                    value={profile?.surname}
                     onChange={handleChange}
                   />
                 </Card.Body>

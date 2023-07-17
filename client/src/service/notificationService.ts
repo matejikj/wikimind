@@ -11,26 +11,32 @@ const messageService = new MessageService()
 
 export async function wacChatWebSocket(chat: Chat, setMessageDataset: any) {
     if (chat.accessControlPolicy === AccessControlPolicy.WAC) {
-        const wssUrl = new URL(chat.source);
+        const wssUrl = new URL(chat.storage);
         wssUrl.protocol = 'wss';
-
-
-        const socket = new WebSocket(wssUrl, ['solid-0.1']);
-        socket.onopen = function () {
-            this.send(`sub ${chat.storage}`)
-        };
-        socket.onmessage = function (msg) {
-            if (msg.data && msg.data.slice(0, 3) === 'pub') {
-                if (msg.data === `pub ${chat.storage}`) {
-                    messageService.getChat(chat.source + WIKIMIND + SLASH + CHATS + SLASH + chat.id + TTLFILETYPE).then((result: ChatDataset | undefined) => {
-                        if (result) {
-                            setMessageDataset(result)
-                        }
-                    })
+        let socket;
+        const connectWebSocket = () => {
+            socket = new WebSocket(wssUrl, ['solid-0.1']);
+            socket.onopen = function () {
+                this.send(`sub ${chat.storage}`)
+            };
+            socket.onclose = function (event) {
+                setTimeout(() => {
+                    connectWebSocket();
+                }, 100);
+            };
+            socket.onmessage = function (msg) {
+                if (msg.data && msg.data.slice(0, 3) === 'pub') {
+                    if (msg.data === `pub ${chat.storage}`) {
+                        messageService.getChat(chat.source + WIKIMIND + SLASH + CHATS + SLASH + chat.id + TTLFILETYPE).then((result: ChatDataset | undefined) => {
+                            if (result) {
+                                setMessageDataset(result)
+                            }
+                        })
+                    }
                 }
-            }
-        };
-
+            };
+        }
+        connectWebSocket()
     } else {
         const websocket4 = new WebsocketNotification(
             chat.storage,
@@ -44,7 +50,5 @@ export async function wacChatWebSocket(chat: Chat, setMessageDataset: any) {
             })
         });
         websocket4.connect();
-
     }
-
 }

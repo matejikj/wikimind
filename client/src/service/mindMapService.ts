@@ -103,8 +103,13 @@ export class MindMapService {
    * @returns The URL of the newly created mind map.
    */
   async saveMindMap(mindMap: MindMapDataset): Promise<void> {
-    this.connectionRepository.saveConnections(mindMap.mindMap.storage, mindMap.links)
-    this.nodeRepository.saveNodes(mindMap.mindMap.storage, mindMap.nodes)
+    try {
+      await this.mindMapRepository.removeMindMap(mindMap.mindMap.storage)
+      let mindMapStorageDataset = createSolidDataset();
+      await saveSolidDatasetAt(mindMap.mindMap.storage, mindMapStorageDataset, { fetch });
+      this.connectionRepository.saveConnections(mindMap.mindMap.storage, mindMap.links)
+      this.nodeRepository.saveNodes(mindMap.mindMap.storage, mindMap.nodes)
+    } catch(error: any) {}
   }
 
   async removeMindMap(mindMap: MindMap): Promise<boolean> {

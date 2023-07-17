@@ -6,7 +6,6 @@ import { MindMapDataset } from "../models/types/MindMapDataset";
 import { MindMapService } from "../service/mindMapService";
 import { SessionContext } from "../sessionContext";
 
-
 import { Form } from "react-bootstrap";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { Exam } from "../models/types/Exam";
@@ -14,6 +13,10 @@ import { addExamResult } from "../service/examService";
 import { generate_uuidv4, levenshteinDistance } from "../service/utils";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
 
+/**
+ * ExamPage component.
+ * Responsible for displaying the exam visualization and handling user interactions.
+ */
 const ExamPage: React.FC = () => {
     const d3Container = useRef(null);
     const navigate = useNavigate();
@@ -25,19 +28,30 @@ const ExamPage: React.FC = () => {
     const [width, setWidth] = useState(4000);
     const [dataset, setDataset] = useState<MindMapDataset>();
     const [fillDataset, setFillDataset] = useState<Map<string, string>>(new Map<string, string>());
-    const sessionContext = useContext(SessionContext)
-    const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
-    wssUrl.protocol = 'wss';
+    const sessionContext = useContext(SessionContext);
 
     const mindMapService = new MindMapService();
 
+    /**
+     * Fetches the mind map data from the provided URL.
+     * @param url The URL of the mind map data.
+     */
     async function fetchMindMap(url: string): Promise<void> {
         try {
             const mindMapDataset = await mindMapService.getMindMap(url);
             if (mindMapDataset) {
-                mindMapDataset.links = AddCoords(mindMapDataset.links, getIdsMapping(mindMapDataset.nodes))
-                setDataset(mindMapDataset)
-                updateCanvasAxis(mindMapDataset)
+                mindMapDataset.links = AddCoords(mindMapDataset.links, getIdsMapping(mindMapDataset.nodes));
+                setDataset(mindMapDataset);
+                const xAxes = mindMapDataset.nodes.map((node) => { return node.cx });
+                const yAxes = mindMapDataset.nodes.map((node) => { return node.cy });
+                if (ref && ref.current) {
+                    // @ts-ignore
+                    const mainWidth = ref.current.offsetWidth;
+                    // @ts-ignore
+                    const mainHeight = ref.current.offsetHeight;
+                    setWidth(Math.max(Math.max(...xAxes) + 250, mainWidth));
+                    setHeight(Math.max(Math.max(...yAxes) + 250, mainHeight));
+                }
             }
         } catch (error) {
             // Handle the error, e.g., display an error message to the user or perform fallback actions
@@ -47,27 +61,15 @@ const ExamPage: React.FC = () => {
     useEffect(
         () => {
             if (location.state !== null && location.state.id !== null) {
-                fetchMindMap(location.state.id)
+                fetchMindMap(location.state.id);
             } else {
-                navigate('/')
+                navigate('/');
             }
-        }, [])
+        }, []);
 
-    const updateCanvasAxis = (res: MindMapDataset) => {
-        if (res) {
-            const xAxes = res.nodes.map((node) => { return node.cx })
-            const yAxes = res.nodes.map((node) => { return node.cy })
-            if (ref && ref.current) {
-                // @ts-ignore
-                const mainWidth = ref.current.offsetWidth
-                // @ts-ignore
-                const mainHeight = ref.current.offsetHeight
-                setWidth(Math.max(Math.max(...xAxes) + 250, mainWidth))
-                setHeight(Math.max(Math.max(...yAxes) + 250, mainHeight))
-            }
-        }
-    }
-
+    /**
+     * Calculates and records the exam results based on the filled answers.
+     */
     const done = async () => {
         let count = 0;
         let good = 0;
@@ -75,28 +77,35 @@ const ExamPage: React.FC = () => {
         dataset && dataset.nodes.forEach((item) => {
             if (item.isInTest) {
                 count++;
-                const distance = levenshteinDistance(item.title.toLowerCase(), fillDataset.get(item.id)!.toLowerCase())
+                const distance = levenshteinDistance(item.title.toLowerCase(), fillDataset.get(item.id)!.toLowerCase());
                 if (distance < 3) {
-                    good++
+                    good++;
                 }
             }
-        })
+        });
+
         const blankProfile: Exam = {
             id: generate_uuidv4(),
             max: count,
             result: good,
             mindMap: location.state.id,
             profile: sessionContext.sessionInfo.webId
-        }
-        addExamResult(sessionContext.sessionInfo, blankProfile, location.state.class)
-        
+        };
+
+        addExamResult(sessionContext.sessionInfo, blankProfile, location.state.class);
     }
 
+    /**
+     * Updates the filled text for the given node ID.
+     * @param id The ID of the node.
+     * @param text The filled text for the node.
+     */
     const fillText = (id: string, text: string) => {
         setFillDataset(new Map(fillDataset.set(id, text)));
     }
 
     return (
+
         <div className="App">
             <Sidenav />
             <main ref={ref}>
@@ -226,7 +235,7 @@ const ExamPage: React.FC = () => {
                                                 x={(node.cx) - node.title.length * 3.5 + 5}
                                                 y={(node.cy) + 5}
                                                 fill={node.textColor}
-                                        >{node.title}
+                                            >{node.title}
                                             </text>
                                         </g>
                                 );

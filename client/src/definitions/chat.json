@@ -2,7 +2,7 @@
     "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Chat",
     "properties": {
         "id": "https://schema.org/identifier",
-        "host": "https://d-nb.info/standards/elementset/gnd#organizerOrHost: ",
+        "host": "https://d-nb.info/standards/elementset/gnd#organizerOrHost",
         "guest": "https://dbpedia.org/ontology/guest",
         "source": "http://purl.org/dc/terms/source",
         "accessControlPolicy": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#accessControlPolicy",

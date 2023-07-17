@@ -216,9 +216,8 @@ const Class: React.FC = () => {
                 <Row>
                   <h4>Announcements</h4>
                   {dataset?.messages.length === 0 &&
-                    <p>No announcements</p>
+                    <p>No announcements already</p>
                   }
-
                 </Row>
                 {dataset?.messages.map((item, index) => {
                   return (
@@ -228,32 +227,17 @@ const Class: React.FC = () => {
                           {item.text}
                         </div>
                         <div className='my-stack-reverse'>
-                        <Button
-                          size="sm"
-                          className='rounded-circle'
-                          onClick={() => removeAnnouncement(item)}
-                          variant="success"
-                        >
-                          <MdDeleteForever></MdDeleteForever>
-                        </Button>
-
+                          <Button
+                            size="sm"
+                            className='rounded-circle'
+                            onClick={() => removeAnnouncement(item)}
+                            variant="success"
+                          >
+                            <MdDeleteForever></MdDeleteForever>
+                          </Button>
                         </div>
                       </div>
                     </Row>
-                    // <Row>
-                    //   <Stack direction="horizontal" gap={1}>
-                    //     <Button
-                    //       size="sm"
-                    //       onClick={() => removeAnnouncement(item)}
-                    //       variant="success"
-                    //     >
-                    //       <MdDeleteForever></MdDeleteForever>
-                    //     </Button>
-                    //     <p>{item.text}</p>
-
-                    //   </Stack>
-
-                    // </Row>
                   )
                 })}
                 <Row>
@@ -284,7 +268,10 @@ const Class: React.FC = () => {
                       </Button>
                     </Stack> :
                     <Stack direction="horizontal" gap={1}>
-                      <Button size='sm' onClick={() => setAnnouncementVisible(true)} variant="primary">Create new announcement</Button>
+                      {
+                        dataset?.class.teacher === sessionContext.sessionInfo.webId &&
+                        <Button size='sm' onClick={() => setAnnouncementVisible(true)} variant="primary">Create new announcement</Button>
+                      }
                     </Stack>
                   }
                 </Row>
@@ -294,9 +281,9 @@ const Class: React.FC = () => {
             <Col sm="12">
               <Container className="class-container">
                 <Row>
-                  <h4>Classes mindMaps</h4>
+                  <h4>Mind maps</h4>
                   {dataset?.mindMaps.length === 0 &&
-                    <p>No mindMaps already</p>
+                    <p>No mind maps already</p>
                   }
                 </Row>
                 {dataset?.mindMaps.map((item, index) => {
@@ -307,14 +294,17 @@ const Class: React.FC = () => {
                           {item.name}
                         </div>
                         <div className='my-stack-reverse'>
-                          <Button
-                            size="sm"
-                            className='rounded-circle'
-                            onClick={() => removeMindMap(item)}
-                            variant="success"
-                          >
-                            <MdDeleteForever></MdDeleteForever>
-                          </Button>
+                          {
+                            dataset?.class.teacher === sessionContext.sessionInfo.webId &&
+                            <Button
+                              size="sm"
+                              className='rounded-circle'
+                              onClick={() => removeMindMap(item)}
+                              variant="success"
+                            >
+                              <MdDeleteForever></MdDeleteForever>
+                            </Button>
+                          }
                           <Button
                             size="sm"
                             className='rounded-circle'
@@ -336,15 +326,18 @@ const Class: React.FC = () => {
                     </Row>
                   )
                 })}
-                <Button onClick={() => setCreateNewModalVisible(true)} variant="outline-success">Create new</Button>
+                {
+                  dataset?.class.teacher === sessionContext.sessionInfo.webId &&
+                  <Button onClick={() => setCreateNewModalVisible(true)} variant="outline-success">Create new</Button>
+                }
               </Container>
             </Col>
             <Col sm="12">
               <Container className="class-container">
                 <Row>
-                  <h4>Pupils</h4>
+                  <h4>Students</h4>
                   {dataset?.students.length === 0 &&
-                    <p>No pupils already</p>
+                    <p>No students already</p>
                   }
                 </Row>
                 {dataset?.students.map((item, index) => {
@@ -352,7 +345,15 @@ const Class: React.FC = () => {
                     <Row key={index}>
                       <div className='aaa'>
                         <div className='my-stack'>
-                          {item.name} {item.surname}
+                          {
+                            (item.name === "" && item.surname === "") &&
+                            <p>{item.webId}</p>
+                          }
+                          {
+                            (item.name !== "" || item.surname !== "") &&
+                            <p>{`${item.name} ${item.surname}`}</p>
+                          }
+
                         </div>
                         <div className='my-stack-reverse'>
                           <Button

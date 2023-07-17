@@ -18,13 +18,11 @@ import Editor from "./pages/Editor";
 import ExamPage from "./pages/ExamPage";
 import Login from './pages/Login';
 import ProfileView from "./pages/ProfileView";
-import { isWacOrAcp } from "./service/accessService";
+import { getPodUrl, isWacOrAcp } from "./service/accessService";
 import { checkContainer } from "./service/containerService";
 import { SessionContext } from "./sessionContext";
 import './styles/style.css';
 
-const STORAGE_DESCRIPTION = "http://www.w3.org/ns/solid/terms#storageDescription"
-const WELL_KNOWN = ".well-known"
 const App: React.FC = () => {
 
   const [sessionInfo, setSessionInfo]
@@ -38,14 +36,7 @@ const App: React.FC = () => {
         restorePreviousSession: true
       })
       if (info && info.webId) {
-        let podUrl
-        const podUrls = (await getPodUrlAll(info.webId))
-        if (podUrls && podUrls.length > 0) {
-          podUrl = podUrls[0];
-        } else {
-          const resInfo = await getResourceInfo(info.webId)
-          podUrl = resInfo.internal_resourceInfo.linkedResources[STORAGE_DESCRIPTION][0].split(WELL_KNOWN)[0]
-        }
+        const podUrl = await getPodUrl(info.webId)
         if (podUrl) {
           setWaiting(true)
           const accessControlPolicy: AccessControlPolicy = await isWacOrAcp(podUrl);
