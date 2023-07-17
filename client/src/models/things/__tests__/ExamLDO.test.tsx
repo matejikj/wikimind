@@ -1,67 +1,64 @@
-import { buildThing, createThing, getInteger, getStringNoLocale } from "@inrupt/solid-client";
-import { rdf_type } from "../../LDO";
-import { Exam } from "../../types/Exam";
+import {
+  ThingLocal,
+  buildThing,
+  createThing,
+  setInteger,
+  getInteger,
+  getStringNoLocale,
+} from "@inrupt/solid-client";
 import { ExamLDO } from "../ExamLDO";
+import { Exam } from "../../types/Exam";
+import examDefinition from "../../../definitions/exam.json";
 
-
-/**
- * Tests for the ExamLDO class.
- */
 describe("ExamLDO", () => {
-  let examLDO: ExamLDO;
+  const rdfIdentity = "https://inrupt.com/.well-known/sdk-local-node/";
+  const examLDO = new ExamLDO(examDefinition);
 
-  beforeEach(() => {
-    // Create a new instance of ExamLDO with specified identity and properties.
-    examLDO = new ExamLDO({
-      "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Exam",
-      "properties": {
-        "max": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#max",
-        "result": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#result",
-        "id": "http://schema.org/email",
-        "mindMap": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#mindMap",
-        "profile": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profile"
-      }
-    });
-  });
-
-  test("read should return Exam object", () => {
-    // Create a mock Thing with relevant properties.
-    const mockThing = buildThing(createThing({ name: "exam123" }))
-      .addUrl(rdf_type, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Exam")
-      .addInteger("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#max", 100)
-      .addInteger("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#result", 85)
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#mindMap", "https://example.com/mindmap")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profile", "https://example.com/profile")
-      .addStringNoLocale("http://schema.org/email", "exam123")
-      .build();
-    const result = examLDO.read(mockThing);
-
-    // Assert the returned Exam object has expected values.
-    expect(result).toEqual({
+  test("should read an Exam object from a Linked Data Object", () => {
+    // Prepare the Linked Data Object (LDO) with exam data
+    const examLDOData: any = {
       max: 100,
       result: 85,
-      mindMap: "https://example.com/mindmap",
-      profile: "https://example.com/profile",
-      id: "exam123"
-    });
-  });
-
-  test("create should return ThingLocal representing Exam object", () => {
-    const mockExam: Exam = {
-      max: 100,
-      result: 85,
-      mindMap: "https://example.com/mindmap",
-      profile: "https://example.com/profile",
-      id: "exam123"
+      mindMap: "https://example.com/mindMap123",
+      profile: "https://example.com/profile456",
+      id: "exam123",
     };
 
-    const result = examLDO.create(mockExam);
+    // Create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = buildThing(createThing({ name: examLDOData.id }))
+      .addInteger(examDefinition.properties.max, examLDOData.max)
+      .addInteger(examDefinition.properties.result, examLDOData.result)
+      .addStringNoLocale(examDefinition.properties.mindMap, examLDOData.mindMap)
+      .addStringNoLocale(examDefinition.properties.profile, examLDOData.profile)
+      .addStringNoLocale(examDefinition.properties.id, examLDOData.id)
+      .build();
 
-    // Assert the returned ThingLocal has expected property values.
-    expect(getInteger(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#max")).toBe(100);
-    expect(getInteger(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#result")).toBe(85);
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#mindMap")).toBe("https://example.com/mindmap");
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#profile")).toBe("https://example.com/profile");
-    expect(getStringNoLocale(result, "http://schema.org/email")).toBe("exam123");
+    // Call the read method to convert the LDO to an Exam object
+    const exam: Exam = examLDO.read(ldoThing);
+
+    // Check if the Exam object matches the input data
+    expect(exam).toEqual(examLDOData);
+  });
+
+  test("should create a Linked Data Object (LDO) from an Exam object", () => {
+    // Prepare the Exam object
+    const exam: Exam = {
+      max: 200,
+      result: 180,
+      mindMap: "https://example.com/mindMap789",
+      profile: "https://example.com/profile012",
+      id: "exam456",
+    };
+
+    // Call the create method to create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = examLDO.create(exam);
+
+    // Check if the created ThingLocal contains the correct values
+    expect(ldoThing.url).toBe(`${rdfIdentity}exam456`);
+    expect(getInteger(ldoThing, examDefinition.properties.max)).toBe(exam.max);
+    expect(getInteger(ldoThing, examDefinition.properties.result)).toBe(exam.result);
+    expect(getStringNoLocale(ldoThing, examDefinition.properties.mindMap)).toBe(exam.mindMap);
+    expect(getStringNoLocale(ldoThing, examDefinition.properties.profile)).toBe(exam.profile);
+    expect(getStringNoLocale(ldoThing, examDefinition.properties.id)).toBe(exam.id);
   });
 });

@@ -1,57 +1,55 @@
-import { buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
-import { rdf_type } from "../../LDO";
-import { Connection } from "../../types/Connection";
+import {
+  ThingLocal,
+  buildThing,
+  createThing,
+  setStringNoLocale,
+  getStringNoLocale,
+} from "@inrupt/solid-client";
 import { ConnectionLDO } from "../ConnectionLDO";
+import { Connection } from "../../types/Connection";
+import connectionDefinition from "../../../definitions/connection.json";
 
-
-/**
- * Tests for the ConnectionLDO class.
- */
 describe("ConnectionLDO", () => {
-  let connectionLDO: ConnectionLDO;
+  const rdfIdentity = "https://inrupt.com/.well-known/sdk-local-node/";
+  const connectionLDO = new ConnectionLDO(connectionDefinition);
 
-  beforeEach(() => {
-    // Create a new instance of ConnectionLDO with specified identity and properties.
-    connectionLDO = new ConnectionLDO({
-      "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Connection",
-      "properties": {
-        "from": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#from",
-        "to": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#to",
-        "id": "http://schema.org/identifier"
-      }
-    });
-  });
-
-  test("read should return Connection object", () => {
-    // Create a mock Thing with relevant properties.
-    const mockThing = buildThing(createThing({ name: "connection123" }))
-      .addUrl(rdf_type, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Connection")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#from", "https://example.com/from")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#to", "https://example.com/to")
-      .addStringNoLocale("http://schema.org/identifier", "connection123")
-      .build();
-
-    const result = connectionLDO.read(mockThing);
-    // Assert the returned Connection object has expected values.
-    expect(result).toEqual({
+  test("should read a Connection object from a Linked Data Object", () => {
+    // Prepare the Linked Data Object (LDO) with connection data
+    const connectionLDOData: any = {
       id: "connection123",
-      to: "https://example.com/to",
-      from: "https://example.com/from"
-    });
-  });
-
-  test("create should return ThingLocal representing Connection object", () => {
-    const mockConnection: Connection = {
-      id: "connection123",
-      to: "https://example.com/to",
-      from: "https://example.com/from"
+      to: "https://example.com/toUser",
+      from: "https://example.com/fromUser",
     };
 
-    const result = connectionLDO.create(mockConnection);
+    // Create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = buildThing(createThing({ name: connectionLDOData.id }))
+      .addStringNoLocale(connectionDefinition.properties.id, connectionLDOData.id)
+      .addStringNoLocale(connectionDefinition.properties.to, connectionLDOData.to)
+      .addStringNoLocale(connectionDefinition.properties.from, connectionLDOData.from)
+      .build();
 
-    // Assert the returned ThingLocal has expected property values.
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#to")).toBe("https://example.com/to");
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#from")).toBe("https://example.com/from");
-    expect(getStringNoLocale(result, "http://schema.org/identifier")).toBe("connection123");
+    // Call the read method to convert the LDO to a Connection object
+    const connection: Connection = connectionLDO.read(ldoThing);
+
+    // Check if the Connection object matches the input data
+    expect(connection).toEqual(connectionLDOData);
+  });
+
+  test("should create a Linked Data Object (LDO) from a Connection object", () => {
+    // Prepare the Connection object
+    const connection: Connection = {
+      id: "connection456",
+      to: "https://example.com/toUser456",
+      from: "https://example.com/fromUser456",
+    };
+
+    // Call the create method to create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = connectionLDO.create(connection);
+
+    // Check if the created ThingLocal contains the correct values
+    expect(ldoThing.url).toBe(`${rdfIdentity}connection456`);
+    expect(getStringNoLocale(ldoThing, connectionDefinition.properties.id)).toBe(connection.id);
+    expect(getStringNoLocale(ldoThing, connectionDefinition.properties.to)).toBe(connection.to);
+    expect(getStringNoLocale(ldoThing, connectionDefinition.properties.from)).toBe(connection.from);
   });
 });

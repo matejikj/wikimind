@@ -1,58 +1,56 @@
-import { buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
-import { rdf_type } from "../../LDO";
+import {
+  ThingLocal,
+  buildThing,
+  createThing,
+  setStringNoLocale,
+  getStringNoLocale,
+} from "@inrupt/solid-client";
+import { LinkLDO } from "../LinkLDO";
 import { Link } from "../../types/Link";
 import { LinkType } from "../../enums/LinkType";
-import { LinkLDO } from "../LinkLDO";
+import linkDefinition from "../../../definitions/link.json";
 
-
-/**
- * Tests for the LinkLDO class.
- */
 describe("LinkLDO", () => {
-  let linkLDO: LinkLDO;
+  const rdfIdentity = "https://inrupt.com/.well-known/sdk-local-node/";
+  const linkLDO = new LinkLDO(linkDefinition);
 
-  beforeEach(() => {
-    // Create a new instance of LinkLDO with specified identity and properties.
-    linkLDO = new LinkLDO({
-      "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Link",
-      "properties": {
-        "url": "https://schema.org/url",
-        "id": "http://schema.org/identifier",
-        "linkType": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#LinkType"
-      }
-    });
-  });
-
-  test("read should return Link object", () => {
-    // Create a mock Thing with relevant properties.
-    const mockThing = buildThing(createThing({ name: "link123" }))
-      .addUrl(rdf_type, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Link")
-      .addStringNoLocale("https://schema.org/url", "https://example.com")
-      .addStringNoLocale("http://schema.org/identifier", "link123")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#LinkType", "CHAT")
-      .build();
-    const result = linkLDO.read(mockThing);
-
-    // Assert the returned Link object has expected values.
-    expect(result).toEqual({
-      url: "https://example.com",
+  test("should read a Link object from a Linked Data Object", () => {
+    // Prepare the Linked Data Object (LDO) with link data
+    const linkLDOData: any = {
+      url: "https://example.com/link123",
       id: "link123",
-      linkType: LinkType.CHAT_LINK
-    });
-  });
-
-  test("create should return ThingLocal representing Link object", () => {
-    const mockLink: Link = {
-      url: "https://example.com",
-      id: "link123",
-      linkType: LinkType.CHAT_LINK
+      linkType: "webpage", // Assuming LinkType is a string enum with values like "webpage", "image", etc.
     };
 
-    const result = linkLDO.create(mockLink);
+    // Create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = buildThing(createThing({ name: linkLDOData.id }))
+      .addStringNoLocale(linkDefinition.properties.url, linkLDOData.url)
+      .addStringNoLocale(linkDefinition.properties.id, linkLDOData.id)
+      .addStringNoLocale(linkDefinition.properties.linkType, linkLDOData.linkType)
+      .build();
 
-    // Assert the returned ThingLocal has expected property values.
-    expect(getStringNoLocale(result, "http://schema.org/identifier")).toBe("link123");
-    expect(getStringNoLocale(result, "https://schema.org/url")).toBe("https://example.com");
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#LinkType")).toBe("CHAT");
+    // Call the read method to convert the LDO to a Link object
+    const link: Link = linkLDO.read(ldoThing);
+
+    // Check if the Link object matches the input data
+    expect(link).toEqual(linkLDOData);
+  });
+
+  test("should create a Linked Data Object (LDO) from a Link object", () => {
+    // Prepare the Link object
+    const link: Link = {
+      url: "https://example.com/link456",
+      id: "link456",
+      linkType: LinkType.CHAT_LINK, // Assuming LinkType is an enum with values like Image, Webpage, etc.
+    };
+
+    // Call the create method to create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = linkLDO.create(link);
+
+    // Check if the created ThingLocal contains the correct values
+    expect(ldoThing.url).toBe(`${rdfIdentity}link456`);
+    expect(getStringNoLocale(ldoThing, linkDefinition.properties.url)).toBe(link.url);
+    expect(getStringNoLocale(ldoThing, linkDefinition.properties.id)).toBe(link.id);
+    expect(getStringNoLocale(ldoThing, linkDefinition.properties.linkType)).toBe(link.linkType.toString());
   });
 });

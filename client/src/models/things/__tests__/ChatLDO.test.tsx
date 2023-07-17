@@ -1,83 +1,76 @@
-import { rdf_type } from "../../LDO";
-import { AccessControlPolicy } from "../../enums/AccessControlPolicy";
-import { Chat } from "../../types/Chat";
+import {
+  ThingLocal,
+  buildThing,
+  createThing,
+  setStringNoLocale,
+  getStringNoLocale,
+} from "@inrupt/solid-client";
 import { ChatLDO } from "../ChatLDO";
-import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
+import { Chat } from "../../types/Chat";
+import { AccessControlPolicy } from "../../enums/AccessControlPolicy";
+import chatDefinition from "../../../definitions/chat.json";
 
-/**
- * Tests for the ChatLDO class.
- */
 describe("ChatLDO", () => {
-  let chatLDO: ChatLDO;
+  const rdfIdentity = "https://inrupt.com/.well-known/sdk-local-node/";
+  const chatLDO = new ChatLDO(chatDefinition);
 
-  beforeEach(() => {
-    // Create a new instance of ChatLDO with specified identity and properties.
-    chatLDO = new ChatLDO({
-      "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Chat",
-      "properties": {
-        "id": "http://schema.org/identifier",
-        "host": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#owner",
-        "guest": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#guest",
-        "storage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage",
-        "modified": "http://schema.org/modified",
-        "source": "http://schema.org/source",
-        "accessControlPolicy": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#ownerAccessType",
-        "lastMessage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#lastMessage"
-      }
-    });
-  });
-
-  test("read should return Chat object", () => {
-    // Create a mock Thing with relevant properties.
-    const mockThing = buildThing(createThing({ name: "Wikie" }))
-      .addUrl(rdf_type, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Chat")
-      .addStringNoLocale("http://schema.org/identifier", "chat123")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#owner", "https://example.com/owner")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#guest", "https://example.com/guest")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage", "https://example.com/storage")
-      .addStringNoLocale("http://schema.org/modified", "2023-07-04T12:00:00Z")
-      .addStringNoLocale("http://schema.org/source", "matejikj")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#ownerAccessType", "WAC")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#lastMessage", "Hello, World!")
-      .build();
-
-    const result = chatLDO.read(mockThing);
-
-    // Assert the returned Chat object has expected values.
-    expect(result).toEqual({
+  test("should read a Chat object from a Linked Data Object", () => {
+    // Prepare the Linked Data Object (LDO) with chat data
+    const chatLDOData: any = {
       id: "chat123",
-      host: "https://example.com/owner",
-      guest: "https://example.com/guest",
-      storage: "https://example.com/storage",
-      source: "matejikj",
-      ownerAccessType: "WAC",
-      modified: "2023-07-04T12:00:00Z",
-      lastMessage: "Hello, World!"
-    });
-  });
-
-  test("create should return ThingLocal representing Chat object", () => {
-    const mockChat: Chat = {
-      id: "chat123",
-      host: "https://example.com/owner",
-      guest: "https://example.com/guest",
-      source: "matejikj",
-      accessControlPolicy: AccessControlPolicy.WAC,
-      storage: "https://example.com/storage",
-      modified: "2023-07-04T12:00:00Z",
-      lastMessage: "Hello, World!"
+      host: "https://example.com/chatHost",
+      source: "https://example.com/chatSource",
+      accessControlPolicy: "public", // Assuming AccessControlPolicy is a string enum with values like "public", "private", etc.
+      storage: "https://example.com/chatStorage",
+      modified: "2023-07-17T12:34:56Z",
+      lastMessage: "Hello, this is the last message!",
+      guest: "https://example.com/guestUser",
     };
 
-    const result = chatLDO.create(mockChat);
+    // Create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = buildThing(createThing({ name: chatLDOData.id }))
+      .addStringNoLocale(chatDefinition.properties.id, chatLDOData.id)
+      .addStringNoLocale(chatDefinition.properties.host, chatLDOData.host)
+      .addStringNoLocale(chatDefinition.properties.source, chatLDOData.source)
+      .addStringNoLocale(chatDefinition.properties.accessControlPolicy, chatLDOData.accessControlPolicy)
+      .addStringNoLocale(chatDefinition.properties.storage, chatLDOData.storage)
+      .addStringNoLocale(chatDefinition.properties.modified, chatLDOData.modified)
+      .addStringNoLocale(chatDefinition.properties.lastMessage, chatLDOData.lastMessage)
+      .addStringNoLocale(chatDefinition.properties.guest, chatLDOData.guest)
+      .build();
 
-    // Assert the returned ThingLocal has expected property values.
-    expect(getStringNoLocale(result, "http://schema.org/identifier")).toBe("chat123");
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#owner")).toBe("https://example.com/owner");
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#guest")).toBe("https://example.com/guest");
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage")).toBe("https://example.com/storage");
-    expect(getStringNoLocale(result, "http://schema.org/source")).toBe("matejikj");
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#ownerAccessType")).toBe("WAC");
-    expect(getStringNoLocale(result, "http://schema.org/modified")).toBe("2023-07-04T12:00:00Z");
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#lastMessage")).toBe("Hello, World!");
+    // Call the read method to convert the LDO to a Chat object
+    const chat: Chat = chatLDO.read(ldoThing);
+
+    // Check if the Chat object matches the input data
+    expect(chat).toEqual(chatLDOData);
+  });
+
+  test("should create a Linked Data Object (LDO) from a Chat object", () => {
+    // Prepare the Chat object
+    const chat: Chat = {
+      id: "chat456",
+      host: "https://example.com/chatHost456",
+      source: "https://example.com/chatSource456",
+      accessControlPolicy: AccessControlPolicy.ACP, // Assuming AccessControlPolicy is an enum with values like Public, Private, etc.
+      storage: "https://example.com/chatStorage456",
+      modified: "2023-07-18T09:00:00Z",
+      lastMessage: "This is the latest message!",
+      guest: "https://example.com/guestUser456",
+    };
+
+    // Call the create method to create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = chatLDO.create(chat);
+
+    // Check if the created ThingLocal contains the correct values
+    expect(ldoThing.url).toBe(`${rdfIdentity}chat456`);
+    expect(getStringNoLocale(ldoThing, chatDefinition.properties.id)).toBe(chat.id);
+    expect(getStringNoLocale(ldoThing, chatDefinition.properties.host)).toBe(chat.host);
+    expect(getStringNoLocale(ldoThing, chatDefinition.properties.source)).toBe(chat.source);
+    expect(getStringNoLocale(ldoThing, chatDefinition.properties.accessControlPolicy)).toBe(chat.accessControlPolicy);
+    expect(getStringNoLocale(ldoThing, chatDefinition.properties.storage)).toBe(chat.storage);
+    expect(getStringNoLocale(ldoThing, chatDefinition.properties.modified)).toBe(chat.modified);
+    expect(getStringNoLocale(ldoThing, chatDefinition.properties.lastMessage)).toBe(chat.lastMessage);
+    expect(getStringNoLocale(ldoThing, chatDefinition.properties.guest)).toBe(chat.guest);
   });
 });

@@ -1,52 +1,63 @@
-import { buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
-import { rdf_type } from "../../LDO";
-import { MindMap } from "../../types/MindMap";
+import {
+  ThingLocal,
+  buildThing,
+  createThing,
+  setStringNoLocale,
+  getStringNoLocale,
+} from "@inrupt/solid-client";
 import { MindMapLDO } from "../MindMapLDO";
+import { MindMap } from "../../types/MindMap";
+import mindMapDefinition from "../../../definitions/mindMap.json";
 
-
-/**
- * Tests for the MindMapLDO class.
- */
 describe("MindMapLDO", () => {
-  let mindMapLDO: MindMapLDO;
+  const rdfIdentity = "https://inrupt.com/.well-known/sdk-local-node/";
+  const mindMapLDO = new MindMapLDO(mindMapDefinition);
 
-  beforeEach(() => {
-    // Create a new instance of MindMapLDO with specified identity and properties.
-    mindMapLDO = new MindMapLDO({
-      "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#MindMap",
-      "properties": {
-        "created": "https://schema.org/dateCreated",
-        "id": "http://schema.org/identifier"
-      }
-    });
-  });
-
-  test("read should return MindMap object", () => {
-    // Create a mock Thing with relevant properties.
-    const mockThing = buildThing(createThing({ name: "mindmap123" }))
-      .addUrl(rdf_type, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#MindMap")
-      .addStringNoLocale("https://schema.org/dateCreated", "2023-07-04")
-      .addStringNoLocale("http://schema.org/identifier", "mindmap123")
-      .build();
-
-    const result = mindMapLDO.read(mockThing);
-
-    // Assert the returned MindMap object has expected values.
-    expect(result).toEqual({
-      id: "mindmap123",
-      created: "2023-07-04"
-    });
-  });
-  test("create should return ThingLocal representing MindMap object", () => {
-    const mockMindMap: MindMap = {
-      id: "mindmap123",
-      created: "2023-07-04"
+  test("should read a MindMap object from a Linked Data Object", () => {
+    // Prepare the Linked Data Object (LDO) with mind map data
+    const mindMapLDOData: any = {
+      id: "mindMap123",
+      name: "My Mind Map",
+      storage: "https://example.com/mindMap123",
+      source: "https://example.com/mindMapSource",
+      created: "2023-07-17T12:34:56Z",
     };
 
-    const result = mindMapLDO.create(mockMindMap);
+    // Create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = buildThing(createThing({ name: mindMapLDOData.id }))
+      .addStringNoLocale(mindMapDefinition.properties.id, mindMapLDOData.id)
+      .addStringNoLocale(mindMapDefinition.properties.name, mindMapLDOData.name)
+      .addStringNoLocale(mindMapDefinition.properties.storage, mindMapLDOData.storage)
+      .addStringNoLocale(mindMapDefinition.properties.source, mindMapLDOData.source)
+      .addStringNoLocale(mindMapDefinition.properties.created, mindMapLDOData.created)
+      .build();
 
-    // Assert the returned ThingLocal has expected property values.
-    expect(getStringNoLocale(result, "http://schema.org/identifier")).toBe("mindmap123");
-    expect(getStringNoLocale(result, "https://schema.org/dateCreated")).toBe("2023-07-04");
+    // Call the read method to convert the LDO to a MindMap object
+    const mindMap: MindMap = mindMapLDO.read(ldoThing);
+
+    // Check if the MindMap object matches the input data
+    expect(mindMap).toEqual(mindMapLDOData);
+  });
+
+  test("should create a Linked Data Object (LDO) from a MindMap object", () => {
+    // Prepare the MindMap object
+    const mindMap: MindMap = {
+      id: "mindMap456",
+      name: "Another Mind Map",
+      storage: "https://example.com/mindMap456",
+      source: "https://example.com/mindMapSource456",
+      created: "2023-07-18T09:00:00Z",
+    };
+
+    // Call the create method to create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = mindMapLDO.create(mindMap);
+
+    // Check if the created ThingLocal contains the correct values
+    expect(ldoThing.url).toBe(`${rdfIdentity}mindMap456`);
+    expect(getStringNoLocale(ldoThing, mindMapDefinition.properties.id)).toBe(mindMap.id);
+    expect(getStringNoLocale(ldoThing, mindMapDefinition.properties.name)).toBe(mindMap.name);
+    expect(getStringNoLocale(ldoThing, mindMapDefinition.properties.storage)).toBe(mindMap.storage);
+    expect(getStringNoLocale(ldoThing, mindMapDefinition.properties.source)).toBe(mindMap.source);
+    expect(getStringNoLocale(ldoThing, mindMapDefinition.properties.created)).toBe(mindMap.created);
   });
 });

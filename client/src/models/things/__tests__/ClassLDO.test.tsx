@@ -1,62 +1,63 @@
-import { rdf_type } from "../../LDO";
-import { Class } from "../../types/Class";
+import {
+  ThingLocal,
+  buildThing,
+  createThing,
+  setStringNoLocale,
+  getStringNoLocale,
+} from "@inrupt/solid-client";
 import { ClassLDO } from "../ClassLDO";
-import { createThing, getStringNoLocale, buildThing, addStringNoLocale, addUrl } from "@inrupt/solid-client";
+import { Class } from "../../types/Class";
+import classDefinition from "../../../definitions/class.json";
 
-
-/**
- * Tests for the ClassLDO class.
- */
 describe("ClassLDO", () => {
-  let classLDO: ClassLDO;
+  const rdfIdentity = "https://inrupt.com/.well-known/sdk-local-node/";
+  const classLDO = new ClassLDO(classDefinition);
 
-  beforeEach(() => {
-    // Create a new instance of ClassLDO with specified identity and properties.
-    classLDO = new ClassLDO({
-      "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Class",
-      "properties": {
-        "name": "http://schema.org/name",
-        "id": "http://schema.org/identifier",
-        "teacher": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#teacher",
-        "storage": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage"
-      }
-    });
-  });
-
-  test("read should return Class object", () => {
-    // Create a mock Thing with relevant properties.
-    const mockThing = buildThing(createThing({ name: "Math" }))
-      .addUrl(rdf_type, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Class")
-      .addStringNoLocale("http://schema.org/name", "Math")
-      .addStringNoLocale("http://schema.org/identifier", "class123")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#teacher", "https://example.com/teacher")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage", "https://example.com/storage")
-      .build();
-    const result = classLDO.read(mockThing);
-
-    // Assert the returned Class object has expected values.
-    expect(result).toEqual({
-      name: "Math",
+  test("should read a Class object from a Linked Data Object", () => {
+    // Prepare the Linked Data Object (LDO) with class data
+    const classLDOData: any = {
+      name: "History 101",
       id: "class123",
-      teacher: "https://example.com/teacher",
-      storage: "https://example.com/storage"
-    });
-  });
-
-  test("create should return ThingLocal representing Class object", () => {
-    const mockClass: Class = {
-      name: "Math",
-      id: "class123",
-      teacher: "https://example.com/teacher",
-      storage: "https://example.com/storage"
+      teacher: "https://example.com/teacher123",
+      source: "https://example.com/classSource",
+      storage: "https://example.com/classStorage",
     };
 
-    const result = classLDO.create(mockClass);
+    // Create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = buildThing(createThing({ name: classLDOData.id }))
+      .addStringNoLocale(classDefinition.properties.name, classLDOData.name)
+      .addStringNoLocale(classDefinition.properties.id, classLDOData.id)
+      .addStringNoLocale(classDefinition.properties.teacher, classLDOData.teacher)
+      .addStringNoLocale(classDefinition.properties.source, classLDOData.source)
+      .addStringNoLocale(classDefinition.properties.storage, classLDOData.storage)
+      .build();
 
-    // Assert the returned ThingLocal has expected property values.
-    expect(getStringNoLocale(result, "http://schema.org/name")).toBe("Math");
-    expect(getStringNoLocale(result, "http://schema.org/identifier")).toBe("class123");
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#teacher")).toBe("https://example.com/teacher");
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#storage")).toBe("https://example.com/storage");
+    // Call the read method to convert the LDO to a Class object
+    const classObj: Class = classLDO.read(ldoThing);
+
+    // Check if the Class object matches the input data
+    expect(classObj).toEqual(classLDOData);
+  });
+
+  test("should create a Linked Data Object (LDO) from a Class object", () => {
+    // Prepare the Class object
+    const classObj: Class = {
+      name: "Mathematics 202",
+      id: "class456",
+      teacher: "https://example.com/teacher456",
+      source: "https://example.com/classSource456",
+      storage: "https://example.com/classStorage456",
+    };
+
+    // Call the create method to create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = classLDO.create(classObj);
+
+    // Check if the created ThingLocal contains the correct values
+    expect(ldoThing.url).toBe(`${rdfIdentity}class456`);
+    expect(getStringNoLocale(ldoThing, classDefinition.properties.name)).toBe(classObj.name);
+    expect(getStringNoLocale(ldoThing, classDefinition.properties.id)).toBe(classObj.id);
+    expect(getStringNoLocale(ldoThing, classDefinition.properties.teacher)).toBe(classObj.teacher);
+    expect(getStringNoLocale(ldoThing, classDefinition.properties.source)).toBe(classObj.source);
+    expect(getStringNoLocale(ldoThing, classDefinition.properties.storage)).toBe(classObj.storage);
   });
 });

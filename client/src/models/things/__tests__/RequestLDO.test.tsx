@@ -1,57 +1,60 @@
-import { buildThing, createThing, getStringNoLocale } from "@inrupt/solid-client";
-import { rdf_type } from "../../LDO";
-import { Request } from "../../types/Request";
+import {
+  ThingLocal,
+  buildThing,
+  createThing,
+  setStringNoLocale,
+  getStringNoLocale,
+} from "@inrupt/solid-client";
 import { RequestLDO } from "../RequestLDO";
+import { Request } from "../../types/Request";
+import { RequestType } from "../../enums/RequestType";
+import requestDefinition from "../../../definitions/request.json";
 
-/**
- * Tests for the RequestLDO class.
- */
 describe("RequestLDO", () => {
-  let requestLDO: RequestLDO;
+  const rdfIdentity = "https://inrupt.com/.well-known/sdk-local-node/";
+  const requestLDO = new RequestLDO(requestDefinition);
 
-  beforeEach(() => {
-    // Create a new instance of RequestLDO with specified identity and properties.
-    requestLDO = new RequestLDO({
-      "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Request",
-      "properties": {
-        "requestor": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#requestor",
-        "id": "http://schema.org/identifier",
-        "subject": "http://schema.org/url"
-      }
-    });
-  });
-
-  test("read should return Request object", () => {
-    // Create a mock Thing with relevant properties.
-    const mockThing = buildThing(createThing({ name: "request123" }))
-      .addUrl(rdf_type, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Request")
-      .addStringNoLocale("http://schema.org/identifier", "request123")
-      .addStringNoLocale("http://schema.org/url", "https://example.com")
-      .addStringNoLocale("https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#requestor", "user123")
-      .build();
-
-    const result = requestLDO.read(mockThing);
-
-    // Assert the returned Request object has expected values.
-    expect(result).toEqual({
+  test("should read a Request object from a Linked Data Object", () => {
+    // Prepare the Linked Data Object (LDO) with request data
+    const requestLDOData: any = {
       id: "request123",
-      class: "https://example.com",
-      requestor: "user123"
-    });
-  });
-  
-  test("create should return ThingLocal representing Request object", () => {
-    const mockRequest: Request = {
-      id: "request123",
-      subject: "https://example.com",
-      requestor: "user123"
+      subject: "https://example.com/resource123",
+      requestor: "https://example.com/user456",
+      requestType: "read", // Assuming RequestType is a string enum with values like "read", "write", etc.
     };
 
-    const result = requestLDO.create(mockRequest);
+    // Create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = buildThing(createThing({ name: requestLDOData.id }))
+      .addStringNoLocale(requestDefinition.properties.id, requestLDOData.id)
+      .addStringNoLocale(requestDefinition.properties.subject, requestLDOData.subject)
+      .addStringNoLocale(requestDefinition.properties.requestor, requestLDOData.requestor)
+      .addStringNoLocale(requestDefinition.properties.requestType, requestLDOData.requestType)
+      .build();
 
-    // Assert the returned ThingLocal has expected property values.
-    expect(getStringNoLocale(result, "http://schema.org/identifier")).toBe("request123");
-    expect(getStringNoLocale(result, "http://schema.org/url")).toBe("https://example.com");
-    expect(getStringNoLocale(result, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#requestor")).toBe("user123");
+    // Call the read method to convert the LDO to a Request object
+    const request: Request = requestLDO.read(ldoThing);
+
+    // Check if the Request object matches the input data
+    expect(request).toEqual(requestLDOData);
+  });
+
+  test("should create a Linked Data Object (LDO) from a Request object", () => {
+    // Prepare the Request object
+    const request: Request = {
+      id: "request456",
+      subject: "https://example.com/resource789",
+      requestor: "https://example.com/user123",
+      requestType: RequestType.ADD_CLASS, // Assuming RequestType is an enum with values like Read, Write, etc.
+    };
+
+    // Call the create method to create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = requestLDO.create(request);
+
+    // Check if the created ThingLocal contains the correct values
+    expect(ldoThing.url).toBe(`${rdfIdentity}request456`);
+    expect(getStringNoLocale(ldoThing, requestDefinition.properties.id)).toBe(request.id);
+    expect(getStringNoLocale(ldoThing, requestDefinition.properties.subject)).toBe(request.subject);
+    expect(getStringNoLocale(ldoThing, requestDefinition.properties.requestor)).toBe(request.requestor);
+    expect(getStringNoLocale(ldoThing, requestDefinition.properties.requestType)).toBe(request.requestType.toString());
   });
 });

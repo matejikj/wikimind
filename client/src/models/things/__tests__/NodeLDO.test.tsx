@@ -1,96 +1,80 @@
-import { buildThing, createThing, getBoolean, getInteger, getStringNoLocale } from "@inrupt/solid-client";
-import { rdf_type } from "../../LDO";
-import { Node } from "../../types/Node";
+import {
+  ThingLocal,
+  buildThing,
+  createThing,
+  setStringNoLocale,
+  getBoolean,
+  getInteger,
+  getStringNoLocale,
+} from "@inrupt/solid-client";
 import { NodeLDO } from "../NodeLDO";
+import { Node } from "../../types/Node";
+import nodeDefinition from "../../../definitions/node.json";
 
-/**
- * Represents a Linked Data Object (LDO) for a node.
- */
-jest.mock("../../../service/containerService", () => {
-  return {
-    WIKIMIND: 'WikiMind',
-  };
-});
+describe("NodeLDO", () => {
+  const rdfIdentity = "https://inrupt.com/.well-known/sdk-local-node/";
+  const nodeLDO = new NodeLDO(nodeDefinition);
 
-/**
- * Tests for the ProfileLDO class.
- */
-describe("ProfileLDO", () => {
-  let nodeLDO: NodeLDO;
+  test("should read a Node object from a Linked Data Object", () => {
+    // Prepare the Linked Data Object (LDO) with node data
+    const nodeLDOData: any = {
+      id: "node123",
+      cx: 100,
+      cy: 200,
+      title: "My Node",
+      uri: "https://example.com/node123",
+      description: "This is a test node.",
+      textColor: "black",
+      color: "white",
+      isInTest: true,
+    };
 
-  beforeEach(() => {
-    // Create a new instance of NodeLDO with specified identity and properties.
-    nodeLDO = new NodeLDO({
-      "identity": "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Node",
-      "properties": {
-        "id": "http://schema.org/identifier",
-        "uri": "http://schema.org/uri",
-        "description": "https://schema.org/description",
-        "title": "http://schema.org/name",
-        "cx": "http://schema.org/distance",
-        "cy": "http://schema.org/email",
-        "color": "http://schema.org/color",
-        "textColor": "http://schema.org/textColor",
-        "isInTest": "https://schema.org/Product"
-      }
-    });
-  });
-
-
-  test("read should return Node object", () => {
-    // Create a mock Thing with relevant properties.
-    const mockThing = buildThing(createThing({ name: "mockNode" }))
-      .addUrl(rdf_type, "https://github.com/matejikj/diplomka/blob/master/wikimind.ttl#Node")
-      .addStringNoLocale("http://schema.org/identifier", "node1")
-      .addInteger("http://schema.org/distance", 10)
-      .addInteger("http://schema.org/email", 20)
-      .addStringNoLocale("http://schema.org/name", "Node Title")
-      .addStringNoLocale("http://schema.org/uri", "https://example.com/node1")
-      .addStringNoLocale("https://schema.org/description", "Node Description")
-      .addStringNoLocale("http://schema.org/textColor", "#000000")
-      .addStringNoLocale("http://schema.org/color", "#FFFFFF")
-      .addBoolean("https://schema.org/Product", true)
+    // Create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = buildThing(createThing({ name: nodeLDOData.id }))
+      .addInteger(nodeDefinition.properties.cx, nodeLDOData.cx)
+      .addInteger(nodeDefinition.properties.cy, nodeLDOData.cy)
+      .addStringNoLocale(nodeDefinition.properties.title, nodeLDOData.title)
+      .addStringNoLocale(nodeDefinition.properties.id, nodeLDOData.id)
+      .addStringNoLocale(nodeDefinition.properties.uri, nodeLDOData.uri)
+      .addStringNoLocale(nodeDefinition.properties.description, nodeLDOData.description)
+      .addStringNoLocale(nodeDefinition.properties.textColor, nodeLDOData.textColor)
+      .addStringNoLocale(nodeDefinition.properties.color, nodeLDOData.color)
+      .addBoolean(nodeDefinition.properties.isInTest, nodeLDOData.isInTest)
       .build();
 
-    const result = nodeLDO.read(mockThing);
+    // Call the read method to convert the LDO to a Node object
+    const node: Node = nodeLDO.read(ldoThing);
 
-    // Assert the returned Node object has expected values.
-    expect(result).toEqual({
-      id: "node1",
-      cx: 10,
-      cy: 20,
-      title: "Node Title",
-      uri: "https://example.com/node1",
-      description: "Node Description",
-      textColor: "#000000",
-      color: "#FFFFFF",
-      isInTest: true
-    });
+    // Check if the Node object matches the input data
+    expect(node).toEqual(nodeLDOData);
   });
 
-  test("create should return ThingLocal representing Node object", () => {
-    const mockNode: Node = {
-      id: "node1",
-      cx: 10,
-      cy: 20,
-      title: "Node Title",
-      uri: "https://example.com/node1",
-      description: "Node Description",
-      textColor: "#000000",
-      color: "#FFFFFF",
-      isInTest: true
+  test("should create a Linked Data Object (LDO) from a Node object", () => {
+    // Prepare the Node object
+    const node: Node = {
+      id: "node456",
+      cx: 300,
+      cy: 400,
+      title: "Another Node",
+      uri: "https://example.com/node456",
+      description: "This is another test node.",
+      textColor: "blue",
+      color: "yellow",
+      isInTest: false,
     };
-    const result = nodeLDO.create(mockNode);
 
-    // Assert the returned ThingLocal has expected property values.
-    expect(getStringNoLocale(result, "http://schema.org/identifier")).toBe("node1");
-    expect(getInteger(result, "http://schema.org/distance")).toBe(10);
-    expect(getInteger(result, "http://schema.org/email")).toBe(20);
-    expect(getStringNoLocale(result, "http://schema.org/name")).toBe("Node Title");
-    expect(getStringNoLocale(result, "http://schema.org/uri")).toBe("https://example.com/node1");
-    expect(getStringNoLocale(result, "https://schema.org/description")).toBe("Node Description");
-    expect(getStringNoLocale(result, "http://schema.org/textColor")).toBe("#000000");
-    expect(getStringNoLocale(result, "http://schema.org/color")).toBe("#FFFFFF");
-    expect(getBoolean(result, "https://schema.org/Product")).toBe(true);
+    // Call the create method to create a ThingLocal representing the LDO
+    const ldoThing: ThingLocal = nodeLDO.create(node);
+
+    // Check if the created ThingLocal contains the correct values
+    expect(ldoThing.url).toBe(`${rdfIdentity}node456`);
+    expect(getInteger(ldoThing, nodeDefinition.properties.cx)).toBe(node.cx);
+    expect(getInteger(ldoThing, nodeDefinition.properties.cy)).toBe(node.cy);
+    expect(getStringNoLocale(ldoThing, nodeDefinition.properties.title)).toBe(node.title);
+    expect(getStringNoLocale(ldoThing, nodeDefinition.properties.uri)).toBe(node.uri);
+    expect(getStringNoLocale(ldoThing, nodeDefinition.properties.description)).toBe(node.description);
+    expect(getStringNoLocale(ldoThing, nodeDefinition.properties.textColor)).toBe(node.textColor);
+    expect(getStringNoLocale(ldoThing, nodeDefinition.properties.color)).toBe(node.color);
+    expect(getBoolean(ldoThing, nodeDefinition.properties.isInTest)).toBe(node.isInTest);
   });
 });
