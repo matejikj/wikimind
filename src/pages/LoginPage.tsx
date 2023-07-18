@@ -1,13 +1,15 @@
 import { login } from "@inrupt/solid-client-authn-browser";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import loginLocalization from "./locales/login.json";
 
 import '../styles/style.css';
+import { SessionContext } from "../sessionContext";
 
 /**
  * Represents the LoginPage component that allows users to log in to their Solid pods.
@@ -16,6 +18,9 @@ const LoginPage: React.FC = () => {
   // State to hold the selected pod provider's URL.
   const [currentProvider, setCurrentProvider] = useState<string>('');
 
+  // Access the session context to get session information
+  const sessionContext = useContext(SessionContext);
+
   return (
     <div id="login">
       <Container className='center-container'>
@@ -23,7 +28,9 @@ const LoginPage: React.FC = () => {
           <Col sm={12}>
             <Card>
               <Card.Body>
-                <Card.Title>Pod provider</Card.Title>
+                <Card.Title>
+                  {loginLocalization.podProvider[sessionContext.sessionInfo.localization]}
+                </Card.Title>
                 <br />
                 {/* Dropdown to select a pod provider */}
                 <Form.Select
@@ -32,7 +39,7 @@ const LoginPage: React.FC = () => {
                   aria-label="Default select example"
                   style={{ maxWidth: '600px' }}
                 >
-                  <option>Open this select menu</option>
+                  <option>{loginLocalization.select[sessionContext.sessionInfo.localization]}</option>
                   <option value="https://datapod.igrant.io/">https://datapod.igrant.io/</option>
                   <option value="https://inrupt.net">https://inrupt.net</option>
                   <option value="https://use.id/matejikj">https://use.id/matejikj</option>
@@ -53,7 +60,9 @@ const LoginPage: React.FC = () => {
                 />
                 <br />
                 {/* Button to initiate the login process */}
-                <Button onClick={() => { login({ oidcIssuer: currentProvider }) }} variant="primary">LOGIN</Button>
+                <Button onClick={() => { login({ oidcIssuer: currentProvider }) }} variant="primary">
+                {loginLocalization.login[sessionContext.sessionInfo.localization]}
+                </Button>
               </Card.Body>
             </Card>
           </Col>

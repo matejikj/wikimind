@@ -1,0 +1,47 @@
+{
+    "dashboard": {
+        "cs": "Seznam mind map",
+        "en": "Mind maps"        
+    },
+    "close": {
+        "cs": "Seznam mind map",
+        "en": "close"        
+    },
+    "cancel": {
+        "cs": "Seznam mind map",
+        "en": "cancel"        
+    },
+    "nodeColors": {
+        "cs": "Seznam mind map",
+        "en": "nodeColors"        
+    },
+    "background": {
+        "cs": "Seznam mind map",
+        "en": "background"        
+    },
+    "selectBackgroundColor": {
+        "cs": "Seznam mind map",
+        "en": "selectBackgroundColor"        
+    },
+    "textColor": {
+        "cs": "Seznam mind map",
+        "en": "text"        
+    },
+    "selectTextColor": {
+        "cs": "Seznam mind map",
+        "en": "text"        
+    },
+    "backgroundColor": {
+        "cs": "Seznam mind map",
+        "en": "backgroundColor"        
+    },
+    "addNewNode": {
+        "cs": "Seznam mind map",
+        "en": "Add new Node"        
+    },
+    "add": {
+        "cs": "Seznam mind map",
+        "en": "Add"        
+    }
+    
+}

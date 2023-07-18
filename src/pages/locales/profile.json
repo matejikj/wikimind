@@ -1,6 +1,18 @@
 {
-    "chooseName": {
+    "profileInfo": {
         "cs": "Zvol jméno",
-        "en": "Choose name"        
+        "en": "Profile info:"        
+    },
+    "name": {
+        "cs": "Zvol jméno",
+        "en": "name"        
+    },
+    "surname": {
+        "cs": "Zvol jméno",
+        "en": "surname"        
+    },
+    "confirm": {
+        "cs": "Zvol jméno",
+        "en": "confirm"        
     }
 }

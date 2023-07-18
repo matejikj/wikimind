@@ -1,3 +1,4 @@
+import React, { useContext } from "react";
 import { Col, Row } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
@@ -5,11 +6,15 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { Node } from "../models/types/Node";
-import '../styles/style.css';
 import { generate_uuidv4 } from "../service/utils";
-import { item } from "rdf-namespaces/dist/fhir";
-import { useState } from "react";
+import '../styles/style.css';
+import modalsLocalization from "./locales/modals.json";
+import { SessionContext } from "../sessionContext";
 
+/**
+ * Represents the ModalNodeEditor component for editing and adding nodes in a Mind Map dataset.
+ * This component displays a modal dialog with input fields to edit or create a new node in the dataset.
+ */
 const ModalNodeEditor: React.FC<{
     clickedNode: Node | undefined,
     node: Node | undefined,
@@ -21,13 +26,22 @@ const ModalNodeEditor: React.FC<{
     setModal: Function
 }> = ({ clickedNode, updateCanvasAxis, node, setNode, dataset, setDataset, showModal, setModal }) => {
 
+    // Access the session context to get session information
+    const sessionContext = useContext(SessionContext);
+
+    /**
+     * Handles the save action when the user clicks the "Add node" button in the modal.
+     * This function updates the dataset with the new or edited node information and handles linking nodes if necessary.
+     * It also triggers the canvas update.
+     * @param event The click event object
+     */
     async function handleSave(event: any) {
         if (dataset && node) {
             if (node.id === "") {
                 const newId = generate_uuidv4()
                 node.id = newId
                 dataset.nodes.push(node)
-            } 
+            }
             const selectedNode = dataset.nodes.find((item) => item.id === node.id)
             if (selectedNode) {
                 if (clickedNode && clickedNode.id !== node.id) {
@@ -49,7 +63,7 @@ const ModalNodeEditor: React.FC<{
                     }
                 });
                 updateCanvasAxis(dataset)
-            }            
+            }
         }
         setModal(false)
     }
@@ -59,7 +73,9 @@ const ModalNodeEditor: React.FC<{
             show={showModal}
         >
             <Modal.Header>
-                <Modal.Title>Add new Node</Modal.Title>
+                <Modal.Title>
+                    {modalsLocalization.addNewNode[sessionContext.sessionInfo.localization]}
+                </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 {node &&
@@ -103,14 +119,15 @@ const ModalNodeEditor: React.FC<{
                         </Row>
                     </Container>
                 }
-
             </Modal.Body>
             <Modal.Footer>
+                {/* Button to cancel the editing */}
                 <Button variant="secondary" onClick={() => setModal(false)}>
-                    Cancel
+                    {modalsLocalization.cancel[sessionContext.sessionInfo.localization]}
                 </Button>
+                {/* Button to save the node */}
                 <Button variant="primary" onClick={handleSave}>
-                    Add node
+                    {modalsLocalization.add[sessionContext.sessionInfo.localization]}
                 </Button>
             </Modal.Footer>
         </Modal>

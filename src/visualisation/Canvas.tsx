@@ -63,9 +63,6 @@ const Canvas: React.FC<{
   updateCanvasAxis,
   setCreatorVisible
 }) => {
-    const d3Container = useRef(null);
-    const sessionContext = useContext(SessionContext);
-
     const [active, setActive] = React.useState<Node | undefined>(undefined);
     const [positionX, setPositionX] = React.useState(0);
     const [positionY, setPositionY] = React.useState(0);
@@ -87,7 +84,6 @@ const Canvas: React.FC<{
             onClick={() => setClickedNode(undefined)}
             width={width}
             height={height}
-            ref={d3Container}
             xmlns="http://www.w3.org/2000/svg"
           >
             <rect width="100%" height="100%" fill="white" />

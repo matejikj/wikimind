@@ -12,7 +12,6 @@ import { ImInfo } from "react-icons/im";
 import { MdColorLens, MdKeyboardReturn, MdOutlineCancel, MdScreenShare } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import ModalNodeColor from "../components/ModalNodeColor";
-import ModalNodeDelete from "../components/ModalNodeDelete";
 import ModalNodeDetail from "../components/ModalNodeDetail";
 import ModalNodeEditor from "../components/ModalNodeEditor";
 import Sidenav from "../components/Sidenav";
@@ -77,7 +76,6 @@ const EditorPage: React.FC = () => {
 
   const [creatorVisible, setCreatorVisible] = useState(false);
   const [modalNodeCreate, setModalNodeCreate] = useState(false);
-  const [modalNodeDelete, setModalNodeDelete] = useState(false);
   const [modalNodeColor, setModalNodeColor] = useState(false);
   const [modalRecommendDetail, setModalRecommendDetail] = useState(false);
 
@@ -161,7 +159,7 @@ const EditorPage: React.FC = () => {
    */
   async function saveDataset() {
     if (dataset) {
-      await mindMapService.saveMindMap(dataset);
+      await mindMapService.saveMindMap(dataset, sessionContext.sessionInfo);
     }
   }
 
@@ -397,8 +395,11 @@ const EditorPage: React.FC = () => {
 
   return (
     <div className="App">
+      {/* The side navigation component */}
       <Sidenav />
+
       <main className="visualisation-tools" ref={ref}>
+        {/* Node editor modal */}
         <ModalNodeEditor
           clickedNode={clickedNode}
           updateCanvasAxis={updateCanvasAxis}
@@ -409,26 +410,26 @@ const EditorPage: React.FC = () => {
           setModal={setModalNodeCreate}
           showModal={modalNodeCreate}
         />
+
+        {/* Recommendation detail modal */}
         <ModalNodeDetail
           node={detailNode}
           setModal={setModalRecommendDetail}
           showModal={modalRecommendDetail}
         />
-        <ModalNodeDelete
-          datasetName={dataset}
-          clickedNode={clickedNode}
-          showModal={modalNodeDelete}
-          setModal={setModalNodeDelete}
-        />
+        {/* Node color picker modal */}
         <ModalNodeColor
           showModal={modalNodeColor}
           setModal={setModalNodeColor}
           node={clickedNode}
         />
+
+        {/* Search and recommendations section */}
         {creatorVisible &&
           <Container>
             <Row>
               <Stack direction="horizontal" gap={2}>
+                {/* Input for searching keywords */}
                 <Form.Control
                   type="text"
                   placeholder="Keyword"
@@ -437,32 +438,45 @@ const EditorPage: React.FC = () => {
                   value={searchedKeyword}
                   onChange={(e) => setSearchedKeyword(e.target.value)}
                 />
+                {/* Button to initiate the keyword search */}
                 <Button size="sm" variant="success" onClick={searchKeyword}>Search</Button>
-                <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { getPreviousItem() }}><MdKeyboardReturn></MdKeyboardReturn></Button>
-                <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { clearSearching() }}><AiOutlineClear></AiOutlineClear></Button>
+                {/* Button to go back to the previous search result */}
+                <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { getPreviousItem() }}><MdKeyboardReturn /></Button>
+                {/* Button to clear the current search query and recommendations */}
+                <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { clearSearching() }}><AiOutlineClear /></Button>
               </Stack>
             </Row>
             <Row>
+              {/* If a node is clicked, show actions for the clicked node */}
               {(clickedNode !== undefined) &&
                 <Stack className="visualisation-active-container" direction="horizontal" gap={1}>
+                  {/* Button to view node details */}
                   <Button variant="success" disabled size="sm">
                     {clickedNode.title.length > 10 ? clickedNode.title.slice(0, 10) + '..' : clickedNode.title}
                   </Button>
-                  <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { editNode(clickedNode) }}><ImInfo></ImInfo></Button>
-                  <Button size="sm" variant={clickedNode.isInTest ? "info" : "secondary"} className="rounded-circle" onClick={() => examSwitch()}><BsQuestionSquare></BsQuestionSquare></Button>
+                  {/* Button to open the node detail modal */}
+                  <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { editNode(clickedNode) }}><ImInfo /></Button>
+                  {/* Button to mark/unmark the node as a test node */}
+                  <Button size="sm" variant={clickedNode.isInTest ? "info" : "secondary"} className="rounded-circle" onClick={() => examSwitch()}><BsQuestionSquare /></Button>
+                  {/* Button to find similar entities to the clicked node */}
                   {findingSimilar ? (
                     <Spinner animation="border" role="status">
                       <span className="visually-hidden">Loading...</span>
                     </Spinner>
                   ) : (
-                    <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { getSimilarEntities(clickedNode) }}><HiMagnifyingGlass></HiMagnifyingGlass></Button>
+                    <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { getSimilarEntities(clickedNode) }}><HiMagnifyingGlass /></Button>
                   )}
-                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.ADD_CONNECTION) }}><BsNodePlus></BsNodePlus></Button>
-                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setModalNodeColor(true) }}><MdColorLens></MdColorLens></Button>
-                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdOutlineCancel></MdOutlineCancel></Button>
-                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { removeNode() }}><BiTrash></BiTrash></Button>
+                  {/* Button to add a new node connection */}
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.ADD_CONNECTION) }}><BsNodePlus /></Button>
+                  {/* Button to open the node color picker modal */}
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setModalNodeColor(true) }}><MdColorLens /></Button>
+                  {/* Button to clear the clicked node selection */}
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdOutlineCancel /></Button>
+                  {/* Button to remove the clicked node from the mind map */}
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { removeNode() }}><BiTrash /></Button>
                 </Stack>
               }
+              {/* If no node is clicked, show a message */}
               {(clickedNode === undefined) &&
                 <Stack className="visualisation-active-container" direction="horizontal" gap={1}>
                   <Button disabled variant="light" size="sm">
@@ -474,93 +488,127 @@ const EditorPage: React.FC = () => {
           </Container>
         }
 
+        {/* Toggle button for timeline view */}
         {datesView ? (
+          // Show button to close the timeline view and return to the mind map
           <Button
             size="sm"
             className="rounded-circle"
             id="visualisation-btn-time-close"
             onClick={() => {
               setCreatorVisible(false);
-              setDatesView(false)
+              setDatesView(false);
             }}
-            variant="success"><GrGraphQl></GrGraphQl>
+            variant="success"
+          >
+            <GrGraphQl />
           </Button>
         ) : (
+          // Show button to open the timeline view
           <Button
             size="sm"
             className="rounded-circle"
             id="visualisation-btn-time"
             onClick={() => createDateView()}
-            variant="success"><BiTimeFive></BiTimeFive>
+            variant="success"
+          >
+            <BiTimeFive />
           </Button>
         )}
 
         {!datesView && (
+          // Toggle button for the mind map visualization section
           creatorVisible ? (
+            // Show button to hide the visualization section
             <Button
               size="sm"
               className="rounded-circle"
               id="visualisation-btn-toggle"
               onClick={() => setCreatorVisible(false)}
-              variant="success"><FaMinus></FaMinus>
+              variant="success"
+            >
+              <FaMinus />
             </Button>
           ) : (
-            <Button size="sm" className="rounded-circle" id="visualisation-btn-toggle" onClick={() => setCreatorVisible(true)} variant="success">
-              <FaPlus></FaPlus>
+            // Show button to show the visualization section
+            <Button
+              size="sm"
+              className="rounded-circle"
+              id="visualisation-btn-toggle"
+              onClick={() => setCreatorVisible(true)}
+              variant="success"
+            >
+              <FaPlus />
             </Button>
           )
         )}
+
+        {/* Buttons for saving the mind map and creating a picture */}
         {creatorVisible &&
-          <Button
-            size="sm"
-            className="rounded-circle"
-            id="visualisation-btn-save"
-            onClick={() => saveDataset()}
-            variant="success"><FiSave></FiSave>
-          </Button>
+          <React.Fragment>
+            <Button
+              size="sm"
+              className="rounded-circle"
+              id="visualisation-btn-save"
+              onClick={() => saveDataset()}
+              variant="success"
+            >
+              <FiSave />
+            </Button>
+            <Button
+              size="sm"
+              className="rounded-circle"
+              id="visualisation-btn-picture"
+              onClick={() => createPicture()}
+              variant="success"
+            >
+              <MdScreenShare />
+            </Button>
+          </React.Fragment>
         }
-        {creatorVisible &&
-          <Button
-            size="sm"
-            className="rounded-circle"
-            id="visualisation-btn-picture"
-            onClick={() => createPicture()}
-            variant="success"><MdScreenShare></MdScreenShare>
-          </Button>
-        }
+
+        {/* Recommendations section */}
         <div className={creatorVisible ? recommends.length !== 0 ? "creator-top-recommends" : "creator-top" : "creator-hidden"}>
           <Container fluid>
             <Row>
               <Col className="recommend-col" sm="12">
                 <div className="recommends-div">
-                  <Button onClick={() => createCustomEntity()} variant={'outline'} className="recommend-btn" size="sm">
+                  {/* Button to add a custom entity */}
+                  <Button onClick={() => createCustomEntity()} variant="outline" className="recommend-btn" size="sm">
                     {"Add custom entity"}
                   </Button>
                 </div>
+                {/* Display recommended entities and keywords */}
                 {recommends.map((item, index) => {
                   return (
                     <div key={index} className={item.entity.value.includes(CATEGORY_PART) ? 'recommends-div-category' : 'recommends-div'}>
                       <div className={item.entity.value.includes(CATEGORY_PART) ? 'recommends-inline-div-category' : 'recommends-inline-div'}>
-
                         <Stack direction="horizontal" gap={0}>
+                          {/* Button to search for recommendations */}
                           <Button onClick={() => { findWikiLinks(item); }} className="recommend-btn" size="sm">
                             {item.label.value}
                           </Button>
-                          <Button size="sm" className="recommend-btn" onClick={() => { openRecommendDetail(item) }}><FaInfo></FaInfo></Button>
-                          <Button size="sm" className="recommend-btn" onClick={() => { addRecommendation(item) }}><FaPlus></FaPlus></Button>
+                          {/* Button to open the recommendation detail modal */}
+                          <Button size="sm" className="recommend-btn" onClick={() => { openRecommendDetail(item) }}><FaInfo /></Button>
+                          {/* Button to add a recommendation to the mind map */}
+                          <Button size="sm" className="recommend-btn" onClick={() => { addRecommendation(item) }}><FaPlus /></Button>
                         </Stack>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </Col>
             </Row>
           </Container>
         </div>
+
+        {/* Main visualization section */}
         <div className={creatorVisible ? recommends.length !== 0 ? "creator-bottom-recommends" : "creator-bottom" : "canvas-full"}>
           {datesView ? (
+            // Show the timeline view
             <Timeline dataset={historyDataset} />
           ) : (
+            // Show the mind map visualization using the Canvas component
             <Canvas
               setCreatorVisible={setCreatorVisible}
               clickedNode={clickedNode}
@@ -577,12 +625,12 @@ const EditorPage: React.FC = () => {
               setClickedLink={setClickedLink}
               disabledCanvas={disabledCanvas}
               setDisabledCanvas={setDisabledCanvas}
-            ></Canvas>
+            />
           )}
         </div>
       </main>
     </div>
-  )
+  );
 };
 
 export default EditorPage;

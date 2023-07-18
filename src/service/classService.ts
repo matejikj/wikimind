@@ -77,40 +77,50 @@ export class ClassService {
 
     async getClass(classUrl: string): Promise<ClassDataset | undefined> {
         try {
-            const classThing = await this.classRepository.getClass(classUrl)
-            if (classThing) {
-                const classLinks = await this.linkRepository.getLinksList(classThing.storage)
-                const exams = await this.examRepository.getExams(classThing.storage)
+            const classThing = await this.classRepository.getClass(classUrl);
+            if (!classThing) return undefined;
 
-                const messages = await this.messageRepository.getMessages(classThing.storage)
+            const classLinks = await this.linkRepository.getLinksList(classThing.storage);
+            const profileLinks = classLinks.filter((link) => link.linkType === LinkType.PROFILE_LINK);
+            const mindMapLinks = classLinks.filter((link) => link.linkType === LinkType.GRAPH_LINK);
 
-                const profileLinks = classLinks.filter((link) => link.linkType === LinkType.PROFILE_LINK)
-                const mindMapLinks = classLinks.filter((link) => link.linkType === LinkType.GRAPH_LINK)
-                const profiles: Profile[] = []
-                await Promise.all(profileLinks.map(async (item) => {
-                    const profileUrl = `${item.url}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
-                    const result = await this.profileRepository.getProfile(profileUrl);
-                    if (result) {
-                        profiles.push(result)
-                    }
-                }));
-                const mindMaps: MindMap[] = []
-                await Promise.all(mindMapLinks.map(async (item) => {
-                    const result = await this.mindMapRepository.getMindMap(item.url);
-                    if (result) {
-                        mindMaps.push(result)
-                    }
-                }));
-                return {
-                    testResults: exams,
-                    messages: messages,
-                    class: classThing,
-                    students: profiles,
-                    mindMaps: mindMaps
-                };
-            }
-        }
-        catch (error) {
+            const profilePromises: Promise<Profile | undefined>[] = profileLinks.map(async (item) => {
+                const profileUrl = `${item.url}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
+                try {
+                    return await this.profileRepository.getProfile(profileUrl);
+                } catch (error) {
+                    console.error(error);
+                    return undefined;
+                }
+            });
+
+            const mindMapPromises: Promise<MindMap | undefined>[] = mindMapLinks.map(async (item) => {
+                try {
+                    return await this.mindMapRepository.getMindMap(item.url);
+                } catch (error) {
+                    console.error(error);
+                    return undefined;
+                }
+            });
+
+            const [profiles, mindMaps, exams, messages] = await Promise.allSettled([
+                Promise.all(profilePromises),
+                Promise.all(mindMapPromises),
+                this.examRepository.getExams(classThing.storage),
+                this.messageRepository.getMessages(classThing.storage),
+            ]);
+
+            const resolvedProfiles = (profiles.status === 'fulfilled' ? profiles.value : []) as Profile[];
+            const resolvedMindMaps = (mindMaps.status === 'fulfilled' ? mindMaps.value : []) as MindMap[];
+
+            return {
+                testResults: exams.status === 'fulfilled' ? exams.value : [],
+                messages: messages.status === 'fulfilled' ? messages.value : [],
+                class: classThing,
+                students: resolvedProfiles,
+                mindMaps: resolvedMindMaps,
+            };
+        } catch (error) {
             console.error(error);
             return undefined;
         }
@@ -212,6 +222,7 @@ export class ClassService {
             linkType: LinkType.GRAPH_LINK
         };
         await this.mindMapRepository.createMindMap(mindMapUrl, blankMindMap)
+
         this.linkRepository.createLink(classThing.storage, datasetLink)
 
         let mindMapStorage = createSolidDataset();
@@ -220,31 +231,22 @@ export class ClassService {
             await initializeAcl(mindMapUrl);
             await initializeAcl(mindMapStorageUrl);
         }
-        const classLinks = await this.linkRepository.getLinksList(classThing.storage)
-        const profileLinks = classLinks.filter((link) => link.linkType === LinkType.PROFILE_LINK)
 
-        profileLinks.map(async (item) => {
-            const profileUrl = `${item.url}${WIKIMIND}/${PROFILE}/${PROFILE}${TTLFILETYPE}`;
-            const profile = await this.profileRepository.getProfile(profileUrl);
-            if (profile) {
+        universalAccess.setPublicAccess(mindMapStorageUrl, {
+            append: true,
+            read: true,
+            write: false,
+        },
+            { fetch: fetch }
+        )
+        universalAccess.setPublicAccess(mindMapUrl, {
+            append: true,
+            read: true,
+            write: false,
+        },
+            { fetch: fetch }
+        )
 
-                universalAccess.setAgentAccess(mindMapStorageUrl, profile.webId, {
-                    append: true,
-                    read: true,
-                    write: false,
-                },
-                    { fetch: fetch }
-                )
-                universalAccess.setAgentAccess(mindMapUrl, profile.webId, {
-                    append: true,
-                    read: true,
-                    write: false,
-                },
-                    { fetch: fetch }
-                )
-
-            }
-        });
         return mindMapUrl;
     }
 
@@ -333,6 +335,15 @@ export class ClassService {
             return true
         } catch (error) {
             return false
+        }
+    }
+
+    async denyClassRequest(classRequest: Request, userSession: UserSession): Promise<void> {
+        try {
+            const requestsUrl = `${userSession.podUrl}${WIKIMIND}/${REQUESTS}/${REQUESTS}${TTLFILETYPE}`;
+            await this.requestRepository.removeRequest(requestsUrl, classRequest)
+        } catch (error) {
+            return undefined
         }
     }
 

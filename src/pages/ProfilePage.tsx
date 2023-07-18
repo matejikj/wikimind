@@ -10,6 +10,8 @@ import Row from 'react-bootstrap/Row';
 import { Profile } from '../models/types/Profile';
 import { ProfileService } from "../service/profileService";
 import { SessionContext } from '../sessionContext';
+import profileLocalization from "./locales/profile.json";
+
 import '../styles/style.css';
 
 /**
@@ -73,11 +75,13 @@ const ProfilePage: React.FC = () => {
             <Col sm={12}>
               <Card border="success" style={{ width: '18rem' }}>
                 <Card.Body>
-                  <Card.Title>Profile info:</Card.Title>
+                  <Card.Title>
+                  {profileLocalization.profileInfo[sessionContext.sessionInfo.localization]}
+                  </Card.Title>
                   <Card.Subtitle>{profile?.webId || ""}</Card.Subtitle>
                   <br />
                   {/* Form inputs for Name */}
-                  <Form.Label htmlFor="name">Name</Form.Label>
+                  <Form.Label htmlFor="name">{profileLocalization.name[sessionContext.sessionInfo.localization]}</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="name"
@@ -89,7 +93,7 @@ const ProfilePage: React.FC = () => {
                   />
                   <br />
                   {/* Form inputs for Surname */}
-                  <Form.Label htmlFor="surname">Surname</Form.Label>
+                  <Form.Label htmlFor="surname">{profileLocalization.surname[sessionContext.sessionInfo.localization]}</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="surname"
@@ -102,7 +106,7 @@ const ProfilePage: React.FC = () => {
                 </Card.Body>
                 <Card.Footer>
                   {/* Button to save profile changes */}
-                  <Button variant="outline-success" onClick={profileSaved}>Confirm</Button>
+                  <Button variant="outline-success" onClick={profileSaved}>{profileLocalization.confirm[sessionContext.sessionInfo.localization]}</Button>
                 </Card.Footer>
               </Card>
             </Col>

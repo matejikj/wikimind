@@ -1,9 +1,15 @@
 import {
   createSolidDataset,
-  saveSolidDatasetAt
+  saveSolidDatasetAt,
+  universalAccess,
+  getSolidDataset,
+  getThingAll,
+  removeThing
 } from "@inrupt/solid-client";
 import { fetch } from "@inrupt/solid-client-authn-browser";
-import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
+import {
+  AccessControlPolicy
+} from "../models/enums/AccessControlPolicy";
 import { Link } from "../models/types/Link";
 import { LinkType } from "../models/enums/LinkType";
 import { MindMap } from "../models/types/MindMap";
@@ -102,14 +108,38 @@ export class MindMapService {
    * @param userSession The user session.
    * @returns The URL of the newly created mind map.
    */
-  async saveMindMap(mindMap: MindMapDataset): Promise<void> {
+  async saveMindMap(mindMap: MindMapDataset, userSession: UserSession): Promise<void> {
     try {
-      await this.mindMapRepository.removeMindMap(mindMap.mindMap.storage)
-      let mindMapStorageDataset = createSolidDataset();
-      await saveSolidDatasetAt(mindMap.mindMap.storage, mindMapStorageDataset, { fetch });
-      this.connectionRepository.saveConnections(mindMap.mindMap.storage, mindMap.links)
-      this.nodeRepository.saveNodes(mindMap.mindMap.storage, mindMap.nodes)
-    } catch(error: any) {}
+      // const access = await universalAccess.getPublicAccess(mindMap.mindMap.storage, { fetch })
+      // await this.mindMapRepository.removeMindMap(mindMap.mindMap.storage)
+      // let mindMapStorageDataset = createSolidDataset();
+      // await saveSolidDatasetAt(mindMap.mindMap.storage, mindMapStorageDataset, { fetch });
+      // if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
+      //   await initializeAcl(mindMap.mindMap.storage);
+      // }
+      // if (access) {
+      //   await universalAccess.setPublicAccess(mindMap.mindMap.storage, access,
+      //     { fetch: fetch }
+      //   )
+      // }
+
+      let dataset = await getSolidDataset(mindMap.mindMap.storage, { fetch });
+
+      const things = await getThingAll(dataset);
+      things.forEach((thing) => {
+        dataset = removeThing(dataset, thing)
+      });
+      await saveSolidDatasetAt(mindMap.mindMap.storage, dataset, { fetch });
+
+      if (mindMap.links.length > 0) {
+        this.connectionRepository.saveConnections(mindMap.mindMap.storage, mindMap.links)
+      }
+
+      if (mindMap.nodes.length > 0) {
+
+        this.nodeRepository.saveNodes(mindMap.mindMap.storage, mindMap.nodes)
+      }
+    } catch (error: any) { }
   }
 
   async removeMindMap(mindMap: MindMap): Promise<boolean> {

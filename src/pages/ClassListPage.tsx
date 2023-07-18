@@ -5,8 +5,8 @@ import Modal from 'react-bootstrap/Modal';
 import { useNavigate } from 'react-router-dom';
 import Sidenav from "../components/Sidenav";
 
-import { Col, Container, Row, Stack } from 'react-bootstrap';
-import { MdDeleteForever, MdSlideshow } from 'react-icons/md';
+import { Col, Container, Row, Spinner, Stack } from 'react-bootstrap';
+import { MdDeleteForever, MdRefresh, MdSlideshow } from 'react-icons/md';
 import { RxCheck, RxCross2 } from 'react-icons/rx';
 import { Class } from '../models/types/Class';
 import { Request } from '../models/types/Request';
@@ -66,7 +66,6 @@ const ClassListPage: React.FC = () => {
         setClassList((classList) =>
           classList.filter((item) => item.id !== classThing.id)
         )
-        // setShowMindMapDeleteModal(false)
       }
     }
     await classesService.removeClass(sessionContext.sessionInfo, classThing)
@@ -82,13 +81,16 @@ const ClassListPage: React.FC = () => {
         requests.filter((item) => item.id !== request.id)
       )
     }
-
   }
 
-  const denyAccess = (e: any) => {
-    const requestor = requests.find((item) => { return item.requestor === e.target.name })
-    if (requestor !== undefined) {
-      // classesService.denyRequest(sessionContext.sessionInfo, requestor)
+  async function denyAccess(request: Request) {
+    try {
+      await classesService.denyClassRequest(request, sessionContext.sessionInfo)
+      setRequests((requests) =>
+        requests.filter((item) => item.id !== request.id)
+      )
+    } catch (error) {
+      alert(error)
     }
   }
 
@@ -215,14 +217,22 @@ const ClassListPage: React.FC = () => {
           <Row>
             <Col sm="12">
               <Container className='class-container'>
-                <Row>
+                <Stack gap={1}>
                   <h4>Requests</h4>
+                  <div>
+                    <Button
+                      className="rounded-circle"
+                      size="sm"
+                      onClick={() => fetchData()}
+                    >
+                      <MdRefresh>
+                      </MdRefresh>
+                    </Button>
+                  </div>
                   {requests.length === 0 &&
-                    <p>No requests already</p>
+                    <p>No requests</p>
                   }
-
-                </Row>
-
+                </Stack>
                 {requests.map((item, index) => {
                   return (
                     <Row key={index}>
@@ -231,25 +241,32 @@ const ClassListPage: React.FC = () => {
                           {item.requestor}
                         </div>
                         <div className='my-stack-reverse'>
-                          
-                          <Button
-                            size="sm"
-                            className='rounded-circle'
-                            name={item.requestor}
-                            onClick={() => allowRequest(item)}
-                            variant="success"
-                          >
-                            <RxCheck></RxCheck>
-                          </Button>
-                          <Button
-                            size="sm"
-                            className='rounded-circle'
-                            name={item.requestor}
-                            onClick={denyAccess}
-                            variant="outline-danger"
-                          >
-                            <RxCross2></RxCross2>
-                          </Button>
+                          {waiting ? (
+                            <Spinner animation="border" role="status">
+                              <span className="visually-hidden">Loading...</span>
+                            </Spinner>
+                          ) : (
+                            <div>
+                              <Button
+                                size="sm"
+                                className='rounded-circle'
+                                name={item.requestor}
+                                onClick={() => allowRequest(item)}
+                                variant="success"
+                              >
+                                <RxCheck></RxCheck>
+                              </Button>
+                              <Button
+                                size="sm"
+                                className='rounded-circle'
+                                name={item.requestor}
+                                onClick={() => denyAccess(item)}
+                                variant="outline-danger"
+                              >
+                                <RxCross2></RxCross2>
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </Row>

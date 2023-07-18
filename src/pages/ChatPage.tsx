@@ -7,7 +7,7 @@ import { SessionContext } from "../sessionContext";
 import { ChatDataset } from "../models/types/ChatDataset";
 import { Message } from "../models/types/Message";
 import { MessageService } from "../service/messageService";
-import { wacChatWebSocket } from "../service/notificationService";
+import { messageNotificationsSubscription } from "../service/notificationService";
 import { generate_uuidv4 } from "../service/utils";
 
 /**
@@ -41,7 +41,7 @@ const ChatPage: React.FC = () => {
                     element.scrollIntoView({ behavior: 'auto' });
                 }
 
-                await wacChatWebSocket(chat.chat, setMessageDataset);
+                await messageNotificationsSubscription(chat.chat, setMessageDataset);
             }
         } catch (error) {
             // Handle the error, e.g., display an error message to the user or perform fallback actions
@@ -77,6 +77,8 @@ const ChatPage: React.FC = () => {
         <div className="App">
             <Sidenav />
             <Container fluid className="h-100">
+            <Row className="h-100">
+</Row>
                 <Row className="h-100">
                     <Col xs={12} className="p-0">
                         <div className="chat-container">

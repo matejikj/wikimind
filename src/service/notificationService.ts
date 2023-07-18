@@ -4,12 +4,13 @@ import { WebsocketNotification } from "@inrupt/solid-client-notifications";
 import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
 import { Chat } from "../models/types/Chat";
 import { ChatDataset } from "../models/types/ChatDataset";
-import { CHATS, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";
+import { CHATS, REQUESTS, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";
 import { MessageService } from "./messageService";
+import { UserSession } from "../models/UserSession";
 
 const messageService = new MessageService()
 
-export async function wacChatWebSocket(chat: Chat, setMessageDataset: any) {
+export async function messageNotificationsSubscription(chat: Chat, setMessageDataset: any) {
     if (chat.accessControlPolicy === AccessControlPolicy.WAC) {
         const wssUrl = new URL(chat.storage);
         wssUrl.protocol = 'wss';

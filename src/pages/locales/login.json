@@ -1,0 +1,14 @@
+{
+    "podProvider": {
+        "cs": "Zvol jméno",
+        "en": "Pod provider"        
+    },
+    "select": {
+        "cs": "Zvol jméno",
+        "en": "Select provider"        
+    },
+    "login": {
+        "cs": "Zvol jméno",
+        "en": "LOGIN"        
+    }
+}

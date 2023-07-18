@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Col, Container, Form, Modal, Row, Stack } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import { FcComments } from "react-icons/fc";
-import { MdDeleteForever, MdDriveFileRenameOutline, MdLink, MdSlideshow } from "react-icons/md";
+import { MdDeleteForever, MdDriveFileRenameOutline, MdLink, MdRefresh, MdSlideshow } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidenav from "../components/Sidenav";
 import { ClassDataset } from "../models/types/ClassDataset";
@@ -28,9 +28,15 @@ const ClassPage: React.FC = () => {
 
   const classService = new ClassService();
 
-  async function fetchClass(url: string): Promise<void> {
+  async function fetchClass(): Promise<void> {
     try {
-      const classDataset = await classService.getClass(url);
+      const startTime = performance.now();
+
+      const classDataset = await classService.getClass(location.state.url);
+      const endTime = performance.now();
+      const executionTime = endTime - startTime;
+      console.log(`getClass execution time: ${executionTime} milliseconds`);
+
       if (classDataset) {
         setDataset(classDataset)
       }
@@ -41,7 +47,7 @@ const ClassPage: React.FC = () => {
   useEffect(
     () => {
       if (location.state !== null && location.state.url !== null) {
-        fetchClass(location.state.url)
+        fetchClass()
       } else {
         navigate('/')
       }
@@ -129,8 +135,11 @@ const ClassPage: React.FC = () => {
   async function removeAnnouncement(message: Message) {
     if (dataset) {
       if (await classService.removeAnnouncement(dataset.class, message)) {
-        const a = dataset.messages.findIndex(item => item.id === message.id)
-        dataset.messages.splice(a, 1)
+        const filteredMessages = dataset.messages.filter((item) => item.id !== message.id)
+        setDataset({
+          ...dataset,
+          messages: filteredMessages
+        });
         setAnnouncement('')
       }
     }
@@ -176,7 +185,20 @@ const ClassPage: React.FC = () => {
           </Row>
           <Row>
             <Col sm="6">
-              <h6>Teacher: {dataset?.class.teacher}</h6>
+              <Stack>
+                <h6>Teacher: {dataset?.class.teacher}</h6>
+                <div>
+                  <Button
+                    className="rounded-circle"
+                    size="sm"
+                    onClick={() => fetchClass()}
+                  >
+                    <MdRefresh>
+                    </MdRefresh>
+                  </Button>
+                </div>
+
+              </Stack>
             </Col>
             <Col sm="6">
               {
@@ -216,14 +238,16 @@ const ClassPage: React.FC = () => {
                           {item.text}
                         </div>
                         <div className='my-stack-reverse'>
-                          <Button
-                            size="sm"
-                            className='rounded-circle'
-                            onClick={() => removeAnnouncement(item)}
-                            variant="success"
-                          >
-                            <MdDeleteForever></MdDeleteForever>
-                          </Button>
+                          {(sessionContext.sessionInfo.webId === dataset?.class.teacher) &&
+
+                            <Button
+                              size="sm"
+                              className='rounded-circle'
+                              onClick={() => removeAnnouncement(item)}
+                              variant="success"
+                            >
+                              <MdDeleteForever></MdDeleteForever>
+                            </Button>}
                         </div>
                       </div>
                     </Row>
