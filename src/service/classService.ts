@@ -450,18 +450,18 @@ export class ClassService {
     }
 
     async addExamResult(userSession: UserSession, exam: Exam, classUrl: string) {
-        const profileLDO = new ExamLDO(examDefinition).create(exam)
-        const myDataset = await getSolidDataset(
-            classUrl,
-            { fetch: fetch }
-        );
+        // const profileLDO = new ExamLDO(examDefinition).create(exam)
+        // const myDataset = await getSolidDataset(
+        //     classUrl,
+        //     { fetch: fetch }
+        // );
 
-        const savedProfileSolidDataset = setThing(myDataset, profileLDO)
-        const savedSolidDataset = await saveSolidDatasetAt(
-            classUrl,
-            savedProfileSolidDataset,
-            { fetch: fetch }
-        );
+        // const savedProfileSolidDataset = setThing(myDataset, profileLDO)
+        // const savedSolidDataset = await saveSolidDatasetAt(
+        //     classUrl,
+        //     savedProfileSolidDataset,
+        //     { fetch: fetch }
+        // );
 
     }
 }

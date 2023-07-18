@@ -9,7 +9,6 @@ import { SessionContext } from "../sessionContext";
 import { Form } from "react-bootstrap";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { Exam } from "../models/types/Exam";
-import { addExamResult } from "../service/examService";
 import { generate_uuidv4, levenshteinDistance } from "../service/utils";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
 
@@ -92,7 +91,8 @@ const ExamPage: React.FC = () => {
             profile: sessionContext.sessionInfo.webId
         };
 
-        addExamResult(sessionContext.sessionInfo, blankProfile, location.state.class);
+
+        // addExamResult(sessionContext.sessionInfo, blankProfile, location.state.class);
     }
 
     /**
