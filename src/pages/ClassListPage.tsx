@@ -16,8 +16,12 @@ import { SessionContext } from '../sessionContext';
 import { CLASSES, SLASH, TTLFILETYPE, WIKIMIND } from '../service/containerService';
 import '../styles/style.css';
 
-const Classes: React.FC = () => {
+const ClassListPage: React.FC = () => {
+  const navigate = useNavigate();
+  const sessionContext = useContext(SessionContext)
+
   const [classList, setClassList] = useState<Class[]>([]);
+  const [requests, setRequests] = useState<Request[]>([]);
 
   const [show, setShow] = useState(false);
   const [request, setRequest] = useState(false);
@@ -25,16 +29,9 @@ const Classes: React.FC = () => {
   const [name, setName] = useState("");
 
   const [waiting, setWaiting] = useState(false);
-  
-  const sessionContext = useContext(SessionContext)
-  const [requests, setRequests] = useState<Request[]>([]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  const navigate = useNavigate();
-  const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
-  wssUrl.protocol = 'wss';
 
   const classesService = new ClassService();
 
@@ -44,7 +41,6 @@ const Classes: React.FC = () => {
       requests && setRequests(requests)
       const classes = await classesService.getClassList(sessionContext.sessionInfo.podUrl);
       classes && setClassList(classes)
-
     } catch (error) {
       // Handle the error, e.g., display an error message to the user or perform fallback actions
     }
@@ -269,4 +265,4 @@ const Classes: React.FC = () => {
   );
 };
 
-export default Classes;
+export default ClassListPage;

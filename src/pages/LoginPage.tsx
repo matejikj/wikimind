@@ -9,11 +9,11 @@ import Row from 'react-bootstrap/Row';
 
 import '../styles/style.css';
 
-const authOptions = {
-  clientName: "Learnee",
-};
-
-const Login: React.FC = () => {
+/**
+ * Represents the LoginPage component that allows users to log in to their Solid pods.
+ */
+const LoginPage: React.FC = () => {
+  // State to hold the selected pod provider's URL.
   const [currentProvider, setCurrentProvider] = useState<string>('');
 
   return (
@@ -25,6 +25,7 @@ const Login: React.FC = () => {
               <Card.Body>
                 <Card.Title>Pod provider</Card.Title>
                 <br />
+                {/* Dropdown to select a pod provider */}
                 <Form.Select
                   onChange={(e) => { setCurrentProvider(e.target.value) }}
                   value={currentProvider}
@@ -39,9 +40,9 @@ const Login: React.FC = () => {
                   <option value="https://solid.redpencil.io/">https://solid.redpencil.io/</option>
                   <option value="https://login.inrupt.com/">https://login.inrupt.com/</option>
                   <option value="https://solidweb.me/">https://solidweb.me/</option>
-                  
                 </Form.Select>
                 <br />
+                {/* Input field to manually enter a pod provider's URL */}
                 <Form.Control
                   type="text"
                   placeholder="Id"
@@ -51,6 +52,7 @@ const Login: React.FC = () => {
                   onChange={(e) => { setCurrentProvider(e.target.value) }}
                 />
                 <br />
+                {/* Button to initiate the login process */}
                 <Button onClick={() => { login({ oidcIssuer: currentProvider }) }} variant="primary">LOGIN</Button>
               </Card.Body>
             </Card>
@@ -58,9 +60,7 @@ const Login: React.FC = () => {
         </Row>
       </Container>
     </div>
-
-
   );
 };
 
-export default Login;
+export default LoginPage;

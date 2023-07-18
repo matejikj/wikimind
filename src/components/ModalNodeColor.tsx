@@ -3,8 +3,8 @@ import { Col, Row } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Modal from 'react-bootstrap/Modal';
-import { Node } from "../../models/types/Node";
-import '../../styles/style.css';
+import { Node } from "../models/types/Node";
+import '../styles/style.css';
 
 const blankFormInput = {
     title: '',

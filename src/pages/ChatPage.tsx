@@ -13,7 +13,7 @@ import { generate_uuidv4 } from "../service/utils";
 /**
  * Chat component for displaying and sending chat messages.
  */
-const Chat: React.FC = () => {
+const ChatPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -115,4 +115,4 @@ const Chat: React.FC = () => {
 
 };
 
-export default Chat;
+export default ChatPage;

@@ -7,22 +7,12 @@ import { SessionContext } from "../sessionContext";
 import { groupDates } from "./utils";
 import { TimePeriod } from "./models/ChoiceSelection";
 
-const HistoryVisualisation: React.FC<{
+const Timeline: React.FC<{
   dataset: TimelineResultItem[],
 }> = ({
   dataset
 }) => {
-    const d3Container = useRef(null);
-    const navigate = useNavigate();
-    const location = useLocation();
-    const countRef = useRef(0);
-    const elementRef = useRef(null);
-
-    const ref = useRef(null);
-    const theme = useContext(SessionContext)
-
     const [currentPeriod, setCurrentPeriod] = useState<TimePeriod>(TimePeriod.Century);
-
     const [dateGroups, setDateGroups] = useState<{
       [key: string]: TimelineResultItem[];
     }>({});
@@ -70,13 +60,12 @@ const HistoryVisualisation: React.FC<{
       createTimePeriod(currentPeriod)
       setCardsView(false)
     }
+
     function aaa(e: any) {
       const newPeriod = parseInt(e.target.value)
       setCurrentPeriod(newPeriod)
       createTimePeriod(newPeriod)
     }
-
-
 
     return (
       <div>
@@ -101,13 +90,10 @@ const HistoryVisualisation: React.FC<{
             <FaPlus></FaPlus>
           </Button>
         )}
-
         {!cardsView ? (
           <Container fluid>
             <Row>
-              <Col>
-              </Col>
-              <Col sm="8">
+              <Col sm="12">
                 <Form.Select
                   onChange={(e) => aaa(e)}
                   value={currentPeriod}
@@ -118,11 +104,7 @@ const HistoryVisualisation: React.FC<{
                   <option value={TimePeriod.Decade}>Decade</option>
                   <option value={TimePeriod.Year}>Year</option>
                 </Form.Select>
-
               </Col>
-              <Col>
-              </Col>
-
             </Row>
             <Row>
               <Col sm="6">
@@ -130,15 +112,10 @@ const HistoryVisualisation: React.FC<{
                   min={0}
                   max={keys.length - 1}
                   step={1}
-                  // value={keys.findIndex((value: any) => value === key)}
                   onChange={handleSliderChange}
-                // value={"key"}
                 />
               </Col>
-
-
             </Row>
-
             <Row>
               <Col sm="6">
                 {currentPeriod === TimePeriod.Century &&
@@ -178,7 +155,6 @@ const HistoryVisualisation: React.FC<{
                   min={0}
                   max={dataset.length - 1}
                   step={1}
-                  // value={keys.findIndex((value: any) => value === key)}
                   onChange={handleCardsSliderChange}
                   value={index}
                 />
@@ -191,7 +167,6 @@ const HistoryVisualisation: React.FC<{
                 activeIndex={index}
                 indicators={false}
                 data-bs-theme="dark"
-              // className="timeline-carousel"
               >
                 {dataset.map((item, index) => {
                   return (
@@ -208,18 +183,7 @@ const HistoryVisualisation: React.FC<{
                           </div>
                         </Card.Body>
                       </Card>
-                      {/* <Stack gap={3}>
-                        <Image className="timeline-img" src={item.thumbnail.value} />                        <div>
-                          <h2>{item.label.value}</h2>
-                          <h6>{item.propertyLabel.value}: {item.value.value}</h6>
-                        </div>
-                        <div className="timeline-info-abstract">
-                          {item.abstract.value}
-                          <br />
-                        </div>
-                      </Stack> */}
                     </Carousel.Item>
-
                   )
                 })}
               </Carousel>
@@ -232,4 +196,4 @@ const HistoryVisualisation: React.FC<{
 
   };
 
-export default HistoryVisualisation;
+export default Timeline;

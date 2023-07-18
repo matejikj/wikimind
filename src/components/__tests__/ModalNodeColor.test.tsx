@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, RenderResult } from '@testing-library/react';
 import ModalNodeColor from '../ModalNodeColor';
-import { Node } from '../../../models/types/Node';
+import { Node } from '../../models/types/Node';
 
 const mockNode: Node = {
     id: "node1",

@@ -12,47 +12,63 @@ import { ProfileService } from "../service/profileService";
 import { SessionContext } from '../sessionContext';
 import '../styles/style.css';
 
-const ProfileView: React.FC = () => {
-  const sessionContext = useContext(SessionContext)
+/**
+ * Represents the ProfilePage component displaying the user's profile information.
+ */
+const ProfilePage: React.FC = () => {
+  // Access the SessionContext to get the user's session information.
+  const sessionContext = useContext(SessionContext);
 
-  const [profile, setProfile] = useState<Profile>();
+  // State to hold the user's profile information.
+  const [profile, setProfile] = useState<Profile | undefined>();
 
+  // Create an instance of the ProfileService to interact with the profile data.
   const profileService = new ProfileService();
 
+  /**
+   * Fetches the user's profile from the backend API.
+   */
   async function fetchProfile(): Promise<void> {
     try {
       const profile = await profileService.getProfile(sessionContext.sessionInfo.podUrl);
-      setProfile(profile)
+      setProfile(profile);
     } catch (error) {
-      // Handle the error, e.g., display an error message to the user or perform fallback actions
+      // Handle the error, e.g., display an error message to the user or perform fallback actions.
     }
   }
 
+  // Fetch the user's profile on component mount.
   useEffect(() => {
     fetchProfile();
   }, []);
 
+  /**
+   * Saves the user's profile to the backend API.
+   */
   async function profileSaved(): Promise<void> {
     if (profile) {
-      profileService.updateProfile(sessionContext.sessionInfo.podUrl, profile)
+      profileService.updateProfile(sessionContext.sessionInfo.podUrl, profile);
     }
   }
 
-  function handleChange(event: any): void {
+  /**
+   * Handles the change in form input fields and updates the profile state accordingly.
+   * @param event - The change event from the input field.
+   */
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
     const key = event.target.name;
     const value = event.target.value;
-    key && value !== undefined && profile && setProfile({ ...profile, [key]: value })
-    console.log()
+    if (key && value !== undefined && profile) {
+      setProfile({ ...profile, [key]: value });
+    }
   }
 
   return (
     <div className="App">
+      {/* The Sidenav component displaying navigation options */}
       <Sidenav />
       <main>
         <Container className='center-container'>
-          {/* <Row>
-            <Button onClick={() => aaa()}>fdsfsd</Button>
-          </Row> */}
           <Row>
             <Col sm={12}>
               <Card border="success" style={{ width: '18rem' }}>
@@ -60,6 +76,7 @@ const ProfileView: React.FC = () => {
                   <Card.Title>Profile info:</Card.Title>
                   <Card.Subtitle>{profile?.webId || ""}</Card.Subtitle>
                   <br />
+                  {/* Form inputs for Name */}
                   <Form.Label htmlFor="name">Name</Form.Label>
                   <Form.Control
                     type="text"
@@ -71,6 +88,7 @@ const ProfileView: React.FC = () => {
                     onChange={handleChange}
                   />
                   <br />
+                  {/* Form inputs for Surname */}
                   <Form.Label htmlFor="surname">Surname</Form.Label>
                   <Form.Control
                     type="text"
@@ -83,6 +101,7 @@ const ProfileView: React.FC = () => {
                   />
                 </Card.Body>
                 <Card.Footer>
+                  {/* Button to save profile changes */}
                   <Button variant="outline-success" onClick={profileSaved}>Confirm</Button>
                 </Card.Footer>
               </Card>
@@ -91,8 +110,7 @@ const ProfileView: React.FC = () => {
         </Container>
       </main>
     </div>
-
   );
 };
 
-export default ProfileView;
+export default ProfilePage;

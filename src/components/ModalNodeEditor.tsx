@@ -3,10 +3,10 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { MindMapDataset } from "../../models/types/MindMapDataset";
-import { Node } from "../../models/types/Node";
-import '../../styles/style.css';
-import { generate_uuidv4 } from "../../service/utils";
+import { MindMapDataset } from "../models/types/MindMapDataset";
+import { Node } from "../models/types/Node";
+import '../styles/style.css';
+import { generate_uuidv4 } from "../service/utils";
 import { item } from "rdf-namespaces/dist/fhir";
 import { useState } from "react";
 

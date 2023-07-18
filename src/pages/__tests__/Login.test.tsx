@@ -1,6 +1,6 @@
 import React from 'react';
 import { RenderResult, render, fireEvent } from '@testing-library/react';
-import Login from '../Login';
+import LoginPage from '../LoginPage';
 import { login } from "@inrupt/solid-client-authn-browser";
 
 jest.mock("@inrupt/solid-client-authn-browser", () => {
@@ -14,7 +14,7 @@ describe("<Login />", () => {
   let loginComponent: RenderResult;
 
   beforeEach(() => {
-    loginComponent = render(<Login />);
+    loginComponent = render(<LoginPage />);
   });
 
   test("Renders without issue", async () => {

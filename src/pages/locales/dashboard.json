@@ -1,0 +1,38 @@
+{
+    "chooseName": {
+        "cs": "Zvol jméno",
+        "en": "Choose name"        
+    },
+    "close": {
+        "cs": "Zavřít",
+        "en": "Close"        
+    },
+    "save": {
+        "cs": "save",
+        "en": "Save Changes"        
+    },
+    "delete": {
+        "cs": "Opravdu chceš smazat tuto myšlenkovou mapu?",
+        "en": "Really want to delete mindMap?"        
+    },
+    "create": {
+        "cs": "Vytvořit",
+        "en": "Create"        
+    },
+    "cancel": {
+        "cs": "Zrušit",
+        "en": "Cancel"        
+    },
+    "confirm": {
+        "cs": "Potvrdit",
+        "en": "Confirm"        
+    },
+    "header": {
+        "cs": "Tvoje myšlenkové mapy!",
+        "en": "Your mind maps!"        
+    },
+    "insert": {
+        "cs": "Zadej nazev",
+        "en": "Fill the name"        
+    }    
+}

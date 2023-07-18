@@ -2,10 +2,10 @@ import { useContext, useState } from "react";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { MindMapDataset } from "../../models/types/MindMapDataset";
-import { Node } from '../../models/types/Node';
-import { generate_uuidv4 } from "../../service/utils";
-import { SessionContext } from "../../sessionContext";
+import { MindMapDataset } from "../models/types/MindMapDataset";
+import { Node } from '../models/types/Node';
+import { generate_uuidv4 } from "../service/utils";
+import { SessionContext } from "../sessionContext";
 
 const ModalNodeDelete: React.FC<{
     datasetName: MindMapDataset | undefined,

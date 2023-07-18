@@ -1,23 +1,19 @@
-import {
-  getPodUrlAll,
-  getResourceInfo
-} from "@inrupt/solid-client";
 import { handleIncomingRedirect } from "@inrupt/solid-client-authn-browser";
 import React, { useEffect } from "react";
 import { Toast, ToastContainer } from "react-bootstrap";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { LanguageLocalization, UserSession, defaultSessionValue } from "./models/UserSession";
 import { AccessControlPolicy } from "./models/enums/AccessControlPolicy";
-import Browser from "./pages/Browser";
-import Chat from "./pages/Chat";
-import Chats from "./pages/Chats";
-import Class from "./pages/Class";
-import Classes from "./pages/Classes";
-import Dashboard from "./pages/Dashboard";
-import Editor from "./pages/Editor";
+import BrowserPage from "./pages/BrowserPage";
+import ChatListPage from "./pages/ChatListPage";
+import ChatPage from "./pages/ChatPage";
+import ClassListPage from "./pages/ClassListPage";
+import ClassPage from "./pages/ClassPage";
+import EditorPage from "./pages/EditorPage";
 import ExamPage from "./pages/ExamPage";
-import Login from './pages/Login';
-import ProfileView from "./pages/ProfileView";
+import LoginPage from './pages/LoginPage';
+import MinaMapListPage from "./pages/MindMapListPage";
+import ProfilePage from "./pages/ProfilePage";
 import { getPodUrl, isWacOrAcp } from "./service/accessService";
 import { checkContainer } from "./service/containerService";
 import { SessionContext } from "./sessionContext";
@@ -73,14 +69,14 @@ const App: React.FC = () => {
           if (sessionInfo.isLogged) {
             return (
               <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/editor" element={<Editor />} />
-                <Route path="/classes" element={<Classes />} />
-                <Route path="/class" element={<Class />} />
-                <Route path="/browser" element={<Browser />} />
-                <Route path="/profile" element={<ProfileView />} />
-                <Route path="/chats" element={<Chats />} />
-                <Route path="/chat" element={<Chat />} />
+                <Route path="/" element={<MinaMapListPage />} />
+                <Route path="/editor" element={<EditorPage />} />
+                <Route path="/classes" element={<ClassListPage />} />
+                <Route path="/class" element={<ClassPage />} />
+                <Route path="/browser" element={<BrowserPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/chats" element={<ChatListPage />} />
+                <Route path="/chat" element={<ChatPage />} />
                 <Route path="/exam" element={<ExamPage />} />
               </Routes>
             )
@@ -120,7 +116,7 @@ const App: React.FC = () => {
                   </Toast>
 
                 </ToastContainer>
-                <Login></Login>
+                <LoginPage></LoginPage>
               </div>
             )
           }

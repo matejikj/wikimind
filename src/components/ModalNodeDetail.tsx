@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Row } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Modal from 'react-bootstrap/Modal';
-import { Node } from "../../models/types/Node";
-import '../../styles/style.css';
+import { Node } from "../models/types/Node";
+import '../styles/style.css';
 
 const blankFormInput = {
     title: '',
@@ -15,31 +16,21 @@ const ModalNodeDetail: React.FC<{
     showModal: boolean,
     setModal: Function
 }> = ({ node, showModal, setModal }) => {
-
-    const [mounted, setMounted] = useState(false); // <-- new state variable
-
-    useEffect(() => {
-        setMounted(true); // set the mounted state variable to true after the component mounts
-    }, []);
-
-    useEffect(
-        () => {
-
-            if (mounted) {
-                if (node) {
-                }
-            }
-        }, [mounted])
+    const [formInputs, setFormInputs] = useState(blankFormInput);
 
     return (
         <Modal
             show={showModal}
+            onHide={() => setModal(false)}
         >
-            <Modal.Header closeButton>
-                <Modal.Title>Create custom node</Modal.Title>
+            <Modal.Header>
+                <Modal.Title>{node?.title}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Container fluid>
+                    <Row>
+                    {node?.description}
+                    </Row>
                 </Container>
             </Modal.Body>
             <Modal.Footer>

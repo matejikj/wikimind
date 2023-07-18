@@ -4,40 +4,32 @@ import { BiTimeFive } from "react-icons/bi";
 import { GrGraphQl } from "react-icons/gr";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
+import ModalNodeDetail from "../components/ModalNodeDetail";
 import Sidenav from "../components/Sidenav";
 import { DBPediaService } from "../dbpedia/dbpediaService";
-import { RecommendResultItem } from "../dbpedia/models/RecommendResultItem";
 import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
-import { Connection } from "../models/types/Connection";
 import { MindMapDataset } from "../models/types/MindMapDataset";
 import { Node } from "../models/types/Node";
 import { MindMapService } from "../service/mindMapService";
 import { SessionContext } from "../sessionContext";
-import HistoryVisualisation from "../visualisation/HistoryVisualisation";
-import ModalNodeDetail from "../visualisation/modals/ModalNodeDetail";
-import { CanvasState } from "../visualisation/models/CanvasState";
-import { HistoryItem } from "../visualisation/models/HistoryItem";
+import Timeline from "../visualisation/Timeline";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
 
-const Browser: React.FC = () => {
+const BrowserPage: React.FC = () => {
     const d3Container = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
 
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
-    const [url, setUrl] = useState('');
     const [width, setWidth] = useState(0);
     const [dataset, setDataset] = useState<MindMapDataset>();
 
     const sessionContext = useContext(SessionContext);
-    const [mounted, setMounted] = useState(false);
-    const wssUrl = new URL(sessionContext.sessionInfo.podUrl);
-    wssUrl.protocol = 'wss';
 
     const [clickedNode, setClickedNode] = useState<Node>();
 
-    const [creatorVisible, setCreatorVisible] = useState(false); // <-- new state variable
+    const [creatorVisible, setCreatorVisible] = useState(false);
     const [modalNodeDetail, setModalNodeDetail] = useState(false);
 
     const [disabledCanvas, setDisabledCanvas] = useState(false);
@@ -77,7 +69,7 @@ const Browser: React.FC = () => {
             } else {
                 navigate('/')
             }
-        }, [mounted])
+        }, [])
 
     async function createDateView() {
         if (dataset) {
@@ -121,7 +113,7 @@ const Browser: React.FC = () => {
                         </Button>
                     )}
                     {datesView ? (
-                        <HistoryVisualisation dataset={historyDataset} />
+                        <Timeline dataset={historyDataset} />
                     ) : (
                         <TransformWrapper
                             disabled={disabledCanvas}
@@ -247,4 +239,4 @@ const Browser: React.FC = () => {
     )
 };
 
-export default Browser;
+export default BrowserPage;

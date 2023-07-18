@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
 import Sidenav from "../components/Sidenav";
-
 import { Container, Row } from 'react-bootstrap';
 import { BsFillSendFill } from 'react-icons/bs';
 import { Chat } from '../models/types/Chat';
@@ -11,7 +10,7 @@ import { MessageService } from '../service/messageService';
 import { SessionContext } from '../sessionContext';
 import '../styles/style.css';
 
-const Chats: React.FC = () => {
+const ChatListPage: React.FC = () => {
   const [list, setList] = useState<Chat[]>([]);
 
   const sessionContext = useContext(SessionContext)
@@ -78,4 +77,4 @@ const Chats: React.FC = () => {
   );
 };
 
-export default Chats;
+export default ChatListPage;

@@ -11,6 +11,10 @@ import { HiMagnifyingGlass } from "react-icons/hi2";
 import { ImInfo } from "react-icons/im";
 import { MdColorLens, MdKeyboardReturn, MdOutlineCancel, MdScreenShare } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
+import ModalNodeColor from "../components/ModalNodeColor";
+import ModalNodeDelete from "../components/ModalNodeDelete";
+import ModalNodeDetail from "../components/ModalNodeDetail";
+import ModalNodeEditor from "../components/ModalNodeEditor";
 import Sidenav from "../components/Sidenav";
 import { CATEGORY_PART, DBPediaService } from "../dbpedia/dbpediaService";
 import { RecommendResultItem } from "../dbpedia/models/RecommendResultItem";
@@ -21,16 +25,11 @@ import { Node } from "../models/types/Node";
 import { MindMapService } from "../service/mindMapService";
 import { SessionContext } from "../sessionContext";
 import Canvas from "../visualisation/Canvas";
-import HistoryVisualisation from "../visualisation/HistoryVisualisation";
-import ModalNodeColor from "../visualisation/modals/ModalNodeColor";
-import ModalNodeDelete from "../visualisation/modals/ModalNodeDelete";
-import ModalNodeDetail from "../visualisation/modals/ModalNodeDetail";
-import ModalNodeEditor from "../visualisation/modals/ModalNodeEditor";
+import Timeline from "../visualisation/Timeline";
 import { CanvasState } from "../visualisation/models/CanvasState";
 import { HistoryItem } from "../visualisation/models/HistoryItem";
 import { HistoryItemType } from "../visualisation/models/HistoryItemType";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
-import { set } from 'lodash';
 
 const blankNode: Node = {
   id: '',
@@ -44,7 +43,17 @@ const blankNode: Node = {
   textColor: "black"
 }
 
-const Editor: React.FC = () => {
+/**
+ * EditorPage Component
+ *
+ * This component represents the main editor page for a mind map visualization tool.
+ * It provides functionality for adding, editing, and deleting nodes, creating connections between nodes,
+ * searching for nodes and connections based on keywords, viewing historical timelines, and saving the mind map dataset.
+ * The component uses various external libraries and services to implement its functionality.
+ * It also contains sub-components for node editing, node detail viewing, node deletion, node color selection,
+ * and modal recommendations detail.
+ */
+const EditorPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -60,14 +69,14 @@ const Editor: React.FC = () => {
   const [clickedNode, setClickedNode] = useState<Node>();
   const [createdNode, setCreatedNode] = useState<Node>();
   const [detailNode, setDetailNode] = useState<Node>();
-  
+
   const [searchedKeyword, setSearchedKeyword] = useState('');
   const [recommends, setRecommends] = useState<RecommendResultItem[]>([]);
   const [recommendPath, setRecommendPath] = useState<HistoryItem[]>([]);
   const [lastQuery, setLastQuery] = useState<HistoryItem | undefined>(undefined);
 
-  const [creatorVisible, setCreatorVisible] = useState(false); // <-- new state variable
-  const [modalNodeCreate, setModalNodeCreate] = useState(false); // <-- new state variable
+  const [creatorVisible, setCreatorVisible] = useState(false);
+  const [modalNodeCreate, setModalNodeCreate] = useState(false);
   const [modalNodeDelete, setModalNodeDelete] = useState(false);
   const [modalNodeColor, setModalNodeColor] = useState(false);
   const [modalRecommendDetail, setModalRecommendDetail] = useState(false);
@@ -78,15 +87,20 @@ const Editor: React.FC = () => {
   const [findingSimilar, setFindingSimilar] = useState(false);
   const [historyDataset, setHistoryDataset] = useState<TimelineResultItem[]>([]);
 
-  const [datesView, setDatesView] = useState(false); // <-- new state variable
+  const [datesView, setDatesView] = useState(false);
 
   const mindMapService = new MindMapService();
   const dbpediaService = new DBPediaService(sessionContext.sessionInfo);
 
+  /**
+ * Fetch the mind map dataset from the server based on the URL provided in the location state.
+ * If successful, set the retrieved dataset as the current dataset.
+ */
   async function fetchMindMap(url: string): Promise<void> {
     try {
       const mindMapDataset = await mindMapService.getMindMap(url);
       if (mindMapDataset) {
+        // Adjust the positions of the nodes and update the canvas dimensions
         mindMapDataset.links = AddCoords(mindMapDataset.links, getIdsMapping(mindMapDataset.nodes))
         setDataset(mindMapDataset)
         updateCanvasAxis(mindMapDataset)
@@ -98,13 +112,18 @@ const Editor: React.FC = () => {
 
   useEffect(
     () => {
+      // Fetch the mind map dataset when the component is mounted
       if (location.state !== null && location.state.id !== null) {
         fetchMindMap(location.state.id)
       } else {
+        // If the URL is not provided, navigate the user to the main page
         navigate('/')
       }
     }, [])
 
+  /**
+   * Update the canvas dimensions based on the positions of the nodes in the dataset.
+   */
   const updateCanvasAxis = (res: MindMapDataset) => {
     if (res) {
       const xAxes = res.nodes.map((node) => { return node.cx })
@@ -120,6 +139,12 @@ const Editor: React.FC = () => {
     }
   }
 
+  /**
+   * Update the position (cx, cy) of a node in the dataset.
+   * @param x - The new x-coordinate.
+   * @param y - The new y-coordinate.
+   * @param id - The ID of the node to be updated.
+   */
   const setPosition = (x: number, y: number, id: string) => {
     if (dataset) {
       dataset.nodes = dataset.nodes.map((todo) => {
@@ -131,25 +156,28 @@ const Editor: React.FC = () => {
     }
   }
 
+  /**
+   * Save the current mind map dataset to the server.
+   */
   async function saveDataset() {
     if (dataset) {
       await mindMapService.saveMindMap(dataset);
     }
   }
 
+  /**
+   * Create a picture of the current mind map and save it as a PNG image.
+   */
   function createPicture() {
     const svgElement = document.getElementById('svg-canvas');
 
     if (svgElement) {
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
-
       const svgString = new XMLSerializer().serializeToString(svgElement);
       const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-
       const DOMURL = window.URL || window.webkitURL || window;
       const svgURL = DOMURL.createObjectURL(svgBlob);
-
       const img = new Image();
       img.onload = function () {
         if (context) {
@@ -161,7 +189,6 @@ const Editor: React.FC = () => {
               saveAs(blob, 'svg_image.png');
             }
           });
-
         }
         DOMURL.revokeObjectURL(svgURL);
       };
@@ -169,6 +196,9 @@ const Editor: React.FC = () => {
     }
   }
 
+  /**
+   * Search for nodes and connections related to the provided keyword using the DBpedia service.
+   */
   async function searchKeyword() {
     const keywords = await dbpediaService.getKeywords(searchedKeyword)
     if (keywords !== undefined) {
@@ -184,6 +214,10 @@ const Editor: React.FC = () => {
     }
   }
 
+  /**
+   * Fetch recommended keywords or entities related to the provided item using the DBpedia service.
+   * @param item - The item for which recommendations should be fetched.
+   */
   async function findWikiLinks(item: RecommendResultItem) {
     const recommendations = await dbpediaService.getEntityRecommendation(item.entity.value)
     if (recommendations) {
@@ -200,14 +234,16 @@ const Editor: React.FC = () => {
     }
   }
 
+  /**
+   * Get similar entities for the provided node using the DBpedia service.
+   * @param item - The node for which similar entities should be fetched.
+   */
   async function getSimilarEntities(item: Node) {
     if (item.uri !== "") {
       setFindingSimilar(true)
-
       const recommendations = await dbpediaService.getEntityRecommendation(item.uri)
       if (recommendations) {
         setFindingSimilar(false)
-
         if (lastQuery) {
           recommendPath.push(lastQuery)
         }
@@ -222,6 +258,9 @@ const Editor: React.FC = () => {
     }
   }
 
+  /**
+   * Clear the current search query and recommendations.
+   */
   function clearSearching() {
     setSearchedKeyword('')
     setLastQuery(undefined)
@@ -229,7 +268,9 @@ const Editor: React.FC = () => {
     setRecommends([])
   }
 
-
+  /**
+   * Create a timeline view showing historical dates of nodes in the dataset.
+   */
   async function createDateView() {
     if (dataset) {
       let dates = await dbpediaService.getDates(dataset.nodes)
@@ -243,11 +284,13 @@ const Editor: React.FC = () => {
         })
         setCreatorVisible(false);
         setDatesView(true)
-
       }
     }
   }
 
+  /**
+   * Get the previous item in the recommendation path and update the current search query.
+   */
   async function getPreviousItem() {
     if (recommendPath.length > 0) {
       const lastItem = recommendPath.pop()
@@ -271,6 +314,9 @@ const Editor: React.FC = () => {
     }
   }
 
+  /**
+   * Toggle the 'isInTest' property of the clicked node to mark it as a test node or remove the test mark.
+   */
   function examSwitch() {
     if (clickedNode) {
       const newIsInTest = !clickedNode.isInTest
@@ -285,9 +331,11 @@ const Editor: React.FC = () => {
     }
   }
 
+  /**
+   * Remove the clicked node and its connections from the mind map dataset.
+   */
   function removeNode() {
     if (clickedNode) {
-
       const filteredNodes = dataset?.nodes.filter((item) => item.id !== clickedNode.id)
       const filteredConnections = dataset?.links.filter((item) => item.from !== clickedNode.id && item.to !== clickedNode.id)
       if (filteredNodes && filteredConnections && dataset) {
@@ -298,6 +346,9 @@ const Editor: React.FC = () => {
     }
   }
 
+  /**
+   * Create a custom entity with default values and open the node editor modal.
+   */
   async function createCustomEntity() {
     const newNode: Node = JSON.parse(JSON.stringify(blankNode))
     newNode.cx = 300
@@ -306,27 +357,39 @@ const Editor: React.FC = () => {
     setModalNodeCreate(true)
   }
 
+  /**
+   * Open the recommendation detail modal to view more information about the provided item.
+   * @param item - The item for which recommendation details should be displayed.
+   */
   async function openRecommendDetail(item: RecommendResultItem) {
     const res = await dbpediaService.getRecommendDetail(item)
-      const newNode: Node = JSON.parse(JSON.stringify(blankNode))
-      newNode.title = item.label.value
-      newNode.description = res
-      setDetailNode(newNode)
-      setModalRecommendDetail(true)
+    const newNode: Node = JSON.parse(JSON.stringify(blankNode))
+    newNode.title = item.label.value
+    newNode.description = res
+    setDetailNode(newNode)
+    setModalRecommendDetail(true)
   }
 
+  /**
+   * Add a recommendation (node) to the mind map based on the provided recommendation item.
+   * @param item - The recommendation item to be added to the mind map.
+   */
   async function addRecommendation(item: RecommendResultItem) {
     const res = await dbpediaService.getRecommendDetail(item)
-      const newNode: Node = JSON.parse(JSON.stringify(blankNode))
-      newNode.description = res
-      newNode.title = item.label.value
-      newNode.uri = item.entity.value
-      newNode.cx = 300
-      newNode.cy = 300
-      setCreatedNode(newNode)
-      setModalNodeCreate(true)
+    const newNode: Node = JSON.parse(JSON.stringify(blankNode))
+    newNode.description = res
+    newNode.title = item.label.value
+    newNode.uri = item.entity.value
+    newNode.cx = 300
+    newNode.cy = 300
+    setCreatedNode(newNode)
+    setModalNodeCreate(true)
   }
 
+  /**
+   * Edit the properties of a node by opening the node editor modal.
+   * @param item - The node to be edited.
+   */
   async function editNode(item: Node) {
     setCreatedNode(item)
     setModalNodeCreate(true)
@@ -336,7 +399,7 @@ const Editor: React.FC = () => {
     <div className="App">
       <Sidenav />
       <main className="visualisation-tools" ref={ref}>
-      <ModalNodeEditor
+        <ModalNodeEditor
           clickedNode={clickedNode}
           updateCanvasAxis={updateCanvasAxis}
           node={createdNode}
@@ -447,9 +510,6 @@ const Editor: React.FC = () => {
             </Button>
           )
         )}
-
-
-
         {creatorVisible &&
           <Button
             size="sm"
@@ -477,7 +537,6 @@ const Editor: React.FC = () => {
                     {"Add custom entity"}
                   </Button>
                 </div>
-
                 {recommends.map((item, index) => {
                   return (
                     <div key={index} className={item.entity.value.includes(CATEGORY_PART) ? 'recommends-div-category' : 'recommends-div'}>
@@ -500,7 +559,7 @@ const Editor: React.FC = () => {
         </div>
         <div className={creatorVisible ? recommends.length !== 0 ? "creator-bottom-recommends" : "creator-bottom" : "canvas-full"}>
           {datesView ? (
-            <HistoryVisualisation dataset={historyDataset} />
+            <Timeline dataset={historyDataset} />
           ) : (
             <Canvas
               setCreatorVisible={setCreatorVisible}
@@ -526,4 +585,4 @@ const Editor: React.FC = () => {
   )
 };
 
-export default Editor;
+export default EditorPage;

@@ -6,7 +6,6 @@ import { MdDeleteForever, MdDriveFileRenameOutline, MdLink, MdSlideshow } from "
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidenav from "../components/Sidenav";
 import { ClassDataset } from "../models/types/ClassDataset";
-import { Exam } from "../models/types/Exam";
 import { Message } from "../models/types/Message";
 import { MindMap } from "../models/types/MindMap";
 import { ClassService } from "../service/classService";
@@ -15,15 +14,7 @@ import { generate_uuidv4 } from "../service/utils";
 import { SessionContext } from "../sessionContext";
 import '../styles/style.css';
 
-const exampleExams: Exam[] = [{
-  id: generate_uuidv4(),
-  profile: 'inrupt.com/matejikj',
-  mindMap: 'aaaaa',
-  max: 5,
-  result: 3
-}]
-
-const Class: React.FC = () => {
+const ClassPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const sessionContext = useContext(SessionContext)
@@ -34,8 +25,6 @@ const Class: React.FC = () => {
   const [dataset, setDataset] = useState<ClassDataset>();
   const [name, setName] = useState('');
   const [createNewModalVisible, setCreateNewModalVisible] = useState(false);
-
-  const [mounted, setMounted] = useState(false);
 
   const classService = new ClassService();
 
@@ -56,7 +45,7 @@ const Class: React.FC = () => {
       } else {
         navigate('/')
       }
-    }, [mounted])
+    }, [])
 
   async function showMindMap(mindMap: MindMap) {
     if (dataset) {
@@ -377,10 +366,9 @@ const Class: React.FC = () => {
               <Container className="class-container">
                 <Row>
                   <h4>Exams</h4>
-                  {exampleExams.length === 0 &&
+                  {/* {exampleExams.length === 0 &&
                     <p>No exams already</p>
-                  }
-
+                  } */}
                 </Row>
                 <table>
                   <tr>
@@ -389,7 +377,7 @@ const Class: React.FC = () => {
                     <th>Max</th>
                     <th>Result</th>
                   </tr>
-                  {exampleExams.map((item, index) => {
+                  {/* {exampleExams.map((item, index) => {
                     return (
                       <tr>
                         <td>{item.profile}</td>
@@ -409,7 +397,7 @@ const Class: React.FC = () => {
                       //   </Col>
                       // </Row>
                     )
-                  })}
+                  })} */}
                 </table>
               </Container>
             </Col>
@@ -418,7 +406,6 @@ const Class: React.FC = () => {
       </main>
     </div>
   )
-
 };
 
-export default Class;
+export default ClassPage;
