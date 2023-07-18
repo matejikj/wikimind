@@ -35,6 +35,7 @@ import { RequestRepository } from "../repository/requestRepository";
 import { getPodUrl, initializeAcl } from "./accessService";
 import { ExamLDO } from "../models/things/ExamLDO";
 import { Exam } from "../models/types/Exam";
+import { item } from "rdf-namespaces/dist/fhir";
 
 
 
@@ -348,6 +349,15 @@ export class ClassService {
     }
 
     async allowClassAccess(classRequest: Request, userSession: UserSession): Promise<void> {
+        const chatLinksUrl = `${userSession.podUrl}${WIKIMIND}/${CHATS}/${CHATS}${TTLFILETYPE}`;
+        const chatLinks = await this.linkRepository.getLinksList(chatLinksUrl);
+
+        const chats: Chat[] = []
+        const promiseList = (chatLinks.map(async (link) => {
+            const chat = await this.chatRepository.getChat(link.url)
+            chat && chats.push(chat)
+        }));
+
         const messageDatasetId = generate_uuidv4();
         const messageDatasetUrl = userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + messageDatasetId + TTLFILETYPE;
         const messageStorageUrl = userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + generate_uuidv4() + TTLFILETYPE;
@@ -394,59 +404,72 @@ export class ClassService {
                     })();
 
                     const createChatPromise = (async () => {
-                        const classThing: Chat = {
-                            id: messageDatasetId,
-                            host: userSession.webId,
-                            source: userSession.podUrl,
-                            accessControlPolicy: userSession.podAccessControlPolicy!,
-                            guest: classRequest.requestor,
-                            modified: Date.now().toString(),
-                            lastMessage: '',
-                            storage: messageStorageUrl,
+
+                        await Promise.all(promiseList)
+                        const existingChat = chats.find((item) => (item.guest === classRequest.requestor ||
+                            item.host === classRequest.requestor))
+
+                        if (existingChat == undefined) {
+                            const classThing: Chat = {
+                                id: messageDatasetId,
+                                host: userSession.webId,
+                                source: userSession.podUrl,
+                                accessControlPolicy: userSession.podAccessControlPolicy!,
+                                guest: classRequest.requestor,
+                                modified: Date.now().toString(),
+                                lastMessage: '',
+                                storage: messageStorageUrl,
+                            }
+
+                            await this.chatRepository.createChat(messageDatasetUrl, classThing)
+
+                            const chatStorageSolidDataset = createSolidDataset();
+                            await saveSolidDatasetAt(messageStorageUrl, chatStorageSolidDataset, { fetch: fetch });
+
+                            if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
+                                const initializeAclPromises = [initializeAcl(messageDatasetUrl), initializeAcl(messageStorageUrl)];
+                                await Promise.all(initializeAclPromises);
+                            }
+
+                            universalAccess.setAgentAccess(messageDatasetUrl, classRequest.requestor, {
+                                append: true,
+                                read: true,
+                                write: false
+                            },
+                                { fetch: fetch }
+                            )
+                            universalAccess.setAgentAccess(messageStorageUrl, classRequest.requestor, {
+                                append: true,
+                                read: true,
+                                write: false
+                            },
+                                { fetch: fetch }
+                            )
                         }
-
-                        await this.chatRepository.createChat(messageDatasetUrl, classThing)
-
-                        const chatStorageSolidDataset = createSolidDataset();
-                        await saveSolidDatasetAt(messageStorageUrl, chatStorageSolidDataset, { fetch: fetch });
-
-                        if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
-                            const initializeAclPromises = [initializeAcl(messageDatasetUrl), initializeAcl(messageStorageUrl)];
-                            await Promise.all(initializeAclPromises);
-                        }
-
-                        universalAccess.setAgentAccess(messageDatasetUrl, classRequest.requestor, {
-                            append: true,
-                            read: true,
-                            write: false
-                        },
-                            { fetch: fetch }
-                        )
-                        universalAccess.setAgentAccess(messageStorageUrl, classRequest.requestor, {
-                            append: true,
-                            read: true,
-                            write: false
-                        },
-                            { fetch: fetch }
-                        )
-
                     })();
                     const createChatLinkPromise = (async () => {
-                        const newChatLink = {
-                            id: generate_uuidv4(),
-                            linkType: LinkType.CHAT_LINK,
-                            url: messageDatasetUrl,
+                        await Promise.all(promiseList)
+                        const existingChat = chats.find((item) => (item.guest === classRequest.requestor ||
+                            item.host === classRequest.requestor))
+
+                        if (existingChat == undefined) {
+                            const newChatLink = {
+                                id: generate_uuidv4(),
+                                linkType: LinkType.CHAT_LINK,
+                                url: messageDatasetUrl,
+                            }
+                            await this.linkRepository.createLink(
+                                userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + CHATS + TTLFILETYPE, newChatLink)
+                            const contactRequest: Request = {
+                                id: generate_uuidv4(),
+                                subject: messageDatasetUrl,
+                                requestor: userSession.webId,
+                                requestType: RequestType.ADD_CONTACT
+                            }
+                            const grantUrl = podUrl + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
+                            await this.requestRepository.createRequest(grantUrl, contactRequest)
+
                         }
-                        await this.linkRepository.createLink(
-                            userSession.podUrl + WIKIMIND + SLASH + CHATS + SLASH + CHATS + TTLFILETYPE, newChatLink)
-                        const contactRequest: Request = {
-                            id: generate_uuidv4(),
-                            subject: messageDatasetUrl,
-                            requestor: userSession.webId,
-                            requestType: RequestType.ADD_CONTACT
-                        }
-                        const grantUrl = podUrl + WIKIMIND + SLASH + REQUESTS + SLASH + REQUESTS + TTLFILETYPE
-                        await this.requestRepository.createRequest(grantUrl, contactRequest)
                     })();
                     await Promise.all([...setAgentAccessPromises, saveLinkForStudent, grantRequestPromise, createChatPromise, createChatLinkPromise]);
                 }
