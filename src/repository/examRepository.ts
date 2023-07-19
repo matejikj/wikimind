@@ -32,7 +32,7 @@ import {
      * @returns A Promise that resolves when the exam is successfully created and saved.
      */
     async createExam(classUrl: string, examObject: Exam): Promise<void> {
-      let classDataset = createSolidDataset();
+      let classDataset = await getSolidDataset(classUrl, { fetch });
       classDataset = setThing(classDataset, this.examLDO.create(examObject));
       await saveSolidDatasetAt(classUrl, classDataset, { fetch });
     }

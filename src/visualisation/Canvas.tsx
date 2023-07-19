@@ -81,7 +81,10 @@ const Canvas: React.FC<{
         >
           <svg
             id="svg-canvas"
-            onClick={() => setClickedNode(undefined)}
+            onClick={() => {
+              setClickedNode(undefined)
+              setCanvasState(CanvasState.DEFAULT)
+            }}
             width={width}
             height={height}
             xmlns="http://www.w3.org/2000/svg"

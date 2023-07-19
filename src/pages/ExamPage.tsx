@@ -11,6 +11,7 @@ import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { Exam } from "../models/types/Exam";
 import { generate_uuidv4, levenshteinDistance } from "../service/utils";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
+import { ClassService } from "../service/classService";
 
 /**
  * ExamPage component.
@@ -30,6 +31,7 @@ const ExamPage: React.FC = () => {
     const sessionContext = useContext(SessionContext);
 
     const mindMapService = new MindMapService();
+    const classService = new ClassService();
 
     /**
      * Fetches the mind map data from the provided URL.
@@ -83,7 +85,7 @@ const ExamPage: React.FC = () => {
             }
         });
 
-        const blankProfile: Exam = {
+        const newExamResult: Exam = {
             id: generate_uuidv4(),
             max: count,
             result: good,
@@ -91,8 +93,16 @@ const ExamPage: React.FC = () => {
             profile: sessionContext.sessionInfo.webId
         };
 
+        if (location.state && location.state.classStorage && location.state.classUrl) {
+            classService.addExamResult(location.state.classStorage, newExamResult)
+            navigate('/class/', {
+                state: {
+                  url: location.state.classUrl
+                }
+              })
+        }
 
-        // addExamResult(sessionContext.sessionInfo, blankProfile, location.state.class);
+        
     }
 
     /**

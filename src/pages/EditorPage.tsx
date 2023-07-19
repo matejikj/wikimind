@@ -436,14 +436,14 @@ const EditorPage: React.FC = () => {
                   name="keyword"
                   size="sm"
                   value={searchedKeyword}
-                  onChange={(e) => setSearchedKeyword(e.target.value)}
+                  onChange={(e) => { setCanvasState(CanvasState.DEFAULT); setSearchedKeyword(e.target.value) }}
                 />
                 {/* Button to initiate the keyword search */}
-                <Button size="sm" variant="success" onClick={searchKeyword}>Search</Button>
+                <Button size="sm" variant="success" onClick={() => { setCanvasState(CanvasState.DEFAULT); searchKeyword() }}>Search</Button>
                 {/* Button to go back to the previous search result */}
-                <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { getPreviousItem() }}><MdKeyboardReturn /></Button>
+                <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); getPreviousItem() }}><MdKeyboardReturn /></Button>
                 {/* Button to clear the current search query and recommendations */}
-                <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { clearSearching() }}><AiOutlineClear /></Button>
+                <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); clearSearching() }}><AiOutlineClear /></Button>
               </Stack>
             </Row>
             <Row>
@@ -455,25 +455,25 @@ const EditorPage: React.FC = () => {
                     {clickedNode.title.length > 10 ? clickedNode.title.slice(0, 10) + '..' : clickedNode.title}
                   </Button>
                   {/* Button to open the node detail modal */}
-                  <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { editNode(clickedNode) }}><ImInfo /></Button>
+                  <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); editNode(clickedNode) }}><ImInfo /></Button>
                   {/* Button to mark/unmark the node as a test node */}
-                  <Button size="sm" variant={clickedNode.isInTest ? "info" : "secondary"} className="rounded-circle" onClick={() => examSwitch()}><BsQuestionSquare /></Button>
+                  <Button size="sm" variant={clickedNode.isInTest ? "info" : "secondary"} className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); examSwitch() }}><BsQuestionSquare /></Button>
                   {/* Button to find similar entities to the clicked node */}
                   {findingSimilar ? (
                     <Spinner animation="border" role="status">
                       <span className="visually-hidden">Loading...</span>
                     </Spinner>
                   ) : (
-                    <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { getSimilarEntities(clickedNode) }}><HiMagnifyingGlass /></Button>
+                    <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); getSimilarEntities(clickedNode) }}><HiMagnifyingGlass /></Button>
                   )}
                   {/* Button to add a new node connection */}
                   <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.ADD_CONNECTION) }}><BsNodePlus /></Button>
                   {/* Button to open the node color picker modal */}
-                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setModalNodeColor(true) }}><MdColorLens /></Button>
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); setModalNodeColor(true) }}><MdColorLens /></Button>
                   {/* Button to clear the clicked node selection */}
-                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setClickedNode(undefined) }}><MdOutlineCancel /></Button>
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); setClickedNode(undefined) }}><MdOutlineCancel /></Button>
                   {/* Button to remove the clicked node from the mind map */}
-                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { removeNode() }}><BiTrash /></Button>
+                  <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); removeNode() }}><BiTrash /></Button>
                 </Stack>
               }
               {/* If no node is clicked, show a message */}
@@ -496,6 +496,7 @@ const EditorPage: React.FC = () => {
             className="rounded-circle"
             id="visualisation-btn-time-close"
             onClick={() => {
+              setCanvasState(CanvasState.DEFAULT);
               setCreatorVisible(false);
               setDatesView(false);
             }}
@@ -509,7 +510,10 @@ const EditorPage: React.FC = () => {
             size="sm"
             className="rounded-circle"
             id="visualisation-btn-time"
-            onClick={() => createDateView()}
+            onClick={() => {
+              setCanvasState(CanvasState.DEFAULT);
+              createDateView()
+            }}
             variant="success"
           >
             <BiTimeFive />
@@ -524,7 +528,7 @@ const EditorPage: React.FC = () => {
               size="sm"
               className="rounded-circle"
               id="visualisation-btn-toggle"
-              onClick={() => setCreatorVisible(false)}
+              onClick={() => { setCanvasState(CanvasState.DEFAULT); setCreatorVisible(false) }}
               variant="success"
             >
               <FaMinus />
@@ -535,7 +539,7 @@ const EditorPage: React.FC = () => {
               size="sm"
               className="rounded-circle"
               id="visualisation-btn-toggle"
-              onClick={() => setCreatorVisible(true)}
+              onClick={() => { setCanvasState(CanvasState.DEFAULT); setCreatorVisible(true) }}
               variant="success"
             >
               <FaPlus />
@@ -550,7 +554,7 @@ const EditorPage: React.FC = () => {
               size="sm"
               className="rounded-circle"
               id="visualisation-btn-save"
-              onClick={() => saveDataset()}
+              onClick={() => { setCanvasState(CanvasState.DEFAULT); saveDataset() }}
               variant="success"
             >
               <FiSave />
@@ -559,7 +563,7 @@ const EditorPage: React.FC = () => {
               size="sm"
               className="rounded-circle"
               id="visualisation-btn-picture"
-              onClick={() => createPicture()}
+              onClick={() => { setCanvasState(CanvasState.DEFAULT); createPicture() }}
               variant="success"
             >
               <MdScreenShare />
@@ -574,7 +578,7 @@ const EditorPage: React.FC = () => {
               <Col className="recommend-col" sm="12">
                 <div className="recommends-div">
                   {/* Button to add a custom entity */}
-                  <Button onClick={() => createCustomEntity()} variant="outline" className="recommend-btn" size="sm">
+                  <Button onClick={() => { setCanvasState(CanvasState.DEFAULT);; createCustomEntity() }} variant="outline" className="recommend-btn" size="sm">
                     {"Add custom entity"}
                   </Button>
                 </div>
@@ -585,13 +589,13 @@ const EditorPage: React.FC = () => {
                       <div className={item.entity.value.includes(CATEGORY_PART) ? 'recommends-inline-div-category' : 'recommends-inline-div'}>
                         <Stack direction="horizontal" gap={0}>
                           {/* Button to search for recommendations */}
-                          <Button onClick={() => { findWikiLinks(item); }} className="recommend-btn" size="sm">
+                          <Button onClick={() => { setCanvasState(CanvasState.DEFAULT); findWikiLinks(item); }} className="recommend-btn" size="sm">
                             {item.label.value}
                           </Button>
                           {/* Button to open the recommendation detail modal */}
-                          <Button size="sm" className="recommend-btn" onClick={() => { openRecommendDetail(item) }}><FaInfo /></Button>
+                          <Button size="sm" className="recommend-btn" onClick={() => { setCanvasState(CanvasState.DEFAULT); openRecommendDetail(item) }}><FaInfo /></Button>
                           {/* Button to add a recommendation to the mind map */}
-                          <Button size="sm" className="recommend-btn" onClick={() => { addRecommendation(item) }}><FaPlus /></Button>
+                          <Button size="sm" className="recommend-btn" onClick={() => { setCanvasState(CanvasState.DEFAULT); addRecommendation(item) }}><FaPlus /></Button>
                         </Stack>
                       </div>
                     </div>

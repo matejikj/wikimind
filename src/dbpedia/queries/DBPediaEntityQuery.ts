@@ -14,13 +14,11 @@ export class DBPediaEntityQuery extends DBpediaQueryBuilder {
       <${entity}> ?type ?entity.
       ?entity rdfs:label ?label.
       FILTER (?type = dbo:wikiPageWikiLink || ?type = dcterms:subject)
-    `
+      `
       localization === LanguageLocalization.CS ?
-      whereClause += `
-      FILTER (lang(?label) = "cs" || lang(?label) = "en")
+      whereClause += `FILTER (lang(?label) = "cs" || lang(?label) = "en")
       ` :
-      whereClause += `
-      FILTER (lang(?label) = "en")
+      whereClause += `FILTER (lang(?label) = "en")
       `
       this.addWhereClause(whereClause);
     }

@@ -12,34 +12,29 @@ export class DBpediaCategoryQuery extends DBpediaQueryBuilder {
     this.addSelectVariable('entity');
     this.addSelectVariable('label');
     let whereClause = `
-        {
-          <${entity}> ?type ?entity.
-          ?entity rdfs:label ?label.
-          FILTER (?type = skos:broader || ?type = dcterms:subject)
-    `
+    {
+      <${entity}> ?type ?entity.
+      ?entity rdfs:label ?label.
+      FILTER (?type = skos:broader || ?type = dcterms:subject)
+      `
     localization === LanguageLocalization.CS ?
-      whereClause += `
-          FILTER (lang(?label) = "cs" || lang(?label) = "en")
+      whereClause += `FILTER (lang(?label) = "cs" || lang(?label) = "en")
     `:
-      whereClause += `
-          FILTER (lang(?label) = "en")
+      whereClause += `FILTER (lang(?label) = "en")
     `
-    whereClause += `
-          }
-          UNION
-          {
-              ?entity ?type <${entity}>.
-              ?entity rdfs:label ?label.
-              FILTER (?type = skos:broader || ?type = dcterms:subject)
-    `
+    whereClause += `}
+    UNION
+    {
+      ?entity ?type <${entity}>.
+      ?entity rdfs:label ?label.
+      FILTER (?type = skos:broader || ?type = dcterms:subject)
+      `
     localization === LanguageLocalization.CS ?
-      whereClause += `
-          FILTER (lang(?label) = "cs" || lang(?label) = "en")
-      }
+      whereClause += `FILTER (lang(?label) = "cs" || lang(?label) = "en")
+    }
     `:
-      whereClause += `
-          FILTER (lang(?label) = "en")
-      }
+      whereClause += `FILTER (lang(?label) = "en")
+    }
     `
 
     this.addWhereClause(whereClause);

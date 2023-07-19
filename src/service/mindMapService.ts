@@ -36,19 +36,23 @@ export class MindMapService {
     this.nodeRepository = new NodeRepository();
   }
 
-  async getMindMapList(podUrl: string): Promise<MindMap[] | undefined> {
+  async getMindMapList(podUrl: string): Promise<MindMap[]> {
+    const resMindMapList: MindMap[] = []
+
     try {
-      const resMindMapList: MindMap[] = []
       const mindMapLinksUrl = `${podUrl}${WIKIMIND}/${MINDMAPS}/${MINDMAPS}${TTLFILETYPE}`;
       const mindMapLinks = await this.linkRepository.getLinksList(mindMapLinksUrl);
       await Promise.all(mindMapLinks.map(async (link) => {
-        const mindMap = await this.mindMapRepository.getMindMap(link.url)
-        mindMap && resMindMapList.push(mindMap)
+        try {
+          const mindMap = await this.mindMapRepository.getMindMap(link.url)
+          mindMap && resMindMapList.push(mindMap)
+        } catch (error) {
+          console.debug('Problem when getting mindMap: ', error)
+        }
       }));
       return resMindMapList
-    } catch (error) {
-      console.error(error);
-      return undefined;
+    } finally {
+      return resMindMapList;
     }
   }
 

@@ -73,42 +73,47 @@ const ProfilePage: React.FC = () => {
         <Container className='center-container'>
           <Row>
             <Col sm={12}>
-              <Card border="success" style={{ width: '18rem' }}>
-                <Card.Body>
-                  <Card.Title>
-                  {profileLocalization.profileInfo[sessionContext.sessionInfo.localization]}
-                  </Card.Title>
-                  <Card.Subtitle>{profile?.webId || ""}</Card.Subtitle>
-                  <br />
-                  {/* Form inputs for Name */}
-                  <Form.Label htmlFor="name">{profileLocalization.name[sessionContext.sessionInfo.localization]}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="name"
-                    name="name"
-                    style={{ maxWidth: '500px' }}
-                    id="name"
-                    value={profile?.name}
-                    onChange={handleChange}
-                  />
-                  <br />
-                  {/* Form inputs for Surname */}
-                  <Form.Label htmlFor="surname">{profileLocalization.surname[sessionContext.sessionInfo.localization]}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="surname"
-                    name="surname"
-                    id="surname"
-                    style={{ maxWidth: '500px' }}
-                    value={profile?.surname}
-                    onChange={handleChange}
-                  />
-                </Card.Body>
-                <Card.Footer>
-                  {/* Button to save profile changes */}
-                  <Button variant="outline-success" onClick={profileSaved}>{profileLocalization.confirm[sessionContext.sessionInfo.localization]}</Button>
-                </Card.Footer>
-              </Card>
+              {
+                profile &&
+                <Card border="success" style={{ width: '18rem' }}>
+
+                  <Card.Body>
+                    <Card.Title>
+                      {profileLocalization.profileInfo[sessionContext.sessionInfo.localization]}
+                    </Card.Title>
+                    <Card.Subtitle>{profile?.webId || ""}</Card.Subtitle>
+                    <br />
+                    {/* Form inputs for Name */}
+                    <Form.Label htmlFor="name">{profileLocalization.name[sessionContext.sessionInfo.localization]}</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="name"
+                      name="name"
+                      style={{ maxWidth: '500px' }}
+                      id="name"
+                      value={profile?.name}
+                      onChange={handleChange}
+                    />
+                    <br />
+                    {/* Form inputs for Surname */}
+                    <Form.Label htmlFor="surname">{profileLocalization.surname[sessionContext.sessionInfo.localization]}</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="surname"
+                      name="surname"
+                      id="surname"
+                      style={{ maxWidth: '500px' }}
+                      value={profile?.surname}
+                      onChange={handleChange}
+                    />
+                  </Card.Body>
+                  <Card.Footer>
+                    {/* Button to save profile changes */}
+                    <Button variant="outline-success" onClick={profileSaved}>{profileLocalization.confirm[sessionContext.sessionInfo.localization]}</Button>
+                  </Card.Footer>
+                </Card>
+              }
+
             </Col>
           </Row>
         </Container>

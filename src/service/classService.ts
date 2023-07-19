@@ -60,19 +60,22 @@ export class ClassService {
         this.examRepository = new ExamRepository();
     }
 
-    async getClassList(podUrl: string): Promise<Class[] | undefined> {
+    async getClassList(podUrl: string): Promise<Class[]> {
+        const classList: Class[] = []
+
         try {
-            const classList: Class[] = []
             const classLinksUrl = `${podUrl}${WIKIMIND}/${CLASSES}/${CLASSES}${TTLFILETYPE}`;
             const classLinks = await this.linkRepository.getLinksList(classLinksUrl);
             await Promise.all(classLinks.map(async (link) => {
-                const newClass = await this.classRepository.getClass(link.url)
-                newClass && classList.push(newClass)
+                try {
+                    const newClass = await this.classRepository.getClass(link.url)
+                    newClass && classList.push(newClass)    
+                } catch (error) {
+                    console.debug('Problem when getting class: ', error)
+                }
             }));
-            return classList
-        } catch (error) {
-            console.error(error);
-            return undefined;
+        } finally {
+            return classList;
         }
     }
 
@@ -90,8 +93,15 @@ export class ClassService {
                 try {
                     return await this.profileRepository.getProfile(profileUrl);
                 } catch (error) {
-                    console.error(error);
-                    return undefined;
+                    console.debug('Problem when getting class: ', error)
+                    // console.error(error);
+                    const profile: Profile = {
+                        webId: item.url,
+                        source: item.url,
+                        name: '',
+                        surname: ''
+                    }
+                    return profile
                 }
             });
 
@@ -322,7 +332,6 @@ export class ClassService {
 
     async createNewAnnouncement(classThing: Class, message: Message): Promise<boolean> {
         try {
-            const mindMapStorageUrl = `${classThing.source}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
             await this.messageRepository.createMessage(classThing.storage, message)
             return true
         } catch (error) {
@@ -483,20 +492,33 @@ export class ClassService {
         }
     }
 
-    async addExamResult(userSession: UserSession, exam: Exam, classUrl: string) {
-        // const profileLDO = new ExamLDO(examDefinition).create(exam)
-        // const myDataset = await getSolidDataset(
-        //     classUrl,
-        //     { fetch: fetch }
-        // );
+    // async createNewAnnouncement(classThing: Class, message: Message): Promise<boolean> {
+    //     try {
+    //         const mindMapStorageUrl = `${classThing.source}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
+    //         await this.messageRepository.createMessage(classThing.storage, message)
+    //         return true
+    //     } catch (error) {
+    //         return false
+    //     }
+    // }
+    // async removeAnnouncement(classThing: Class, message: Message): Promise<boolean> {
+    //     try {
+    //         const mindMapStorageUrl = `${classThing.source}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
+    //         await this.messageRepository.removeMessage(classThing.storage, message)
+    //         return true
+    //     } catch (error) {
+    //         return false
+    //     }
+    // }
 
-        // const savedProfileSolidDataset = setThing(myDataset, profileLDO)
-        // const savedSolidDataset = await saveSolidDatasetAt(
-        //     classUrl,
-        //     savedProfileSolidDataset,
-        //     { fetch: fetch }
-        // );
-
+    async addExamResult(classUrl: string, exam: Exam) {
+        try {
+            const mindMapStorageUrl = `${classUrl}${WIKIMIND}/${MINDMAPS}/${exam.id}${TTLFILETYPE}`;
+            await this.examRepository.createExam(classUrl, exam)
+            return true
+        } catch (error) {
+            return false
+        }
     }
 }
 

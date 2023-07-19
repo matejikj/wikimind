@@ -1,4 +1,8 @@
-import { handleIncomingRedirect } from "@inrupt/solid-client-authn-browser";
+import {
+  handleIncomingRedirect,
+  logout,
+  onSessionRestore
+} from "@inrupt/solid-client-authn-browser";
 import React, { useEffect } from "react";
 import { Toast, ToastContainer } from "react-bootstrap";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -18,6 +22,7 @@ import { getPodUrl, isWacOrAcp } from "./service/accessService";
 import { checkContainer } from "./service/containerService";
 import { SessionContext } from "./sessionContext";
 import './styles/style.css';
+import Cookies from 'js-cookie';
 
 const App: React.FC = () => {
 
@@ -31,6 +36,7 @@ const App: React.FC = () => {
       const info = await handleIncomingRedirect({
         restorePreviousSession: true
       })
+      localStorage.clear()
       if (info && info.webId) {
         const podUrl = await getPodUrl(info.webId)
         if (podUrl) {
@@ -51,6 +57,7 @@ const App: React.FC = () => {
         }
       }
     } catch (error) {
+      setWaiting(false)
       setToastVisible(true)
     }
   }

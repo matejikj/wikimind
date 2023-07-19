@@ -196,8 +196,6 @@ describe("MindMapService", () => {
 
       // Call the createNewMindMap method
       const createdMindMapUrl = await mindMapService.createNewMindMap(mindMapName, userSession);
-
-      console.log("fasd")
       // // Check the result
       // expect(createdMindMapUrl).toEqual(mindMapUrl);
 

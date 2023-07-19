@@ -176,7 +176,8 @@ async function checkChatsContainer(podUrl: string): Promise<void> {
  * @throws {Error} - Throws an error if there is a problem with the SolidPod.
  */
 export async function checkContainer(userSession: UserSession): Promise<void> {
-  await checkMainContainer(userSession.podUrl);
+  try {
+    await checkMainContainer(userSession.podUrl);
 
   await Promise.all([
     checkMindMapsContainer(userSession.podUrl),
@@ -205,4 +206,8 @@ export async function checkContainer(userSession: UserSession): Promise<void> {
     { append: false, read: true, write: false },
     { fetch: fetch }
   );
+  } catch (error) {
+    throw error
+  }
+  
 }

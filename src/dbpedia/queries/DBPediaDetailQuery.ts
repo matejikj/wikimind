@@ -10,11 +10,9 @@ export class DBPediaDetailQuery extends DBpediaQueryBuilder {
     <${entity}> dbo:abstract ?abstract.
     `
     localization === LanguageLocalization.CS ?
-      whereClause += `
-    FILTER (lang(?abstract) = "cs" || lang(?abstract) = "en")
+      whereClause += `FILTER (lang(?abstract) = "cs" || lang(?abstract) = "en")
     ` :
-      whereClause += `
-    FILTER (lang(?abstract) = "en")
+      whereClause += `FILTER (lang(?abstract) = "en")
     `
     this.addWhereClause(whereClause);
   }

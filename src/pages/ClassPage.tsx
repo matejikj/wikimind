@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Col, Container, Form, Modal, Row, Stack } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
-import { FcComments } from "react-icons/fc";
+import { FcComments, FcFullTrash } from "react-icons/fc";
 import { MdDeleteForever, MdDriveFileRenameOutline, MdLink, MdRefresh, MdSlideshow } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidenav from "../components/Sidenav";
@@ -13,6 +13,11 @@ import { CLASSES, MINDMAPS, TTLFILETYPE, WIKIMIND } from "../service/containerSe
 import { generate_uuidv4 } from "../service/utils";
 import { SessionContext } from "../sessionContext";
 import '../styles/style.css';
+import { surname } from "rdf-namespaces/dist/foaf";
+import { getNumberFromUrl } from "../repository/utils";
+import { BsTrashFill } from "react-icons/bs";
+import { Profile } from "../models/types/Profile";
+import { Exam } from "../models/types/Exam";
 
 const ClassPage: React.FC = () => {
   const navigate = useNavigate();
@@ -106,7 +111,8 @@ const ClassPage: React.FC = () => {
       navigate('/exam/', {
         state: {
           id: url,
-          class: classUrl
+          classStorage: dataset.class.storage,
+          classUrl: classUrl
         }
       })
 
@@ -144,6 +150,52 @@ const ClassPage: React.FC = () => {
       }
     }
   }
+
+  async function removeStudent(student: Profile) {
+    if (dataset) {
+      // if (await classService.removeAnnouncement(dataset.class, message)) {
+      //   const filteredMessages = dataset.messages.filter((item) => item.id !== message.id)
+      //   setDataset({
+      //     ...dataset,
+      //     messages: filteredMessages
+      //   });
+      //   setAnnouncement('')
+      // }
+    }
+  }
+
+  async function removeExam(exam: Exam) {
+    if (dataset) {
+    //   if (await classService.removeAnnouncement(dataset.class, message)) {
+    //     const filteredMessages = dataset.messages.filter((item) => item.id !== message.id)
+    //     setDataset({
+    //       ...dataset,
+    //       messages: filteredMessages
+    //     });
+    //     setAnnouncement('')
+    //   }
+    // }
+  }}
+
+  
+
+  function getProfileDetail(webID: string) {
+    const profile = dataset?.students.find((item) => item.webId === webID)
+    if (profile && (profile.name !== "" || profile.surname !== "")) {
+      return `${profile.name} ${profile.surname}`
+    }
+    return webID
+  }
+
+  function getMindMapName(id: string) {
+
+    const mindMap = dataset?.mindMaps.find((item) => item.id === getNumberFromUrl(id))
+
+    if (mindMap) {
+      return mindMap.name
+    }
+  }
+
 
   return (
     <div className="App">
@@ -313,7 +365,7 @@ const ClassPage: React.FC = () => {
                               size="sm"
                               className='rounded-circle'
                               onClick={() => removeMindMap(item)}
-                              variant="success"
+                              variant="outline-danger"
                             >
                               <MdDeleteForever></MdDeleteForever>
                             </Button>
@@ -322,7 +374,7 @@ const ClassPage: React.FC = () => {
                             size="sm"
                             className='rounded-circle'
                             onClick={() => showExam(item)}
-                            variant="success"
+                            variant="outline-success"
                           >
                             <MdDriveFileRenameOutline></MdDriveFileRenameOutline>
                           </Button>
@@ -330,7 +382,7 @@ const ClassPage: React.FC = () => {
                             size="sm"
                             className='rounded-circle'
                             onClick={() => showMindMap(item)}
-                            variant="success"
+                            variant="outline-success"
                           >
                             <MdSlideshow></MdSlideshow>
                           </Button>
@@ -369,13 +421,13 @@ const ClassPage: React.FC = () => {
 
                         </div>
                         <div className='my-stack-reverse'>
-                          <Button
+                        <Button
                             size='sm'
-                            className="class-message"
-                            variant="outline"
-                            onClick={() => { sendMessage(item.webId) }}>
-                            <FcComments>
-                            </FcComments>
+                            className='rounded-circle'
+                            variant="outline-danger"
+                            onClick={() => { removeStudent(item) }}>
+                            <BsTrashFill>
+                            </BsTrashFill>
                           </Button>
 
                         </div>
@@ -400,28 +452,28 @@ const ClassPage: React.FC = () => {
                     <th>MindMap</th>
                     <th>Max</th>
                     <th>Result</th>
+                    <th></th>
                   </tr>
-                  {/* {exampleExams.map((item, index) => {
+                  {dataset?.testResults.map((item, index) => {
                     return (
                       <tr>
-                        <td>{item.profile}</td>
-                        <td>{item.mindMap}</td>
+                        <td>{getProfileDetail(item.profile)}</td>
+                        <td>{getMindMapName(item.mindMap)}</td>
                         <td>{item.max}</td>
                         <td>{item.result}</td>
+                        <td>
+                          <Button
+                            size='sm'
+                            className='rounded-circle'
+                            variant="outline-danger"
+                            onClick={() => { removeExam(item)}}>
+                            <BsTrashFill>
+                            </BsTrashFill>
+                          </Button>
+                        </td>
                       </tr>
-
-                      // <Row key={index}>
-                      //   <Col sm={9}>{item.name} {item.surname}</Col>
-                      //   <Col sm={3}>
-
-                      //     <Stack direction="horizontal" gap={2}>
-                      //       <Button className="class-message" variant="outline" onClick={() => { sendMessage(item.webId) }}><FcComments> </FcComments></Button>
-
-                      //     </Stack>
-                      //   </Col>
-                      // </Row>
                     )
-                  })} */}
+                  })}
                 </table>
               </Container>
             </Col>
