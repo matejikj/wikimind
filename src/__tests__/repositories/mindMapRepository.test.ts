@@ -111,7 +111,7 @@ describe("MindMapRepository", () => {
                 source: "mindMap-pod-1",
             };
             const mindMapRepository = new MindMapRepository();
-            const mindMapResult = await mindMapRepository.removeMindMap(mindMapDatasetUrl);
+            const mindMapResult = await mindMapRepository.removeMindMapDataset(mindMapDatasetUrl);
             expect(mindMapResult).toEqual(undefined);
         });
     });

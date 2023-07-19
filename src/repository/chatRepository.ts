@@ -10,6 +10,7 @@ import chatDefinition from "../definitions/chat.json";
 import { ChatLDO } from "../models/things/ChatLDO";
 import { Chat } from "../models/types/Chat";
 import { getNumberFromUrl } from "./utils";
+import { CHATS, MINDMAPS, TTLFILETYPE, WIKIMIND } from "../service/containerService";
 
 /**
  * Represents a repository for managing chat data using Solid data storage.
@@ -45,5 +46,12 @@ export class ChatRepository {
     let chatDataset = createSolidDataset();
     chatDataset = setThing(chatDataset, this.chatLDO.create(chat));
     await saveSolidDatasetAt(chatUrl, chatDataset, { fetch });
+  }
+
+  async updateChat(chat: Chat): Promise<void> {
+    const url = `${chat.source}${WIKIMIND}/${CHATS}/${chat.id}${TTLFILETYPE}`;
+    let mindMapDataset = await getSolidDataset(url, { fetch });
+    mindMapDataset = setThing(mindMapDataset, this.chatLDO.create(chat));
+    await saveSolidDatasetAt(url, mindMapDataset, { fetch });
   }
 }

@@ -1,14 +1,18 @@
 {
     "podProvider": {
-        "cs": "Zvol jméno",
-        "en": "Pod provider"        
+        "cs": "Zvol svého providera",
+        "en": "Choose your Solid pod provider"        
     },
     "select": {
         "cs": "Zvol jméno",
         "en": "Select provider"        
     },
+    "placeholder": {
+        "cs": "Vlož adresu providera",
+        "en": "Fill your provider"        
+    },
     "login": {
-        "cs": "Zvol jméno",
-        "en": "LOGIN"        
+        "cs": "Přihláásit",
+        "en": "Login"        
     }
 }

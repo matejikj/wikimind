@@ -10,6 +10,7 @@ import loginLocalization from "./locales/login.json";
 
 import '../styles/style.css';
 import { SessionContext } from "../sessionContext";
+import { LanguageLocalization } from "../models/UserSession";
 
 /**
  * Represents the LoginPage component that allows users to log in to their Solid pods.
@@ -17,6 +18,7 @@ import { SessionContext } from "../sessionContext";
 const LoginPage: React.FC = () => {
   // State to hold the selected pod provider's URL.
   const [currentProvider, setCurrentProvider] = useState<string>('');
+  const [language, setLanguage] = useState<LanguageLocalization>(LanguageLocalization.CS);
 
   // Access the session context to get session information
   const sessionContext = useContext(SessionContext);
@@ -26,10 +28,34 @@ const LoginPage: React.FC = () => {
       <Container className='center-container'>
         <Row>
           <Col sm={12}>
-            <Card>
+            <Card
+            border="dark"
+            // bg='secondary'
+            text='dark'
+
+>
               <Card.Body>
+                <Card.Subtitle>
+                  {
+                    language === LanguageLocalization.CS ?
+                      <Button
+                        variant="light"
+                        size="sm"
+                        onClick={() => setLanguage(LanguageLocalization.EN)}
+                      >
+                        🇨🇿
+                      </Button> :
+                      <Button
+                        variant="light"
+                        size="sm"
+                        onClick={() => setLanguage(LanguageLocalization.CS)}
+                      >
+                        🇬🇧
+                      </Button>
+                  }
+                </Card.Subtitle>
                 <Card.Title>
-                  {loginLocalization.podProvider[sessionContext.sessionInfo.localization]}
+                  {loginLocalization.podProvider[language]}
                 </Card.Title>
                 <br />
                 {/* Dropdown to select a pod provider */}
@@ -39,20 +65,16 @@ const LoginPage: React.FC = () => {
                   aria-label="Default select example"
                   style={{ maxWidth: '600px' }}
                 >
-                  <option>{loginLocalization.select[sessionContext.sessionInfo.localization]}</option>
+                  <option>{loginLocalization.select[language]}</option>
                   <option value="https://datapod.igrant.io/">https://datapod.igrant.io/</option>
-                  <option value="https://inrupt.net">https://inrupt.net</option>
-                  <option value="https://use.id/matejikj">https://use.id/matejikj</option>
-                  <option value="https://solidweb.org">https://solidweb.org</option>
                   <option value="https://solid.redpencil.io/">https://solid.redpencil.io/</option>
                   <option value="https://login.inrupt.com/">https://login.inrupt.com/</option>
-                  <option value="https://solidweb.me/">https://solidweb.me/</option>
                 </Form.Select>
                 <br />
                 {/* Input field to manually enter a pod provider's URL */}
                 <Form.Control
                   type="text"
-                  placeholder="Id"
+                  placeholder={loginLocalization.placeholder[language]}
                   value={currentProvider}
                   name="id"
                   style={{ maxWidth: '600px' }}
@@ -60,8 +82,8 @@ const LoginPage: React.FC = () => {
                 />
                 <br />
                 {/* Button to initiate the login process */}
-                <Button onClick={() => { login({ oidcIssuer: currentProvider }) }} variant="primary">
-                {loginLocalization.login[sessionContext.sessionInfo.localization]}
+                <Button onClick={() => { login({ oidcIssuer: currentProvider }) }} variant="secondary">
+                  {loginLocalization.login[language]}
                 </Button>
               </Card.Body>
             </Card>

@@ -53,7 +53,11 @@ export class MessageService {
 
 
   async sendMessage(chat: Chat, message: Message): Promise<void> {
+    chat.lastMessage = message.text
+    await this.chatRepository.updateChat(chat)
+
     // const url = `${chat.source}${WIKIMIND}/${CHATS}/${chat.storage}${TTLFILETYPE}`
     await this.messageRepository.createMessage(chat.storage, message)
+
   }  
 }

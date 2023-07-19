@@ -4,7 +4,9 @@ import {
     getThingAll,
     getUrlAll,
     saveSolidDatasetAt,
-    setThing
+    setThing,
+    getThing,
+    removeThing
   } from "@inrupt/solid-client";
   import { fetch } from "@inrupt/solid-client-authn-browser";
   import { RDF } from "@inrupt/vocab-common-rdf";
@@ -54,5 +56,16 @@ import {
       });
       return exams;
     }
+
+    async removeExam(listUrl: string, exam: Exam): Promise<void> {
+      let messageListDataset = await getSolidDataset(listUrl, { fetch });
+      const thingId = `${listUrl}#${exam.id}`;
+      const thing = getThing(messageListDataset, thingId);
+      if (thing) {
+        messageListDataset = removeThing(messageListDataset, thing);
+        await saveSolidDatasetAt(listUrl, messageListDataset, { fetch });
+      }
+    }
+
   }
   

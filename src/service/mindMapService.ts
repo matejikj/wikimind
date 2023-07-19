@@ -152,9 +152,9 @@ export class MindMapService {
       const mindMapLinksUrl = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${MINDMAPS}${TTLFILETYPE}`;
       const mindMapLinks = await this.linkRepository.getLinksList(mindMapLinksUrl);
 
-      await this.mindMapRepository.removeMindMap(mindMap.storage)
+      await this.mindMapRepository.removeMindMapDataset(mindMap.storage)
       const url = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
-      await this.mindMapRepository.removeMindMap(url)
+      await this.mindMapRepository.removeMindMapDataset(url)
 
       const link = mindMapLinks.find((item) => item.url === url)
       if (link) {

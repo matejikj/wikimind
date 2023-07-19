@@ -277,9 +277,9 @@ export class ClassService {
                 await Promise.all(mindMapLinks.map(async (item) => {
                     const mindMap = await this.mindMapRepository.getMindMap(item.url)
                     if (mindMap) {
-                        await this.mindMapRepository.removeMindMap(mindMap.storage)
+                        await this.mindMapRepository.removeMindMapDataset(mindMap.storage)
                         const url = `${userSession.podUrl}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
-                        await this.mindMapRepository.removeMindMap(url)
+                        await this.mindMapRepository.removeMindMapDataset(url)
                     }
                 }));
                 await this.linkRepository.removeLink(classLinksUrl, removedClass)
@@ -297,9 +297,9 @@ export class ClassService {
                         this.requestRepository.createRequest(grantUrl, grant)
                     }
                 });
-                await this.mindMapRepository.removeMindMap(classThing.storage)
+                await this.mindMapRepository.removeMindMapDataset(classThing.storage)
                 const url = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${classThing.id}${TTLFILETYPE}`;
-                await this.mindMapRepository.removeMindMap(url)
+                await this.mindMapRepository.removeMindMapDataset(url)
 
                 return true;
             }
@@ -443,14 +443,14 @@ export class ClassService {
                             universalAccess.setAgentAccess(messageDatasetUrl, classRequest.requestor, {
                                 append: true,
                                 read: true,
-                                write: false
+                                write: true
                             },
                                 { fetch: fetch }
                             )
                             universalAccess.setAgentAccess(messageStorageUrl, classRequest.requestor, {
                                 append: true,
                                 read: true,
-                                write: false
+                                write: true
                             },
                                 { fetch: fetch }
                             )
@@ -492,24 +492,34 @@ export class ClassService {
         }
     }
 
-    // async createNewAnnouncement(classThing: Class, message: Message): Promise<boolean> {
-    //     try {
-    //         const mindMapStorageUrl = `${classThing.source}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
-    //         await this.messageRepository.createMessage(classThing.storage, message)
-    //         return true
-    //     } catch (error) {
-    //         return false
-    //     }
-    // }
-    // async removeAnnouncement(classThing: Class, message: Message): Promise<boolean> {
-    //     try {
-    //         const mindMapStorageUrl = `${classThing.source}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
-    //         await this.messageRepository.removeMessage(classThing.storage, message)
-    //         return true
-    //     } catch (error) {
-    //         return false
-    //     }
-    // }
+    async removeExam(exam: Exam, classThing: Class): Promise<boolean> {
+        try {
+            await this.examRepository.removeExam(classThing.storage, exam)
+            return true
+        } catch (error) {
+            return false
+        }
+    }
+    
+
+    async removeClassMindMap(mindMap: MindMap, classThing: Class): Promise<boolean> {
+        try {
+            const mindMapLinks = await this.linkRepository.getLinksList(classThing.storage);
+      
+            await this.mindMapRepository.removeMindMapDataset(mindMap.storage)
+            const url = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
+            await this.mindMapRepository.removeMindMapDataset(url)
+      
+            const link = mindMapLinks.find((item) => item.url === url)
+            if (link) {
+              await this.linkRepository.removeLink(classThing.storage, link)
+            }
+            return true;
+          }
+          catch (error) {
+            return false;
+          }
+    }
 
     async addExamResult(classUrl: string, exam: Exam) {
         try {

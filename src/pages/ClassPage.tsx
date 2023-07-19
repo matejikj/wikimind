@@ -77,10 +77,6 @@ const ClassPage: React.FC = () => {
     }
   }
 
-  const removeMindMap = (mindMap: MindMap) => {
-    console.log(mindMap.id)
-  }
-
   async function addMindMap() {
     if (dataset) {
       const mindMapUrl = await classService.addMindMap(sessionContext.sessionInfo, dataset?.class, name)
@@ -93,14 +89,6 @@ const ClassPage: React.FC = () => {
       }
 
     }
-  }
-
-  const sendMessage = (e: string) => {
-    navigate('/chat/', {
-      state: {
-        id: e
-      }
-    })
   }
 
   async function showExam(mindMap: MindMap) {
@@ -166,18 +154,31 @@ const ClassPage: React.FC = () => {
 
   async function removeExam(exam: Exam) {
     if (dataset) {
-    //   if (await classService.removeAnnouncement(dataset.class, message)) {
-    //     const filteredMessages = dataset.messages.filter((item) => item.id !== message.id)
-    //     setDataset({
-    //       ...dataset,
-    //       messages: filteredMessages
-    //     });
-    //     setAnnouncement('')
-    //   }
-    // }
-  }}
+      if (await classService.removeExam(exam, dataset.class)) {
+        const filteredExams = dataset.testResults.filter((item) => item.id !== exam.id)
+        setDataset({
+          ...dataset,
+          testResults: filteredExams
+        });
+        setAnnouncement('')
+      }
+    }
+  }
 
-  
+  async function removeMindMap(mindMap: MindMap) {
+    if (dataset) {
+      if (await classService.removeClassMindMap(mindMap, dataset.class)) {
+        const filteredMindMaps = dataset.mindMaps.filter((item) => item.id !== mindMap.id)
+        setDataset({
+          ...dataset,
+          mindMaps: filteredMindMaps
+        });
+        setAnnouncement('')
+      }
+    }
+  }
+
+
 
   function getProfileDetail(webID: string) {
     const profile = dataset?.students.find((item) => item.webId === webID)
@@ -285,7 +286,7 @@ const ClassPage: React.FC = () => {
                 {dataset?.messages.map((item, index) => {
                   return (
                     <Row key={index}>
-                      <div className='aaa'>
+                      <div className='stack-row'>
                         <div className='my-stack'>
                           {item.text}
                         </div>
@@ -354,7 +355,7 @@ const ClassPage: React.FC = () => {
                 {dataset?.mindMaps.map((item, index) => {
                   return (
                     <Row key={index}>
-                      <div className='aaa'>
+                      <div className='stack-row'>
                         <div className='my-stack'>
                           {item.name}
                         </div>
@@ -370,14 +371,17 @@ const ClassPage: React.FC = () => {
                               <MdDeleteForever></MdDeleteForever>
                             </Button>
                           }
-                          <Button
-                            size="sm"
-                            className='rounded-circle'
-                            onClick={() => showExam(item)}
-                            variant="outline-success"
-                          >
-                            <MdDriveFileRenameOutline></MdDriveFileRenameOutline>
-                          </Button>
+                          {
+                            dataset?.class.teacher !== sessionContext.sessionInfo.webId &&
+                            <Button
+                              size="sm"
+                              className='rounded-circle'
+                              onClick={() => showExam(item)}
+                              variant="outline-success"
+                            >
+                              <MdDriveFileRenameOutline></MdDriveFileRenameOutline>
+                            </Button>
+                          }
                           <Button
                             size="sm"
                             className='rounded-circle'
@@ -408,7 +412,7 @@ const ClassPage: React.FC = () => {
                 {dataset?.students.map((item, index) => {
                   return (
                     <Row key={index}>
-                      <div className='aaa'>
+                      <div className='stack-row'>
                         <div className='my-stack'>
                           {
                             (item.name === "" && item.surname === "") &&
@@ -418,19 +422,20 @@ const ClassPage: React.FC = () => {
                             (item.name !== "" || item.surname !== "") &&
                             <p>{`${item.name} ${item.surname}`}</p>
                           }
-
                         </div>
-                        <div className='my-stack-reverse'>
-                        <Button
-                            size='sm'
-                            className='rounded-circle'
-                            variant="outline-danger"
-                            onClick={() => { removeStudent(item) }}>
-                            <BsTrashFill>
-                            </BsTrashFill>
-                          </Button>
-
-                        </div>
+                        {
+                          dataset?.class.teacher === sessionContext.sessionInfo.webId &&
+                          <div className='my-stack-reverse'>
+                            <Button
+                              size='sm'
+                              className='rounded-circle'
+                              variant="outline-danger"
+                              onClick={() => { removeStudent(item) }}>
+                              <BsTrashFill>
+                              </BsTrashFill>
+                            </Button>
+                          </div>
+                        }
                       </div>
                     </Row>
                   )
@@ -442,39 +447,48 @@ const ClassPage: React.FC = () => {
               <Container className="class-container">
                 <Row>
                   <h4>Exams</h4>
-                  {/* {exampleExams.length === 0 &&
+                  {dataset && dataset.testResults.length === 0 &&
                     <p>No exams already</p>
-                  } */}
+                  }
                 </Row>
-                <table>
-                  <tr>
-                    <th>Pupil</th>
-                    <th>MindMap</th>
-                    <th>Max</th>
-                    <th>Result</th>
-                    <th></th>
-                  </tr>
-                  {dataset?.testResults.map((item, index) => {
-                    return (
+                <Row>
+                  {dataset && dataset.testResults.length > 0 &&
+                    <table>
                       <tr>
-                        <td>{getProfileDetail(item.profile)}</td>
-                        <td>{getMindMapName(item.mindMap)}</td>
-                        <td>{item.max}</td>
-                        <td>{item.result}</td>
-                        <td>
-                          <Button
-                            size='sm'
-                            className='rounded-circle'
-                            variant="outline-danger"
-                            onClick={() => { removeExam(item)}}>
-                            <BsTrashFill>
-                            </BsTrashFill>
-                          </Button>
-                        </td>
+                        <th>Pupil</th>
+                        <th>MindMap</th>
+                        <th>Max</th>
+                        <th>Result</th>
+                        <th></th>
                       </tr>
-                    )
-                  })}
-                </table>
+                      {dataset?.testResults.map((item, index) => {
+                        return (
+                          <tr>
+                            <td>{getProfileDetail(item.profile)}</td>
+                            <td>{getMindMapName(item.mindMap)}</td>
+                            <td>{item.max}</td>
+                            <td>{item.result}</td>
+                            <td>
+                              {
+                                dataset?.class.teacher === sessionContext.sessionInfo.webId &&
+                                <Button
+                                  size='sm'
+                                  className='rounded-circle'
+                                  variant="outline-danger"
+                                  onClick={() => { removeExam(item) }}>
+                                  <BsTrashFill>
+                                  </BsTrashFill>
+                                </Button>
+
+                              }
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </table>}
+
+                </Row>
+
               </Container>
             </Col>
           </Row>

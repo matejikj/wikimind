@@ -1,40 +1,41 @@
 import {
-    createSolidDataset,
-    deleteSolidDataset,
-    getSolidDataset,
-    getThing,
-    getThingAll,
-    getUrlAll,
-    saveSolidDatasetAt,
-    setThing
-  } from "@inrupt/solid-client";
-  import { fetch } from "@inrupt/solid-client-authn-browser";
-  import { RDF } from "@inrupt/vocab-common-rdf";
-  import connectionDefinition from "../definitions/connection.json";
-  import mindMapDefinition from "../definitions/mindMap.json";
-  import nodeDefinition from "../definitions/node.json";
-  import { ConnectionLDO } from "../models/things/ConnectionLDO";
-  import { MindMapLDO } from "../models/things/MindMapLDO";
-  import { NodeLDO } from "../models/things/NodeLDO";
-  import { Connection } from "../models/types/Connection";
-  import { MindMap } from "../models/types/MindMap";
-  import { Node } from "../models/types/Node";
-  import { MINDMAPS, TTLFILETYPE, WIKIMIND } from "../service/containerService";
-  import { getNumberFromUrl } from "./utils";
-  
-  /**
-   * Represents a repository for managing mind map data using Solid data storage.
-   */
-  export class MindMapRepository {
+  createSolidDataset,
+  deleteSolidDataset,
+  getSolidDataset,
+  getThing,
+  getThingAll,
+  getUrlAll,
+  saveSolidDatasetAt,
+  setThing,
+  removeThing
+} from "@inrupt/solid-client";
+import { fetch } from "@inrupt/solid-client-authn-browser";
+import { RDF } from "@inrupt/vocab-common-rdf";
+import connectionDefinition from "../definitions/connection.json";
+import mindMapDefinition from "../definitions/mindMap.json";
+import nodeDefinition from "../definitions/node.json";
+import { ConnectionLDO } from "../models/things/ConnectionLDO";
+import { MindMapLDO } from "../models/things/MindMapLDO";
+import { NodeLDO } from "../models/things/NodeLDO";
+import { Connection } from "../models/types/Connection";
+import { MindMap } from "../models/types/MindMap";
+import { Node } from "../models/types/Node";
+import { MINDMAPS, TTLFILETYPE, WIKIMIND } from "../service/containerService";
+import { getNumberFromUrl } from "./utils";
+
+/**
+ * Represents a repository for managing mind map data using Solid data storage.
+ */
+export class MindMapRepository {
     private mindMapLDO: MindMapLDO;
-  
+    
     /**
      * Creates a new instance of the MindMapRepository class.
      */
     constructor() {
       this.mindMapLDO = new MindMapLDO(mindMapDefinition);
     }
-  
+    
     /**
      * Retrieves a mind map from Solid data storage based on the provided mind map URL.
      * @param mindMapUrl - The URL of the mind map to retrieve.
@@ -46,7 +47,7 @@ import {
       const thingId = `${mindMapUrl}#${getNumberFromUrl(mindMapUrl)}`;
       return mindMapBuilder.read(getThing(mindMapDataset, thingId));
     }
-  
+    
     /**
      * Creates a new mind map in Solid data storage under the provided mind map URL.
      * @param mindMapUrl - The URL where the mind map will be created.
@@ -58,7 +59,7 @@ import {
       mindMapDataset = setThing(mindMapDataset, this.mindMapLDO.create(mindMap));
       await saveSolidDatasetAt(mindMapUrl, mindMapDataset, { fetch });
     }
-  
+    
     /**
      * Updates an existing mind map in Solid data storage.
      * @param mindMap - The MindMap object representing the updated mind map data.
@@ -70,14 +71,13 @@ import {
       mindMapDataset = setThing(mindMapDataset, this.mindMapLDO.create(mindMap));
       await saveSolidDatasetAt(url, mindMapDataset, { fetch });
     }
-  
+    
     /**
      * Removes a mind map from Solid data storage based on the provided URL.
      * @param url - The URL of the mind map to be removed.
      * @returns A Promise that resolves when the mind map is successfully removed from the storage.
      */
-    async removeMindMap(url: string): Promise<void> {
+    async removeMindMapDataset(url: string): Promise<void> {
       await deleteSolidDataset(url, { fetch: fetch });
     }
-  }
-  
+}

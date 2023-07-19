@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Card, Carousel, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Card, Carousel, Col, Container, Form, Row, Stack } from "react-bootstrap";
 import { FaAddressCard } from "react-icons/fa";
 import { MdFormatListBulleted } from "react-icons/md";
 import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
@@ -123,7 +123,7 @@ const Timeline: React.FC<{
               </Col>
             </Row>
             <Row>
-              <Col style={{textAlign: "center"}}>
+              <Col style={{ textAlign: "center" }}>
                 {currentPeriod === TimePeriod.Century &&
                   <div>{key}. {timelineLocalization.century[sessionContext.sessionInfo.localization]}</div>
                 }
@@ -135,20 +135,16 @@ const Timeline: React.FC<{
                 }
               </Col>
             </Row>
-            <Row>
-              <Col>
-                <p>
-                  {key && dateGroups[key] && dateGroups[key].map((item) => {
-                    return (
-                      <Card style={{marginBottom: "4px", padding: "2px"}}>
-                        <Card.Title>{item.value.value}</Card.Title>
-                        <Card.Subtitle>{item.propertyLabel.value} {item.label.value}</Card.Subtitle>
-                      </Card>
-                    )
-                  })}
-                </p>
-              </Col>
-            </Row>
+            <Stack className="stack-timeline" >
+              {key && dateGroups[key] && dateGroups[key].map((item) => {
+                return (
+                  <Card style={{ marginBottom: "4px", padding: "2px" }}>
+                    <Card.Title>{item.value.value}</Card.Title>
+                    <Card.Subtitle>{item.propertyLabel.value} {item.label.value}</Card.Subtitle>
+                  </Card>
+                )
+              })}
+            </Stack>
           </Container>
         ) : (
           <Container fluid>

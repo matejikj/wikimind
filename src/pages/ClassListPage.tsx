@@ -148,7 +148,7 @@ const ClassListPage: React.FC = () => {
           {classList && classList.map((item, index) => {
             return (
               <Row key={index}>
-                <div className='aaa'>
+                <div className='stack-row'>
                   <div className='my-stack'>
                     {item.name}
                   </div>
@@ -236,7 +236,7 @@ const ClassListPage: React.FC = () => {
                 {requests.map((item, index) => {
                   return (
                     <Row key={index}>
-                      <div className='aaa'>
+                      <div className='stack-row'>
                         <div className='my-stack'>
                           {item.requestor}
                         </div>

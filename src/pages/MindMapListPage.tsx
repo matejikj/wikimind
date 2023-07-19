@@ -207,7 +207,7 @@ const MinaMapListPage: React.FC = () => {
           {mindMapList.map((item, index) => {
             return (
               <Row key={index}>
-                <div className='aaa'>
+                <div className='stack-row'>
                   <div className='my-stack'>
                     {item.name}
                   </div>
