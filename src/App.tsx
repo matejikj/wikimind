@@ -22,7 +22,6 @@ import { getPodUrl, isWacOrAcp } from "./service/accessService";
 import { checkContainer } from "./service/containerService";
 import { SessionContext } from "./sessionContext";
 import './styles/style.css';
-import Cookies from 'js-cookie';
 
 const App: React.FC = () => {
 
