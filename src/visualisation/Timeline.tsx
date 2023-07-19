@@ -1,17 +1,20 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Card, Carousel, Col, Container, Form, Row } from "react-bootstrap";
-import { FaMinus, FaPlus } from "react-icons/fa";
-import { useLocation, useNavigate } from "react-router-dom";
+import { FaAddressCard } from "react-icons/fa";
+import { MdFormatListBulleted } from "react-icons/md";
 import { TimelineResultItem } from "../dbpedia/models/TimelineResultItem";
 import { SessionContext } from "../sessionContext";
-import { groupDates } from "./utils";
+import timelineLocalization from "./locales/timeline.json";
 import { TimePeriod } from "./models/ChoiceSelection";
+import { groupDates } from "./utils";
 
 const Timeline: React.FC<{
   dataset: TimelineResultItem[],
 }> = ({
   dataset
 }) => {
+    const sessionContext = useContext(SessionContext);
+
     const [currentPeriod, setCurrentPeriod] = useState<TimePeriod>(TimePeriod.Century);
     const [dateGroups, setDateGroups] = useState<{
       [key: string]: TimelineResultItem[];
@@ -52,7 +55,7 @@ const Timeline: React.FC<{
       setCardsView(true)
     }
 
-    const handleSelect = (selectedIndex: any) => {
+    function handleSelect(selectedIndex: any) {
       setIndex(selectedIndex);
     };
 
@@ -76,7 +79,7 @@ const Timeline: React.FC<{
             id="visualisation-btn-toggle"
             onClick={() => changeToCardsView()}
             variant="success">
-            <FaMinus></FaMinus>
+            <FaAddressCard></FaAddressCard>
           </Button>
         ) : (
           <Button
@@ -87,27 +90,30 @@ const Timeline: React.FC<{
               () => changeToTimelineView()
             }
             variant="success">
-            <FaPlus></FaPlus>
+            <MdFormatListBulleted></MdFormatListBulleted>
           </Button>
         )}
         {!cardsView ? (
           <Container fluid>
             <Row>
-              <Col sm="12">
+              <Col></Col>
+              <Col>
                 <Form.Select
                   onChange={(e) => aaa(e)}
                   value={currentPeriod}
                   aria-label="Default select example"
                   style={{ maxWidth: '600px' }}
                 >
-                  <option value={TimePeriod.Century}>Century</option>
-                  <option value={TimePeriod.Decade}>Decade</option>
-                  <option value={TimePeriod.Year}>Year</option>
+                  <option value={TimePeriod.Century}>{timelineLocalization.century[sessionContext.sessionInfo.localization]}</option>
+                  <option value={TimePeriod.Decade}>{timelineLocalization.decade[sessionContext.sessionInfo.localization]}</option>
+                  <option value={TimePeriod.Year}>{timelineLocalization.year[sessionContext.sessionInfo.localization]}</option>
                 </Form.Select>
               </Col>
+              <Col></Col>
+
             </Row>
             <Row>
-              <Col sm="6">
+              <Col sm="12">
                 <Form.Range
                   min={0}
                   max={keys.length - 1}
@@ -117,35 +123,32 @@ const Timeline: React.FC<{
               </Col>
             </Row>
             <Row>
-              <Col sm="6">
+              <Col style={{textAlign: "center"}}>
                 {currentPeriod === TimePeriod.Century &&
-                  <div>{key}. century</div>
+                  <div>{key}. {timelineLocalization.century[sessionContext.sessionInfo.localization]}</div>
                 }
                 {currentPeriod === TimePeriod.Decade &&
                   <div>{key}s</div>
                 }
                 {currentPeriod === TimePeriod.Year &&
-                  <div>year {key}</div>
+                  <div>{timelineLocalization.year[sessionContext.sessionInfo.localization]} {key}</div>
                 }
               </Col>
-
             </Row>
-
             <Row>
               <Col>
                 <p>
-                  Values:{' '}
                   {key && dateGroups[key] && dateGroups[key].map((item) => {
                     return (
-                      <div>
-                        {item.label.value + ": " + item.propertyLabel.value + " - " + item.value.value}
-                      </div>
+                      <Card style={{marginBottom: "4px", padding: "2px"}}>
+                        <Card.Title>{item.value.value}</Card.Title>
+                        <Card.Subtitle>{item.propertyLabel.value} {item.label.value}</Card.Subtitle>
+                      </Card>
                     )
                   })}
                 </p>
               </Col>
             </Row>
-
           </Container>
         ) : (
           <Container fluid>

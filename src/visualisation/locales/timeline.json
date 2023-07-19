@@ -1,0 +1,14 @@
+{
+    "century": {
+        "cs": "Století",
+        "en": "Century"        
+    },
+    "decade": {
+        "cs": "Desetiletí",
+        "en": "Decade"        
+    },
+    "year": {
+        "cs": "Rok",
+        "en": "Year"        
+    }
+}
