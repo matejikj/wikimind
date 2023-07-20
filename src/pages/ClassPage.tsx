@@ -465,19 +465,6 @@ const ClassPage: React.FC = () => {
                             <p>{`${item.name} ${item.surname}`}</p>
                           }
                         </div>
-                        {
-                          dataset?.class.teacher === sessionContext.sessionInfo.webId &&
-                          <div className='my-stack-reverse'>
-                            <Button
-                              size='sm'
-                              className='rounded-circle'
-                              variant="outline-danger"
-                              onClick={() => { removeStudent(item) }}>
-                              <BsTrashFill>
-                              </BsTrashFill>
-                            </Button>
-                          </div>
-                        }
                       </div>
                     </Row>
                   )
