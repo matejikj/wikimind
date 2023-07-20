@@ -1,0 +1,95 @@
+{
+    "close": {
+        "cs": "Zavřít",
+        "en": "Close"
+    },
+    "classes": {
+        "cs": "Tvoje třídy",
+        "en": "Your classes"
+    },
+    "addCustom": {
+        "cs": "Přidej třídu",
+        "en": "Add custom entity"
+    },
+    "req": {
+        "cs": "Poslat požadavek",
+        "en": "Send request"
+    },
+    "cancel": {
+        "cs": "Zrušit",
+        "en": "Cancel"
+    },
+    "newClasses": {
+        "cs": "Vytvořit třídu",
+        "en": "Create class"
+    },
+    "save": {
+        "cs": "Uložit",
+        "en": "Save"
+    },
+    "chooseName": {
+        "cs": "Žádné požadavky",
+        "en": "Choose name"
+    },
+    "teacher": {
+        "cs": "Ucitel",
+        "en": "Teacher"
+    },
+    "announcement": {
+        "cs": "Oznámení",
+        "en": "Announcement"
+    },
+    "newAnnouncement": {
+        "cs": "Přidej oznámení",
+        "en": "New announcement"
+    },
+    "noAnnouncement": {
+        "cs": "Žádné oznámení",
+        "en": "No announcements"
+    },
+    "students": {
+        "cs": "Studenti",
+        "en": "Students"
+    },
+    "mindMaps": {
+        "cs": "Mind mapy",
+        "en": "Mind maps"
+    },
+    "noMndMaps": {
+        "cs": "Žádné mind mapy",
+        "en": "No mind maps"
+    },
+    "noStudents": {
+        "cs": "žádní studenti",
+        "en": "no students"
+    },
+    "noexams": {
+        "cs": "žádné zkoušky",
+        "en": "no exams"
+    },
+    "exams": {
+        "cs": "Zkoušky",
+        "en": "Exams"
+    },
+    "requests": {
+        "cs": "Žádosti",
+        "en": "Requests"
+    },
+    "add": {
+        "cs": "Přidej",
+        "en": "Add"
+    },
+    "copy": {
+        "cs": "Zkopíruj",
+        "en": "Copy"
+    },
+    "result": {
+        "cs": "Body",
+        "en": "result"
+    },
+    "noRequests": {
+        "cs": "Žádné žádosti",
+        "en": "No requests"
+    }
+
+}

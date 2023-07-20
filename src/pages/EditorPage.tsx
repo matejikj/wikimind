@@ -29,6 +29,7 @@ import { CanvasState } from "../visualisation/models/CanvasState";
 import { HistoryItem } from "../visualisation/models/HistoryItem";
 import { HistoryItemType } from "../visualisation/models/HistoryItemType";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
+import editorLocalization from "./locales/editor.json";
 
 const blankNode: Node = {
   id: '',
@@ -407,13 +408,12 @@ const EditorPage: React.FC = () => {
               <Stack direction="horizontal" gap={2}>
                 <Form.Control
                   type="text"
-                  placeholder="Keyword"
                   name="keyword"
                   size="sm"
                   value={searchedKeyword}
                   onChange={(e) => { setCanvasState(CanvasState.DEFAULT); setSearchedKeyword(e.target.value) }}
                 />
-                <Button size="sm" variant="success" onClick={() => { setCanvasState(CanvasState.DEFAULT); searchKeyword() }}>Search</Button>
+                <Button size="sm" variant="success" onClick={() => { setCanvasState(CanvasState.DEFAULT); searchKeyword() }}>{editorLocalization.search[sessionContext.sessionInfo.localization]}</Button>
                 <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); getPreviousItem() }}><MdKeyboardReturn /></Button>
                 <Button variant="outline-success" size="sm" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); clearSearching() }}><AiOutlineClear /></Button>
               </Stack>
@@ -428,7 +428,7 @@ const EditorPage: React.FC = () => {
                   <Button size="sm" variant={clickedNode.isInTest ? "info" : "secondary"} className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); examSwitch() }}><BsQuestionSquare /></Button>
                   {findingSimilar ? (
                     <Spinner animation="border" role="status">
-                      <span className="visually-hidden">Loading...</span>
+                      <span className="visually-hidden">{editorLocalization.loading[sessionContext.sessionInfo.localization]}</span>
                     </Spinner>
                   ) : (
                     <Button size="sm" variant="outline-success" className="rounded-circle" onClick={() => { setCanvasState(CanvasState.DEFAULT); getSimilarEntities(clickedNode) }}><HiMagnifyingGlass /></Button>
@@ -442,7 +442,7 @@ const EditorPage: React.FC = () => {
               {(clickedNode === undefined) &&
                 <Stack className="visualisation-active-container" direction="horizontal" gap={1}>
                   <Button disabled variant="light" size="sm">
-                    {"No active node"}
+                    {editorLocalization.noactive[sessionContext.sessionInfo.localization]}
                   </Button>
                 </Stack>
               }
@@ -528,7 +528,7 @@ const EditorPage: React.FC = () => {
               <Col className="recommend-col" sm="12">
                 <div className="recommends-div">
                   <Button onClick={() => { setCanvasState(CanvasState.DEFAULT);; createCustomEntity() }} variant="outline" className="recommend-btn" size="sm">
-                    {"Add custom entity"}
+                  {editorLocalization.addCustom[sessionContext.sessionInfo.localization]}
                   </Button>
                 </div>
                 {recommends.map((item, index) => {

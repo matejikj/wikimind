@@ -48,6 +48,11 @@ export class ChatRepository {
     await saveSolidDatasetAt(chatUrl, chatDataset, { fetch });
   }
 
+    /**
+   * Updates a new chat and saves it to Solid data storage.
+   * @param chat - The Chat object representing the chat to be updated.
+   * @returns A Promise that resolves when the chat is successfully created and saved.
+   */
   async updateChat(chat: Chat): Promise<void> {
     const url = `${chat.source}${WIKIMIND}/${CHATS}/${chat.id}${TTLFILETYPE}`;
     let mindMapDataset = await getSolidDataset(url, { fetch });

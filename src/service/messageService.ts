@@ -6,6 +6,9 @@ import { LinkRepository } from "../repository/linkRepository";
 import { MessageRepository } from "../repository/messageRepository";
 import { CHATS, TTLFILETYPE, WIKIMIND } from "./containerService";
 
+/**
+ * MessageService class provides methods for interacting with chats and messages.
+ */
 export class MessageService {
   private chatRepository: ChatRepository;
   private messageRepository: MessageRepository;
@@ -17,6 +20,11 @@ export class MessageService {
     this.linkRepository = new LinkRepository();
   }
 
+  /**
+   * Retrieves the list of chats associated with a Pod.
+   * @param podUrl - The URL of the Pod.
+   * @returns A Promise that resolves to an array of Chat objects, or undefined if there's an error.
+   */
   async getChatList(podUrl: string): Promise<Chat[] | undefined> {
     try {
       const chats: Chat[] = []
@@ -32,6 +40,11 @@ export class MessageService {
     }
   }
 
+  /**
+   * Retrieves the details of a specific chat and its messages.
+   * @param chatUrl - The URL of the chat.
+   * @returns A Promise that resolves to the ChatDataset object if found, otherwise undefined.
+   */
   async getChat(chatUrl: string): Promise<ChatDataset | undefined> {
     try {
       const chat = await this.chatRepository.getChat(chatUrl)
@@ -52,6 +65,12 @@ export class MessageService {
   }
 
 
+  /**
+   * Sends a message to a chat and updates the last message.
+   * @param chat - The Chat object representing the chat to which the message will be sent.
+   * @param message - The Message object representing the message to be sent.
+   * @returns A Promise that resolves to void.
+   */
   async sendMessage(chat: Chat, message: Message): Promise<void> {
     chat.lastMessage = message.text
     await this.chatRepository.updateChat(chat)
@@ -59,5 +78,5 @@ export class MessageService {
     // const url = `${chat.source}${WIKIMIND}/${CHATS}/${chat.storage}${TTLFILETYPE}`
     await this.messageRepository.createMessage(chat.storage, message)
 
-  }  
+  }
 }

@@ -1,0 +1,18 @@
+{
+    "loading": {
+        "cs": "Načítání",
+        "en": "Loading"
+    },
+    "noactive": {
+        "cs": "Žádný aktivní prvek",
+        "en": "No active node"
+    },
+    "search": {
+        "cs": "Hledej",
+        "en": "Search"
+    },
+    "addCustom": {
+        "cs": "Přidej vlastní entitu",
+        "en": "Add custom entity"
+    }
+}

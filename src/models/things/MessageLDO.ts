@@ -17,7 +17,6 @@ export class MessageLDO extends BaseLDO<Message> implements CRUDLDO<Message> {
         return {
             id: getStringNoLocale(thing, (this.rdf.properties.id))!,
             from: getStringNoLocale(thing, (this.rdf.properties.from))!,
-            // to: getStringNoLocale(thing, (this.rdf.properties.to))!,
             text: getStringNoLocale(thing, (this.rdf.properties.text))!,
             date: getInteger(thing, (this.rdf.properties.date))!,
         };
@@ -35,7 +34,6 @@ export class MessageLDO extends BaseLDO<Message> implements CRUDLDO<Message> {
             .addInteger((this.rdf.properties.date), object.date)
             .addStringNoLocale((this.rdf.properties.text), object.text)
             .addStringNoLocale((this.rdf.properties.from), object.from)
-            // .addStringNoLocale((this.rdf.properties.to), object.to)
             .build();
         return newThing;
     }

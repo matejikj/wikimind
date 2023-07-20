@@ -16,6 +16,7 @@ import { CLASSES, MINDMAPS, TTLFILETYPE, WIKIMIND } from "../service/containerSe
 import { generate_uuidv4 } from "../service/utils";
 import { SessionContext } from "../sessionContext";
 import '../styles/style.css';
+import localization from "./locales/classes.json";
 
 const ClassPage: React.FC = () => {
   const navigate = useNavigate();
@@ -37,9 +38,15 @@ const ClassPage: React.FC = () => {
  */
   async function fetchClass(): Promise<void> {
     try {
+      const startTime = performance.now();
+
       const classDataset = await classService.getClass(location.state.url);
+      const endTime = performance.now();
+      const executionTime = endTime - startTime;
+      console.log(`getClass execution time: ${executionTime} milliseconds`);
+
       if (classDataset) {
-        setDataset(classDataset);
+        setDataset(classDataset)
       }
     } catch (error) {
       alert(error)
@@ -240,7 +247,7 @@ const ClassPage: React.FC = () => {
         <Container>
           <Modal show={createNewModalVisible} onHide={() => setCreateNewModalVisible(false)}>
             <Modal.Header>
-              <Modal.Title>Choose name</Modal.Title>
+              <Modal.Title>{localization.chooseName[sessionContext.sessionInfo.localization]}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <Form>
@@ -257,10 +264,10 @@ const ClassPage: React.FC = () => {
               <Button
                 className='my-btn'
                 variant="secondary" onClick={() => setCreateNewModalVisible(false)}>
-                Close
+                {localization.close[sessionContext.sessionInfo.localization]}
               </Button>
               <Button variant="primary" onClick={addMindMap}>
-                Save Changes
+              {localization.save[sessionContext.sessionInfo.localization]}
               </Button>
             </Modal.Footer>
           </Modal>
@@ -274,7 +281,7 @@ const ClassPage: React.FC = () => {
           <Row>
             <Col sm="6">
               <Stack>
-                <h6>Teacher: {dataset?.class.teacher}</h6>
+                <h6>{localization.teacher[sessionContext.sessionInfo.localization]}: {dataset?.class.teacher}</h6>
                 <div>
                   <Button
                     className="rounded-circle"
@@ -294,7 +301,7 @@ const ClassPage: React.FC = () => {
                 <Stack direction="horizontal" gap={2}>
                   <span
                   >
-                    Copy inviting link
+                    {localization.copy[sessionContext.sessionInfo.localization]}
                   </span>
                   <Button
                     onClick={() => copyToClipboard()}
@@ -313,9 +320,9 @@ const ClassPage: React.FC = () => {
             <Col sm="12">
               <Container className="class-container">
                 <Row>
-                  <h4>Announcements</h4>
+                  <h4> {localization.announcement[sessionContext.sessionInfo.localization]}</h4>
                   {dataset?.messages.length === 0 &&
-                    <p>No announcements already</p>
+                    <p> {localization.noAnnouncement[sessionContext.sessionInfo.localization]}</p>
                   }
                 </Row>
                 {dataset?.messages.map((item, index) => {
@@ -358,20 +365,20 @@ const ClassPage: React.FC = () => {
                         variant="success"
                         size="sm"
                       >
-                        Add
+                         {localization.add[sessionContext.sessionInfo.localization]}
                       </Button>
                       <Button
                         onClick={() => { setAnnouncementVisible(false) }}
                         variant="danger"
                         size="sm"
                       >
-                        Cancel
+                         {localization.cancel[sessionContext.sessionInfo.localization]}
                       </Button>
                     </Stack> :
                     <Stack direction="horizontal" gap={1}>
                       {
                         dataset?.class.teacher === sessionContext.sessionInfo.webId &&
-                        <Button size='sm' onClick={() => setAnnouncementVisible(true)} variant="primary">Create new announcement</Button>
+                        <Button size='sm' onClick={() => setAnnouncementVisible(true)} variant="primary"> {localization.newAnnouncement[sessionContext.sessionInfo.localization]}</Button>
                       }
                     </Stack>
                   }
@@ -382,9 +389,9 @@ const ClassPage: React.FC = () => {
             <Col sm="12">
               <Container className="class-container">
                 <Row>
-                  <h4>Mind maps</h4>
+                  <h4> {localization.mindMaps[sessionContext.sessionInfo.localization]}</h4>
                   {dataset?.mindMaps.length === 0 &&
-                    <p>No mind maps already</p>
+                    <p> {localization.noMndMaps[sessionContext.sessionInfo.localization]}</p>
                   }
                 </Row>
                 {dataset?.mindMaps.map((item, index) => {
@@ -432,16 +439,16 @@ const ClassPage: React.FC = () => {
                 })}
                 {
                   dataset?.class.teacher === sessionContext.sessionInfo.webId &&
-                  <Button onClick={() => setCreateNewModalVisible(true)} variant="outline-success">Create new</Button>
+                  <Button onClick={() => setCreateNewModalVisible(true)} variant="outline-success"> {localization.add[sessionContext.sessionInfo.localization]}</Button>
                 }
               </Container>
             </Col>
             <Col sm="12">
               <Container className="class-container">
                 <Row>
-                  <h4>Students</h4>
+                  <h4> {localization.students[sessionContext.sessionInfo.localization]}</h4>
                   {dataset?.students.length === 0 &&
-                    <p>No students already</p>
+                    <p>{localization.noStudents[sessionContext.sessionInfo.localization]}</p>
                   }
                 </Row>
                 {dataset?.students.map((item, index) => {
@@ -481,19 +488,19 @@ const ClassPage: React.FC = () => {
             <Col sm="12">
               <Container className="class-container">
                 <Row>
-                  <h4>Exams</h4>
+                  <h4> {localization.exams[sessionContext.sessionInfo.localization]}</h4>
                   {dataset && dataset.testResults.length === 0 &&
-                    <p>No exams already</p>
+                    <p> {localization.noexams[sessionContext.sessionInfo.localization]}</p>
                   }
                 </Row>
                 <Row>
                   {dataset && dataset.testResults.length > 0 &&
                     <table>
                       <tr>
-                        <th>Pupil</th>
+                        <th>Student</th>
                         <th>MindMap</th>
                         <th>Max</th>
-                        <th>Result</th>
+                        <th> {localization.result[sessionContext.sessionInfo.localization]}</th>
                         <th></th>
                       </tr>
                       {dataset?.testResults.map((item, index) => {

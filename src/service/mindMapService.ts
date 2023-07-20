@@ -1,28 +1,30 @@
 import {
   createSolidDataset,
-  saveSolidDatasetAt,
-  universalAccess,
   getSolidDataset,
   getThingAll,
-  removeThing
+  removeThing,
+  saveSolidDatasetAt
 } from "@inrupt/solid-client";
 import { fetch } from "@inrupt/solid-client-authn-browser";
+import { UserSession } from "../models/UserSession";
 import {
   AccessControlPolicy
 } from "../models/enums/AccessControlPolicy";
-import { Link } from "../models/types/Link";
 import { LinkType } from "../models/enums/LinkType";
+import { Link } from "../models/types/Link";
 import { MindMap } from "../models/types/MindMap";
 import { MindMapDataset } from "../models/types/MindMapDataset";
-import { UserSession } from "../models/UserSession";
+import { ConnectionRepository } from "../repository/connectionRepository";
 import { LinkRepository } from "../repository/linkRepository";
 import { MindMapRepository } from "../repository/mindMapRepository";
+import { NodeRepository } from "../repository/nodeRepository";
 import { initializeAcl } from "./accessService";
 import { MINDMAPS, TTLFILETYPE, WIKIMIND } from "./containerService";
 import { generate_uuidv4 } from "./utils";
-import { ConnectionRepository } from "../repository/connectionRepository";
-import { NodeRepository } from "../repository/nodeRepository";
 
+/**
+ * MindMapService class provides methods for interacting with mind maps and related data.
+ */
 export class MindMapService {
   private mindMapRepository: MindMapRepository;
   private linkRepository: LinkRepository;
@@ -36,6 +38,11 @@ export class MindMapService {
     this.nodeRepository = new NodeRepository();
   }
 
+  /**
+   * Retrieves the list of mind maps associated with a Pod.
+   * @param podUrl - The URL of the Pod.
+   * @returns A Promise that resolves to an array of MindMap objects.
+   */
   async getMindMapList(podUrl: string): Promise<MindMap[]> {
     const resMindMapList: MindMap[] = []
 
@@ -56,6 +63,11 @@ export class MindMapService {
     }
   }
 
+  /**
+   * Retrieves the details of a specific mind map and its associated nodes and connections.
+   * @param mindMapUrl - The URL of the mind map.
+   * @returns A Promise that resolves to the MindMapDataset object if found, otherwise undefined.
+   */
   async getMindMap(mindMapUrl: string): Promise<MindMapDataset | undefined> {
     try {
       const mindMap = await this.mindMapRepository.getMindMap(mindMapUrl)
@@ -77,6 +89,12 @@ export class MindMapService {
     }
   }
 
+  /**
+   * Creates a new mind map with the given name and user session.
+   * @param name - The name of the new mind map.
+   * @param userSession - The user session.
+   * @returns A Promise that resolves to the URL of the newly created mind map.
+   */
   async createNewMindMap(name: string, userSession: UserSession): Promise<string | undefined> {
     const mindMapsListUrl = `${userSession.podUrl}${WIKIMIND}/${MINDMAPS}/${MINDMAPS}${TTLFILETYPE}`;
     const mindMapStorageUrl = `${userSession.podUrl}${WIKIMIND}/${MINDMAPS}/${generate_uuidv4()}${TTLFILETYPE}`;
@@ -114,18 +132,6 @@ export class MindMapService {
    */
   async saveMindMap(mindMap: MindMapDataset, userSession: UserSession): Promise<void> {
     try {
-      // const access = await universalAccess.getPublicAccess(mindMap.mindMap.storage, { fetch })
-      // await this.mindMapRepository.removeMindMap(mindMap.mindMap.storage)
-      // let mindMapStorageDataset = createSolidDataset();
-      // await saveSolidDatasetAt(mindMap.mindMap.storage, mindMapStorageDataset, { fetch });
-      // if (userSession.podAccessControlPolicy === AccessControlPolicy.WAC) {
-      //   await initializeAcl(mindMap.mindMap.storage);
-      // }
-      // if (access) {
-      //   await universalAccess.setPublicAccess(mindMap.mindMap.storage, access,
-      //     { fetch: fetch }
-      //   )
-      // }
 
       let dataset = await getSolidDataset(mindMap.mindMap.storage, { fetch });
 
@@ -146,6 +152,11 @@ export class MindMapService {
     } catch (error: any) { }
   }
 
+  /**
+   * Removes a mind map and its associated data.
+   * @param mindMap - The MindMap object representing the mind map to be removed.
+   * @returns A Promise that resolves to true if the removal is successful, otherwise false.
+   */
   async removeMindMap(mindMap: MindMap): Promise<boolean> {
     try {
 
@@ -167,6 +178,11 @@ export class MindMapService {
     }
   }
 
+  /**
+   * Updates an existing mind map with the provided data.
+   * @param mindMap - The MindMap object representing the mind map to be updated.
+   * @returns A Promise that resolves to true if the update is successful, otherwise false.
+   */
   async updateMindMap(mindMap: MindMap): Promise<boolean> {
     try {
       await this.mindMapRepository.updateMindMap(mindMap)

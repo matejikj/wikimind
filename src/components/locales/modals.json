@@ -1,47 +1,47 @@
 {
     "dashboard": {
-        "cs": "Seznam mind map",
-        "en": "Mind maps"        
+        "cs": "fds mind map",
+        "en": "rfewq maps"        
     },
     "close": {
-        "cs": "Seznam mind map",
-        "en": "close"        
+        "cs": "Zavřít",
+        "en": "Close"        
     },
     "cancel": {
-        "cs": "Seznam mind map",
-        "en": "cancel"        
+        "cs": "Zrušit",
+        "en": "Cancel"        
     },
     "nodeColors": {
-        "cs": "Seznam mind map",
-        "en": "nodeColors"        
+        "cs": "Barva entity",
+        "en": "Node colors"        
     },
     "background": {
-        "cs": "Seznam mind map",
+        "cs": "Pozadí",
         "en": "background"        
     },
     "selectBackgroundColor": {
-        "cs": "Seznam mind map",
-        "en": "selectBackgroundColor"        
+        "cs": "Vyber pozadí",
+        "en": "Select background color"        
     },
     "textColor": {
-        "cs": "Seznam mind map",
-        "en": "text"        
+        "cs": "Text",
+        "en": "Text"        
     },
     "selectTextColor": {
-        "cs": "Seznam mind map",
-        "en": "text"        
+        "cs": "Vyber barvu textu",
+        "en": "Select color text"        
     },
     "backgroundColor": {
-        "cs": "Seznam mind map",
-        "en": "backgroundColor"        
+        "cs": "Barva poyadí",
+        "en": "Background color"        
     },
     "addNewNode": {
         "cs": "Seznam mind map",
         "en": "Add new Node"        
     },
     "add": {
-        "cs": "Seznam mind map",
-        "en": "Add"        
+        "cs": "Uložit",
+        "en": "Save"        
     }
     
 }

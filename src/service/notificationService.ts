@@ -4,12 +4,16 @@ import { WebsocketNotification } from "@inrupt/solid-client-notifications";
 import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
 import { Chat } from "../models/types/Chat";
 import { ChatDataset } from "../models/types/ChatDataset";
-import { CHATS, REQUESTS, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";
+import { CHATS, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";
 import { MessageService } from "./messageService";
-import { UserSession } from "../models/UserSession";
 
 const messageService = new MessageService()
 
+/**
+ * Subscribes to message notifications for a specific chat.
+ * @param chat - The Chat object representing the chat to subscribe to.
+ * @param setMessageDataset - A function to set the received chat dataset after subscription updates.
+ */
 export async function messageNotificationsSubscription(chat: Chat, setMessageDataset: any) {
     if (chat.accessControlPolicy === AccessControlPolicy.WAC) {
         const wssUrl = new URL(chat.storage);

@@ -9,6 +9,6 @@
         "cy": "http://data.ign.fr/def/geometrie/20190212.htm#coordY",
         "color": "http://vocab.gtfs.org/gtfs.ttl#color",
         "textColor": "http://vocab.gtfs.org/gtfs.ttl#textColor",
-        "isInTest": "https://schema.org/Product"
+        "isInTest": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#storage"
     }
 }

@@ -3,8 +3,7 @@ import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
     createSolidDataset,
     saveSolidDatasetAt,
-    universalAccess,
-    getPodUrlAll
+    universalAccess
 } from "@inrupt/solid-client";
 
 
@@ -13,17 +12,18 @@ import { Class } from "../models/types/Class";
 import { CHATS, CLASSES, MINDMAPS, PROFILE, REQUESTS, SLASH, TTLFILETYPE, WIKIMIND } from "./containerService";
 import { generate_uuidv4 } from "./utils";
 // import { getProfile } from "./profileService";
+import { UserSession } from "../models/UserSession";
 import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
+import { LinkType } from "../models/enums/LinkType";
+import { RequestType } from "../models/enums/RequestType";
 import { Chat } from "../models/types/Chat";
 import { ClassDataset } from "../models/types/ClassDataset";
+import { Exam } from "../models/types/Exam";
 import { Link } from "../models/types/Link";
-import { LinkType } from "../models/enums/LinkType";
 import { Message } from "../models/types/Message";
 import { MindMap } from "../models/types/MindMap";
 import { Profile } from "../models/types/Profile";
 import { Request } from "../models/types/Request";
-import { RequestType } from "../models/enums/RequestType";
-import { UserSession } from "../models/UserSession";
 import { ChatRepository } from "../repository/chatRepository";
 import { ClassRepository } from "../repository/classRepository";
 import { ExamRepository } from "../repository/examRepository";
@@ -33,12 +33,12 @@ import { MindMapRepository } from "../repository/mindMapRepository";
 import { ProfileRepository } from "../repository/profileRepository";
 import { RequestRepository } from "../repository/requestRepository";
 import { getPodUrl, initializeAcl } from "./accessService";
-import { ExamLDO } from "../models/things/ExamLDO";
-import { Exam } from "../models/types/Exam";
-import { item } from "rdf-namespaces/dist/fhir";
 
 
 
+/**
+ * ClassService class provides methods for interacting with classes and related data.
+ */
 export class ClassService {
     private classRepository: ClassRepository;
     private messageRepository: MessageRepository;
@@ -60,6 +60,11 @@ export class ClassService {
         this.examRepository = new ExamRepository();
     }
 
+    /**
+     * Retrieves the list of classes associated with a Pod.
+     * @param podUrl - The URL of the Pod.
+     * @returns A Promise that resolves to an array of Class objects.
+     */
     async getClassList(podUrl: string): Promise<Class[]> {
         const classList: Class[] = []
 
@@ -69,7 +74,7 @@ export class ClassService {
             await Promise.all(classLinks.map(async (link) => {
                 try {
                     const newClass = await this.classRepository.getClass(link.url)
-                    newClass && classList.push(newClass)    
+                    newClass && classList.push(newClass)
                 } catch (error) {
                     console.debug('Problem when getting class: ', error)
                 }
@@ -79,6 +84,11 @@ export class ClassService {
         }
     }
 
+    /**
+     * Retrieves the details of a specific class.
+     * @param classUrl - The URL of the class.
+     * @returns A Promise that resolves to the ClassDataset object if found, otherwise undefined.
+     */
     async getClass(classUrl: string): Promise<ClassDataset | undefined> {
         try {
             const classThing = await this.classRepository.getClass(classUrl);
@@ -137,6 +147,12 @@ export class ClassService {
         }
     }
 
+    /**
+     * Creates a new class and saves it to the Pod.
+     * @param name - The name of the new class.
+     * @param userSession - The UserSession object representing the current user's session.
+     * @returns A Promise that resolves to the URL of the newly created class.
+     */
     async createNewClass(name: string, userSession: UserSession): Promise<string | undefined> {
         const classesListUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${CLASSES}${TTLFILETYPE}`;
         const classStorageUrl = `${userSession.podUrl}${WIKIMIND}/${CLASSES}/${generate_uuidv4()}${TTLFILETYPE}`;
@@ -167,6 +183,11 @@ export class ClassService {
         return classUrl;
     }
 
+    /**
+     * Retrieves the list of class requests from the Pod.
+     * @param userSession - The UserSession object representing the current user's session.
+     * @returns A Promise that resolves to an array of Request objects.
+     */
     async getRequests(userSession: UserSession) {
 
         try {
@@ -311,6 +332,11 @@ export class ClassService {
         }
     }
 
+    /**
+     * Sends a request to join a class.
+     * @param userSession - The UserSession object representing the current user's session.
+     * @param classUri - The URL of the class to join.
+     */
     async requestClass(userSession: UserSession, classUri: string) {
         const paramString = classUri.split('?')[1];
         const webId = classUri.split('?')[0];
@@ -330,6 +356,12 @@ export class ClassService {
         }
     }
 
+    /**
+     * Creates a new announcement for a class.
+     * @param classThing - The Class object representing the class to add the announcement to.
+     * @param message - The Message object representing the announcement.
+     * @returns A Promise that resolves to true if the announcement is created successfully, otherwise false.
+     */
     async createNewAnnouncement(classThing: Class, message: Message): Promise<boolean> {
         try {
             await this.messageRepository.createMessage(classThing.storage, message)
@@ -338,6 +370,13 @@ export class ClassService {
             return false
         }
     }
+
+    /**
+     * Removes an announcement from a class.
+     * @param classThing - The Class object representing the class to remove the announcement from.
+     * @param message - The Message object representing the announcement to be removed.
+     * @returns A Promise that resolves to true if the announcement is removed successfully, otherwise false.
+     */
     async removeAnnouncement(classThing: Class, message: Message): Promise<boolean> {
         try {
             const mindMapStorageUrl = `${classThing.source}${WIKIMIND}/${MINDMAPS}/${classThing.id}${TTLFILETYPE}`;
@@ -348,6 +387,12 @@ export class ClassService {
         }
     }
 
+    /**
+     * Denies a class request.
+     * @param classRequest - The Request object representing the class request to be denied.
+     * @param userSession - The UserSession object representing the current user's session.
+     * @returns A Promise that resolves to void.
+     */
     async denyClassRequest(classRequest: Request, userSession: UserSession): Promise<void> {
         try {
             const requestsUrl = `${userSession.podUrl}${WIKIMIND}/${REQUESTS}/${REQUESTS}${TTLFILETYPE}`;
@@ -357,6 +402,12 @@ export class ClassService {
         }
     }
 
+    /**
+     * Allows access to a class for a specific user.
+     * @param classRequest - The Request object representing the class request to be allowed.
+     * @param userSession - The UserSession object representing the current user's session.
+     * @returns A Promise that resolves to void.
+     */
     async allowClassAccess(classRequest: Request, userSession: UserSession): Promise<void> {
         const chatLinksUrl = `${userSession.podUrl}${WIKIMIND}/${CHATS}/${CHATS}${TTLFILETYPE}`;
         const chatLinks = await this.linkRepository.getLinksList(chatLinksUrl);
@@ -492,6 +543,12 @@ export class ClassService {
         }
     }
 
+    /**
+     * Removes an exam from a class.
+     * @param exam - The Exam object representing the exam to be removed.
+     * @param classThing - The Class object representing the class from which the exam will be removed.
+     * @returns A Promise that resolves to true if the exam is removed successfully, otherwise false.
+     */
     async removeExam(exam: Exam, classThing: Class): Promise<boolean> {
         try {
             await this.examRepository.removeExam(classThing.storage, exam)
@@ -500,27 +557,38 @@ export class ClassService {
             return false
         }
     }
-    
 
+    /**
+     * Removes a mind map from a class.
+     * @param mindMap - The MindMap object representing the mind map to be removed.
+     * @param classThing - The Class object representing the class from which the mind map will be removed.
+     * @returns A Promise that resolves to true if the mind map is removed successfully, otherwise false.
+     */
     async removeClassMindMap(mindMap: MindMap, classThing: Class): Promise<boolean> {
         try {
             const mindMapLinks = await this.linkRepository.getLinksList(classThing.storage);
-      
+
             await this.mindMapRepository.removeMindMapDataset(mindMap.storage)
             const url = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
             await this.mindMapRepository.removeMindMapDataset(url)
-      
+
             const link = mindMapLinks.find((item) => item.url === url)
             if (link) {
-              await this.linkRepository.removeLink(classThing.storage, link)
+                await this.linkRepository.removeLink(classThing.storage, link)
             }
             return true;
-          }
-          catch (error) {
+        }
+        catch (error) {
             return false;
-          }
+        }
     }
 
+    /**
+     * Adds an exam result to a class.
+     * @param classUrl - The URL of the class to which the exam result will be added.
+     * @param exam - The Exam object representing the exam result to be added.
+     * @returns A Promise that resolves to true if the exam result is added successfully, otherwise false.
+     */
     async addExamResult(classUrl: string, exam: Exam) {
         try {
             const mindMapStorageUrl = `${classUrl}${WIKIMIND}/${MINDMAPS}/${exam.id}${TTLFILETYPE}`;

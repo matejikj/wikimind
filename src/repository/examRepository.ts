@@ -57,6 +57,12 @@ import {
       return exams;
     }
 
+        /**
+     * Remove exam from Solid data storage under the given storage URL.
+     * @param storageUrl - The URL of the storage where the exams are located.
+     * @param exam - exam.
+     * @returns A Promise that resolves to an array of Exam objects found in the storage.
+     */
     async removeExam(listUrl: string, exam: Exam): Promise<void> {
       let messageListDataset = await getSolidDataset(listUrl, { fetch });
       const thingId = `${listUrl}#${exam.id}`;

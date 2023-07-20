@@ -12,7 +12,7 @@ import { Class } from '../models/types/Class';
 import { Request } from '../models/types/Request';
 import { ClassService } from '../service/classService';
 import { SessionContext } from '../sessionContext';
-
+import localization from "./locales/classes.json";
 import { CLASSES, SLASH, TTLFILETYPE, WIKIMIND } from '../service/containerService';
 import '../styles/style.css';
 
@@ -117,13 +117,12 @@ const ClassListPage: React.FC = () => {
       <main>
         <Modal show={show} onHide={handleClose}>
           <Modal.Header>
-            <Modal.Title>Choose name</Modal.Title>
+            <Modal.Title>{localization.addCustom[sessionContext.sessionInfo.localization]}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
               <Form.Control
                 type="text"
-                placeholder="insert name"
                 aria-label="insert name"
                 value={name}
                 onChange={(e) => { setName(e.target.value) }}
@@ -132,16 +131,16 @@ const ClassListPage: React.FC = () => {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
-              Close
+              {localization.close[sessionContext.sessionInfo.localization]}
             </Button>
             <Button variant="primary" onClick={createNew}>
-              Save Changes
+              {localization.save[sessionContext.sessionInfo.localization]}
             </Button>
           </Modal.Footer>
         </Modal>
         <Container>
           <Row>
-            <h1>Your classes!</h1>
+            <h1>{localization.classes[sessionContext.sessionInfo.localization]}</h1>
           </Row>
 
           {classList && classList.map((item, index) => {
@@ -197,19 +196,19 @@ const ClassListPage: React.FC = () => {
                   variant="success"
                   size="sm"
                 >
-                  Request
+                  {localization.req[sessionContext.sessionInfo.localization]}
                 </Button>
                 <Button
                   onClick={() => { setRequest(false) }}
                   variant="danger"
                   size="sm"
                 >
-                  Cancel
+                  {localization.cancel[sessionContext.sessionInfo.localization]}
                 </Button>
               </Stack> :
               <Stack direction="horizontal" gap={1}>
-                <Button size='sm' onClick={handleShow} variant="primary">Create new class</Button>
-                <Button size='sm' onClick={() => { setRequest(true) }} variant="success">Add class</Button>
+                <Button size='sm' onClick={handleShow} variant="primary">{localization.newClasses[sessionContext.sessionInfo.localization]}</Button>
+                <Button size='sm' onClick={() => { setRequest(true) }} variant="success">{localization.req[sessionContext.sessionInfo.localization]}</Button>
               </Stack>
             }
           </Row>
@@ -217,7 +216,10 @@ const ClassListPage: React.FC = () => {
             <Col sm="12">
               <Container className='class-container'>
                 <Stack gap={1}>
-                  <h4>Requests</h4>
+                  <h4>
+                    {localization.requests[sessionContext.sessionInfo.localization]}
+
+                  </h4>
                   <div>
                     <Button
                       className="rounded-circle"
@@ -229,7 +231,7 @@ const ClassListPage: React.FC = () => {
                     </Button>
                   </div>
                   {requests.length === 0 &&
-                    <p>No requests</p>
+                    <p>{localization.noRequests[sessionContext.sessionInfo.localization]}</p>
                   }
                 </Stack>
                 {requests.map((item, index) => {

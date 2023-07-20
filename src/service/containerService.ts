@@ -1,21 +1,18 @@
 import {
   createContainerAt,
   createSolidDataset,
-  getPodUrlAll,
   getSolidDataset,
-  isContainer,
   saveSolidDatasetAt,
   setThing,
-  getContentType,
   universalAccess
 } from "@inrupt/solid-client";
 import { fetch } from "@inrupt/solid-client-authn-browser";
 import profileDefinition from "../definitions/profile.json";
-import { ProfileLDO } from "../models/things/ProfileLDO";
-import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
-import { Profile } from "../models/types/Profile";
-import { initializeAcl, isWacOrAcp } from "./accessService";
 import { UserSession } from "../models/UserSession";
+import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
+import { ProfileLDO } from "../models/things/ProfileLDO";
+import { Profile } from "../models/types/Profile";
+import { initializeAcl } from "./accessService";
 
 // Constants for container names, file types, and separators.
 export const WIKIMIND = "WikiMind";

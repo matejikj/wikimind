@@ -72,11 +72,6 @@ const ModalNodeEditor: React.FC<{
         <Modal
             show={showModal}
         >
-            <Modal.Header>
-                <Modal.Title>
-                    {modalsLocalization.addNewNode[sessionContext.sessionInfo.localization]}
-                </Modal.Title>
-            </Modal.Header>
             <Modal.Body>
                 {node &&
                     <Container fluid>
