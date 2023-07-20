@@ -377,10 +377,10 @@ tr:nth-child(even) {
 
 .loader {
     position: relative;
-    width: 250px;
-    height: 250px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
-    background: linear-gradient(#f07e6e, #84cdfa, #5ad1cd);
+    background: linear-gradient(#dddddd, #17a66d, #5ad1cd);
     animation: animate 1.2s linear infinite;
 }
 
@@ -399,7 +399,7 @@ tr:nth-child(even) {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: linear-gradient(#f07e6e, #84cdfa, #5ad1cd);
+    background: linear-gradient(#81a76d, #223360, #5ad1cd);
 }
 
 .loader span:nth-child(1) {

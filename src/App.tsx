@@ -1,7 +1,5 @@
 import {
-  handleIncomingRedirect,
-  logout,
-  onSessionRestore
+  handleIncomingRedirect
 } from "@inrupt/solid-client-authn-browser";
 import React, { useEffect } from "react";
 import { Toast, ToastContainer } from "react-bootstrap";
@@ -110,17 +108,11 @@ const App: React.FC = () => {
                     bg='danger'
                   >
                     <Toast.Header>
-                      <img
-                        src="holder.js/20x20?text=%20"
-                        className="rounded me-2"
-                        alt=""
-                      />
                       <strong className="me-auto">WikiMind</strong>
                       <small>Now</small>
                     </Toast.Header>
                     <Toast.Body>Your Solid provider is not comaptible, because of getting pod url</Toast.Body>
                   </Toast>
-
                 </ToastContainer>
                 <LoginPage></LoginPage>
               </div>

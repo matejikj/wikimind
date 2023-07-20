@@ -55,7 +55,7 @@ const ExamPage: React.FC = () => {
                 }
             }
         } catch (error) {
-            // Handle the error, e.g., display an error message to the user or perform fallback actions
+            alert(error)
         }
     }
 

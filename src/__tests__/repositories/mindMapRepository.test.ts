@@ -27,16 +27,12 @@ jest.mock("@inrupt/solid-client", () => {
     };
 });
 
-
 const mindMapId = generate_uuidv4()
 const mindMapDatasetUrl = `https://inrupt.com/.well-known/sdk-local-node/WikiMind/mindMaps/${mindMapId}.ttl`
-
 let mindMapDataset = createSolidDataset();
-
 
 describe("MindMapRepository", () => {
     beforeEach(async () => {
-
         (getSolidDataset as jest.Mock).mockImplementation(
             async (url, fetch) => {
                 if (url === mindMapDatasetUrl) {
@@ -62,7 +58,6 @@ describe("MindMapRepository", () => {
     describe("getMindMap", () => {
         it("should fetch mindMap and return parsed mindMap", async () => {
             const mindMapLDO = new MindMapLDO(mindMapDefinition)
-
             const testMindMap: MindMap = {
                 id: `WikiMind/mindMaps/${mindMapId}.ttl#${mindMapId}`,
                 name: "MindMap",
@@ -80,10 +75,9 @@ describe("MindMapRepository", () => {
         });
     });
 
-    describe("createMindMap", () => {
+    describe("read", () => {
         it("should fetch mindMap and return parsed mindMap", async () => {
             const mindMapLDO = new MindMapLDO(mindMapDefinition)
-
             const testMindMap: MindMap = {
                 id: `WikiMind/mindMaps/${mindMapId}.ttl#${mindMapId}`,
                 name: "MindMap",
@@ -91,8 +85,6 @@ describe("MindMapRepository", () => {
                 storage: "https://inrupt.com/.well-known/sdk-local-node/",
                 source: "mindMap-pod-1",
             };
-            const mindMapRepository = new MindMapRepository();
-            const mindMapResult = await mindMapRepository.createMindMap(mindMapDatasetUrl, testMindMap);
             const myDataset = await getSolidDataset(mindMapDatasetUrl, { fetch });
             const thing = getThing(myDataset, `https://inrupt.com/.well-known/sdk-local-node/WikiMind/mindMaps/${mindMapId}.ttl#${mindMapId}`)
             const mindMapthing = mindMapLDO.read(thing)
@@ -100,16 +92,8 @@ describe("MindMapRepository", () => {
         });
     });
 
-    describe("updateMindMap", () => {
-        it("should fetch mindMap and return parsed mindMap", async () => {
-            const mindMapLDO = new MindMapLDO(mindMapDefinition)
-            const testMindMap: MindMap = {
-                id: `WikiMind/mindMaps/${mindMapId}.ttl#${mindMapId}`,
-                name: "MindMap",
-                created: "John",
-                storage: "https://inrupt.com/.well-known/sdk-local-node/",
-                source: "mindMap-pod-1",
-            };
+    describe("removeMindMapDataset", () => {
+        it("should remove mindMap and return undefined", async () => {
             const mindMapRepository = new MindMapRepository();
             const mindMapResult = await mindMapRepository.removeMindMapDataset(mindMapDatasetUrl);
             expect(mindMapResult).toEqual(undefined);

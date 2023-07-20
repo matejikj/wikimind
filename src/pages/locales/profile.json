@@ -1,18 +1,18 @@
 {
     "profileInfo": {
-        "cs": "Zvol jméno",
-        "en": "Profile info:"        
+        "cs": "Tvoje webId",
+        "en": "Your webId"        
     },
     "name": {
-        "cs": "Zvol jméno",
-        "en": "name"        
+        "cs": "Jméno",
+        "en": "Name"        
     },
     "surname": {
-        "cs": "Zvol jméno",
-        "en": "surname"        
+        "cs": "Příjmení",
+        "en": "Surname"        
     },
     "confirm": {
-        "cs": "Zvol jméno",
-        "en": "confirm"        
+        "cs": "Potvrdit",
+        "en": "Confirm"        
     }
 }

@@ -22,35 +22,25 @@ jest.mock("@inrupt/solid-client", () => {
     return {
         ...originalModule,
         getSolidDataset: jest.fn(),
-        // getThing: jest.fn(),
         saveSolidDatasetAt: jest.fn(),
-        // setThing: jest.fn(),
         deleteSolidDataset: jest.fn(),
     };
 });
-
 
 const classId = generate_uuidv4()
 const classDatasetUrl = `https://inrupt.com/.well-known/sdk-local-node/WikiMind/classs/${classId}.ttl`
 
 let classDataset = createSolidDataset();
 
-
 describe("ClassRepository", () => {
-
-
-
     beforeEach(async () => {
-
-
         (getSolidDataset as jest.Mock).mockImplementation(
             async (url, fetch) => {
                 if (url === classDatasetUrl) {
                     return classDataset
                 }
             }
-
-        );        //   (getThing as jest.Mock).mockReturnValue(datasetMock.graphs.default[classThingUrl]);
+        );
         (saveSolidDatasetAt as jest.Mock).mockImplementation(
             async (url, dataset, fetch) => {
                 if (url === classDatasetUrl) {
@@ -64,9 +54,6 @@ describe("ClassRepository", () => {
                 return undefined;
             }
         );
-
-
-
 
         jest.clearAllMocks();
     });
@@ -108,36 +95,17 @@ describe("ClassRepository", () => {
                 storage: "https://inrupt.com/.well-known/sdk-local-node/",
                 source: "class-pod-1",
             };
-
-            
-
-
-            const classRepository = new ClassRepository();
-            const classResult = await classRepository.createClass(classDatasetUrl, testClass);
-
             const myDataset = await getSolidDataset(classDatasetUrl, { fetch });
             const thing = getThing(myDataset, `https://inrupt.com/.well-known/sdk-local-node/WikiMind/classs/${classId}.ttl#${classId}`)
             const classthing = classLDO.read(thing)
-
             expect(classthing).toEqual(testClass);
         });
     });
 
-    describe("updateClass", () => {
+    describe("removeClass", () => {
         it("should fetch class and return parsed class", async () => {
-            const classLDO = new ClassLDO(classDefinition)
-
-            const testClass: Class = {
-                id: `WikiMind/classs/${classId}.ttl#${classId}`,
-                name: "Class",
-                teacher: "John",
-                storage: "https://inrupt.com/.well-known/sdk-local-node/",
-                source: "class-pod-1",
-            };
-
             const classRepository = new ClassRepository();
             const classResult = await classRepository.removeClass(classDatasetUrl);
-
             expect(classResult).toEqual(undefined);
         });
     });

@@ -22,32 +22,23 @@ jest.mock("@inrupt/solid-client", () => {
     return {
         ...originalModule,
         getSolidDataset: jest.fn(),
-        // getThing: jest.fn(),
         saveSolidDatasetAt: jest.fn(),
-        // setThing: jest.fn(),
     };
 });
 
-
 const chatId = generate_uuidv4()
 const chatDatasetUrl = `https://inrupt.com/.well-known/sdk-local-node/WikiMind/chats/${chatId}.ttl`
-
 let chatDataset = createSolidDataset();
 
-
 describe("ChatRepository", () => {
-
     beforeEach(async () => {
-
-
         (getSolidDataset as jest.Mock).mockImplementation(
             async (url, fetch) => {
                 if (url === chatDatasetUrl) {
                     return chatDataset
                 }
             }
-
-        );        //   (getThing as jest.Mock).mockReturnValue(datasetMock.graphs.default[chatThingUrl]);
+        );
         (saveSolidDatasetAt as jest.Mock).mockImplementation(
             async (url, dataset, fetch) => {
                 if (url === chatDatasetUrl) {
@@ -55,7 +46,6 @@ describe("ChatRepository", () => {
                 }
             }
         );
-
         jest.clearAllMocks();
     });
 
@@ -65,12 +55,12 @@ describe("ChatRepository", () => {
 
             const chat: Chat = {
                 id: `WikiMind/chats/${chatId}.ttl#${chatId}`,
-                host: "John",
-                guest: "Jane",
+                host: "Jan",
+                guest: "Jan",
                 storage: "https://inrupt.com/.well-known/sdk-local-node/",
                 source: "chat-pod-1",
                 accessControlPolicy: AccessControlPolicy.ACP,
-                lastMessage: "Hello!",
+                lastMessage: "Helloworld",
                 modified: "2023-07-15T10:30:00Z",
             };
             

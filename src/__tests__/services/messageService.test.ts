@@ -87,10 +87,7 @@ describe("MessageService", () => {
   describe("getChat", () => {
     it("should fetch a chat and its messages", async () => {
       const chatLDO = new ChatLDO(chatDefinition);
-      const linkLDO = new LinkLDO(linkDefinition);
       const messageLDO = new MessageLDO(messageDefinition);
-
-      // Prepare test chat data
       const chat: Chat = {
         id: `WikiMind/chats/${chatId}.ttl#${chatId}`,
         host: "John",
@@ -102,8 +99,6 @@ describe("MessageService", () => {
         modified: "2023-07-15T10:30:00Z",
       };
       const chatThing = chatLDO.create(chat);
-
-      // Prepare test message data
       const message: Message = {
         id: `WikiMind/chats/${generate_uuidv4()}.ttl#${generate_uuidv4()}`,
         from: profileMock.webId,
@@ -111,27 +106,17 @@ describe("MessageService", () => {
         date: Date.now(),
       };
       const messageThing = messageLDO.create(message);
-
       const chatsDataset = await getSolidDataset(chatDatasetUrl, { fetch });
       const savedChatSolidDataset = setThing(chatsDataset, chatThing);
       await saveSolidDatasetAt(chatDatasetUrl, savedChatSolidDataset, { fetch });
-
-      // Save the message in the storage dataset
       const storageDataset = await getSolidDataset(storageDatasetUrl, { fetch });
       const savedMessageSolidDataset = setThing(storageDataset, messageThing);
       await saveSolidDatasetAt(storageDatasetUrl, savedMessageSolidDataset, { fetch });
-
-      // Create the MessageService instance
       const messageService = new MessageService();
-
-      // Call the getChat method
       const chatDataset = await messageService.getChat(chat.storage);
       if (chatDataset) {
         expect((chatDataset?.messages)).toEqual(([message]));
-
       }
-
-
     })
   });
 
@@ -180,13 +165,12 @@ describe("MessageService", () => {
       const linkLDO = new LinkLDO(linkDefinition);
       const messageLDO = new MessageLDO(messageDefinition);
 
-      // Prepare test chat data
       const chat: Chat = {
-        id: `WikiMind/chats/${chatId}.ttl#${chatId}`,
+        id: chatId,
         host: "John",
         guest: "Jane",
         storage: storageDatasetUrl,
-        source: "chat-pod-1",
+        source: 'https://inrupt.com/.well-known/sdk-local-node/',
         accessControlPolicy: AccessControlPolicy.ACP,
         lastMessage: "Hello!",
         modified: "2023-07-15T10:30:00Z",
@@ -196,7 +180,6 @@ describe("MessageService", () => {
       const msgId = generate_uuidv4()
       const msgThingId = `https://inrupt.com/.well-known/sdk-local-node/WikiMind/chats/${msgId}.ttl#${msgId}`
 
-      // Prepare test message data
       const message: Message = {
         id: `WikiMind/chats/${msgId}.ttl#${msgId}`,
         from: profileMock.webId,
@@ -204,7 +187,6 @@ describe("MessageService", () => {
         date: Date.now(),
       };
 
-      // Save the chat and link datasets
       const linksDataset = await getSolidDataset(chatsDatasetUrl, { fetch });
       const link: Link = {
         id: generate_uuidv4(),
@@ -218,20 +200,13 @@ describe("MessageService", () => {
       const chatsDataset = await getSolidDataset(chatDatasetUrl, { fetch });
       const savedChatSolidDataset = setThing(chatsDataset, chatThing);
       await saveSolidDatasetAt(chatDatasetUrl, savedChatSolidDataset, { fetch });
-
-      // Create the MessageService instance
       const messageService = new MessageService();
 
-      // Call the sendMessage method
       await messageService.sendMessage(chat, message);
-
-      // Check if the message was saved in the chatDataset
       const updatedChatDataset = await getSolidDataset(storageDatasetUrl, { fetch });
       const resThing = await getThing(updatedChatDataset, msgThingId);
       const resMessage = messageLDO.read(resThing);
-
       expect((resMessage)).toEqual((message));
     });
   });
-
 })

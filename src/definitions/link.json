@@ -1,14 +1,8 @@
 {
     "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Link",
     "properties": {
-        "url": 
-            "https://schema.org/url"
-        ,
-        "id": 
-            "http://schema.org/identifier"
-        ,
-        "linkType": 
-            "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#LinkType"
-        
+        "url": "https://schema.org/url",
+        "id": "http://schema.org/identifier",
+        "linkType": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#LinkType"
     }
 }

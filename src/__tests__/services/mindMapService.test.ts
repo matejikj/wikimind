@@ -36,6 +36,7 @@ jest.mock("@inrupt/solid-client", () => {
   };
 });
 
+
 let mindMapsDataset = createSolidDataset();
 let mindMapDataset = createSolidDataset();
 let storageDataset = createSolidDataset();

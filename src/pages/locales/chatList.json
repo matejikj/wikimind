@@ -1,0 +1,10 @@
+{
+    "header": {
+        "cs": "Tvoje zprávy",
+        "en": "Your chats"        
+    },
+    "type": {
+        "cs": "Napiš svou zprávu...",
+        "en": "Type your message..."        
+    }    
+}

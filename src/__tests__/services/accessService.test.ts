@@ -21,6 +21,7 @@ jest.mock("@inrupt/solid-client", () => {
   };
 });
 
+
 beforeEach(() => {
   jest.clearAllMocks();
 });

@@ -1,20 +1,10 @@
 {
     "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Message",
     "properties": {
-        "to": 
-            "https://schema.org/recipient"
-        ,
-        "from": 
-            "https://schema.org/sender"
-        ,
-        "id": 
-            "http://schema.org/identifier"
-        ,
-        "text": 
-            "https://schema.org/text"
-        ,
-        "date": 
-            "https://schema.org/dateCreated"
-        
+        "to": "https://schema.org/recipient",
+        "from": "https://schema.org/sender",
+        "id": "http://schema.org/identifier",
+        "text": "https://schema.org/text",
+        "date": "https://schema.org/dateCreated"
     }
 }

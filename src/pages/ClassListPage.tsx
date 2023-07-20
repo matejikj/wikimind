@@ -42,7 +42,7 @@ const ClassListPage: React.FC = () => {
       const classes = await classesService.getClassList(sessionContext.sessionInfo.podUrl);
       classes && setClassList(classes)
     } catch (error) {
-      // Handle the error, e.g., display an error message to the user or perform fallback actions
+      alert(error)
     }
   }
 
@@ -69,7 +69,6 @@ const ClassListPage: React.FC = () => {
       }
     }
     await classesService.removeClass(sessionContext.sessionInfo, classThing)
-
   }
 
   async function allowRequest(request: Request) {

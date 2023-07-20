@@ -1,17 +1,9 @@
 {
     "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Profile",
     "properties": {
-        "surname": 
-            "http://xmlns.com/foaf/0.1/#term_surname"
-        ,
-        "name": 
-            "http://xmlns.com/foaf/0.1/#term_name"
-        ,
-        "webId": 
-            "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#webId"
-        ,
-        "source": 
-            "http://purl.org/dc/terms/source"
-        
+        "surname": "http://xmlns.com/foaf/0.1/#term_surname",
+        "name": "http://xmlns.com/foaf/0.1/#term_name",
+        "webId": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#webId",
+        "source": "http://purl.org/dc/terms/source"
     }
 }

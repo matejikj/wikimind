@@ -1,23 +1,21 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Col, Container, Form, Modal, Row, Stack } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
-import { FcComments, FcFullTrash } from "react-icons/fc";
+import { BsTrashFill } from "react-icons/bs";
 import { MdDeleteForever, MdDriveFileRenameOutline, MdLink, MdRefresh, MdSlideshow } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidenav from "../components/Sidenav";
 import { ClassDataset } from "../models/types/ClassDataset";
+import { Exam } from "../models/types/Exam";
 import { Message } from "../models/types/Message";
 import { MindMap } from "../models/types/MindMap";
+import { Profile } from "../models/types/Profile";
+import { getNumberFromUrl } from "../repository/utils";
 import { ClassService } from "../service/classService";
 import { CLASSES, MINDMAPS, TTLFILETYPE, WIKIMIND } from "../service/containerService";
 import { generate_uuidv4 } from "../service/utils";
 import { SessionContext } from "../sessionContext";
 import '../styles/style.css';
-import { surname } from "rdf-namespaces/dist/foaf";
-import { getNumberFromUrl } from "../repository/utils";
-import { BsTrashFill } from "react-icons/bs";
-import { Profile } from "../models/types/Profile";
-import { Exam } from "../models/types/Exam";
 
 const ClassPage: React.FC = () => {
   const navigate = useNavigate();
@@ -33,68 +31,81 @@ const ClassPage: React.FC = () => {
 
   const classService = new ClassService();
 
+  /**
+ * Fetches the class dataset using the provided URL from the location state.
+ * The fetched class dataset is stored in the component state variable 'dataset'.
+ */
   async function fetchClass(): Promise<void> {
     try {
-      const startTime = performance.now();
-
       const classDataset = await classService.getClass(location.state.url);
-      const endTime = performance.now();
-      const executionTime = endTime - startTime;
-      console.log(`getClass execution time: ${executionTime} milliseconds`);
-
       if (classDataset) {
-        setDataset(classDataset)
+        setDataset(classDataset);
       }
     } catch (error) {
+      alert(error)
     }
   }
 
-  useEffect(
-    () => {
-      if (location.state !== null && location.state.url !== null) {
-        fetchClass()
-      } else {
-        navigate('/')
-      }
-    }, [])
+  /**
+   * Fetches the class dataset when the component mounts.
+   * If the location state is null or the URL is not provided, it navigates back to the homepage.
+   */
+  useEffect(() => {
+    if (location.state !== null && location.state.url !== null) {
+      fetchClass();
+    } else {
+      navigate('/');
+    }
+  }, []);
 
+  /**
+   * Shows the mind map in the editor or browser based on the user's role (teacher or student).
+   * @param mindMap - The MindMap object to be shown.
+   */
   async function showMindMap(mindMap: MindMap) {
     if (dataset) {
-      const url = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`
+      const url = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
       if (dataset.class.teacher === sessionContext.sessionInfo.webId) {
         navigate('/editor/', {
           state: {
             id: url
           }
-        })
+        });
       } else {
         navigate('/browser/', {
           state: {
             id: url
           }
-        })
+        });
       }
     }
   }
 
+  /**
+   * Adds a new mind map to the class using the provided name.
+   * The newly created mind map URL is used to navigate to the editor page for editing the mind map.
+   */
   async function addMindMap() {
     if (dataset) {
-      const mindMapUrl = await classService.addMindMap(sessionContext.sessionInfo, dataset?.class, name)
+      const mindMapUrl = await classService.addMindMap(sessionContext.sessionInfo, dataset?.class, name);
       if (mindMapUrl) {
         navigate('/editor/', {
           state: {
             id: mindMapUrl
           }
-        })
+        });
       }
-
     }
   }
 
+  /**
+   * Shows the exam details for the selected mind map.
+   * @param mindMap - The MindMap object for which the exam details are to be shown.
+   */
   async function showExam(mindMap: MindMap) {
     if (dataset) {
-      const url = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`
-      const classUrl = `${dataset.class.source}${WIKIMIND}/${CLASSES}/${dataset.class.id}${TTLFILETYPE}`
+      const url = `${mindMap.source}${WIKIMIND}/${MINDMAPS}/${mindMap.id}${TTLFILETYPE}`;
+      const classUrl = `${dataset.class.source}${WIKIMIND}/${CLASSES}/${dataset.class.id}${TTLFILETYPE}`;
 
       navigate('/exam/', {
         state: {
@@ -102,16 +113,23 @@ const ClassPage: React.FC = () => {
           classStorage: dataset.class.storage,
           classUrl: classUrl
         }
-      })
-
+      });
     }
   }
 
+  /**
+   * Copies the class URL with the classId to the clipboard.
+   * The URL is in the format: sessionContext.sessionInfo.webId + "?classId=" + dataset?.class.id
+   */
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(sessionContext.sessionInfo.webId + "?classId=" + dataset?.class.id)
+    navigator.clipboard.writeText(sessionContext.sessionInfo.webId + "?classId=" + dataset?.class.id);
   }
 
-  async function createNewAnnoucement() {
+  /**
+   * Creates a new announcement and adds it to the class dataset.
+   * The announcement is created with the teacher's webId, current date, and the entered announcement text.
+   */
+  async function createNewAnnouncement() {
     if (dataset) {
       const message: Message = {
         id: generate_uuidv4(),
@@ -120,80 +138,97 @@ const ClassPage: React.FC = () => {
         date: Date.now()
       };
       if (await classService.createNewAnnouncement(dataset.class, message)) {
-        dataset.messages.push(message)
-        setAnnouncement('')
+        dataset.messages.push(message);
+        setAnnouncement('');
       }
     }
   }
 
+  /**
+   * Removes an announcement from the class dataset.
+   * @param message - The Message object to be removed.
+   */
   async function removeAnnouncement(message: Message) {
     if (dataset) {
       if (await classService.removeAnnouncement(dataset.class, message)) {
-        const filteredMessages = dataset.messages.filter((item) => item.id !== message.id)
+        const filteredMessages = dataset.messages.filter((item) => item.id !== message.id);
         setDataset({
           ...dataset,
           messages: filteredMessages
         });
-        setAnnouncement('')
+        setAnnouncement('');
       }
     }
   }
 
+  /**
+   * Removes a student from the class dataset.
+   * @param student - The Profile object of the student to be removed.
+   * Note: The function implementation is missing, and the comment is left as a placeholder.
+   */
   async function removeStudent(student: Profile) {
     if (dataset) {
-      // if (await classService.removeAnnouncement(dataset.class, message)) {
-      //   const filteredMessages = dataset.messages.filter((item) => item.id !== message.id)
-      //   setDataset({
-      //     ...dataset,
-      //     messages: filteredMessages
-      //   });
-      //   setAnnouncement('')
-      // }
+      // Implement this function as per your requirements
     }
   }
 
+  /**
+   * Removes an exam from the class dataset.
+   * @param exam - The Exam object to be removed.
+   */
   async function removeExam(exam: Exam) {
     if (dataset) {
       if (await classService.removeExam(exam, dataset.class)) {
-        const filteredExams = dataset.testResults.filter((item) => item.id !== exam.id)
+        const filteredExams = dataset.testResults.filter((item) => item.id !== exam.id);
         setDataset({
           ...dataset,
           testResults: filteredExams
         });
-        setAnnouncement('')
+        setAnnouncement('');
       }
     }
   }
 
+  /**
+   * Removes a mind map from the class dataset.
+   * @param mindMap - The MindMap object to be removed.
+   */
   async function removeMindMap(mindMap: MindMap) {
     if (dataset) {
       if (await classService.removeClassMindMap(mindMap, dataset.class)) {
-        const filteredMindMaps = dataset.mindMaps.filter((item) => item.id !== mindMap.id)
+        const filteredMindMaps = dataset.mindMaps.filter((item) => item.id !== mindMap.id);
         setDataset({
           ...dataset,
           mindMaps: filteredMindMaps
         });
-        setAnnouncement('')
+        setAnnouncement('');
       }
     }
   }
 
-
-
+  /**
+   * Gets the profile detail (name and surname) for a given webID.
+   * If the name and surname are not available, it returns the webID as the profile detail.
+   * @param webID - The webID of the profile.
+   * @returns The profile detail (name and surname) or the webID.
+   */
   function getProfileDetail(webID: string) {
-    const profile = dataset?.students.find((item) => item.webId === webID)
+    const profile = dataset?.students.find((item) => item.webId === webID);
     if (profile && (profile.name !== "" || profile.surname !== "")) {
-      return `${profile.name} ${profile.surname}`
+      return `${profile.name} ${profile.surname}`;
     }
-    return webID
+    return webID;
   }
 
+  /**
+   * Gets the name of a mind map from its ID using the dataset.
+   * @param id - The ID of the mind map.
+   * @returns The name of the mind map corresponding to the given ID or undefined if not found.
+   */
   function getMindMapName(id: string) {
-
-    const mindMap = dataset?.mindMaps.find((item) => item.id === getNumberFromUrl(id))
-
+    const mindMap = dataset?.mindMaps.find((item) => item.id === getNumberFromUrl(id));
     if (mindMap) {
-      return mindMap.name
+      return mindMap.name;
     }
   }
 
@@ -319,7 +354,7 @@ const ClassPage: React.FC = () => {
                         onChange={(e) => { setAnnouncement(e.target.value) }}
                       />
                       <Button
-                        onClick={() => createNewAnnoucement()}
+                        onClick={() => createNewAnnouncement()}
                         variant="success"
                         size="sm"
                       >

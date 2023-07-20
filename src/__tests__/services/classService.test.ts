@@ -36,6 +36,7 @@ jest.mock("@inrupt/solid-client", () => {
   };
 });
 
+
 let classesDataset = createSolidDataset();
 let classDataset = createSolidDataset();
 let storageDataset = createSolidDataset();

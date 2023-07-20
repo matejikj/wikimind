@@ -22,18 +22,13 @@ jest.mock("@inrupt/solid-client", () => {
     return {
         ...originalModule,
         getSolidDataset: jest.fn(),
-        // getThing: jest.fn(),
         saveSolidDatasetAt: jest.fn(),
-        // setThing: jest.fn(),
     };
 });
-
 let savedDataset = createSolidDataset();
-
 
 describe("ProfileRepository", () => {
     const profileUrl = "https://inrupt.com/.well-known/sdk-local-node/WikiMind";
-
     beforeEach(async () => {
         (getSolidDataset as jest.Mock).mockImplementation(
             async (url, fetch) => {
@@ -64,18 +59,12 @@ describe("ProfileRepository", () => {
                 .addStringNoLocale(profileDefinition.properties.surname, "Matejik")
                 .addStringNoLocale(profileDefinition.properties.source, "")
                 .build();
-
             const myDataset = await getSolidDataset(profileUrl, { fetch });
             const savedProfileSolidDataset = setThing(myDataset, thing);
             await saveSolidDatasetAt(profileUrl, savedProfileSolidDataset, { fetch });
-
-
             const profileRepository = new ProfileRepository();
             const profile = await profileRepository.getProfile(profileUrl);
-
             expect(getSolidDataset).toHaveBeenCalledWith(profileUrl, { fetch });
-            //   expect(getThing).toHaveBeenCalledWith(datasetMock, profileThingUrl);
-
             expect(profile).toEqual(test);
         });
     });
@@ -88,19 +77,13 @@ describe("ProfileRepository", () => {
                 surname: "Matejik",
                 source: "",
             };
-
             const profileRepository = new ProfileRepository();
-
             await profileRepository.updateProfile(profileUrl, test);
-            
             let myDataset = await getSolidDataset(profileUrl, { fetch });
             const profileThing = getThing(myDataset, profileUrl);
             const profileLDO = new ProfileLDO(profileDefinition);
             const datasetProfile = profileLDO.read(profileThing);
-      
             expect(getSolidDataset).toHaveBeenCalledWith(profileUrl, { fetch });
-            //   expect(getThing).toHaveBeenCalledWith(datasetMock, profileThingUrl);
-
             expect(datasetProfile).toEqual(test);
         });
     });

@@ -1,18 +1,17 @@
 import {
   acp_ess_2,
   createAclFromFallbackAcl,
+  getPodUrlAll,
   getResourceAcl,
+  getResourceInfo,
   getSolidDatasetWithAcl,
   hasAccessibleAcl,
   hasFallbackAcl,
   hasResourceAcl,
-  saveAclFor,
-  getPodUrlAll,
-  getResourceInfo
+  saveAclFor
 } from "@inrupt/solid-client";
 import { fetch } from "@inrupt/solid-client-authn-browser";
 import { AccessControlPolicy } from "../models/enums/AccessControlPolicy";
-import { string } from "rdf-namespaces/dist/fhir";
 
 export const STORAGE_DESCRIPTION = "http://www.w3.org/ns/solid/terms#storageDescription"
 export const WELL_KNOWN = ".well-known"
@@ -29,17 +28,15 @@ export const initializeAcl = async (url: string): Promise<void> => {
   try {
     myDatasetWithAcl = await getSolidDatasetWithAcl(url, { fetch: fetch });
   } catch (error) {
-    let message = 'Unknown Error';
-    if (error instanceof Error) message = error.message;
-    throw new Error(`Error when fetching dataset, url: ${url} error: ${message}`);
+    throw error
   }
   let resourceAcl;
   if (!hasResourceAcl(myDatasetWithAcl)) {
     if (!hasAccessibleAcl(myDatasetWithAcl)) {
-      throw new Error(`The current user does not have permission to change access rights to this resource, url: ${url}`);
+      throw new Error(`No permissions`);
     }
     if (!hasFallbackAcl(myDatasetWithAcl)) {
-      throw new Error(`The current user does not have permission to see who currently has access to this resource, url: ${url}`);
+      throw new Error(`No permissions`);
     }
     resourceAcl = createAclFromFallbackAcl(myDatasetWithAcl);
   } else {
@@ -66,14 +63,23 @@ export const isWacOrAcp = async (url: string): Promise<AccessControlPolicy> => {
   return AccessControlPolicy.ACP;
 }
 
-export async function getPodUrl(webId: string) {
-  let podUrl
-  const podUrls = (await getPodUrlAll(webId))
+/**
+ * Retrieves the Pod URL associated with the given WebID.
+ * @param webId - The WebID of the user for whom the Pod URL is to be retrieved.
+ * @returns A Promise that resolves to the user's Pod URL.
+ */
+export async function getPodUrl(webId: string): Promise<string> {
+  let podUrl;
+  
+  // Attempt to get the Pod URL from the WebID profile's known podUrls.
+  const podUrls = await getPodUrlAll(webId);
   if (podUrls && podUrls.length > 0) {
     podUrl = podUrls[0];
   } else {
-    const resInfo = await getResourceInfo(webId)
-    podUrl = resInfo.internal_resourceInfo.linkedResources[STORAGE_DESCRIPTION][0].split(WELL_KNOWN)[0]
+    // If the Pod URL is not available in the WebID profile, retrieve it from the STORAGE_DESCRIPTION link.
+    const resInfo = await getResourceInfo(webId);
+    podUrl = resInfo.internal_resourceInfo.linkedResources[STORAGE_DESCRIPTION][0].split(WELL_KNOWN)[0];
   }
-  return podUrl
+  
+  return podUrl;
 }

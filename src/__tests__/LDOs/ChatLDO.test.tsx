@@ -52,7 +52,7 @@ describe("ChatLDO", () => {
       id: "chat456",
       host: "https://example.com/chatHost456",
       source: "https://example.com/chatSource456",
-      accessControlPolicy: AccessControlPolicy.ACP, // Assuming AccessControlPolicy is an enum with values like Public, Private, etc.
+      accessControlPolicy: AccessControlPolicy.ACP,
       storage: "https://example.com/chatStorage456",
       modified: "2023-07-18T09:00:00Z",
       lastMessage: "This is the latest message!",

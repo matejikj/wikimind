@@ -20,12 +20,9 @@ jest.mock("@inrupt/solid-client", () => {
     return {
         ...originalModule,
         getSolidDataset: jest.fn(),
-        // getThing: jest.fn(),
         saveSolidDatasetAt: jest.fn(),
-        // setThing: jest.fn(),
     };
 });
-
 
 const nodeId = generate_uuidv4()
 const nodeDatasetUrl = `https://inrupt.com/.well-known/sdk-local-node/WikiMind/nodes/${nodeId}.ttl`
@@ -34,12 +31,7 @@ let nodeDataset = createSolidDataset();
 
 
 describe("NodeRepository", () => {
-
-
-
     beforeEach(async () => {
-
-
         (getSolidDataset as jest.Mock).mockImplementation(
             async (url, fetch) => {
                 if (url === nodeDatasetUrl) {
@@ -47,7 +39,7 @@ describe("NodeRepository", () => {
                 }
             }
 
-        );        //   (getThing as jest.Mock).mockReturnValue(datasetMock.graphs.default[nodeThingUrl]);
+        );
         (saveSolidDatasetAt as jest.Mock).mockImplementation(
             async (url, dataset, fetch) => {
                 if (url === nodeDatasetUrl) {
@@ -61,7 +53,6 @@ describe("NodeRepository", () => {
     describe("getNodes", () => {
         it("should fetch node and return parsed node", async () => {
             const nodeLDO = new NodeLDO(nodeDefinition)
-
             const testNode: Node = {
                 id: generate_uuidv4(),
                 cx: 100,
@@ -73,15 +64,12 @@ describe("NodeRepository", () => {
                 color: "white",
                 isInTest: true,
             };
-
             const nodething = nodeLDO.create(testNode)
             const myDataset = await getSolidDataset(nodeDatasetUrl, { fetch });
             const savedNodeSolidDataset = setThing(myDataset, nodething);
             await saveSolidDatasetAt(nodeDatasetUrl, savedNodeSolidDataset, { fetch });
-
             const nodeRepository = new NodeRepository();
             const nodeResult = await nodeRepository.getNodes(nodeDatasetUrl);
-
             expect(nodeResult).toEqual([testNode]);
         });
     });

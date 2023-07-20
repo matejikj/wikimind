@@ -1,20 +1,10 @@
 {
     "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#MindMap",
     "properties": {
-        "created": 
-            "https://schema.org/dateCreated"
-        ,
-        "name": 
-            "https://schema.org/name"
-        ,
-        "storage": 
-            "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#storage"
-        ,
-        "source": 
-            "https://schema.org/source"
-        ,
-        "id": 
-            "http://schema.org/identifier"
-        
+        "created": "https://schema.org/dateCreated",
+        "name": "https://schema.org/name",
+        "storage": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#storage",
+        "source": "https://schema.org/source",
+        "id": "http://schema.org/identifier"
     }
 }

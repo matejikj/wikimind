@@ -10,22 +10,29 @@ import { MessageService } from '../service/messageService';
 import { SessionContext } from '../sessionContext';
 import '../styles/style.css';
 import { MdRefresh } from "react-icons/md";
+import chatListLocalization from "./locales/chatList.json";
 
+/**
+ * Chat List page.
+ */
 const ChatListPage: React.FC = () => {
   const [list, setList] = useState<Chat[]>([]);
 
-  const sessionContext = useContext(SessionContext)
+  const sessionContext = useContext(SessionContext);
 
   const navigate = useNavigate();
 
-  const messageService = new MessageService()
+  const messageService = new MessageService();
 
+  /**
+   * Fetches the list of chats from the server and updates the state.
+   */
   async function fetchChatList(): Promise<void> {
     try {
       const chats = await messageService.getChatList(sessionContext.sessionInfo.podUrl);
-      chats && setList(chats)
+      chats && setList(chats);
     } catch (error) {
-      // Handle the error, e.g., display an error message to the user or perform fallback actions
+      alert(error);
     }
   }
 
@@ -33,24 +40,27 @@ const ChatListPage: React.FC = () => {
     fetchChatList();
   }, []);
 
+  /**
+   * Navigates to the chat page with the selected chat's URL.
+   * @param chat - The chat object containing the URL.
+   */
   const showMindMap = (chat: Chat) => {
-    const url = `${chat.source}${WIKIMIND}/${CHATS}/${chat.id}${TTLFILETYPE}`
+    const url = `${chat.source}${WIKIMIND}/${CHATS}/${chat.id}${TTLFILETYPE}`;
     navigate('/chat/', {
       state: {
         id: url
       }
-    })
-  }
+    });
+  };
 
   return (
     <div className="App">
       <Sidenav />
       <main className='dashboard-main'>
         <Container>
-
           <Row>
             <Stack direction="horizontal" gap={1}>
-              <h1>Your messages!</h1>
+              <h1>{chatListLocalization.header[sessionContext.sessionInfo.localization]}</h1>
               <Button
                 className="rounded-circle"
                 size="sm"
@@ -64,7 +74,7 @@ const ChatListPage: React.FC = () => {
           <Stack >
             {list.map((item, index) => {
               return (
-                <div>
+                <div key={index}>
                   <Stack >
                     <div style={{ fontSize: "0.7em" }}>
                       {item.guest === sessionContext.sessionInfo.webId ? item.host : item.guest}
@@ -88,7 +98,6 @@ const ChatListPage: React.FC = () => {
                 </div>
               )
             })}
-
           </Stack>
         </Container>
       </main>

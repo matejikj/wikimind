@@ -15,30 +15,17 @@ import { SessionContext } from '../sessionContext';
 import '../styles/style.css';
 
 /**
- * Represents the MinaMapListPage component displaying a list of mind maps and their actions.
+ * MinaMapListPage - a list of mind maps.
  */
 const MinaMapListPage: React.FC = () => {
-  // Access the SessionContext to get the user's session information.
   const sessionContext = useContext(SessionContext);
-  
-  // Access the navigation hook from react-router-dom.
   const navigate = useNavigate();
-
-  // State to hold the list of mind maps.
   const [mindMapList, setMindMapList] = useState<MindMap[]>([]);
-
-  // State to hold the name for a new mind map or the renamed mind map.
   const [name, setName] = useState("");
-
-  // States to control modals for renaming, deleting, and creating new mind maps.
   const [showMindMapRenameModal, setShowMindMapRenameModal] = useState(false);
   const [showMindMapDeleteModal, setShowMindMapDeleteModal] = useState(false);
   const [createNewModalVisible, setCreateNewModalVisible] = useState(false);
-
-  // State to hold the mind map to be updated (renamed or deleted).
   const [mindMapToChange, setMindMapToChange] = useState<MindMap | undefined>();
-
-  // Create an instance of the MindMapService to interact with the mind map data.
   const mindMapService = new MindMapService();
 
   /**
@@ -53,7 +40,6 @@ const MinaMapListPage: React.FC = () => {
     }
   }
 
-  // Fetch the list of mind maps on component mount.
   useEffect(() => {
     fetchMindMapList();
   }, []);
@@ -122,10 +108,8 @@ const MinaMapListPage: React.FC = () => {
 
   return (
     <div className="App">
-      {/* The Sidenav component displaying navigation options */}
       <Sidenav />
       <main className='dashboard-main'>
-        {/* Modal for creating a new mind map */}
         <Modal show={createNewModalVisible} onHide={() => setCreateNewModalVisible(false)}>
           <Modal.Header>
             <Modal.Title>{dashboardLocalization.chooseName[sessionContext.sessionInfo.localization]}</Modal.Title>
@@ -151,8 +135,6 @@ const MinaMapListPage: React.FC = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-
-        {/* Modal for deleting a mind map */}
         <Modal show={showMindMapDeleteModal}>
           <Modal.Header>
             <Modal.Title>{dashboardLocalization.delete[sessionContext.sessionInfo.localization]}</Modal.Title>
@@ -170,8 +152,6 @@ const MinaMapListPage: React.FC = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-
-        {/* Modal for renaming a mind map */}
         <Modal show={showMindMapRenameModal}>
           <Modal.Header>
             <Modal.Title>{dashboardLocalization.chooseName[sessionContext.sessionInfo.localization]}</Modal.Title>
@@ -197,13 +177,10 @@ const MinaMapListPage: React.FC = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-
         <Container>
           <Row>
             <h1>{dashboardLocalization.header[sessionContext.sessionInfo.localization]}</h1>
           </Row>
-
-          {/* Render the list of mind maps */}
           {mindMapList.map((item, index) => {
             return (
               <Row key={index}>
@@ -212,7 +189,6 @@ const MinaMapListPage: React.FC = () => {
                     {item.name}
                   </div>
                   <div className='my-stack-reverse'>
-                    {/* Button to delete a mind map */}
                     <Button
                       size='sm'
                       className='class-btn rounded-circle'
@@ -224,8 +200,6 @@ const MinaMapListPage: React.FC = () => {
                     >
                       <MdDeleteForever></MdDeleteForever>
                     </Button>
-
-                    {/* Button to rename a mind map */}
                     <Button
                       size='sm'
                       className='class-btn rounded-circle'
@@ -237,8 +211,6 @@ const MinaMapListPage: React.FC = () => {
                     >
                       <MdDriveFileRenameOutline></MdDriveFileRenameOutline>
                     </Button>
-
-                    {/* Button to view a mind map */}
                     <Button
                       size='sm'
                       className='class-btn rounded-circle'
@@ -252,8 +224,6 @@ const MinaMapListPage: React.FC = () => {
               </Row>
             )
           })}
-
-          {/* Button to create a new mind map */}
           <Stack direction='horizontal'>
             <Button onClick={() => setCreateNewModalVisible(true)} variant="outline-success">{dashboardLocalization.create[sessionContext.sessionInfo.localization]}</Button>
           </Stack>

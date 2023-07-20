@@ -1,17 +1,9 @@
 {
     "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Request",
     "properties": {
-        "requestor": 
-            "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#requestor"
-        ,
-        "requestType": 
-            "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#requestType"
-        ,
-        "id": 
-            "http://schema.org/identifier"
-        ,
-        "subject": 
-            "http://schema.org/url"
-        
+        "requestor": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#requestor",
+        "requestType": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#requestType",
+        "id": "http://schema.org/identifier",
+        "subject": "http://schema.org/url"
     }
 }

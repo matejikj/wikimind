@@ -1,32 +1,14 @@
 {
     "identity": "https://raw.githubusercontent.com/matejikj/wikimind/main/wikimind.ttl#Node",
     "properties": {
-        "id": 
-            "http://schema.org/identifier"
-        ,
-        "uri": 
-            "http://schema.org/uri"
-        ,
-        "description": 
-            "http://purl.org/dc/terms/description"
-        ,
-        "title": 
-            "http://purl.org/dc/terms/title"
-        ,
-        "cx": 
-            "http://data.ign.fr/def/geometrie/20190212.htm#coordX"
-        ,
-        "cy": 
-            "http://data.ign.fr/def/geometrie/20190212.htm#coordY"
-        ,
-        "color": 
-            "http://vocab.gtfs.org/gtfs.ttl#color"
-        ,
-        "textColor": 
-            "http://vocab.gtfs.org/gtfs.ttl#textColor"
-        ,
-        "isInTest": 
-            "https://schema.org/Product"
-        
+        "id": "http://schema.org/identifier",
+        "uri": "http://schema.org/uri",
+        "description": "http://purl.org/dc/terms/description",
+        "title": "http://purl.org/dc/terms/title",
+        "cx": "http://data.ign.fr/def/geometrie/20190212.htm#coordX",
+        "cy": "http://data.ign.fr/def/geometrie/20190212.htm#coordY",
+        "color": "http://vocab.gtfs.org/gtfs.ttl#color",
+        "textColor": "http://vocab.gtfs.org/gtfs.ttl#textColor",
+        "isInTest": "https://schema.org/Product"
     }
 }

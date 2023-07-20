@@ -15,39 +15,39 @@ import { SessionContext } from "../sessionContext";
 import Timeline from "../visualisation/Timeline";
 import { AddCoords, getIdsMapping } from "../visualisation/utils";
 
+/**
+ * Represents the Browser Page component.
+ */
 const BrowserPage: React.FC = () => {
     const d3Container = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
-
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
     const [dataset, setDataset] = useState<MindMapDataset>();
-
     const sessionContext = useContext(SessionContext);
-
     const [clickedNode, setClickedNode] = useState<Node>();
-
     const [creatorVisible, setCreatorVisible] = useState(false);
     const [modalNodeDetail, setModalNodeDetail] = useState(false);
-
     const [disabledCanvas, setDisabledCanvas] = useState(false);
     const [historyDataset, setHistoryDataset] = useState<TimelineResultItem[]>([]);
-
     const [datesView, setDatesView] = useState(false);
-
     const mindMapService = new MindMapService();
     const dBPeddiaService = new DBPediaService(sessionContext.sessionInfo);
 
+    /**
+     * Fetches the mind map data from the server using the provided URL.
+     * @param url - The URL of the mind map data.
+     */
     async function fetchMindMap(url: string): Promise<void> {
         try {
             const mindMapDataset = await mindMapService.getMindMap(url);
             if (mindMapDataset) {
-                mindMapDataset.links = AddCoords(mindMapDataset.links, getIdsMapping(mindMapDataset.nodes))
-                setDataset(mindMapDataset)
-                const xAxes = mindMapDataset.nodes.map((node) => { return node.cx })
-                const yAxes = mindMapDataset.nodes.map((node) => { return node.cy })
+                mindMapDataset.links = AddCoords(mindMapDataset.links, getIdsMapping(mindMapDataset.nodes));
+                setDataset(mindMapDataset);
+                const xAxes = mindMapDataset.nodes.map((node) => { return node.cx });
+                const yAxes = mindMapDataset.nodes.map((node) => { return node.cy });
                 if (ref && ref.current) {
                     // @ts-ignore
                     const mainWidth = ref.current.offsetWidth;
@@ -58,19 +58,22 @@ const BrowserPage: React.FC = () => {
                 }
             }
         } catch (error) {
-            // Handle the error, e.g., display an error message to the user or perform fallback actions
+            alert(error)
         }
     }
 
-    useEffect(
-        () => {
-            if (location.state !== null && location.state.id !== null) {
-                fetchMindMap(location.state.id)
-            } else {
-                navigate('/')
-            }
-        }, [])
+    // Fetch the mind map data when the component mounts or the location state changes
+    useEffect(() => {
+        if (location.state !== null && location.state.id !== null) {
+            fetchMindMap(location.state.id);
+        } else {
+            navigate('/');
+        }
+    }, []);
 
+    /**
+     * Creates a date view of the mind map data using DBPediaService.
+     */
     async function createDateView() {
         if (dataset) {
             const dates = await dBPeddiaService.getDates(dataset.nodes);

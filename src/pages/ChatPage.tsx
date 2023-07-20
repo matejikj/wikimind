@@ -44,7 +44,7 @@ const ChatPage: React.FC = () => {
                 await messageNotificationsSubscription(chat.chat, setMessageDataset);
             }
         } catch (error) {
-            // Handle the error, e.g., display an error message to the user or perform fallback actions
+            alert(error)
         }
     }
 
@@ -77,8 +77,6 @@ const ChatPage: React.FC = () => {
         <div className="App">
             <Sidenav />
             <Container fluid className="h-100">
-            <Row className="h-100">
-</Row>
                 <Row className="h-100">
                     <Col xs={12} className="p-0">
                         <div className="chat-container">

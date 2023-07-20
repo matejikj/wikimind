@@ -15,16 +15,11 @@ import profileLocalization from "./locales/profile.json";
 import '../styles/style.css';
 
 /**
- * Represents the ProfilePage component displaying the user's profile information.
+ * ProfilePage.
  */
 const ProfilePage: React.FC = () => {
-  // Access the SessionContext to get the user's session information.
   const sessionContext = useContext(SessionContext);
-
-  // State to hold the user's profile information.
   const [profile, setProfile] = useState<Profile | undefined>();
-
-  // Create an instance of the ProfileService to interact with the profile data.
   const profileService = new ProfileService();
 
   /**
@@ -67,7 +62,6 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="App">
-      {/* The Sidenav component displaying navigation options */}
       <Sidenav />
       <main>
         <Container className='center-container'>
@@ -83,11 +77,9 @@ const ProfilePage: React.FC = () => {
                     </Card.Title>
                     <Card.Subtitle>{profile?.webId || ""}</Card.Subtitle>
                     <br />
-                    {/* Form inputs for Name */}
                     <Form.Label htmlFor="name">{profileLocalization.name[sessionContext.sessionInfo.localization]}</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="name"
                       name="name"
                       style={{ maxWidth: '500px' }}
                       id="name"
@@ -95,11 +87,9 @@ const ProfilePage: React.FC = () => {
                       onChange={handleChange}
                     />
                     <br />
-                    {/* Form inputs for Surname */}
                     <Form.Label htmlFor="surname">{profileLocalization.surname[sessionContext.sessionInfo.localization]}</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="surname"
                       name="surname"
                       id="surname"
                       style={{ maxWidth: '500px' }}
@@ -108,12 +98,10 @@ const ProfilePage: React.FC = () => {
                     />
                   </Card.Body>
                   <Card.Footer>
-                    {/* Button to save profile changes */}
                     <Button variant="outline-success" onClick={profileSaved}>{profileLocalization.confirm[sessionContext.sessionInfo.localization]}</Button>
                   </Card.Footer>
                 </Card>
               }
-
             </Col>
           </Row>
         </Container>
