@@ -52,7 +52,6 @@ const Line: React.FC<{
                     stroke="#999"
                     strokeOpacity="0"
                     strokeWidth="10"
-                    onClick={() => alert()}
                 ></line>
                 <line
                     x1={link.target !== undefined && link.source !== undefined ? (link.target[0] + link.source[0]) / 2 : 0}
@@ -63,7 +62,6 @@ const Line: React.FC<{
                     stroke="#999"
                     strokeOpacity="0"
                     strokeWidth="10"
-                    onClick={() => alert()}
                 ></line>
             </g>
         );
