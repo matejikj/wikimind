@@ -5,8 +5,9 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix vann: <http://purl.org/vocab/vann/> .
 @prefix schema: <https://schema.org/> .
-@prefix wikimind: <http://www.w3.org/ns/solid/terms#> .
+@prefix solid: <http://www.w3.org/ns/solid/terms#> .
 
+# Wikimind Project Ontology
 wikimind: rdf:type owl:Ontology ;
     dcterms:title "WikiMind project ontology" ;
     dcterms:description "The ontology adding RDF terms required for the WikiMind project." ;
@@ -15,48 +16,47 @@ wikimind: rdf:type owl:Ontology ;
 
 ### Classes
 wikimind:Chat a rdfs:Class ;
-rdfs:comment "A resource containing information about chat interactions."@en ;
-rdfs:label "Chat"@en .
+    rdfs:comment "A resource containing information about chat interactions."@en ;
+    rdfs:label "Chat"@en .
 
 wikimind:Class a rdfs:Class ;
-rdfs:comment "A resource helping to identify personal information fields kept at the hotel."@en ;
-rdfs:label "Class"@en .
+    rdfs:comment "A resource helping to identify personal information fields kept at the hotel."@en ;
+    rdfs:label "Class"@en .
 
 wikimind:Request a rdfs:Class ;
-rdfs:comment "A resource containing information about a privacy token deletion request."@en ;
-rdfs:label "Request"@en .
+    rdfs:comment "A resource containing information about a privacy token request."@en ;
+    rdfs:label "Request"@en .
 
 wikimind:Connection a rdfs:Class ;
-rdfs:comment "A resource containing information about a connection."@en ;
-rdfs:label "Connection"@en .
+    rdfs:comment "A resource containing information about a connection."@en ;
+    rdfs:label "Connection"@en .
 
 wikimind:Link a rdfs:Class ;
-rdfs:comment "A resource representing a link."@en ;
-rdfs:label "Link"@en .
+    rdfs:comment "A resource representing a link."@en ;
+    rdfs:label "Link"@en .
 
 wikimind:Exam a rdfs:Class ;
-rdfs:comment "A resource containing information about an exam."@en ;
-rdfs:label "Exam"@en .
+    rdfs:comment "A resource containing information about an exam."@en ;
+    rdfs:label "Exam"@en .
 
 wikimind:Message a rdfs:Class ;
-rdfs:comment "A resource representing a message."@en ;
-rdfs:label "Message"@en .
+    rdfs:comment "A resource representing a message."@en ;
+    rdfs:label "Message"@en .
 
 wikimind:MindMap a rdfs:Class ;
-rdfs:comment "A resource representing a mind map."@en ;
-rdfs:label "MindMap"@en .
+    rdfs:comment "A resource representing a mind map."@en ;
+    rdfs:label "MindMap"@en .
 
 wikimind:Node a rdfs:Class ;
-rdfs:comment "A resource representing a node."@en ;
-rdfs:label "Node"@en .
+    rdfs:comment "A resource representing a node."@en ;
+    rdfs:label "Node"@en .
 
 wikimind:Profile a rdfs:Class ;
-rdfs:comment "A resource representing a user profile."@en ;
-rdfs:label "Profile"@en .
+    rdfs:comment "A resource representing a user profile."@en ;
+    rdfs:label "Profile"@en .
 
 
-# Enum Class
-
+# Enum Classes
 
 wikimind:LinkTypeEnum a rdfs:Class ;
     rdfs:comment "An enumeration of link types."@en ;
@@ -70,9 +70,8 @@ wikimind:RequestTypeEnum a rdfs:Class ;
     rdfs:label "Request Type" ;
     rdfs:comment "A class representing different types of requests in the system." .
 
-
-
 # Enum Instances
+
 wikimind:WAC a wikimind:AccessControlPolicyEnum ;
     rdfs:label "WAC" ;
     rdfs:comment "Web Access Control policy." .
@@ -81,29 +80,25 @@ wikimind:ACP a wikimind:AccessControlPolicyEnum ;
     rdfs:label "ACP" ;
     rdfs:comment "Access Control Policy." .
 
-
-
-wikimind:REMOVE_CLASS a ex:RequestTypeEnum ;
+wikimind:REMOVE_CLASS a wikimind:RequestTypeEnum ;
     rdfs:label "REMOVE_CLASS" ;
     rdfs:comment "Link type for graph links - Remove class." .
 
-wikimind:REMOVE_CHAT a ex:RequestTypeEnum ;
+wikimind:REMOVE_CHAT a wikimind:RequestTypeEnum ;
     rdfs:label "REMOVE_CHAT" ;
     rdfs:comment "Link type for class links - Remove chat." .
 
-wikimind:CLASS_REQUEST a ex:RequestTypeEnum ;
+wikimind:CLASS_REQUEST a wikimind:RequestTypeEnum ;
     rdfs:label "CLASS_REQUEST" ;
     rdfs:comment "Link type for profile links - Class request." .
 
-wikimind:ADD_CLASS a ex:RequestTypeEnum ;
+wikimind:ADD_CLASS a wikimind:RequestTypeEnum ;
     rdfs:label "ADD_CLASS" ;
     rdfs:comment "Link type for chat links - Add class." .
 
-wikimind:ADD_CONTACT a ex:RequestTypeEnum ;
+wikimind:ADD_CONTACT a wikimind:RequestTypeEnum ;
     rdfs:label "ADD_CONTACT" ;
     rdfs:comment "Link type for chat links - Add contact." .
-
-
 
 wikimind:GRAPH a wikimind:LinkTypeEnum ;
     rdfs:label "GRAPH link type"@en ;
@@ -121,10 +116,7 @@ wikimind:CHAT a wikimind:LinkTypeEnum ;
     rdfs:label "CHAT link type"@en ;
     rdfs:comment "CHAT link type."@en .
 
-
-
-
-# Property to link resources to their Access Control Policy
+# Properties to link resources to their Access Control Policy
 wikimind:accessControlPolicy a rdf:Property ;
     rdfs:label "has Access Control Policy" ;
     rdfs:comment "Relates a resource to its Access Control Policy." ;
@@ -143,11 +135,9 @@ wikimind:requestType a rdf:Property ;
     rdfs:domain wikimind:Request ;
     rdfs:range wikimind:RequestTypeEnum .
 
-
-
 wikimind:webId a rdf:Property ;
     rdfs:comment "The WebID of a user."@en ;
-    rdfs:label "webId"@en ;
+    rdfs:label "webId"@en .
 
 wikimind:lastMessage a rdf:Property ;
     rdfs:comment "Indicates the last processed message."@en ;
