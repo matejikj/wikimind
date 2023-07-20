@@ -1,6 +1,6 @@
-#Wikimind
+Wikimind
 
-##This is the repository for master thesis A platform for creating and sharing interactive educational materials based on data from knowledge graphs.
+This is the repository for master thesis A platform for creating and sharing interactive educational materials based on data from knowledge graphs.
 
 
 In the project directory, you can run:
