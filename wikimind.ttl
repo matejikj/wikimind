@@ -20,15 +20,15 @@ wikimind:Chat a rdfs:Class ;
     rdfs:label "Chat"@en .
 
 wikimind:Class a rdfs:Class ;
-    rdfs:comment "A resource helping to identify personal information fields kept at the hotel."@en ;
+    rdfs:comment "A Classin school."@en ;
     rdfs:label "Class"@en .
 
 wikimind:Request a rdfs:Class ;
-    rdfs:comment "A resource containing information about a privacy token request."@en ;
+    rdfs:comment "A Request."@en ;
     rdfs:label "Request"@en .
 
 wikimind:Connection a rdfs:Class ;
-    rdfs:comment "A resource containing information about a connection."@en ;
+    rdfs:comment "A resource containing information about a connection netween nodes."@en ;
     rdfs:label "Connection"@en .
 
 wikimind:Link a rdfs:Class ;
@@ -64,7 +64,7 @@ wikimind:LinkTypeEnum a rdfs:Class ;
 
 wikimind:AccessControlPolicyEnum a rdfs:Class ;
     rdfs:label "Access Control Policy" ;
-    rdfs:comment "A class representing access control policies in the system." .
+    rdfs:comment "A class representing access control policies in the solid system." .
 
 wikimind:RequestTypeEnum a rdfs:Class ;
     rdfs:label "Request Type" ;
@@ -144,7 +144,7 @@ wikimind:lastMessage a rdf:Property ;
     rdfs:label "lastMessage"@en .
 
 wikimind:storage a rdf:Property ;
-    rdfs:comment "Indicates if the subject has been stored."@en ;
+    rdfs:comment "Indicates where the subject has been stored."@en ;
     rdfs:label "isStored"@en .
 
 wikimind:isInTest a rdf:Property ;
