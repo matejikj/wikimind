@@ -24,6 +24,7 @@ export const WELL_KNOWN = ".well-known"
  * @returns {Promise<void>} - A Promise that resolves when the initialization is complete.
  */
 export const initializeAcl = async (url: string): Promise<void> => {
+  // https://github.com/AyazDyshin/solid-planner-app/blob/main/src/services/access.ts#L19
   let myDatasetWithAcl;
   try {
     myDatasetWithAcl = await getSolidDatasetWithAcl(url, { fetch: fetch });

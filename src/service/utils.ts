@@ -18,6 +18,7 @@ export async function checkStructure() {
  * @returns The generated UUID string.
  */
 export function generate_uuidv4() {
+  // https://www.tutorialspoint.com/how-to-create-guid-uuid-in-javascript
   let dt = new Date().getTime();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function( c ) {
      let rnd = Math.random() * 16; // Random number in the range 0 to 16
@@ -34,6 +35,7 @@ export function generate_uuidv4() {
  * @returns The Levenshtein distance between the two strings.
  */
 export function levenshteinDistance(s: string, t: string) {
+  // https://www.30secondsofcode.org/js/s/levenshtein-distance/
   if (!s.length) return t.length;
   if (!t.length) return s.length;
   const arr: number[][] = [];
